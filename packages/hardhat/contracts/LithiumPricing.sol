@@ -2,14 +2,16 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC777/IERC777.sol";
 import "./Roles.sol";
+import "./ILithiumPricing.sol";
+import "./ILithiumReward.sol";
+
 /**
  * @title LithiumPricing
  * Based on https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/examples/SimpleToken.sol
  */
-contract LithiumPricing is Roles{
-  enum AnswerStatus { Unclaimed, Claimed }
-
+contract LithiumPricing is ILithiumPricing, Roles {
   IERC777 LithToken;
+  ILithiumReward lithiumReward;
 
   string[] categories; 
 
@@ -41,14 +43,6 @@ contract LithiumPricing is Roles{
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
 
-  event QuestionCreated(uint256 id, address owner, string description, uint256[] answerOptions, uint256 endTime);
-
-  event QuestionActive(uint256 id);
-
-  event QuestionAnswered(uint256 id, uint256 questionId, address answerer, uint256 answerIndex, uint256 stakeAmount);
-
-  event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);
-
   constructor () {
     string memory preIPO = "preIPO";
     categories.push(preIPO);
@@ -57,12 +51,6 @@ contract LithiumPricing is Roles{
   /**
   * @dev Sets the address of the LithToken.
   *
-  * If send or receive hooks are registered for the caller and `recipient`,
-  * the corresponding functions will be called with `data` and empty
-  * `operatorData`. See {IERC777Sender} and {IERC777Recipient}.
-  *
-  * Emits a {Sent} event.
-  *
   * Requirements
   *
   * - the caller must be an admin.
@@ -70,6 +58,16 @@ contract LithiumPricing is Roles{
   function setLithTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     LithToken = IERC777(_tokenAddress);
+  }
+
+  /**
+  * @dev Sets the address of the LithiumReward.
+  *
+
+  */
+  function setLithiumRewardAddress(address _rewardAddress) public {
+    require(isAdmin(msg.sender), "Must be admin to set token address");
+    lithiumReward = ILithiumReward(_rewardAddress);
   }
 
   /**
@@ -115,7 +113,12 @@ contract LithiumPricing is Roles{
   * - the answer set must be valid (see isValidAnswerSet).
   * - the `endtime` must be in the future
   */
-  function createQuestion(uint256 bounty, string memory description, uint256 endTime, uint256[] memory answerSet) public {
+  function createQuestion(
+    uint256 bounty,
+    string memory description,
+    uint256 endTime,
+    uint256[] memory answerSet
+  ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
     require(LithToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
 
@@ -152,14 +155,18 @@ contract LithiumPricing is Roles{
   * - the answerIndex must correspond to a valid answer(see isValidAnswerSet).
   * - the `endtime` must be in the future
   */
-  function recordAnswer(uint256 questionId, uint256 answerIndex, uint256 stakeAmount) internal {
-    Question storage question = questions[questionId];
+  function answerQuestion(
+    uint256 _questionId,
+    uint256 _answerIndex,
+    uint256 _stakeAmount
+  ) internal {
+    Question storage question = questions[_questionId];
     require(question.endTime > block.timestamp, "Question is not longer active");
-    require(answerIndex <= question.answerCount, "Invalid answer index");
-    require(stakeAmount > 0, "Stake amount must be greater than zero");
-    require(LithToken.balanceOf(msg.sender) >= stakeAmount, "Insufficient balance");
+    require(_answerIndex <= question.answerCount, "Invalid answer index");
+    require(_stakeAmount > 0, "Stake amount must be greater than zero");
+    require(LithToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
-    LithToken.operatorSend(msg.sender, address(this), stakeAmount, "", "");
+    LithToken.operatorSend(msg.sender, address(this), _stakeAmount, "", "");
 
     uint256 id = questions.length;
 
@@ -167,68 +174,125 @@ contract LithiumPricing is Roles{
     answer.id = id;
     answer.answerer = msg.sender;
     answer.questionId = question.id;
-    answer.answerIndex = answerIndex;
-    answer.stakeAmount = stakeAmount;
+    answer.answerIndex = _answerIndex;
+    answer.stakeAmount = _stakeAmount;
     answer.status = AnswerStatus.Unclaimed;
 
-    question.totalStaked = question.totalStaked + stakeAmount;
-    question.answerSetTotals[answerIndex] = question.answerSetTotals[answerIndex] + stakeAmount;
+    answers[_questionId][msg.sender] = answer;
 
-    emit QuestionAnswered(id, answer.questionId, answer.answerer, answerIndex, stakeAmount);
+    question.totalStaked = question.totalStaked + _stakeAmount;
+    question.answerSetTotals[_answerIndex] = question.answerSetTotals[_answerIndex] + _stakeAmount;
+
+    emit QuestionAnswered(id, answer.questionId, answer.answerer, _answerIndex, _stakeAmount);
 
   }
 
-  function answerQuestions(uint256[] memory questionIds, uint256[] memory answerIndexes, uint256[] memory stakeAmounts) public payable {
+  function answerQuestions (
+    uint256[] memory questionIds,
+    uint256[] memory answerIndexes,
+    uint256[] memory stakeAmounts
+  ) external override {
     for (uint256 i = 0; i < questionIds.length; i++) {
-      recordAnswer(questionIds[i], answerIndexes[i], stakeAmounts[i]);
+      answerQuestion(questionIds[i], answerIndexes[i], stakeAmounts[i]);
     }
   }
 
-  function getTopAnswerValue(uint256 questionId) internal view returns(uint256) {
-    Question storage question = questions[questionId];
-
-    uint256[] storage answerSetTotals = question.answerSetTotals;
-
-    uint256 topAnswerValue = 0;
-
-    for (uint256 i = 0; i < answerSetTotals.length; i++) {
-
-      if (answerSetTotals[i] > topAnswerValue) {
-        topAnswerValue = answerSetTotals[i];
-      }
-    }
-
-    return topAnswerValue;
+  function getQuestion (
+    uint256 _id
+  ) external view override returns (
+    address owner,
+    uint256 id,
+    uint256 categoryId,
+    string memory description,
+    uint256[] memory answerSet,
+    uint256 answerCount,
+    uint256[] memory answerSetTotals,
+    uint256 finalAnswerIndex,
+    uint256 bounty,
+    uint256 totalStaked,
+    uint256 endTime
+  ) {
+    Question storage question = questions[_id];
+    owner = question.owner;
+    id = question.id;
+    categoryId = question.categoryId;
+    description = question.description;
+    answerSet = question.answerSet;
+    answerCount = question.answerCount;
+    answerSetTotals = question.answerSetTotals;
+    finalAnswerIndex = question.finalAnswerIndex;
+    bounty = question.bounty;
+    totalStaked = question.totalStaked;
+    endTime = question.endTime;
   }
 
-  function getReward(uint256 totalReward, uint256 userStake, uint256 totalAnswerStake) internal pure returns (uint256) {
-    return totalReward * userStake / totalAnswerStake;
+  function getAnswer (
+    uint256 _questionId,
+    address _answerer
+  ) external view override returns (
+    address answerer,
+    uint256 id,
+    uint256 questionId,
+    uint256 answerIndex,
+    uint256 stakeAmount,
+    AnswerStatus status
+  ) {
+    Answer storage answer = answers[_questionId][_answerer];
+    answerer = answer.answerer;
+    id = answer.id;
+    questionId = answer.questionId;
+    answerIndex = answer.answerIndex;
+    stakeAmount = answer.stakeAmount;
+    status = answer.status;
   }
 
-  function claimReward(uint256 questionId) public {
-    Question storage question = questions[questionId];
+  function getAnswerSetTotals (
+    uint256 _questionId
+  ) external view override returns (
+    uint256[] memory
+  ) {
+    return questions[_questionId].answerSetTotals;
+  }
+
+  function getAnswerSet (
+    uint256 _questionId
+  ) external view override returns (
+    uint256[] memory
+  ) {
+    return questions[_questionId].answerSet;
+  }
+
+  function getRewardTotal (
+    uint256 _questionId
+  ) external view override returns (
+    uint256
+  ) {
+    Question storage question = questions[_questionId];
+
+    return question.bounty + question.totalStaked;
+  }    
+
+  function claimReward (
+    uint256 _questionId
+  ) internal {
+    Question storage question = questions[_questionId];
     require(question.endTime <= block.timestamp, "Question is still active and cannot be claimed");
-
-    Answer storage answer = answers[questionId][msg.sender];
-
-    uint256 topAnswerValue = getTopAnswerValue(questionId);
-    uint256 userAnswerValue = question.answerSetTotals[answer.answerIndex];
-
-    require(userAnswerValue == topAnswerValue, "Answer must be correct to claim reward");
+    Answer storage answer = answers[_questionId][msg.sender];
     require(answer.status == AnswerStatus.Unclaimed, "Reward has already been claimed");
 
-    answer.status = AnswerStatus.Claimed;
+    uint256 reward = lithiumReward.getReward(_questionId, msg.sender);
 
-    uint256 rewardTotal = question.bounty + question.totalStaked;
-    uint256 answerTotal = question.answerSetTotals[answer.answerIndex];
-    uint256 rewardValue = getReward(rewardTotal, answer.stakeAmount, answerTotal);
+    if (reward > 0) {
+      answer.status = AnswerStatus.Claimed;
+      LithToken.send(msg.sender, reward, "");
 
-    LithToken.send(msg.sender, rewardValue, "");
-
-    emit RewardClaimed(questionId, msg.sender, rewardValue);
+      emit RewardClaimed(_questionId, msg.sender, reward);
+    }
   }
 
-  function claimRewards(uint256[] memory questionIds) public {
+  function claimRewards (
+    uint256[] memory questionIds
+  ) external override {
     for (uint256 i = 0; i < questionIds.length; i++) {
       claimReward(questionIds[i]);
     }
