@@ -1,1 +1,1 @@
-module.exports = ["YourContract"];
+module.exports = ["LithToken","LithiumPricing","LithiumReward"];
