@@ -1,6 +1,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC777/IERC777.sol";
+import "@openzeppelin/contracts/token/ERC777/IERC777Recipient.sol";
+import "./ERC1820Client.sol";
 import "./Roles.sol";
 import "./ILithiumPricing.sol";
 import "./ILithiumReward.sol";
@@ -9,7 +11,7 @@ import "./ILithiumReward.sol";
  * @title LithiumPricing
  * Based on https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/examples/SimpleToken.sol
  */
-contract LithiumPricing is ILithiumPricing, Roles {
+contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Roles {
   IERC777 LithToken;
   ILithiumReward lithiumReward;
 
@@ -21,7 +23,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 categoryId;
     string description;
     uint256[] answerSet;
-    uint256 answerCount;
     uint256[] answerSetTotals;
     uint256 finalAnswerIndex;
     uint256 bounty;
@@ -31,7 +32,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   struct Answer {
     address answerer;
-    uint256 id;
     uint256 questionId;
     uint256 answerIndex;
     uint256 stakeAmount;
@@ -43,9 +43,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
 
+  event TokensReceived(address operator, address from, address to, uint256 amount, bytes userData, bytes operatorData);
+
   constructor () {
     string memory preIPO = "preIPO";
     categories.push(preIPO);
+    setInterfaceImplementation("ERC777TokensRecipient", address(this));
   }
 
   /**
@@ -126,18 +129,21 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 id = questions.length;
     Question memory question;
     question.id = id;
+    question.bounty = bounty;
     question.owner = msg.sender;
     question.description =  description;
     question.answerSet = answerSet;
-    question.answerCount = answerSet.length + 1;
     question.endTime = endTime;
     question.finalAnswerIndex = 0;
     questions.push(question);
     
     Question storage storedQuestion = questions[id];
     storedQuestion.answerSet.push(0);
+    for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
+      storedQuestion.answerSetTotals.push(0);
+    }
     
-    emit QuestionCreated(id, question.owner, description, storedQuestion.answerSet, endTime);
+    emit QuestionCreated(id, bounty, question.owner, description, storedQuestion.answerSet, endTime);
   }
 
   /**
@@ -160,30 +166,28 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 _answerIndex,
     uint256 _stakeAmount
   ) internal {
+    require(_questionId < questions.length, "Invalid question id");
     Question storage question = questions[_questionId];
     require(question.endTime > block.timestamp, "Question is not longer active");
-    require(_answerIndex <= question.answerCount, "Invalid answer index");
+    require(_answerIndex <= question.answerSet.length, "Invalid answer index");
     require(_stakeAmount > 0, "Stake amount must be greater than zero");
     require(LithToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
     LithToken.operatorSend(msg.sender, address(this), _stakeAmount, "", "");
 
-    uint256 id = questions.length;
-
     Answer memory answer;
-    answer.id = id;
+  
     answer.answerer = msg.sender;
-    answer.questionId = question.id;
+    answer.questionId = _questionId;
     answer.answerIndex = _answerIndex;
     answer.stakeAmount = _stakeAmount;
-    answer.status = AnswerStatus.Unclaimed;
 
     answers[_questionId][msg.sender] = answer;
 
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotals[_answerIndex] = question.answerSetTotals[_answerIndex] + _stakeAmount;
 
-    emit QuestionAnswered(id, answer.questionId, answer.answerer, _answerIndex, _stakeAmount);
+    emit QuestionAnswered(_questionId, msg.sender, _answerIndex, _stakeAmount);
 
   }
 
@@ -205,7 +209,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 categoryId,
     string memory description,
     uint256[] memory answerSet,
-    uint256 answerCount,
     uint256[] memory answerSetTotals,
     uint256 finalAnswerIndex,
     uint256 bounty,
@@ -218,7 +221,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     categoryId = question.categoryId;
     description = question.description;
     answerSet = question.answerSet;
-    answerCount = question.answerCount;
     answerSetTotals = question.answerSetTotals;
     finalAnswerIndex = question.finalAnswerIndex;
     bounty = question.bounty;
@@ -231,7 +233,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     address _answerer
   ) external view override returns (
     address answerer,
-    uint256 id,
     uint256 questionId,
     uint256 answerIndex,
     uint256 stakeAmount,
@@ -239,7 +240,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) {
     Answer storage answer = answers[_questionId][_answerer];
     answerer = answer.answerer;
-    id = answer.id;
     questionId = answer.questionId;
     answerIndex = answer.answerIndex;
     stakeAmount = answer.stakeAmount;
@@ -296,5 +296,19 @@ contract LithiumPricing is ILithiumPricing, Roles {
     for (uint256 i = 0; i < questionIds.length; i++) {
       claimReward(questionIds[i]);
     }
+  }
+
+    function tokensReceived(
+    address operator,
+    address from,
+    address to,
+    uint256 amount,
+    bytes calldata userData,
+    bytes calldata operatorData
+  ) external override {
+    require(msg.sender == address(LithToken), "Simple777Recipient: Invalid token");
+
+
+    emit TokensReceived(operator, from, to, amount, userData, operatorData);
   }
 }

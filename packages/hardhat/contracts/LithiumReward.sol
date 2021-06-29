@@ -49,7 +49,6 @@ contract LithiumReward is ILithiumReward {
     (
       ,
       ,
-      ,
       uint256 answerIndex,
       uint256 stakeAmount,
       

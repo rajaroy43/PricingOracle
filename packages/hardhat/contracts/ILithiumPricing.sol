@@ -25,7 +25,6 @@ interface ILithiumPricing {
     uint256 categoryId,
     string memory description,
     uint256[] memory answerSet,
-    uint256 answerCount,
     uint256[] memory answerSetTotals,
     uint256 finalAnswerIndex,
     uint256 bounty,
@@ -41,7 +40,6 @@ interface ILithiumPricing {
     address _answerer
   ) external view returns (
     address answerer,
-    uint256 id,
     uint256 questionId,
     uint256 answerIndex,
     uint256 stakeAmount,
@@ -83,9 +81,21 @@ interface ILithiumPricing {
     uint256[] memory questionIds
   ) external;
 
-  event QuestionCreated(uint256 id, address owner, string description, uint256[] answerOptions, uint256 endTime);
+  event QuestionCreated (
+    uint256 id,
+    uint256 bounty,
+    address owner,
+    string description,
+    uint256[] answerOptions,
+    uint256 endTime
+  );
 
-  event QuestionAnswered(uint256 id, uint256 questionId, address answerer, uint256 answerIndex, uint256 stakeAmount);
+  event QuestionAnswered (
+    uint256 questionId,
+    address answerer,
+    uint256 answerIndex,
+    uint256 stakeAmount
+  );
 
   event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);
    
