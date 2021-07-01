@@ -26,7 +26,6 @@ interface ILithiumPricing {
     string memory description,
     uint256[] memory answerSet,
     uint256[] memory answerSetTotals,
-    uint256 finalAnswerIndex,
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime
@@ -41,22 +40,23 @@ interface ILithiumPricing {
   ) external view returns (
     address answerer,
     uint256 questionId,
-    uint256 answerIndex,
+    uint16 answerIndex,
     uint256 stakeAmount,
     AnswerStatus status
   );
 
   function createQuestion (
+    uint16 categoryId,
     uint256 bounty,
-    string memory description,
     uint256 endTime,
+    string memory description,
     uint256[] memory answerSet
   ) external;
 
   function answerQuestions (
     uint256[] memory questionIds,
-    uint256[] memory answerIndexes,
-    uint256[] memory stakeAmounts
+    uint256[] memory stakeAmounts,
+    uint16[] memory answerIndexes
   ) external;
 
   function getAnswerSetTotals (
@@ -84,17 +84,18 @@ interface ILithiumPricing {
   event QuestionCreated (
     uint256 id,
     uint256 bounty,
+    uint256 endTime,
+    uint16 categoryId,
     address owner,
     string description,
-    uint256[] answerOptions,
-    uint256 endTime
+    uint256[] answerSet
   );
 
   event QuestionAnswered (
     uint256 questionId,
     address answerer,
-    uint256 answerIndex,
-    uint256 stakeAmount
+    uint256 stakeAmount,
+    uint16 answerIndex
   );
 
   event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);

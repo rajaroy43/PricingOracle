@@ -24,7 +24,6 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     string description;
     uint256[] answerSet;
     uint256[] answerSetTotals;
-    uint256 finalAnswerIndex;
     uint256 bounty;
     uint256 totalStaked;
     uint256 endTime;
@@ -33,8 +32,8 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
   struct Answer {
     address answerer;
     uint256 questionId;
-    uint256 answerIndex;
     uint256 stakeAmount;
+    uint16 answerIndex;
     AnswerStatus status;
   }
 
@@ -117,9 +116,10 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
   * - the `endtime` must be in the future
   */
   function createQuestion(
+    uint16 categoryId,
     uint256 bounty,
-    string memory description,
     uint256 endTime,
+    string memory description,
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
@@ -129,12 +129,12 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     uint256 id = questions.length;
     Question memory question;
     question.id = id;
+    question.categoryId = categoryId;
     question.bounty = bounty;
     question.owner = msg.sender;
     question.description =  description;
     question.answerSet = answerSet;
     question.endTime = endTime;
-    question.finalAnswerIndex = 0;
     questions.push(question);
     
     Question storage storedQuestion = questions[id];
@@ -143,7 +143,7 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
       storedQuestion.answerSetTotals.push(0);
     }
     
-    emit QuestionCreated(id, bounty, question.owner, description, storedQuestion.answerSet, endTime);
+    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
   }
 
   /**
@@ -163,8 +163,8 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
   */
   function answerQuestion(
     uint256 _questionId,
-    uint256 _answerIndex,
-    uint256 _stakeAmount
+    uint256 _stakeAmount,
+    uint16 _answerIndex
   ) internal {
     require(_questionId < questions.length, "Invalid question id");
     Question storage question = questions[_questionId];
@@ -187,17 +187,17 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotals[_answerIndex] = question.answerSetTotals[_answerIndex] + _stakeAmount;
 
-    emit QuestionAnswered(_questionId, msg.sender, _answerIndex, _stakeAmount);
+    emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
 
   }
 
   function answerQuestions (
     uint256[] memory questionIds,
-    uint256[] memory answerIndexes,
-    uint256[] memory stakeAmounts
+    uint256[] memory stakeAmounts,
+    uint16[] memory answerIndexes
   ) external override {
     for (uint256 i = 0; i < questionIds.length; i++) {
-      answerQuestion(questionIds[i], answerIndexes[i], stakeAmounts[i]);
+      answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
     }
   }
 
@@ -210,7 +210,6 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     string memory description,
     uint256[] memory answerSet,
     uint256[] memory answerSetTotals,
-    uint256 finalAnswerIndex,
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime
@@ -222,7 +221,6 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     description = question.description;
     answerSet = question.answerSet;
     answerSetTotals = question.answerSetTotals;
-    finalAnswerIndex = question.finalAnswerIndex;
     bounty = question.bounty;
     totalStaked = question.totalStaked;
     endTime = question.endTime;
@@ -234,7 +232,7 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
   ) external view override returns (
     address answerer,
     uint256 questionId,
-    uint256 answerIndex,
+    uint16 answerIndex,
     uint256 stakeAmount,
     AnswerStatus status
   ) {

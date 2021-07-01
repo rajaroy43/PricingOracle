@@ -1,15 +1,39 @@
-type Purpose @entity {
-  id: ID!
-  sender: Sender!
-  purpose: String!
-  createdAt: BigInt!
-  transactionHash: String!
+type User @entity {
+  id: ID! # address
+  questions: [Question!] @derivedFrom(field: "owner")
+  answers: [Answer!] @derivedFrom(field: "answerer")
+  questionCount: BigInt!
+  totalBounty: BigInt!
+  answerCount: BigInt!
+  totalRewardsClaimed: BigInt!
+  totalStaked: BigInt!
 }
 
-type Sender @entity {
+type Question @entity {
   id: ID!
-  address: Bytes!
-  purposes: [Purpose!] @derivedFrom(field: "sender")
-  createdAt: BigInt!
-  purposeCount: BigInt!
+  owner: User!
+  categoryId: Int!
+  description: String!
+  answerSet: [BigInt!]
+  answerSetTotals: [BigInt!]
+  bounty: BigInt!
+  totalStaked: BigInt!
+  endTime: BigInt!
+  answerCount: BigInt!
+  answers: [Answer!] @derivedFrom(field: "question")
+}
+
+enum AnswerStatus {
+  UNCLAIMED
+  CLAIMED
+}
+
+type Answer @entity {
+  id: ID! # questionId-answerer address
+  answerer: User!
+  question: Question! 
+  answerIndex: Int!
+  stakeAmount: BigInt!
+  rewardClaimed: BigInt!
+  status: AnswerStatus!
 }

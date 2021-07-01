@@ -48,19 +48,22 @@ describe("Lithium Pricing", async function () {
         const bounty =  ethers.utils.parseUnits("100.0", 18)
         const answerSet = [50]
         const finalAnswerSet = [50,0]
+        const categoryId = 0
 
         await expect(lithiumPricing.createQuestion(
+          categoryId,
           bounty,
-          description,
           endTime,
+          description,
           answerSet
         )).emit(lithiumPricing, "QuestionCreated").withArgs(
           0,
           bounty,
+          endTime,
+          categoryId,
           account0.address,
           description,
-          finalAnswerSet,
-          endTime
+          finalAnswerSet
         )
 
         const senderBalanceAfter = await lithToken.balanceOf(account0.address)
@@ -79,13 +82,13 @@ describe("Lithium Pricing", async function () {
 
         await expect(lithiumPricing.connect(account1).answerQuestions(
           ids,
-          answerIndexes,
-          stakeAmounts
+          stakeAmounts,
+          answerIndexes
         )).emit(lithiumPricing, "QuestionAnswered").withArgs(
           0,
           account1.address,
-          answerIndexes[0],
-          stakeAmounts[0]
+          stakeAmounts[0],
+          answerIndexes[0]
         )
 
         const senderBalanceAfter = await lithToken.balanceOf(account1.address)
@@ -98,13 +101,13 @@ describe("Lithium Pricing", async function () {
 
         await expect(lithiumPricing.connect(account2).answerQuestions(
           ids,
+          stake2Amounts,
           answer2Indexes,
-          stake2Amounts
         )).emit(lithiumPricing, "QuestionAnswered").withArgs(
           0,
           account2.address,
-          answer2Indexes[0],
-          stake2Amounts[0]
+          stake2Amounts[0],
+          answer2Indexes[0]
         )
 
         const sender2BalanceAfter = await lithToken.balanceOf(account2.address)
