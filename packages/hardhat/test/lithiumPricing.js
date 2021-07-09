@@ -5,36 +5,42 @@ const { solidity } = require("ethereum-waffle");
 use(solidity);
 
 describe("Lithium Pricing", async function () {
-  let lithiumPricing, lithiumReward, lithToken, account0, account1, account2;
+  let lithiumPricing, lithiumReward, lithToken, account0, account1, account2, stakeAmount, transferAmount1, approveAmount;
 
   describe("Contract Deployment", function () {
     it("Should deploy LithiumPricing, LithiumReward, LithToken", async function () {
+      const accounts = await ethers.getSigners()
+      account0 = accounts[0]
+      account1 = accounts[1]
+      account2 = accounts[2]
+      const approveAmount = ethers.utils.parseUnits("1000.0", 18)
+      transferAmount1 = ethers.utils.parseUnits("100.0", 18)
+      stakeAmount = ethers.utils.parseUnits("25.0", 18)
+
       //contracts = await deployLithiumPricing()
       console.log("\n\n 📡 Deploying Pricing...\n");
       const pricingContract = await ethers.getContractFactory("LithiumPricing");
       lithiumPricing = await pricingContract.deploy()
       console.log("\n\n 📡 Deploying Token...\n");
     
-      const tokenContract = await ethers.getContractFactory("LithToken")
-      lithToken = await tokenContract.deploy([lithiumPricing.address])
+      const tokenContract = await ethers.getContractFactory("LithiumToken")
+      lithToken = await tokenContract.deploy(account0.address)
 
       console.log("\n\n 📡 Deploying Reward...\n");
     
       const rewardContract = await ethers.getContractFactory("LithiumReward")
       lithiumReward = await rewardContract.deploy(lithiumPricing.address)
     
-      await lithiumPricing.setLithTokenAddress(lithToken.address)
+      await lithiumPricing.setLithiumTokenAddress(lithToken.address)
     
       await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
+      await lithToken.connect(account1).approve(lithiumPricing.address, approveAmount)
 
-      const accounts = await ethers.getSigners()
-      account0 = accounts[0]
-      account1 = accounts[1]
-      account2 = accounts[2]
-      const transferAmount = ethers.utils.parseUnits("100.0", 18)
-      await lithToken.transfer(account1.address, transferAmount)
+      await lithToken.approve(lithiumPricing.address, approveAmount)
+      await lithToken.connect(account2).approve(lithiumPricing.address, approveAmount)
+      await lithToken.transfer(account1.address, transferAmount1)
 
-      await lithToken.transfer(account2.address, transferAmount)
+      await lithToken.transfer(account2.address, transferAmount1)
 
 
     });
@@ -45,7 +51,7 @@ describe("Lithium Pricing", async function () {
         const block = await ethers.provider.getBlock()
         const endTime = block.timestamp + 4
         const description = "foo"
-        const bounty =  ethers.utils.parseUnits("100.0", 18)
+        const bounty =  transferAmount1
         const answerSet = [50]
         const finalAnswerSet = [50,0]
         const categoryId = 0
@@ -77,7 +83,7 @@ describe("Lithium Pricing", async function () {
       it("Should be able to answer a question", async function () {
         const senderBalance = await lithToken.balanceOf(account1.address)
         const ids = [0]
-        const stakeAmounts = [ethers.utils.parseUnits("25.0", 18)]
+        const stakeAmounts = [stakeAmount]
         const answerIndexes = [1]
 
         await expect(lithiumPricing.connect(account1).answerQuestions(

@@ -6,7 +6,6 @@ require("@nomiclabs/hardhat-waffle");
 require("@tenderly/hardhat-tenderly")
 
 require("@nomiclabs/hardhat-etherscan");
-require("hardhat-erc1820")
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 

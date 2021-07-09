@@ -1,18 +1,15 @@
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC777/IERC777.sol";
-import "@openzeppelin/contracts/token/ERC777/IERC777Recipient.sol";
-import "./ERC1820Client.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Roles.sol";
 import "./ILithiumPricing.sol";
 import "./ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
- * Based on https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/examples/SimpleToken.sol
  */
-contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Roles {
-  IERC777 LithToken;
+contract LithiumPricing is ILithiumPricing, Roles {
+  IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
   string[] categories; 
@@ -47,19 +44,18 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
   constructor () {
     string memory preIPO = "preIPO";
     categories.push(preIPO);
-    setInterfaceImplementation("ERC777TokensRecipient", address(this));
   }
 
   /**
-  * @dev Sets the address of the LithToken.
+  * @dev Sets the address of the LithiumToken.
   *
   * Requirements
   *
   * - the caller must be an admin.
   */
-  function setLithTokenAddress(address _tokenAddress) public {
+  function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
-    LithToken = IERC777(_tokenAddress);
+    LithiumToken = IERC20(_tokenAddress);
   }
 
   /**
@@ -123,9 +119,9 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
-    require(LithToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
+    require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
 
-    LithToken.operatorSend(msg.sender, address(this), bounty, "", "");
+    LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
     Question memory question;
     question.id = id;
@@ -171,9 +167,9 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     require(question.endTime > block.timestamp, "Question is not longer active");
     require(_answerIndex <= question.answerSet.length, "Invalid answer index");
     require(_stakeAmount > 0, "Stake amount must be greater than zero");
-    require(LithToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
+    require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
-    LithToken.operatorSend(msg.sender, address(this), _stakeAmount, "", "");
+    LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
 
     Answer memory answer;
   
@@ -282,7 +278,7 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
 
     if (reward > 0) {
       answer.status = AnswerStatus.Claimed;
-      LithToken.send(msg.sender, reward, "");
+      LithiumToken.transfer(msg.sender, reward);
 
       emit RewardClaimed(_questionId, msg.sender, reward);
     }
@@ -294,19 +290,5 @@ contract LithiumPricing is IERC777Recipient, ERC1820Client, ILithiumPricing, Rol
     for (uint256 i = 0; i < questionIds.length; i++) {
       claimReward(questionIds[i]);
     }
-  }
-
-    function tokensReceived(
-    address operator,
-    address from,
-    address to,
-    uint256 amount,
-    bytes calldata userData,
-    bytes calldata operatorData
-  ) external override {
-    require(msg.sender == address(LithToken), "Simple777Recipient: Invalid token");
-
-
-    emit TokensReceived(operator, from, to, amount, userData, operatorData);
   }
 }

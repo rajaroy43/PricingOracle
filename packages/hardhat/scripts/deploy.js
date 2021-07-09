@@ -13,7 +13,7 @@ const main = async () => {
   console.log("\n\n 📡 Deploying Token...\n",  lithiumPricing.address);
 
   
-  const lithToken = await deploy("LithToken", [[lithiumPricing.address]]) // <-- add in constructor args like line 19 vvvv
+  const lithToken = await deploy("LithiumToken", [lithiumPricing.address]) // <-- add in constructor args like line 19 vvvv
 
   const lithiumReward = await deploy("LithiumReward", [lithiumPricing.address])
 
