@@ -4,6 +4,45 @@
 
 ---
 
+#### Smart contract tests
+
+install depdencies
+```
+yarn install
+```
+
+run the local chain
+```
+yarn chain
+```
+
+in a new terminal execute smart contract tests
+```
+yarn test
+```
+
+#### Build and Deploy the Subgraph
+
+run the local graph node
+```
+yarn graph-run-node
+```
+
+in a new terminal
+build the subgraph
+```
+yarn graph-codegen && yarn graph-build
+```
+
+create the subgraph
+```
+yarn graph-create-local
+```
+
+deploy the subgraph
+```
+yarn graph-deploy-local
+```
 
 #### [ 🏃‍♀️ Quick Start ](https://github.com/austintgriffith/scaffold-eth#%EF%B8%8F-quick-start)
 
