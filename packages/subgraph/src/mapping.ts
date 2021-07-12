@@ -1,9 +1,13 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, dataSource, log } from "@graphprotocol/graph-ts"
 import {
   QuestionCreated,
   QuestionAnswered,
   RewardClaimed
 } from "../generated/LithiumPricing/LithiumPricing"
+import { 
+  Transfer,
+  Approval
+} from "../generated/LithiumToken/LithiumToken"
 import { User, Question, Answer } from "../generated/schema"
 
 let ZERO = BigInt.fromI32(0)
@@ -19,6 +23,8 @@ function getOrCreateUser(address: string): User {
     user.answerCount = ZERO
     user.totalRewardsClaimed = ZERO
     user.totalStaked = ZERO
+    user.tokenBalance = ZERO
+    user.tokenApprovalBalance = ZERO
 
     user.save()
   }
@@ -48,6 +54,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.totalStaked = ZERO
   question.answerCount = ZERO
   question.endTime = event.params.endTime
+  question.created = event.block.timestamp
   question.save()
 }
 
@@ -97,4 +104,35 @@ export function handleRewardClaimed(event: RewardClaimed): void {
   answer.rewardClaimed = event.params.rewardAmount
   answer.status = "CLAIMED"
   answer.save()
+}
+
+export function handleTransfer(event: Transfer): void {
+  let senderAddress = event.params.from.toHexString()
+
+  let sender = getOrCreateUser(senderAddress)
+  
+  sender.tokenBalance = sender.tokenBalance.minus(event.params.value)
+  sender.save()
+
+
+  let receiverAddress = event.params.to.toHexString()
+
+  let receiver = getOrCreateUser(receiverAddress)
+  
+  receiver.tokenBalance = receiver.tokenBalance.minus(event.params.value)
+  receiver.save()
+}
+
+
+export function handleApproval(event: Approval): void {
+  let appoverAddress = event.params.owner.toHexString()
+
+  let approver = getOrCreateUser(appoverAddress)
+  log.info('dataSource address {}', [dataSource.address().toString()])
+  
+  let pricingAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'// config.LithiumPricingAddress as string
+  if (pricingAddress == event.params.owner.toHexString()) {
+    approver.tokenApprovalBalance = event.params.value
+    approver.save()
+  }
 }

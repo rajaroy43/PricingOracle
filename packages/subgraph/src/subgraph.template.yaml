@@ -28,3 +28,28 @@ dataSources:
         - event: RewardClaimed(uint256,address,uint256)
           handler: handleRewardClaimed
       file: ./src/mapping.ts
+
+  - kind: ethereum/contract
+    name: LithiumToken
+    network: localhost
+    source:
+      address: '{{LithiumTokenAddress}}'
+      abi: LithiumToken
+      startBlock: 1
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - Question
+        - Answer
+      abis:
+        - name: LithiumToken
+          file: ./abis/LithiumToken.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer        
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+      file: ./src/mapping.ts

@@ -7,6 +7,8 @@ type User @entity {
   answerCount: BigInt!
   totalRewardsClaimed: BigInt!
   totalStaked: BigInt!
+  tokenBalance: BigInt!
+  tokenApprovalBalance: BigInt!
 }
 
 type Question @entity {
@@ -21,6 +23,7 @@ type Question @entity {
   endTime: BigInt!
   answerCount: BigInt!
   answers: [Answer!] @derivedFrom(field: "question")
+  created: BigInt!
 }
 
 enum AnswerStatus {
@@ -36,4 +39,5 @@ type Answer @entity {
   stakeAmount: BigInt!
   rewardClaimed: BigInt!
   status: AnswerStatus!
+  created: BigInt!
 }
