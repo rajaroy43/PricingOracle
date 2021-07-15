@@ -22,7 +22,7 @@ interface GetUsersData {
 }
 
 export const QUESTION_FIELDS = gql`
-    fragment UserFields on Fields {
+    fragment QuestionFields on Fields {
       id
       owner {
         id
@@ -37,12 +37,24 @@ export const QUESTION_FIELDS = gql`
       answerCount
       created
     }
-  `
+    `
 
 export const GET_QUESTIONS  = gql`
   query questions {
     questions {
-      ...QUESTION_FIELDS
+      id
+      owner {
+        id
+      }
+      categoryId
+      description
+      answerSet
+      answerSetTotals
+      bounty
+      totalStaked
+      endTime
+      answerCount
+      created
     }
 }
 `;
@@ -94,7 +106,19 @@ export const useGetActiveQuestions = (client: any): GetQuestionsResponse => {
 export const GET_QUESTION  = gql`
   query question($id: ID!) {
     question(id: $id) {
-      ...QUESTION_FIELDS
+      id
+      owner {
+        id
+      }
+      categoryId
+      description
+      answerSet
+      answerSetTotals
+      bounty
+      totalStaked
+      endTime
+      answerCount
+      created
     }
 }
 `;
@@ -103,7 +127,7 @@ interface GetQuestionResponse extends QueryResponse {
   question: QuestionView | null
 }
 
-export const useGetUser = (client: any, id: string): GetQuestionResponse => {
+export const useGetQuestion = (client: any, id: string): GetQuestionResponse => {
   const {loading, error, data} = useQuery<GetQuestionData, QuestionQueryVars>(
     GET_QUESTION,
     {

@@ -1,4 +1,6 @@
 import { User } from 'lithium-subgraph'
+import { AnswerView } from './answer';
+import { QuestionView } from './question';
 
 export interface UserView extends User {
   totalBountyDisplay: string
@@ -6,4 +8,6 @@ export interface UserView extends User {
   totalStakedDisplay: string
   tokenBalanceDisplay: string
   tokenApprovalBalanceDisplay: string
+  questionViews: QuestionView[]
+  answerViews: AnswerView[]
 }

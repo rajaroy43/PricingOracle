@@ -17,8 +17,25 @@ interface GetUsersData {
   users: User[] 
 }
 
+export const QUESTION_FIELDS = gql`
+    fragment QuestionFields on Question {
+      id
+      owner {
+        id
+      }
+      categoryId
+      description
+      answerSet
+      answerSetTotals
+      bounty
+      totalStaked
+      endTime
+      answerCount
+      created
+    }
+  `
 export const USER_FIELDS = gql`
-    fragment UserFields on Fields {
+    fragment UserFields on User {
       id
       questionCount
       totalBounty
@@ -59,9 +76,10 @@ export const useGetUsers = (client: any): GetUsersResponse => {
 }
 
 export const GET_USER  = gql`
+  ${USER_FIELDS}
   query user($id: ID!) {
     user(id: $id) {
-      ...USER_FIELDS
+      ...UserFields
       answers {
         id
         answerer {
@@ -77,8 +95,23 @@ export const GET_USER  = gql`
         status
         created
       }
+      questions {
+        id
+        owner {
+          id
+        }
+        categoryId
+        description
+        answerSet
+        answerSetTotals
+        bounty
+        totalStaked
+        endTime
+        answerCount
+        created
+      }
+  }
     }
-}
 `;
 
 interface GetUserResponse extends QueryResponse {
@@ -86,6 +119,7 @@ interface GetUserResponse extends QueryResponse {
 }
 
 export const useGetUser = (client: any, id: string): GetUserResponse => {
+  id = id.split('').map(f => f.toLowerCase()).join('')
   const {loading, error, data} = useQuery<GetUserData, UserQueryVars>(
     GET_USER,
     {
@@ -93,6 +127,7 @@ export const useGetUser = (client: any, id: string): GetUserResponse => {
       variables: { id },
       fetchPolicy: 'no-cache'
     });
+    
   return {
     loading,
     error,
