@@ -1,3 +1,6 @@
+# typings for graphql-code-generator, uncomment to generate Typscript types
+# scalar BigInt
+
 type User @entity {
   id: ID! # address
   questions: [Question!] @derivedFrom(field: "owner")
@@ -16,8 +19,8 @@ type Question @entity {
   owner: User!
   categoryId: Int!
   description: String!
-  answerSet: [BigInt!]
-  answerSetTotals: [BigInt!]
+  answerSet: [BigInt!]!
+  answerSetTotals: [BigInt!]!
   bounty: BigInt!
   totalStaked: BigInt!
   endTime: BigInt!

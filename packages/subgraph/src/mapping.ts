@@ -119,7 +119,7 @@ export function handleTransfer(event: Transfer): void {
 
   let receiver = getOrCreateUser(receiverAddress)
   
-  receiver.tokenBalance = receiver.tokenBalance.minus(event.params.value)
+  receiver.tokenBalance = receiver.tokenBalance.plus(event.params.value)
   receiver.save()
 }
 
