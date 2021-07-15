@@ -1,18 +1,13 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import React from "react";
-import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import ReactDOM from "react-dom";
+import { HashRouter} from 'react-router-dom'
+import WalletProvider from "./components/providers/WalletProvider";
 import App from "./App";
 import "./index.css";
-
-const themes = {
-  dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
-  light: `${process.env.PUBLIC_URL}/light-theme.css`,
-};
-
-const prevTheme = window.localStorage.getItem("theme");
-
-const subgraphUri = "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract";
+import { ThemeProvider } from "styled-components";
+import theme from './theme'
+const subgraphUri = "http://http://localhost:8000/subgraphs/name/scaffold-eth/your-contract";
 
 const client = new ApolloClient({
   uri: subgraphUri,
@@ -21,9 +16,13 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "light"}>
-      <App subgraphUri={subgraphUri} />
-    </ThemeSwitcherProvider>
+    <HashRouter>
+      <ThemeProvider theme={theme}>
+        <WalletProvider>
+          <App />
+        </WalletProvider>
+        </ThemeProvider>
+    </HashRouter>
   </ApolloProvider>,
   document.getElementById("root"),
 );
