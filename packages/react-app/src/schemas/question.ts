@@ -1,16 +1,17 @@
-import * as Yup from 'yup';
+import * as Yup from 'yup'; 
 
-export const SUPPORTED_WALLETS = {
-  METAMASK: 'METAMASK',
-  // FORTMATIC: 'FORTMATIC'
-}
-
-export const selectWalletSchema = {
+export const createQuestionSchema = {
   defaultValues: {
-    walletType: '',
+    description: '',
+    answerSet: '1',
+    endTime: '',
+    bounty: '0'
   },
   schema: Yup.object({
-    walletType: Yup.string().oneOf(Object.keys(SUPPORTED_WALLETS))
-      .required('Required')
+    description: Yup.string().required('Required'),
+    // TODO make answer set this an array of string
+    answerSet: Yup.string().required('Required'),
+    endTime: Yup.string().required('Required'),
+    bounty: Yup.string().required('Required')
   })
 }

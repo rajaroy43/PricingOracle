@@ -2,7 +2,7 @@ import Web3 from 'web3'
 import base from './base'
 
 const connectMetamask = async () => {
-  console.log(`conencting MetaMask wallet`)
+  console.log(`connecting MetaMask wallet`)
   // @ts-ignore
   if (window.ethereum) {
     // @ts-ignore
@@ -10,7 +10,7 @@ const connectMetamask = async () => {
     // @ts-ignore
     await window.ethereum.enable();
     // @ts-ignore
-    return [ window.web3, window.web3.currentProvider ];
+    return [ window.web3, window.web3.currentProvider];
   }
   return false;
 }

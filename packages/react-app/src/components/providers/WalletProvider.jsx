@@ -21,8 +21,8 @@ const reducer = (state, action) => {
         wallet: action.payload.wallet,
         address: action.payload.address,
         provider: action.payload.provider,
-        lithiumTokenInstance: action.payload.tokenInstance,
-        lithiumPricingInstance: action.payload.pricingInstance
+        tokenInstance: action.payload.tokenInstance,
+        pricingInstance: action.payload.pricingInstance
       }
     default:
       return state

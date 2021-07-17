@@ -27,7 +27,6 @@ const walletOptions = [
 ]
 
 const isValidProviderNetwork = (provider: any): boolean => {
-  console.log('is valid', parseInt(provider.chainId, 16) )
   // confirm  the provider chainId matches if not fortmatic
   if (!provider.isFortmatic && parseInt(provider.chainId, 16) !== config.CHAIN_ID) {
     return false
@@ -93,11 +92,10 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
   }
   // @ts-ignore
   const address = await wallets[values.walletType].getAddress(wallet)
-  console.log(`got provider: ${config.chainId} -- ${provider.chainId} -- ${address} \n${Object.keys(provider)}`)
-
-  const tokenInstance = getLithiumTokenInstance(provider)
-  const pricingInstance = getLithiumPricingInstance(provider)
-
+  console.log(`provider is ${provider}`)
+  const tokenInstance = getLithiumTokenInstance(wallet)
+  const pricingInstance = getLithiumPricingInstance(wallet)
+  console.log(`price instance ${Object.keys(pricingInstance)}`)
   const args = {
     walletType: values.walletType,
     wallet,
