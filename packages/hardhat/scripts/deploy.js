@@ -7,19 +7,27 @@ const R = require("ramda");
 
 
 const main = async () => {
+  const accounts = await ethers.getSigners()
+  account0 = accounts[0]
+  account1 = accounts[1]
+  account2 = accounts[2]
 
   console.log("\n\n 📡 Deploying Pricing...\n");
   const lithiumPricing = await deploy("LithiumPricing");
   console.log("\n\n 📡 Deploying Token...\n",  lithiumPricing.address);
 
   
-  const lithToken = await deploy("LithiumToken", [lithiumPricing.address]) // <-- add in constructor args like line 19 vvvv
+  const lithToken = await deploy("LithiumToken", [account0.address]) // <-- add in constructor args like line 19 vvvv
 
   const lithiumReward = await deploy("LithiumReward", [lithiumPricing.address])
 
-  await lithiumPricing.setLithTokenAddress(lithToken.address)
+  await lithiumPricing.setLithiumTokenAddress(lithToken.address)
 
   await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
+  const transferBalance = ethers.utils.parseUnits("1000.0", 18)
+  await lithToken.transfer(account1.address, transferBalance)
+  await lithToken.transfer(account2.address, transferBalance)
+
 
 
 
