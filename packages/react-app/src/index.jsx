@@ -10,11 +10,11 @@ import theme from './theme'
 
 ReactDOM.render(
     <HashRouter>
-      <ThemeProvider theme={theme}>
-        <WalletProvider>
-          <App />
-        </WalletProvider>
-        </ThemeProvider>
+        <ThemeProvider theme={theme}>
+          <WalletProvider>
+            <App />
+          </WalletProvider>
+          </ThemeProvider>
     </HashRouter>,
   document.getElementById("root"),
 );

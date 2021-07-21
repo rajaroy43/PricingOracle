@@ -4,7 +4,7 @@ export const createQuestionSchema = {
   defaultValues: {
     description: '',
     answerSet: '1',
-    endTime: '',
+    endTime: new Date().getTime(),
     bounty: '0'
   },
   schema: Yup.object({

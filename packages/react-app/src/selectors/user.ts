@@ -5,13 +5,15 @@ import { selectAnswer } from "./answer"
 import { selectQuestion } from "./question"
 
 export const selectUser = (user: User): UserView => {
+  const tokenApprovalBalanceDisplay = formatUnits(user.tokenApprovalBalance)
   return {
     ...user,
     totalBountyDisplay: formatUnits(user.totalBounty),
     totalRewardsClaimedDisplay: formatUnits(user.totalRewardsClaimed),
     totalStakedDisplay: formatUnits(user.totalStaked),
     tokenBalanceDisplay: formatUnits(user.tokenBalance),
-    tokenApprovalBalanceDisplay: formatUnits(user.tokenApprovalBalance),
+    tokenApprovalBalanceDisplay,
+    pricingIsApproved: +tokenApprovalBalanceDisplay > 0,
     // @ts-ignore
     questionViews: user.questions ? user.questions.map(selectQuestion) : null,
     // @ts-ignore

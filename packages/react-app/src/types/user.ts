@@ -8,6 +8,7 @@ export interface UserView extends User {
   totalStakedDisplay: string
   tokenBalanceDisplay: string
   tokenApprovalBalanceDisplay: string
+  pricingIsApproved: boolean
   questionViews: QuestionView[]
   answerViews: AnswerView[]
 }

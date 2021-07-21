@@ -1,13 +1,13 @@
 import React from 'react';
-import Box from './Box'
+import Flex from './Flex'
 
 const Card = ({title, text}: {title: string, text: string}) => (
-    <Box>
+    <Flex flexDirection='column'>
       <h4>{title}</h4>
       <div>
         {text}
       </div>
-    </Box>
+    </Flex>
 );
 
 export default Card

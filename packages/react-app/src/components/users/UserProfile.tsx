@@ -9,9 +9,9 @@ import UserInputRow from './UserInputRow'
 const UserProfile = ({user, connectedWallet}: {user: UserView, connectedWallet?: any}) => {
   return (
     <div>
-      { connectedWallet && <UserInputRow connectedWallet={connectedWallet} /> }
+      { connectedWallet && <UserInputRow connectedWallet={connectedWallet} pricingIsApproved={user.pricingIsApproved} /> }
       <UserBalances user={user}/>
-      <Flex>
+      <Flex  justifyContent='space-around' mt='3em'>
         <QuestionList questions={user.questionViews} />
         <AnswerList answers={user.answerViews} />
       </Flex>

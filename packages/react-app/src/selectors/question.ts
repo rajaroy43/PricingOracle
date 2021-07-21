@@ -5,7 +5,7 @@ import { QuestionView } from "../types/question"
 export const selectQuestion = (question: Question): QuestionView => {
   //TODO query a node to get the latest block time
   const now = new Date().getTime() / 1000
-  const isFinished = question.endTime >= now
+  const isFinished = question.endTime < now
   return {
     ...question,
     // @ts-ignore

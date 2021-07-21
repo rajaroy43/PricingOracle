@@ -6,6 +6,7 @@ import Text from '../atoms/inputs/Text'
 import Button from '../atoms/inputs/buttons/Button'
 import Modal from '../atoms/Modal'
 import { parseUnits } from '../../helpers/formatters'
+import DateTime from '../atoms/inputs/DateTime'
 
 const Success = () => (
   <div>
@@ -26,10 +27,9 @@ const getForm = () => (submit: any, isValid: boolean) => (
         name="answerSet"
         type="number" 
       />
-      <Text
+      <DateTime
         label="End Time"
         name="endTime"
-        type="number" 
       />
       <Text
         label="Bounty"
@@ -46,7 +46,7 @@ const getForm = () => (submit: any, isValid: boolean) => (
 )
 
 const getMethodArgs = (categoryId: string) => (values: any) => {
-  return [categoryId, parseUnits(values.bounty), values.endTime, values.description, [values.answerSet]]
+  return [categoryId, parseUnits(values.bounty), values.endTime / 1000, values.description, [values.answerSet]]
 }
 
 const CreateQuestionForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {
