@@ -5,6 +5,8 @@ export interface QuestionView extends Question {
   bountyDisplay: string
   totalStakedDisplay: string
   endTimeLocal: string
+  topAnswerIndex: number
+  topAnswerValue: string
   isFinished: boolean
   createdLocal: string
 }

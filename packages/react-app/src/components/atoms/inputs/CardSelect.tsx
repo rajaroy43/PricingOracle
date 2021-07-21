@@ -15,7 +15,6 @@ const SelectUI = (props:any) => {
       ((o:any) => <CardItem key={o.value} {...o} onClick={() => helper.setValue(o.value)} isSelected={o.value === field.value} />)
     )
 
-  console.log(`selecting card ${props.classes.formControl}`)
   return (
     <FormControl className={props.classes.formControl}>
       <InputLabel>{props.label}</InputLabel>

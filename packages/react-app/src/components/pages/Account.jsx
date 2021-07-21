@@ -10,7 +10,6 @@ const Account = ({match}) => {
   const urlAddress = match.params.address
   const {loading, user} = useGetUser(subgraphClient, urlAddress)
   const connectedWallet = useContext(WalletContext)
-  console.log(`aadress ${urlAddress} wallet address ${connectedWallet.address} ${connectedWallet.pricingInstance}`)
   const userWallet = urlAddress === connectedWallet.address ?
     connectedWallet : null
   return (

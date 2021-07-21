@@ -10,7 +10,7 @@ const QuestionDetail = ({question, connectedWallet}: {question: QuestionView, co
     <div>
       <h3>Question # {question.id}</h3>
       <QuestionInfo question={question} />
-      {!question.isFinished && connectedWallet.wallet && <QuestionAnswer question={question} connectedWallet={connectedWallet} />}
+      { connectedWallet.wallet && <QuestionAnswer question={question} connectedWallet={connectedWallet} isFinished={question.isFinished} />}
     </div>
   )
 }

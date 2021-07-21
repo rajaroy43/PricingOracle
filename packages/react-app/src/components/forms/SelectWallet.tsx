@@ -36,7 +36,6 @@ const isValidProviderNetwork = (provider: any): boolean => {
 }
 
 const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
-  console.log(`errors are ${JSON.stringify(errors, null, 2)}`)
   if (errors.providerNetwork) {
     return (
       <div>
@@ -92,10 +91,8 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
   }
   // @ts-ignore
   const address = await wallets[values.walletType].getAddress(wallet)
-  console.log(`provider is ${provider}`)
   const tokenInstance = getLithiumTokenInstance(wallet)
   const pricingInstance = getLithiumPricingInstance(wallet)
-  console.log(`price instance ${Object.keys(pricingInstance)}`)
   const args = {
     walletType: values.walletType,
     wallet,

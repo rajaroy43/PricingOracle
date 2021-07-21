@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-export const approveSchema = {
+export const claimRewardSchema = {
   defaultValues: {
   },
   schema: Yup.object({

@@ -45,7 +45,6 @@ export const useGetAnswer = (client: any, questionId: string, userId: string): G
       variables: { answerId },
       fetchPolicy: 'no-cache'
     });
-    console.log(`queryied answer ${JSON.stringify(data)}`)
   return {
     loading,
     error,
