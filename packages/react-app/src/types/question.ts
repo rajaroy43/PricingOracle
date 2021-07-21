@@ -7,6 +7,7 @@ export interface QuestionView extends Question {
   endTimeLocal: string
   topAnswerIndex: number
   topAnswerValue: string
+  topAnswerDisplay: string
   isFinished: boolean
   createdLocal: string
 }

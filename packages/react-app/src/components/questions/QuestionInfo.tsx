@@ -11,6 +11,11 @@ const QuestionItem = ({question}: {question: QuestionView}) => {
       <div>{question.isFinished ? 'Finished' : 'Active'}</div>
       <div>Bounty: {question.bountyDisplay}</div>
       <div>Total Staked: {question.totalStakedDisplay}</div>
+      {question.isFinished &&
+        <div>
+          Final Answer: {question.topAnswerDisplay}
+        </div>
+      }
     </Flex>
   )
 }

@@ -42,7 +42,7 @@ const getMethodArgs = (questionId: string) => (values: any) => {
   return [[questionId], [parsedStake], [values.answerIndex]]
 }
 
-const generateAnswerSetOptions = (answerSet: string[]) => {
+export const generateAnswerSetOptions = (answerSet: string[]) => {
   return answerSet.map((answer: string, index: number) => {
     if (index === 0) {
       return {label: `Less Than or Equal to ${answer}`, value: index}

@@ -1,4 +1,5 @@
 import { Question } from "lithium-subgraph"
+import { generateAnswerSetOptions } from "../components/forms/AnswerQuestion"
 import { formatUnits, formatDate } from "../helpers/formatters"
 import { QuestionView } from "../types/question"
 import { getTopAnswer } from "./common"
@@ -8,6 +9,7 @@ export const selectQuestion = (question: Question): QuestionView => {
   const now = new Date().getTime() / 1000
   const isFinished = question.endTime < now
   const topAnswer = getTopAnswer(question.answerSetTotals)
+  const answerSetOptions = generateAnswerSetOptions(question.answerSet)
   return {
     ...question,
     // @ts-ignore
@@ -18,6 +20,7 @@ export const selectQuestion = (question: Question): QuestionView => {
     isFinished,
     createdLocal:  formatDate(question.created),
     topAnswerIndex: topAnswer.index,
-    topAnswerValue: topAnswer.value.toString()
+    topAnswerValue: topAnswer.value.toString(),
+    topAnswerDisplay: answerSetOptions[topAnswer.index].label
   }
 }
