@@ -21,7 +21,29 @@ in a new terminal execute smart contract tests
 yarn test
 ```
 
+## Running the app locally
+
+#### Install Dependencies
+install depdencies
+```
+yarn install
+```
+#### Run Local Chain
+run the local chain
+```
+yarn chain
+```
+
+#### Deploy Smart Contracts
+in a new terminal execute smart contract tests
+```
+yarn deploy
+```
 #### Build and Deploy the Subgraph
+set up the node
+```
+cd docker/graph-node  && ./setup.sh
+```
 
 run the local graph node
 ```
@@ -29,6 +51,11 @@ yarn graph-run-node
 ```
 
 in a new terminal
+prepare the subgraph
+```
+yarn graph-prepare
+```
+
 build the subgraph
 ```
 yarn graph-codegen && yarn graph-build
@@ -43,6 +70,14 @@ deploy the subgraph
 ```
 yarn graph-deploy-local
 ```
+
+#### Run the App
+```
+yarn react-app:start
+```
+the app should be available at http://localhost:3000/
+
+
 
 #### [ 🏃‍♀️ Quick Start ](https://github.com/austintgriffith/scaffold-eth#%EF%B8%8F-quick-start)
 
