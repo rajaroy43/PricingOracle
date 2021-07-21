@@ -45,10 +45,11 @@ export const useGetAnswer = (client: any, questionId: string, userId: string): G
       variables: { answerId },
       fetchPolicy: 'no-cache'
     });
+    console.log(`queryied answer ${JSON.stringify(data)}`)
   return {
     loading,
     error,
-    answer: data != null ? selectAnswer(data.answer) : null
+    answer: data != null && data.answer != null ? selectAnswer(data.answer) : null
   } 
 }
 

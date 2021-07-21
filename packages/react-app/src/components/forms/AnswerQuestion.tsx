@@ -25,7 +25,7 @@ const getForm = (answerSetOptions: any) => (submit: any, isValid: boolean) => (
       <Text
         label="Stake Amount "
         name="stakeAmount"
-        type="number" 
+        type="float" 
       />
     </div>
     <Button
@@ -37,7 +37,9 @@ const getForm = (answerSetOptions: any) => (submit: any, isValid: boolean) => (
 )
 
 const getMethodArgs = (questionId: string) => (values: any) => {
-  return [[questionId], [parseUnits(values.stakeAmount)], [values.answerIndex]]
+  const parsedStake = parseUnits(values.stakeAmount)
+  console.log(`parsed stake is ${parsedStake}`)
+  return [[questionId], [parsedStake], [values.answerIndex]]
 }
 
 const generateAnswerSetOptions = (answerSet: string[]) => {
