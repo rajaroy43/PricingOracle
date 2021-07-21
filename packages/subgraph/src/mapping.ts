@@ -4,6 +4,7 @@ import {
   QuestionAnswered,
   RewardClaimed
 } from "../generated/LithiumPricing/LithiumPricing"
+
 import { 
   Transfer,
   Approval
@@ -33,7 +34,7 @@ function getOrCreateUser(address: string): User {
 }
 
 export function handleQuestionCreated(event: QuestionCreated): void {
-
+  log.info('!!!!!!!handling question created', [])
   let ownerAddress = event.params.owner.toHexString()
 
   let user = getOrCreateUser(ownerAddress)
@@ -89,6 +90,7 @@ export function handleQuestionAnswered(event: QuestionAnswered): void {
   answer.stakeAmount = event.params.stakeAmount
   answer.rewardClaimed = ZERO
   answer.status = "UNCLAIMED"
+  answer.created = event.block.timestamp
   answer.save()
 }
 
@@ -128,11 +130,13 @@ export function handleApproval(event: Approval): void {
   let appoverAddress = event.params.owner.toHexString()
 
   let approver = getOrCreateUser(appoverAddress)
-  log.info('dataSource address {}', [dataSource.address().toString()])
+  log.info('dataSource address {}', [dataSource.address().toHexString()])
   
-  let pricingAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'// config.LithiumPricingAddress as string
-  if (pricingAddress == event.params.owner.toHexString()) {
-    approver.tokenApprovalBalance = event.params.value
+  let pricingAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3'// config.LithiumPricingAddress as string
+  log.info('<><><><><><>pricing address {}', [event.params.spender.toHexString()])
+  if (pricingAddress == event.params.spender.toHexString()) {
+    log.info('pricing approved {}', [pricingAddress])
+    approver.tokenApprovalBalance = approver.tokenApprovalBalance.plus(event.params.value)
     approver.save()
   }
 }
