@@ -40,9 +40,20 @@ in a new terminal execute smart contract tests
 yarn deploy
 ```
 #### Build and Deploy the Subgraph
+install and run docker for your system https://docs.docker.com/get-docker/
+
+install the jq npm package globally
+```
+yarn global add jq
+```
+
 set up the node
 ```
 cd docker/graph-node  && ./setup.sh
+```
+confirm that the Host IP returned by ./setup.sh is the ethereum environment variable in ./docker/graph-node/docker-compose.yml
+```
+ethereum: 'localhost:http://{HOST_IP}:8545'
 ```
 
 run the local graph node
@@ -70,6 +81,8 @@ deploy the subgraph
 ```
 yarn graph-deploy-local
 ```
+
+Troubleshooting: If you have any errors in the graph node connection you may have stale state, to reset the graph node delete the data directory /docker/graph-node/data
 
 #### Run the App
 ```
