@@ -15,23 +15,23 @@ contract LithiumPricing is ILithiumPricing, Roles {
   string[] categories; 
 
   struct Question {
-    address owner;
-    uint256 id;
-    uint256 categoryId;
-    string description;
-    uint256[] answerSet;
-    uint256[] answerSetTotals;
-    uint256 bounty;
-    uint256 totalStaked;
-    uint256 endTime;
+    address owner; // question creator
+    uint256 id; // uinique identifier
+    uint256 categoryId; // related category id
+    string description; // explanation of asset to price ex 'The price of LITH will be higher then'
+    uint256[] answerSet; // the list of possible answers
+    uint256[] answerSetTotals; // the total staked for each answer
+    uint256 bounty; // to bounty offered by the questions creator in LITH tokens
+    uint256 totalStaked; // the total staked by answeres in LITH token
+    uint256 endTime; // the time answering ends relative to block.timestamp
   }
 
   struct Answer {
-    address answerer;
-    uint256 questionId;
-    uint256 stakeAmount;
-    uint16 answerIndex;
-    AnswerStatus status;
+    address answerer; // the answer creator
+    uint256 questionId; // the id of the question being answered
+    uint256 stakeAmount; // the amount to stake in LITH token for the answer
+    uint16 answerIndex; // the index of the chosen answer in the question.answerSet
+    AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
 
   Question[] questions;
@@ -95,10 +95,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   /**
   * @dev Adds a Question to contract storage.
-  *
+  * the `categoryId` is the id for the related category
   * the `bounty` is amount of tokens the questioner is offering for pricing information
-  * the `description` is a description of the asset to price
-  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible
+  * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
+  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
   * the `answerSet` is any array of values that represent less than or greater than prices
   *   For example, an array of [5] indicates the price can be <= OR > 5.
   *   A 0 is appended to the answer set to represent > the highest value
@@ -144,9 +144,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   /**
   * @dev Adds an Answer to contract storage.
-  *
-  * the `stakeAmount` for the answer will be added to totalStake for the question
+  * the `questionId` is the id of the question being answered
+  * the `stakeAmount` is the amount of LITH the answerer wants to stake on the answer
+  * and it will be added to totalStake for the question
   * and the answerSetTotal for the `answerIndex`
+  * the `answerIndex` is the index of the answer in the question.answerSet
   *
   * Emits a { QuestionAnswered } event.
   *
@@ -264,8 +266,18 @@ contract LithiumPricing is ILithiumPricing, Roles {
     Question storage question = questions[_questionId];
 
     return question.bounty + question.totalStaked;
-  }    
+  }
 
+  /**
+  * @dev Allow users to claim a reward for an answered question
+  * the `questionId` is the id of the question to claim the reward for
+  * the reward amount is determined by the LithiumReward contract
+  * Emits a { RewardClaimed } event.
+  *
+  * Requirements
+  *
+  * - the caller must have answered the question
+  */
   function claimReward (
     uint256 _questionId
   ) internal {
@@ -283,6 +295,15 @@ contract LithiumPricing is ILithiumPricing, Roles {
       emit RewardClaimed(_questionId, msg.sender, reward);
     }
   }
+
+    /**
+  * @dev Allow users to claim rewards for answered questions
+  * the `questionIds` is the ids of the questions to claim the rewards for
+  *
+  * Requirements
+  *
+  * - the caller must have answered the questions
+  */
 
   function claimRewards (
     uint256[] memory questionIds
