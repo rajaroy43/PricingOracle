@@ -16,6 +16,8 @@ run the local chain
 yarn chain
 ```
 
+add hardhat accounts to metamask
+
 in a new terminal execute smart contract tests
 ```
 yarn test
@@ -24,7 +26,7 @@ yarn test
 ## Running the app locally
 
 #### Install Dependencies
-install depdencies
+install dependencies
 ```
 yarn install
 ```
@@ -33,6 +35,23 @@ run the local chain
 ```
 yarn chain
 ```
+
+add the following 3 private keys to your metamask, the accounts are prefunded with local chain ETH and LITH tokens
+```
+Accounts
+========
+Account #0: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 (10000 ETH)
+Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+Account #1: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 (10000 ETH)
+Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+
+Account #2: 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc (10000 ETH)
+Private Key: 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
+```
+to add the accounts select Account Menu Icon > Import Account and then pase in the Private Keys from above
+
+!!!THE ABOVE ACCOUNTS ARE NOT SECURE AND SHOUOLD BE  USED FOR LOCAL DEVELOPMENT ONLY!!!
 
 #### Deploy Smart Contracts
 in a new terminal execute smart contract tests
