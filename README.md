@@ -36,6 +36,14 @@ run the local chain
 yarn chain
 ```
 
+add the local hardhat chain to your metamask
+click the metamask network and then choose 'Custom RPC' in the dropdown then fill out the form with the following values
+```
+Network Name: Local Hardhat
+New RPC URL: http://localhost:8545
+Chain ID: 1337
+```
+
 add the following 3 private keys to your metamask, the accounts are prefunded with local chain ETH and LITH tokens
 ```
 Accounts
