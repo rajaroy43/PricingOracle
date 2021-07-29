@@ -46,20 +46,27 @@ install the jq npm package globally
 ```
 yarn global add jq
 ```
+for MacOS, use:
+```
+brew install jq
+```
 
 set up the node
-```
-cd docker/graph-node  && ./setup.sh
-```
-confirm that the Host IP returned by ./setup.sh is the ethereum environment variable in ./docker/graph-node/docker-compose.yml
-```
-ethereum: 'localhost:http://{HOST_IP}:8545'
-```
+
+UBUNTU or Linux ONLY:
+  ```
+  cd docker/graph-node  && ./setup.sh
+  ```
+  confirm that the Host IP returned by ./setup.sh is the ethereum environment variable in ./docker/graph-node/docker-compose.yml
+  ```
+  ethereum: 'localhost:http://{HOST_IP}:8545'
+  ```
 
 run the local graph node
 ```
 yarn graph-run-node
 ```
+NOTE: In the log that is generated, you should see specific statements about connecting to the local chain from `yarn chain` above.
 
 in a new terminal
 prepare the subgraph
