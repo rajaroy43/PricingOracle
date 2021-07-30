@@ -1,10 +1,8 @@
 const fs = require("fs");
 const chalk = require("chalk");
 const bre = require("hardhat");
-
 const publishDir = "../react-app/src/contracts";
 const graphDir = "../subgraph"
-
 function publishContract(contractName) {
   console.log(
     " 💽 Publishing",
@@ -48,7 +46,6 @@ function publishContract(contractName) {
       `${publishDir}/${contractName}.bytecode.js`,
       `module.exports = "${contract.bytecode}";`
     );
-
     const folderPath = graphConfigPath.replace("/config.json","")
     if (!fs.existsSync(folderPath)){
       fs.mkdirSync(folderPath);
@@ -57,6 +54,11 @@ function publishContract(contractName) {
       graphConfigPath,
       JSON.stringify(graphConfig, null, 2)
     );
+    
+    const graphFolderPath =  `${graphDir}/abis/`
+    if (!fs.existsSync(graphFolderPath)){
+      fs.mkdirSync(graphFolderPath);
+    }
     fs.writeFileSync(
       `${graphDir}/abis/${contractName}.json`,
       JSON.stringify(contract.abi, null, 2)
