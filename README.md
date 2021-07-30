@@ -57,12 +57,15 @@ Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
 Account #2: 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc (10000 ETH)
 Private Key: 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
 ```
-to add the accounts select Account Menu Icon > Import Account and then pase in the Private Keys from above
+to add the accounts select Account Menu Icon > Import Account and then pass in the Private Keys from above
 
 !!!THE ABOVE ACCOUNTS ARE NOT SECURE AND SHOUOLD BE  USED FOR LOCAL DEVELOPMENT ONLY!!!
 
+**Note that if you restart the local chain you will need to reset to nonce on any account you use in metamask, to do so:
+Account Menu Icon > Advanced > Reset Account
+
 #### Deploy Smart Contracts
-in a new terminal execute smart contract tests
+in a new terminal deploy smart contracts
 ```
 yarn deploy
 ```
