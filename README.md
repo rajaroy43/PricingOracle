@@ -127,7 +127,12 @@ yarn react-app:start
 ```
 the app should be available at http://localhost:3000/
 
-
+#### Deploy Contracts to Rinkeby
+set the RINKEBY_PROVIDER_ENDPOINT and RINKEBY_PRIVATE_KEY in packages/hardhat/hardhat.config.js
+then from project root run
+```
+yarn deploy-rinkeby
+```
 
 #### [ 🏃‍♀️ Quick Start ](https://github.com/austintgriffith/scaffold-eth#%EF%B8%8F-quick-start)
 

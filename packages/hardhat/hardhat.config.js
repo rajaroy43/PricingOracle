@@ -9,6 +9,12 @@ require("@nomiclabs/hardhat-etherscan");
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
+const RINKEBY_PROVIDER_ENDPOINT = ''
+
+const RINKEBY_PRIVATE_KEY = ''
+
+
+
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
 
@@ -54,10 +60,10 @@ module.exports = {
       */
     },
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", //<---- YOUR INFURA ID! (or it won't work)
-      accounts: {
-        mnemonic: mnemonic(),
-      },
+      url: RINKEBY_PROVIDER_ENDPOINT, //<---- YOUR INFURA ID! (or it won't work)
+      accounts: [
+        RINKEBY_PRIVATE_KEY
+      ],
     },
     kovan: {
       url: "https://kovan.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", //<---- YOUR INFURA ID! (or it won't work)
