@@ -133,6 +133,11 @@ then from project root run
 ```
 yarn deploy-rinkeby
 ```
+#### Subgraph Studio
+https://thegraph.com/studio/subgraph/lithium-finance/
+
+Updating deployed subgraph https://thegraph.com/docs/developer/deploy-subgraph-studio
+
 
 #### [ 🏃‍♀️ Quick Start ](https://github.com/austintgriffith/scaffold-eth#%EF%B8%8F-quick-start)
 
