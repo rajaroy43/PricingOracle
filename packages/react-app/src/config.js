@@ -15,14 +15,11 @@ const config = {
   },
   TESTNET: {
     CHAIN_ID: 4,
-    LITHIUM_TOKEN_ADDRESS: "0x4851ee6d06e6A7447eB58F503AF2F5452A11f748",
-    LITHIUM_PRICING_ADDRESS: "0x8D555d45D60a57eB8d2DA7562d7213ae91F71f0d",
-    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.1"
+    LITHIUM_TOKEN_ADDRESS: "0x2601EE7d4392d3F5fe41e91de9035c6c07241d78",
+    LITHIUM_PRICING_ADDRESS: "0xDBCB890BFcB55Bdb12C8B244cFF16072B29976C4",
+    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.5"
   }
 }
 
-https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.1
-
-const lithiumEnv = process.env.LITHIUM_APP_ENV || 'DEV'
-
+const lithiumEnv = process.env.REACT_APP_ENV || 'DEV'
 export default config[lithiumEnv]

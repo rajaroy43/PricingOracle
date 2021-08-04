@@ -127,6 +127,11 @@ yarn react-app:start
 ```
 the app should be available at http://localhost:3000/
 
+To run the app against the Rinkeby backend
+```
+yarn react-app:start-rinkeby
+```
+
 #### Deploy Contracts to Rinkeby
 set the RINKEBY_PROVIDER_ENDPOINT and RINKEBY_PRIVATE_KEY in packages/hardhat/hardhat.config.js
 then from project root run
