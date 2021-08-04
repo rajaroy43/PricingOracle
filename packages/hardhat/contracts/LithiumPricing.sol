@@ -22,7 +22,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] answerSet; // the list of possible answers
     uint256[] answerSetTotalStaked; // the total staked for each answer
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
-    uint256 totalStaked; // the total staked for all answers in LITH token
+    uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
   }
 
