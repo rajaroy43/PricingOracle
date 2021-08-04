@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 
-export const getTopAnswer = (answerSetTotals: BigNumber[]) => {
-  const topTotals = answerSetTotals.reduce((acc, answerTotal, index) => {
+export const getTopAnswer = (answerSetTotalStaked: BigNumber[]) => {
+  const topTotals = answerSetTotalStaked.reduce((acc, answerTotal, index) => {
     if (BigNumber.from(answerTotal) > acc.value) {
       acc.index = index
     }

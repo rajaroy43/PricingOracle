@@ -20,7 +20,7 @@ type Question @entity {
   categoryId: Int!
   description: String!
   answerSet: [BigInt!]!
-  answerSetTotals: [BigInt!]!
+  answerSetTotalStaked: [BigInt!]!
   bounty: BigInt!
   totalStaked: BigInt!
   endTime: BigInt!

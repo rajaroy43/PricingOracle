@@ -26,7 +26,7 @@ export const QUESTION_FIELDS = gql`
       categoryId
       description
       answerSet
-      answerSetTotals
+      answerSetTotalStaked
       bounty
       totalStaked
       endTime
@@ -103,7 +103,7 @@ export const GET_USER  = gql`
         categoryId
         description
         answerSet
-        answerSetTotals
+        answerSetTotalStaked
         bounty
         totalStaked
         endTime

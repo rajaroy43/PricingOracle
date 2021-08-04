@@ -1,7 +1,7 @@
 import { Question } from 'lithium-subgraph'
 
 export interface QuestionView extends Question {
-  answerSetTotalsDisplay: string[]
+  answerSetTotalStakedDisplay: string[]
   bountyDisplay: string
   totalStakedDisplay: string
   endTimeLocal: string

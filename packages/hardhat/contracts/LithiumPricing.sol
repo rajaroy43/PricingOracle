@@ -20,9 +20,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 categoryId; // related category id
     string description; // explanation of asset to price ex 'The price of LITH will be higher then'
     uint256[] answerSet; // the list of possible answers
-    uint256[] answerSetTotals; // the total staked for each answer
+    uint256[] answerSetTotalStaked; // the total staked for each answer
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
-    uint256 totalStaked; // the total staked by answeres in LITH token
+    uint256 totalStaked; // the total staked for all answers in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
   }
 
@@ -99,8 +99,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * the `bounty` is amount of tokens the questioner is offering for pricing information
   * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
   * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
-  * the `answerSet` is any array of values that represent less than or greater than prices
-  *   For example, an array of [5] indicates the price can be <= OR > 5.
+  * the `answerSet` is any array of values that represent less than or greater than prices in usd
+  *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
+      would be [35000]
+      An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+      would be [35000, 37000]
   *   A 0 is appended to the answer set to represent > the highest value
   *
   * Emits a { QuestionCreated } event.
@@ -136,7 +139,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     Question storage storedQuestion = questions[id];
     storedQuestion.answerSet.push(0);
     for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
-      storedQuestion.answerSetTotals.push(0);
+      storedQuestion.answerSetTotalStaked.push(0);
     }
     
     emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
@@ -183,7 +186,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     answers[_questionId][msg.sender] = answer;
 
     question.totalStaked = question.totalStaked + _stakeAmount;
-    question.answerSetTotals[_answerIndex] = question.answerSetTotals[_answerIndex] + _stakeAmount;
+    question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
 
     emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
 
@@ -207,7 +210,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 categoryId,
     string memory description,
     uint256[] memory answerSet,
-    uint256[] memory answerSetTotals,
+    uint256[] memory answerSetTotalStaked,
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime
@@ -218,7 +221,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     categoryId = question.categoryId;
     description = question.description;
     answerSet = question.answerSet;
-    answerSetTotals = question.answerSetTotals;
+    answerSetTotalStaked = question.answerSetTotalStaked;
     bounty = question.bounty;
     totalStaked = question.totalStaked;
     endTime = question.endTime;
@@ -247,7 +250,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) external view override returns (
     uint256[] memory
   ) {
-    return questions[_questionId].answerSetTotals;
+    return questions[_questionId].answerSetTotalStaked;
   }
 
   function getAnswerSet (
