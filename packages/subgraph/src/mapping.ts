@@ -42,15 +42,15 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   user.totalBounty = user.totalBounty.plus(event.params.bounty)
   user.save()
 
-  let answerSetTotals = new Array<BigInt>(event.params.answerSet.length)
-  answerSetTotals.fill(ZERO)
+  let answerSetTotalStaked = new Array<BigInt>(event.params.answerSet.length)
+  answerSetTotalStaked.fill(ZERO)
 
   let question = new Question(event.params.id.toString())
   question.owner = user.id
   question.categoryId = event.params.categoryId
   question.description = event.params.description
   question.answerSet = event.params.answerSet
-  question.answerSetTotals = answerSetTotals
+  question.answerSetTotalStaked = answerSetTotalStaked
   question.bounty = event.params.bounty
   question.totalStaked = ZERO
   question.answerCount = ZERO
@@ -71,16 +71,16 @@ export function handleQuestionAnswered(event: QuestionAnswered): void {
   let question = Question.load(event.params.questionId.toString())
   question.totalStaked = question.totalStaked.plus(event.params.stakeAmount)
   question.answerCount = question.answerCount.plus(ONE)
-  let answerSetTotals = question.answerSetTotals as BigInt[]
+  let answerSetTotalStaked = question.answerSetTotalStaked as BigInt[]
   let currentAnswerTotal: BigInt | null
-  currentAnswerTotal = answerSetTotals[event.params.answerIndex] as BigInt
+  currentAnswerTotal = answerSetTotalStaked[event.params.answerIndex] as BigInt
   if (currentAnswerTotal == null) {
     currentAnswerTotal = event.params.stakeAmount
   } else {
     currentAnswerTotal = currentAnswerTotal.plus(event.params.stakeAmount)
   }
-  answerSetTotals[event.params.answerIndex] = currentAnswerTotal as BigInt
-  question.answerSetTotals = answerSetTotals
+  answerSetTotalStaked[event.params.answerIndex] = currentAnswerTotal as BigInt
+  question.answerSetTotalStaked = answerSetTotalStaked
   question.save()
 
   let answer = new Answer(event.params.questionId.toString() + '-' + answererAddress)
@@ -132,7 +132,7 @@ export function handleApproval(event: Approval): void {
   let approver = getOrCreateUser(appoverAddress)
   log.info('dataSource address {}', [dataSource.address().toHexString()])
   
-  let pricingAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3'// config.LithiumPricingAddress as string
+  let pricingAddress = '0x8d555d45d60a57eb8d2da7562d7213ae91f71f0d'//'0x5fbdb2315678afecb367f032d93f642f64180aa3'// config.LithiumPricingAddress as string
   log.info('<><><><><><>pricing address {}', [event.params.spender.toHexString()])
   if (pricingAddress == event.params.spender.toHexString()) {
     log.info('pricing approved {}', [pricingAddress])
