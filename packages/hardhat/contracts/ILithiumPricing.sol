@@ -25,7 +25,7 @@ interface ILithiumPricing {
     uint256 categoryId,
     string memory description,
     uint256[] memory answerSet,
-    uint256[] memory answerSetTotals,
+    uint256[] memory answerSetTotalStaked,
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime
