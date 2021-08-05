@@ -3,6 +3,7 @@ const chalk = require("chalk");
 const bre = require("hardhat");
 const publishDir = "../react-app/src/contracts";
 const graphDir = "../subgraph"
+const offChainDir="../off-chain"
 function publishContract(contractName) {
   console.log(
     " 💽 Publishing",
@@ -19,6 +20,7 @@ function publishContract(contractName) {
       .toString();
     contract = JSON.parse(contract);
     let graphConfigPath = `${graphDir}/config/config.json`
+    let offChainConfigPath = `${offChainDir}/config/config.json`
     let graphConfig
     try {
       if (fs.existsSync(graphConfigPath)) {
@@ -46,15 +48,24 @@ function publishContract(contractName) {
       `${publishDir}/${contractName}.bytecode.js`,
       `module.exports = "${contract.bytecode}";`
     );
-    const folderPath = graphConfigPath.replace("/config.json","")
-    if (!fs.existsSync(folderPath)){
-      fs.mkdirSync(folderPath);
+    const graphPath = graphConfigPath.replace("/config.json","")
+    if (!fs.existsSync(graphPath)){
+      fs.mkdirSync(graphPath);
     }
     fs.writeFileSync(
       graphConfigPath,
       JSON.stringify(graphConfig, null, 2)
     );
-    
+    //putting same contract address to off-chain config
+
+    const offChainPath = offChainConfigPath.replace("/config.json","")
+    if (!fs.existsSync(offChainPath)){
+      fs.mkdirSync(offChainPath);
+    }
+    fs.writeFileSync(
+      offChainConfigPath,
+      JSON.stringify(graphConfig, null, 2)
+    );
     const graphFolderPath =  `${graphDir}/abis/`
     if (!fs.existsSync(graphFolderPath)){
       fs.mkdirSync(graphFolderPath);
@@ -63,7 +74,14 @@ function publishContract(contractName) {
       `${graphDir}/abis/${contractName}.json`,
       JSON.stringify(contract.abi, null, 2)
     );
-
+    const offChainFolderPath =  `${offChainDir}/abis/`
+    if (!fs.existsSync(offChainFolderPath)){
+      fs.mkdirSync(offChainFolderPath);
+    }
+    fs.writeFileSync(
+      `${offChainDir}/abis/${contractName}.json`,
+      JSON.stringify(contract.abi, null, 2)
+    );
     console.log(" 📠 Published "+chalk.green(contractName)+" to the frontend.")
 
     return true;
