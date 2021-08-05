@@ -1,0 +1,7 @@
+overwrite: true
+schema: "packages/subgraph/src/schema.graphql"
+generates:
+  ./typings/generated/lithium-subgraph/index.d.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"

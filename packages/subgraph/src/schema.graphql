@@ -1,0 +1,46 @@
+# typings for graphql-code-generator, uncomment to generate Typscript types
+# scalar BigInt
+
+type User @entity {
+  id: ID! # address
+  questions: [Question!] @derivedFrom(field: "owner")
+  answers: [Answer!] @derivedFrom(field: "answerer")
+  questionCount: BigInt!
+  totalBounty: BigInt!
+  answerCount: BigInt!
+  totalRewardsClaimed: BigInt!
+  totalStaked: BigInt!
+  tokenBalance: BigInt!
+  tokenApprovalBalance: BigInt!
+}
+
+type Question @entity {
+  id: ID!
+  owner: User!
+  categoryId: Int!
+  description: String!
+  answerSet: [BigInt!]!
+  answerSetTotalStaked: [BigInt!]!
+  bounty: BigInt!
+  totalStaked: BigInt!
+  endTime: BigInt!
+  answerCount: BigInt!
+  answers: [Answer!] @derivedFrom(field: "question")
+  created: BigInt!
+}
+
+enum AnswerStatus {
+  UNCLAIMED
+  CLAIMED
+}
+
+type Answer @entity {
+  id: ID! # questionId-answerer address
+  answerer: User!
+  question: Question! 
+  answerIndex: Int!
+  stakeAmount: BigInt!
+  rewardClaimed: BigInt!
+  status: AnswerStatus!
+  created: BigInt!
+}
