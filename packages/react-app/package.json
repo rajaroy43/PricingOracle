@@ -101,6 +101,7 @@
   },
   "scripts": {
     "build": "react-scripts build",
+    "build-testnet": "REACT_APP_ENV=TESTNET react-scripts build",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
     "start-rinkeby": "REACT_APP_ENV=TESTNET react-scripts start",
