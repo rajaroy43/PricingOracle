@@ -49,11 +49,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
     /**
-  * @dev Sets the address of the LithiumToken.
+  * @dev Adds new category
   *
-  * Requirements
-  *
-  * - the caller must be an admin.
   */
   function _addCategory(string memory _label) internal {
     bytes32 hash = keccak256(abi.encodePacked(_label));
@@ -62,7 +59,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
   /**
-  * @dev Sets the address of the LithiumToken.
+  * @dev public interface to add a new category
   *
   * Requirements
   *
