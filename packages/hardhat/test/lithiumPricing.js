@@ -49,7 +49,7 @@ describe("Lithium Pricing", async function () {
       it("Should be able to create a question", async function () {
         const senderBalance = await lithToken.balanceOf(account0.address)
         const block = await ethers.provider.getBlock()
-        const endTime = block.timestamp + 4
+        const endTime = block.timestamp + 5
         const description = "foo"
         const bounty =  transferAmount1
         const answerSet = [50]
@@ -75,6 +75,24 @@ describe("Lithium Pricing", async function () {
         const senderBalanceAfter = await lithToken.balanceOf(account0.address)
 
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
+
+      });
+
+      it("Should fail to create a question with an invalid categoryId", async function () {
+        const block = await ethers.provider.getBlock()
+        const endTime = block.timestamp + 8
+        const description = "foo1"
+        const bounty =  transferAmount1
+        const answerSet = [50]
+        const categoryId = 1
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          endTime,
+          description,
+          answerSet
+        )).to.be.reverted
 
       });
     });
@@ -146,5 +164,28 @@ describe("Lithium Pricing", async function () {
 
       
     });
+
+
+    describe("Adding categories", function () {
+      it("Should allow admins to add a category", async function () {
+        const categoryLabel = 'Art Stuff'
+        await expect(
+          lithiumPricing.addCategory(categoryLabel)
+        ).emit(lithiumPricing, "CategoryAdded").withArgs(
+          1,
+          categoryLabel
+        )
+      });
+
+      it("Should not allow non admins to add a category", async function () {
+        const categoryLabel = 'Art Stuff'
+        await expect(
+          lithiumPricing.connect(account1)
+          .addCategory(categoryLabel)
+        ).to.be.revertedWith("Must be admin")
+      });
+    });
+
+
   });
 });
