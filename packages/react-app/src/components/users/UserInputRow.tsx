@@ -1,5 +1,5 @@
 import React from 'react'
-import LithiumPricingAddress from '../../contracts/LithiumPricing.address'
+import config from '../../config'
 import Flex from '../atoms/Flex'
 import ApproveLithiumPricingForm from '../forms/ApproveLithiumPricing'
 import CreateQuestionForm from '../forms/CreateQuestion'
@@ -13,7 +13,7 @@ const UserInputRow = ({connectedWallet, pricingIsApproved}: {connectedWallet: an
         <ApproveLithiumPricingForm
         connectedAddress={connectedWallet.address}
         tokenInstance={connectedWallet.tokenInstance}
-        pricingAddress={LithiumPricingAddress}
+        pricingAddress={config.LITHIUM_PRICING_ADDRESS}
         value={MAX_APPROVE}
         />
       }

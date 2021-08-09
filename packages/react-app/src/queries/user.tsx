@@ -131,6 +131,6 @@ export const useGetUser = (client: any, id: string): GetUserResponse => {
   return {
     loading,
     error,
-    user: data ? selectUser(data.user) : null
+    user: data && data.user ? selectUser(data.user) : null
   } 
 }

@@ -11,6 +11,7 @@
   "private": true,
   "scripts": {
     "react-app:build": "yarn workspace @scaffold-eth/react-app build --max-old-space-size=12288",
+    "react-app:build-testnet": "yarn workspace @scaffold-eth/react-app build-testnet --max-old-space-size=12288",
     "react-app:eject": "yarn workspace @scaffold-eth/react-app eject",
     "react-app:start": "yarn workspace @scaffold-eth/react-app start",
     "react-app:start-rinkeby": "yarn workspace @scaffold-eth/react-app start-rinkeby",
@@ -23,6 +24,7 @@
     "start": "yarn workspace @scaffold-eth/react-app start",
     "compile": "yarn workspace @scaffold-eth/hardhat compile",
     "deploy": "yarn workspace @scaffold-eth/hardhat deploy",
+    "deploy-rinkeby": "yarn workspace @scaffold-eth/hardhat deploy-rinkeby",
     "watch": "yarn workspace @scaffold-eth/hardhat watch",
     "accounts": "yarn workspace @scaffold-eth/hardhat accounts",
     "balance": "yarn workspace @scaffold-eth/hardhat balance",
