@@ -12,7 +12,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
-  string[] categories; 
+  bytes32[] categories; 
 
   struct Question {
     address owner; // question creator
@@ -39,11 +39,35 @@ contract LithiumPricing is ILithiumPricing, Roles {
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
 
-  event TokensReceived(address operator, address from, address to, uint256 amount, bytes userData, bytes operatorData);
+  event CategoryAdded(
+    uint256 id,
+    string label
+  );
 
   constructor () {
-    string memory preIPO = "preIPO";
-    categories.push(preIPO);
+    _addCategory("preIPO");
+  }
+
+    /**
+  * @dev Adds new category
+  *
+  */
+  function _addCategory(string memory _label) internal {
+    bytes32 hash = keccak256(abi.encodePacked(_label));
+    categories.push(hash);
+    emit CategoryAdded(categories.length - 1,  _label);
+  }
+
+  /**
+  * @dev public interface to add a new category
+  *
+  * Requirements
+  *
+  * - the caller must be an admin.
+  */
+  function addCategory(string memory _label) public {
+    require(isAdmin(msg.sender), "Must be admin");
+    _addCategory(_label);
   }
 
   /**
@@ -113,6 +137,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - the caller must have at least `bounty` tokens.
   * - the answer set must be valid (see isValidAnswerSet).
   * - the `endtime` must be in the future
+  * - the category id must be valid
   */
   function createQuestion(
     uint16 categoryId,
@@ -123,6 +148,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
+    require(categories[categoryId] != 0, "Invalid categoryId");
 
     LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
