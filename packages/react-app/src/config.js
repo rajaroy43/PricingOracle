@@ -1,9 +1,12 @@
 import tokenAddress from './contracts/LithiumToken.address'
 import pricingAddress from './contracts/LithiumPricing.address'
 
+const lithiumEnv = process.env.REACT_APP_ENV || 'DEV'
+
 export const CHAIN_IDS = {
   1337: 'Ganache Local',
-  42: 'Kovan'
+  42: 'Kovan',
+  4: 'Rinkeby'
 }
 
 const config = {
@@ -21,5 +24,5 @@ const config = {
   }
 }
 
-const lithiumEnv = process.env.REACT_APP_ENV || 'DEV'
+
 export default config[lithiumEnv]
