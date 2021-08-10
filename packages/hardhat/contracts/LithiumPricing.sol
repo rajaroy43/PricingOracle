@@ -13,7 +13,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ILithiumReward lithiumReward;
 
   uint8 minAnswerSetLength = 2;
-  uint8 maxAnswerSetLength = 3;
+  uint8 maxAnswerSetLength = 2;
 
   bytes32[] categories; 
 
@@ -114,11 +114,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function isValidAnswerSet(uint256[] memory answerSet) internal view {
     require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
 
-    if (answerSet.length > 1) {
-      for (uint256 i = 1; i < answerSet.length; i++) {
-        require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
-      }
+    for (uint256 i = 1; i < answerSet.length; i++) {
+      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
     }
+
   }
 
   /**

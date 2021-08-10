@@ -144,7 +144,7 @@ describe("Lithium Pricing", async function () {
 
       });
 
-      it("Should fail to create a question with an invalid answerSetLength", async function () {
+      it("Should fail to create a question with an invalid answerSet length: too few", async function () {
         const block = await ethers.provider.getBlock()
         const endTime = block.timestamp + 5
         const description = "foo2"
@@ -162,12 +162,31 @@ describe("Lithium Pricing", async function () {
 
       })
 
+      it("Should fail to create a question with an invalid answerSet length: too many", async function () {
+        const block = await ethers.provider.getBlock()
+        const endTime = block.timestamp + 5
+        const description = "foo2"
+        const bounty =  transferAmount1
+        const answerSet = [0,50,100]
+        const categoryId = 0
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          endTime,
+          description,
+          answerSet
+        )).to.be.revertedWith("Answer Set length invalid")
+
+      })
+
+
       it("Should fail to create a question with an invalid answerSet order", async function () {
         const block = await ethers.provider.getBlock()
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
-        const answerSet = [0,50,40]
+        const answerSet = [50,40]
         const categoryId = 0
 
         await expect(lithiumPricing.createQuestion(
