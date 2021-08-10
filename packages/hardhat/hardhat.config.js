@@ -9,9 +9,9 @@ require("@nomiclabs/hardhat-etherscan");
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
-const RINKEBY_PROVIDER_ENDPOINT = ''
+const RINKEBY_PROVIDER_ENDPOINT = 'http://infura.com'
 
-const RINKEBY_PRIVATE_KEY = ''
+const RINKEBY_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
 
 
