@@ -37,9 +37,6 @@ class TransactionSender {
       from: rawTx.from,
     });
 
-    const minimum = 300000;
-    estimatedGas = estimatedGas < minimum ? minimum : 3500000;
-
     return estimatedGas;
   }
 }
