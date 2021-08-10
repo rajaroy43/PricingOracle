@@ -128,10 +128,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
   * the `answerSet` is any array of values that represent less than or greater than prices in usd
   *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
-      would be [35000]
+      would be [0,35000]
       An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
-      would be [35000, 37000]
-  *   A 0 is appended to the answer set to represent > the highest value
+      would be [0,35000, 37000]
   *
   * Emits a { QuestionCreated } event.
   *
