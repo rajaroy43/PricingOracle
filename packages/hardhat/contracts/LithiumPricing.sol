@@ -12,6 +12,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
+  uint8 minAnswerSetLength = 2;
+  uint8 maxAnswerSetLength = 3;
+
   bytes32[] categories; 
 
   struct Question {
@@ -108,8 +111,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     * - if `recipient` is a contract, it must implement the {IERC777Recipient}
     * interface.
     */
-  function isValidAnswerSet(uint256[] memory answerSet) internal pure {
-    require(answerSet[0] != 0, "Zero cannot be in answer set");
+  function isValidAnswerSet(uint256[] memory answerSet) internal view {
+    require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
+
     if (answerSet.length > 1) {
       for (uint256 i = 1; i < answerSet.length; i++) {
         require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
@@ -149,9 +153,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(endTime > block.timestamp, "Endtime must be in the future");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
+    isValidAnswerSet(answerSet);
 
     LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
+    uint256[] memory answerSetTotalStaked = new uint256[](answerSet.length);
     Question memory question;
     question.id = id;
     question.categoryId = categoryId;
@@ -159,16 +165,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.owner = msg.sender;
     question.description =  description;
     question.answerSet = answerSet;
+    question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     questions.push(question);
-    
-    Question storage storedQuestion = questions[id];
-    storedQuestion.answerSet.push(0);
-    for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
-      storedQuestion.answerSetTotalStaked.push(0);
-    }
-    
-    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
+        
+    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, answerSet);
   }
 
   /**
@@ -203,14 +204,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
 
     Answer memory answer;
-  
     answer.answerer = msg.sender;
     answer.questionId = _questionId;
     answer.answerIndex = _answerIndex;
     answer.stakeAmount = _stakeAmount;
-
     answers[_questionId][msg.sender] = answer;
-
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
 

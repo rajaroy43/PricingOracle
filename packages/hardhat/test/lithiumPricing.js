@@ -52,8 +52,7 @@ describe("Lithium Pricing", async function () {
         const endTime = block.timestamp + 5
         const description = "foo"
         const bounty =  transferAmount1
-        const answerSet = [50]
-        const finalAnswerSet = [50,0]
+        const answerSet = [0,50]
         const categoryId = 0
 
         await expect(lithiumPricing.createQuestion(
@@ -69,30 +68,12 @@ describe("Lithium Pricing", async function () {
           categoryId,
           account0.address,
           description,
-          finalAnswerSet
+          answerSet
         )
 
         const senderBalanceAfter = await lithToken.balanceOf(account0.address)
 
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
-
-      });
-
-      it("Should fail to create a question with an invalid categoryId", async function () {
-        const block = await ethers.provider.getBlock()
-        const endTime = block.timestamp + 8
-        const description = "foo1"
-        const bounty =  transferAmount1
-        const answerSet = [50]
-        const categoryId = 1
-
-        await expect(lithiumPricing.createQuestion(
-          categoryId,
-          bounty,
-          endTime,
-          description,
-          answerSet
-        )).to.be.reverted
 
       });
     });
@@ -139,32 +120,88 @@ describe("Lithium Pricing", async function () {
         expect(stake2Amounts[0].add(sender2BalanceAfter)).to.equal(sender2Balance)
 
       });
-
-      describe("Claim reward", function () {
-        it("Should be able to claim reward", async function () {
-          const senderBalance = await lithToken.balanceOf(account1.address)
-          const ids = [0]
-          const rewardAmount = ethers.utils.parseUnits("145.0", 18)
-  
-          await expect(lithiumPricing.connect(account1).claimRewards(
-            ids
-          )).emit(lithiumPricing, "RewardClaimed").withArgs(
-            0,
-            account1.address,
-            rewardAmount
-          )
-  
-          const senderBalanceAfter = await lithToken.balanceOf(account1.address)
-  
-          expect(rewardAmount.add(senderBalance)).to.equal(senderBalanceAfter)
-  
-         
-        });
-      });
-
       
     });
 
+    describe("Preventing invalid question creation", function () {
+
+
+      it("Should fail to create a question with an invalid categoryId", async function () {
+        const block = await ethers.provider.getBlock()
+        const endTime = block.timestamp + 5
+        const description = "foo1"
+        const bounty =  transferAmount1
+        const answerSet = [0,50]
+        const categoryId = 1
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          endTime,
+          description,
+          answerSet
+        )).to.be.reverted
+
+      });
+
+      it("Should fail to create a question with an invalid answerSetLength", async function () {
+        const block = await ethers.provider.getBlock()
+        const endTime = block.timestamp + 5
+        const description = "foo2"
+        const bounty =  transferAmount1
+        const answerSet = [50]
+        const categoryId = 0
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          endTime,
+          description,
+          answerSet
+        )).to.be.revertedWith("Answer Set length invalid")
+
+      })
+
+      it("Should fail to create a question with an invalid answerSet order", async function () {
+        const block = await ethers.provider.getBlock()
+        const endTime = block.timestamp + 5
+        const description = "foo2"
+        const bounty =  transferAmount1
+        const answerSet = [0,50,40]
+        const categoryId = 0
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          endTime,
+          description,
+          answerSet
+        )).to.be.revertedWith("Answers must be in ascending order")
+
+      })
+    });
+
+    describe("Claim reward", function () {
+      it("Should be able to claim reward", async function () {
+        const senderBalance = await lithToken.balanceOf(account1.address)
+        const ids = [0]
+        const rewardAmount = ethers.utils.parseUnits("145.0", 18)
+
+        await expect(lithiumPricing.connect(account1).claimRewards(
+          ids
+        )).emit(lithiumPricing, "RewardClaimed").withArgs(
+          0,
+          account1.address,
+          rewardAmount
+        )
+
+        const senderBalanceAfter = await lithToken.balanceOf(account1.address)
+
+        expect(rewardAmount.add(senderBalance)).to.equal(senderBalanceAfter)
+
+       
+      });
+    });
 
     describe("Adding categories", function () {
       it("Should allow admins to add a category", async function () {
