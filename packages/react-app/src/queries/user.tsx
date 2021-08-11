@@ -26,7 +26,7 @@ export const QUESTION_FIELDS = gql`
       categoryId
       description
       answerSet
-      answerSetTotals
+      answerSetTotalStaked
       bounty
       totalStaked
       endTime
@@ -103,7 +103,7 @@ export const GET_USER  = gql`
         categoryId
         description
         answerSet
-        answerSetTotals
+        answerSetTotalStaked
         bounty
         totalStaked
         endTime
@@ -131,6 +131,6 @@ export const useGetUser = (client: any, id: string): GetUserResponse => {
   return {
     loading,
     error,
-    user: data ? selectUser(data.user) : null
+    user: data && data.user ? selectUser(data.user) : null
   } 
 }

@@ -1,7 +1,7 @@
 /* eslint no-use-before-define: "warn" */
 const fs = require("fs");
 const chalk = require("chalk");
-const { config, ethers, tenderly, run } = require("hardhat");
+const { config, ethers, tenderly, run, network } = require("hardhat");
 const { utils } = require("ethers");
 const R = require("ramda");
 
@@ -11,7 +11,7 @@ const main = async () => {
   account0 = accounts[0]
   account1 = accounts[1]
   account2 = accounts[2]
-
+  console.log(`Deploying to network ${network.name}`)
   console.log("\n\n 📡 Deploying Pricing...\n");
   const lithiumPricing = await deploy("LithiumPricing");
   console.log("\n\n 📡 Deploying Token...\n");
@@ -25,8 +25,10 @@ const main = async () => {
 
   await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
   const transferBalance = ethers.utils.parseUnits("1000.0", 18)
-  await lithToken.transfer(account1.address, transferBalance)
-  await lithToken.transfer(account2.address, transferBalance)
+  if (network.name === 'localhost') {
+    await lithToken.transfer(account1.address, transferBalance)
+    await lithToken.transfer(account2.address, transferBalance)
+  }
 
 
 

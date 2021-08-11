@@ -37,7 +37,7 @@ export type Question = {
   categoryId: Scalars['Int'];
   description: Scalars['String'];
   answerSet: Array<Scalars['BigInt']>;
-  answerSetTotals: Array<Scalars['BigInt']>;
+  answerSetTotalStaked: Array<Scalars['BigInt']>;
   bounty: Scalars['BigInt'];
   totalStaked: Scalars['BigInt'];
   endTime: Scalars['BigInt'];

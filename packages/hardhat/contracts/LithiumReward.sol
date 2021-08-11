@@ -16,7 +16,7 @@ contract LithiumReward is ILithiumReward {
   }
 
   function getTopAnswerIndex (
-    uint256[] memory answerSetTotals
+    uint256[] memory answerSetTotalStaked
   ) internal pure returns (
     uint256
   ) {
@@ -24,10 +24,10 @@ contract LithiumReward is ILithiumReward {
     uint256 topAnswerValue = 0;
     uint256 topAnswerIndex = 0;
 
-    for (uint256 i = 0; i < answerSetTotals.length; i++) {
+    for (uint256 i = 0; i < answerSetTotalStaked.length; i++) {
 
-      if (answerSetTotals[i] > topAnswerValue) {
-        topAnswerValue = answerSetTotals[i];
+      if (answerSetTotalStaked[i] > topAnswerValue) {
+        topAnswerValue = answerSetTotalStaked[i];
         topAnswerIndex  = i;
       }
     }
@@ -54,13 +54,13 @@ contract LithiumReward is ILithiumReward {
       
     ) = lithiumPricing.getAnswer(_questionId, _answerer);
 
-    uint256[] memory answerSetTotals = lithiumPricing.getAnswerSetTotals(_questionId);
-    uint256 topAnswerIndex = getTopAnswerIndex(answerSetTotals);
+    uint256[] memory answerSetTotalStaked = lithiumPricing.getAnswerSetTotals(_questionId);
+    uint256 topAnswerIndex = getTopAnswerIndex(answerSetTotalStaked);
 
     require(topAnswerIndex == answerIndex, "Answer must be correct to claim reward");
 
     uint256 rewardTotal = lithiumPricing.getRewardTotal(_questionId);
-    uint256 answerTotal = answerSetTotals[answerIndex];
+    uint256 answerTotal = answerSetTotalStaked[answerIndex];
     uint256 rewardValue = calculateReward(rewardTotal, stakeAmount, answerTotal);
 
     return rewardValue;

@@ -12,26 +12,26 @@ contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
-  string[] categories; 
+  bytes32[] categories; 
 
   struct Question {
-    address owner;
-    uint256 id;
-    uint256 categoryId;
-    string description;
-    uint256[] answerSet;
-    uint256[] answerSetTotals;
-    uint256 bounty;
-    uint256 totalStaked;
-    uint256 endTime;
+    address owner; // question creator
+    uint256 id; // uinique identifier
+    uint256 categoryId; // related category id
+    string description; // explanation of asset to price ex 'The price of LITH will be higher then'
+    uint256[] answerSet; // the list of possible answers
+    uint256[] answerSetTotalStaked; // the total staked for each answer
+    uint256 bounty; // to bounty offered by the questions creator in LITH tokens
+    uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
+    uint256 endTime; // the time answering ends relative to block.timestamp
   }
 
   struct Answer {
-    address answerer;
-    uint256 questionId;
-    uint256 stakeAmount;
-    uint16 answerIndex;
-    AnswerStatus status;
+    address answerer; // the answer creator
+    uint256 questionId; // the id of the question being answered
+    uint256 stakeAmount; // the amount to stake in LITH token for the answer
+    uint16 answerIndex; // the index of the chosen answer in the question.answerSet
+    AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
 
   Question[] questions;
@@ -39,11 +39,35 @@ contract LithiumPricing is ILithiumPricing, Roles {
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
 
-  event TokensReceived(address operator, address from, address to, uint256 amount, bytes userData, bytes operatorData);
+  event CategoryAdded(
+    uint256 id,
+    string label
+  );
 
   constructor () {
-    string memory preIPO = "preIPO";
-    categories.push(preIPO);
+    _addCategory("preIPO");
+  }
+
+    /**
+  * @dev Adds new category
+  *
+  */
+  function _addCategory(string memory _label) internal {
+    bytes32 hash = keccak256(abi.encodePacked(_label));
+    categories.push(hash);
+    emit CategoryAdded(categories.length - 1,  _label);
+  }
+
+  /**
+  * @dev public interface to add a new category
+  *
+  * Requirements
+  *
+  * - the caller must be an admin.
+  */
+  function addCategory(string memory _label) public {
+    require(isAdmin(msg.sender), "Must be admin");
+    _addCategory(_label);
   }
 
   /**
@@ -95,12 +119,15 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   /**
   * @dev Adds a Question to contract storage.
-  *
+  * the `categoryId` is the id for the related category
   * the `bounty` is amount of tokens the questioner is offering for pricing information
-  * the `description` is a description of the asset to price
-  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible
-  * the `answerSet` is any array of values that represent less than or greater than prices
-  *   For example, an array of [5] indicates the price can be <= OR > 5.
+  * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
+  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
+  * the `answerSet` is any array of values that represent less than or greater than prices in usd
+  *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
+      would be [35000]
+      An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+      would be [35000, 37000]
   *   A 0 is appended to the answer set to represent > the highest value
   *
   * Emits a { QuestionCreated } event.
@@ -110,6 +137,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - the caller must have at least `bounty` tokens.
   * - the answer set must be valid (see isValidAnswerSet).
   * - the `endtime` must be in the future
+  * - the category id must be valid
   */
   function createQuestion(
     uint16 categoryId,
@@ -120,6 +148,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
+    require(categories[categoryId] != 0, "Invalid categoryId");
 
     LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
@@ -136,7 +165,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     Question storage storedQuestion = questions[id];
     storedQuestion.answerSet.push(0);
     for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
-      storedQuestion.answerSetTotals.push(0);
+      storedQuestion.answerSetTotalStaked.push(0);
     }
     
     emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
@@ -144,9 +173,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   /**
   * @dev Adds an Answer to contract storage.
-  *
-  * the `stakeAmount` for the answer will be added to totalStake for the question
+  * the `questionId` is the id of the question being answered
+  * the `stakeAmount` is the amount of LITH the answerer wants to stake on the answer
+  * and it will be added to totalStake for the question
   * and the answerSetTotal for the `answerIndex`
+  * the `answerIndex` is the index of the answer in the question.answerSet
   *
   * Emits a { QuestionAnswered } event.
   *
@@ -181,7 +212,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     answers[_questionId][msg.sender] = answer;
 
     question.totalStaked = question.totalStaked + _stakeAmount;
-    question.answerSetTotals[_answerIndex] = question.answerSetTotals[_answerIndex] + _stakeAmount;
+    question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
 
     emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
 
@@ -205,7 +236,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 categoryId,
     string memory description,
     uint256[] memory answerSet,
-    uint256[] memory answerSetTotals,
+    uint256[] memory answerSetTotalStaked,
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime
@@ -216,7 +247,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     categoryId = question.categoryId;
     description = question.description;
     answerSet = question.answerSet;
-    answerSetTotals = question.answerSetTotals;
+    answerSetTotalStaked = question.answerSetTotalStaked;
     bounty = question.bounty;
     totalStaked = question.totalStaked;
     endTime = question.endTime;
@@ -245,7 +276,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) external view override returns (
     uint256[] memory
   ) {
-    return questions[_questionId].answerSetTotals;
+    return questions[_questionId].answerSetTotalStaked;
   }
 
   function getAnswerSet (
@@ -264,8 +295,18 @@ contract LithiumPricing is ILithiumPricing, Roles {
     Question storage question = questions[_questionId];
 
     return question.bounty + question.totalStaked;
-  }    
+  }
 
+  /**
+  * @dev Allow users to claim a reward for an answered question
+  * the `questionId` is the id of the question to claim the reward for
+  * the reward amount is determined by the LithiumReward contract
+  * Emits a { RewardClaimed } event.
+  *
+  * Requirements
+  *
+  * - the caller must have answered the question
+  */
   function claimReward (
     uint256 _questionId
   ) internal {
@@ -283,6 +324,15 @@ contract LithiumPricing is ILithiumPricing, Roles {
       emit RewardClaimed(_questionId, msg.sender, reward);
     }
   }
+
+    /**
+  * @dev Allow users to claim rewards for answered questions
+  * the `questionIds` is the ids of the questions to claim the rewards for
+  *
+  * Requirements
+  *
+  * - the caller must have answered the questions
+  */
 
   function claimRewards (
     uint256[] memory questionIds
