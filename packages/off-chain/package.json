@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": "LithiumFinance",
   "scripts": {
-    "start-cordinator": "ts-node ./src/main.ts"
+    "start-coordinator": "ts-node ./src/main.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.5",
@@ -13,13 +13,13 @@
     "ethereumjs-util": "^6.1.0",
     "graphql": "^15.5.1",
     "log4js": "^5.0.0",
-    "telegraf": "^4.3.0",
     "ts-node": "^10.1.0",
     "urql": "^2.0.4",
     "web3": "^1.2.11",
     "web3-eth": "^1.5.0"
   },
   "devDependencies": {
-    "@types/ethereumjs-tx": "^2.0.0"
+    "@types/ethereumjs-tx": "^2.0.0",
+    "@types/node-fetch": "^2.5.12"
   }
 }
