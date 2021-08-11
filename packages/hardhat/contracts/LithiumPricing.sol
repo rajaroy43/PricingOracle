@@ -11,7 +11,7 @@ import "./ILithiumReward.sol";
 contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
-
+  enum RewardUpdated{rewardNotupdated,rewardUpdated}
   bytes32[] categories; 
 
   struct Question {
@@ -24,6 +24,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
+    RewardUpdated isRewardUpdated;//reward will be Updated by LithiumCordinator once deadline passed
   }
 
   struct Answer {
@@ -42,6 +43,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
   event CategoryAdded(
     uint256 id,
     string label
+  );
+
+  event rewardStatus(
+    uint256 questionId,
+    RewardUpdated isupdated
   );
 
   constructor () {
@@ -340,5 +346,27 @@ contract LithiumPricing is ILithiumPricing, Roles {
     for (uint256 i = 0; i < questionIds.length; i++) {
       claimReward(questionIds[i]);
     }
+  }
+
+   /**
+  * @dev Allow Lithium Coordinator to submit status of rewards 
+  * the `questionId` is the ids of the questions to updated the status of reward
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  * - endtime must be passed for answering question
+  * - rewards can't be updated again with same question id
+  * - question id must be valid 
+  */
+
+  function updateRewardStatus(uint256 questionId)external{
+    isAdmin(msg.sender);
+    require(questionId < questions.length, "Invalid question id");
+    Question storage question = questions[questionId];
+    require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
+    require(question.isRewardUpdated==RewardUpdated.rewardNotupdated,"Rewards is already updated");
+    question.isRewardUpdated = RewardUpdated.rewardUpdated;
+    emit rewardStatus(questionId,question.isRewardUpdated);
   }
 }
