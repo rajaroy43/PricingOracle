@@ -126,11 +126,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * the `bounty` is amount of tokens the questioner is offering for pricing information
   * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
   * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
-  * the `answerSet` is any array of values that represent less than or greater than prices in usd
+  * the `answerSet` is an array of values that represent equal to or greater than prices in usd
+  *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
+  *   with the last value representing the statement 'equal to or greater than the selected value'
   *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
-      would be [0,35000]
-      An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
-      would be [0,35000, 37000]
+  *   would be [0,35000]
+  *   An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+  *   would be [0,35000,37000]
   *
   * Emits a { QuestionCreated } event.
   *
