@@ -133,7 +133,7 @@ yarn react-app:start-rinkeby
 ```
 
 #### Deploy Contracts to Rinkeby
-set the RINKEBY_PROVIDER_ENDPOINT and RINKEBY_PRIVATE_KEY in packages/hardhat/hardhat.config.js
+set the RINKEBY_PROVIDER_ENDPOINT and RINKEBY_PRIVATE_KEY in packages/hardhat/.env
 then from project root run
 ```
 yarn deploy-rinkeby
