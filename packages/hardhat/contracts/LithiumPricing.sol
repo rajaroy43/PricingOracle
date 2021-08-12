@@ -361,7 +361,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
 
   function updateRewardStatus(uint256 questionId)external{
-    isAdmin(msg.sender);
+    require(isAdmin(msg.sender),"Must be admin");
     require(questionId < questions.length, "Invalid question id");
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
