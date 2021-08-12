@@ -185,7 +185,31 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith("Must be admin")
       });
     });
-
+    describe("Reward Update status ", async function () {
+      const questionId = 0
+      it("Should allow admins to update reward status", async function () {
+        const calculatedewardStatus=1
+        await expect(lithiumPricing.updateRewardStatus(questionId))
+        .emit(lithiumPricing, "rewardStatus").withArgs(
+         questionId,
+         calculatedewardStatus
+       )
+      });
+      it("Should not allow non admins to update reward status", async function () {
+        await expect(lithiumPricing.connect(account1).
+              updateRewardStatus(questionId)).
+              to.be.revertedWith("Must be admin")
+       });
+      it("Shound not update reward status again ",async function(){
+        await expect(lithiumPricing.updateRewardStatus(questionId))
+        .to.be.revertedWith("Rewards is already updated")
+      });
+      it("Should not  update reward status for invalid questionId", async function () {
+        const invalidQuestionId = 19090
+        await expect(lithiumPricing.updateRewardStatus(invalidQuestionId)).
+        to.be.revertedWith("Invalid question id")
+       });
+    });
 
   });
 });
