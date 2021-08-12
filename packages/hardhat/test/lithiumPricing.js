@@ -190,7 +190,7 @@ describe("Lithium Pricing", async function () {
       it("Should allow admins to update reward status", async function () {
         const calculatedewardStatus=1
         await expect(lithiumPricing.updateRewardStatus(questionId))
-        .emit(lithiumPricing, "rewardStatus").withArgs(
+        .emit(lithiumPricing, "RewardStatus").withArgs(
          questionId,
          calculatedewardStatus
        )

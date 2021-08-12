@@ -45,9 +45,17 @@ contract LithiumPricing is ILithiumPricing, Roles {
     string label
   );
 
-  event rewardStatus(
+  event RewardStatus(
     uint256 questionId,
     RewardUpdated isupdated
+  );
+
+  event LithiumRewardAddress(
+    address rewardAddress
+  );
+
+  event LithiumTokenAddress(
+    address lithiumTokenAddress
   );
 
   constructor () {
@@ -86,6 +94,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     LithiumToken = IERC20(_tokenAddress);
+    emit LithiumTokenAddress(address(LithiumToken));
   }
 
   /**
@@ -96,6 +105,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumRewardAddress(address _rewardAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     lithiumReward = ILithiumReward(_rewardAddress);
+    emit LithiumRewardAddress(address(lithiumReward));
   }
 
   /**
@@ -367,6 +377,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
     require(question.isRewardUpdated==RewardUpdated.rewardNotupdated,"Rewards is already updated");
     question.isRewardUpdated = RewardUpdated.rewardUpdated;
-    emit rewardStatus(questionId,question.isRewardUpdated);
+    emit RewardStatus(questionId,question.isRewardUpdated);
   }
 }
