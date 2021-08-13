@@ -24,6 +24,11 @@ const main = async () => {
   await lithiumPricing.setLithiumTokenAddress(lithToken.address)
 
   await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
+
+  await lithiumPricing.addCategory('Pre Coin Offering')
+  await lithiumPricing.addCategory('Art Collection')
+
+
   const transferBalance = ethers.utils.parseUnits("1000.0", 18)
   if (network.name === 'localhost') {
     await lithToken.transfer(account1.address, transferBalance)
