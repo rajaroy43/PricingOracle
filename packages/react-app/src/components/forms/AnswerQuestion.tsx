@@ -44,12 +44,10 @@ const getMethodArgs = (questionId: string) => (values: any) => {
 
 export const generateAnswerSetOptions = (answerSet: string[]) => {
   return answerSet.map((answer: string, index: number) => {
-    if (index === 0) {
-      return {label: `Less Than or Equal to ${answer}`, value: index}
-    } else if (index === answerSet.length - 1) {
-      return {label: `Greater Than ${answerSet[index-1]}`, value: index}
+    if (index === answerSet.length - 1) {
+      return {label: `Greater Than or Equal to ${answer}`, value: index}
     } else {
-      return {label: `Greater Than ${answerSet[index-1]} Less Than or Equal to ${answer}`, value: index}
+      return {label: `Greater Than or Equal to ${answer} or  Less Than ${answerSet[index+1]}`, value: index}
     }
   })
 }

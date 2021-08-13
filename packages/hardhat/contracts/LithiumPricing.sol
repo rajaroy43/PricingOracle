@@ -12,6 +12,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
+  uint8 minAnswerSetLength = 2;
+  uint8 maxAnswerSetLength = 2;
+
   bytes32[] categories; 
 
   struct Question {
@@ -108,13 +111,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
     * - if `recipient` is a contract, it must implement the {IERC777Recipient}
     * interface.
     */
-  function isValidAnswerSet(uint256[] memory answerSet) internal pure {
-    require(answerSet[0] != 0, "Zero cannot be in answer set");
-    if (answerSet.length > 1) {
-      for (uint256 i = 1; i < answerSet.length; i++) {
-        require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
-      }
+  function isValidAnswerSet(uint256[] memory answerSet) internal view {
+    require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
+
+    for (uint256 i = 1; i < answerSet.length; i++) {
+      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
     }
+
   }
 
   /**
@@ -123,12 +126,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * the `bounty` is amount of tokens the questioner is offering for pricing information
   * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
   * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
-  * the `answerSet` is any array of values that represent less than or greater than prices in usd
+  * the `answerSet` is an array of values that represent equal to or greater than prices in usd
+  *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
+  *   with the last value representing the statement 'equal to or greater than the selected value'
   *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
-      would be [35000]
-      An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
-      would be [35000, 37000]
-  *   A 0 is appended to the answer set to represent > the highest value
+  *   would be [0,35000]
+  *   An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+  *   would be [0,35000,37000]
   *
   * Emits a { QuestionCreated } event.
   *
@@ -149,9 +153,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(endTime > block.timestamp, "Endtime must be in the future");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
+    isValidAnswerSet(answerSet);
 
     LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
+    uint256[] memory answerSetTotalStaked = new uint256[](answerSet.length);
     Question memory question;
     question.id = id;
     question.categoryId = categoryId;
@@ -159,16 +165,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.owner = msg.sender;
     question.description =  description;
     question.answerSet = answerSet;
+    question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     questions.push(question);
-    
-    Question storage storedQuestion = questions[id];
-    storedQuestion.answerSet.push(0);
-    for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
-      storedQuestion.answerSetTotalStaked.push(0);
-    }
-    
-    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
+        
+    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, answerSet);
   }
 
   /**
@@ -203,14 +204,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
 
     Answer memory answer;
-  
     answer.answerer = msg.sender;
     answer.questionId = _questionId;
     answer.answerIndex = _answerIndex;
     answer.stakeAmount = _stakeAmount;
-
     answers[_questionId][msg.sender] = answer;
-
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
 
