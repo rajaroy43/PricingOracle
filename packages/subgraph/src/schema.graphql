@@ -14,10 +14,20 @@ type User @entity {
   tokenApprovalBalance: BigInt!
 }
 
+type QuestionCategory @entity {
+  id: ID!
+  label: String!
+  questionCount: BigInt!
+  totalBounty: BigInt!
+  totalStaked: BigInt!
+  rewardedQuestionCount: BigInt!
+  questions: [Question!] @derivedFrom(field: "category")
+}
+
 type Question @entity {
   id: ID!
   owner: User!
-  categoryId: Int!
+  category: QuestionCategory!
   description: String!
   answerSet: [BigInt!]!
   answerSetTotalStaked: [BigInt!]!

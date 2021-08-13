@@ -6,14 +6,9 @@ require("@nomiclabs/hardhat-waffle");
 require("@tenderly/hardhat-tenderly")
 
 require("@nomiclabs/hardhat-etherscan");
+require('dotenv').config()
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
-
-const RINKEBY_PROVIDER_ENDPOINT = '0.0.0.0'
-
-const RINKEBY_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-
-
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -60,9 +55,9 @@ module.exports = {
       */
     },
     rinkeby: {
-      url: RINKEBY_PROVIDER_ENDPOINT, //<---- YOUR INFURA ID! (or it won't work)
+      url: process.env.RINKEBY_PROVIDER_ENDPOINT, //<---- YOUR INFURA ID! (or it won't work)
       accounts: [
-        RINKEBY_PRIVATE_KEY
+        process.env.RINKEBY_PRIVATE_KEY
       ],
     },
     kovan: {

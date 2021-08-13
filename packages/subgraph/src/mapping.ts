@@ -1,5 +1,6 @@
 import { BigInt, dataSource, log } from "@graphprotocol/graph-ts"
 import {
+  CategoryAdded,
   QuestionCreated,
   QuestionAnswered,
   RewardClaimed
@@ -9,7 +10,7 @@ import {
   Transfer,
   Approval
 } from "../generated/LithiumToken/LithiumToken"
-import { User, Question, Answer } from "../generated/schema"
+import { User, Question, Answer, QuestionCategory } from "../generated/schema"
 
 let ZERO = BigInt.fromI32(0)
 let ONE = BigInt.fromI32(1)
@@ -33,6 +34,16 @@ function getOrCreateUser(address: string): User {
   return user as User
 }
 
+export function handleCategoryAdded(event: CategoryAdded): void {
+  let category = new QuestionCategory(event.params.id.toString())
+  category.label = event.params.label
+  category.questionCount = ZERO
+  category.totalBounty = ZERO
+  category.totalStaked = ZERO
+  category.rewardedQuestionCount = ZERO
+  category.save()
+}
+
 export function handleQuestionCreated(event: QuestionCreated): void {
   log.info('!!!!!!!handling question created', [])
   let ownerAddress = event.params.owner.toHexString()
@@ -47,7 +58,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
 
   let question = new Question(event.params.id.toString())
   question.owner = user.id
-  question.categoryId = event.params.categoryId
+  question.category = BigInt.fromI32(event.params.categoryId).toString()
   question.description = event.params.description
   question.answerSet = event.params.answerSet
   question.answerSetTotalStaked = answerSetTotalStaked
@@ -57,6 +68,11 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.endTime = event.params.endTime
   question.created = event.block.timestamp
   question.save()
+
+  let category = QuestionCategory.load(BigInt.fromI32(event.params.categoryId).toString())
+  category.questionCount = category.questionCount + ONE
+  category.totalBounty = category.totalBounty.plus(event.params.bounty)
+  category.save()
 }
 
 export function handleQuestionAnswered(event: QuestionAnswered): void {
@@ -132,7 +148,7 @@ export function handleApproval(event: Approval): void {
   let approver = getOrCreateUser(appoverAddress)
   log.info('dataSource address {}', [dataSource.address().toHexString()])
   
-  let pricingAddress = '0x8d555d45d60a57eb8d2da7562d7213ae91f71f0d'//'0x5fbdb2315678afecb367f032d93f642f64180aa3'// config.LithiumPricingAddress as string
+  let pricingAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3'// '0x8d555d45d60a57eb8d2da7562d7213ae91f71f0d'
   log.info('<><><><><><>pricing address {}', [event.params.spender.toHexString()])
   if (pricingAddress == event.params.spender.toHexString()) {
     log.info('pricing approved {}', [pricingAddress])

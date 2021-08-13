@@ -12,7 +12,10 @@ export const QUESTION_FIELDS = gql`
       owner {
         id
       }
-      categoryId
+      category {
+        id
+        label
+      }
       description
       answerSet
       answerSetTotalStaked
