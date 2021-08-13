@@ -1,6 +1,6 @@
 import web3 from "web3";
 import TransactionSender from "./TransactionSender";
-import { Question } from "lithium-subgraph";
+import QueryAnswerSets from './QueryAnswerSets'
 class Cordinator {
   web3: web3;
   config: any;
@@ -19,29 +19,36 @@ class Cordinator {
   async run() {
     console.info("Starting cordinator");
     //querydata come from subgraph (All question id with  deadline passed)
-    const Questions: Question[] = [];
-    await this._processQuestions(Questions);
+
+    const Questions=await QueryAnswerSets();
+    console.info(`Found ${Questions.size} questions for calculating rewards`);
+    for await(var [questionId] of Questions) {
+      const anserSetsIndex=Questions.get(questionId).map((res: { answerIndex: any; })=>res.answerIndex)
+      console.info("Processing question id ", questionId);
+      await this._processQuestions(questionId,anserSetsIndex);
+    }
+     
+  
   }
 
-  async _processQuestions(Questions: Question[]) {
-    if (!Questions.length)
-      throw new Error("Failed to obtain the Questions/Answers");
-    console.info(`Found ${Questions.length} questions`);
-    //loop over here
-    for (let question of Questions) {
-      console.info("Processing question ", question);
-
-      await this._processQuestion(question); // undefined meaning all blocks were confirmed
+   async _processQuestions(questionId: number,anserSetsIndex:number[]) {
+     if (!anserSetsIndex.length){
+       console.info(`Failed to obtain the AnswersIndex with question id ${questionId}`);
+       return;
+     }
+    //Here it will call python service for getting rewards
+    const iscalculate= await this._processQuestion(anserSetsIndex); // undefined meaning all blocks were confirmed
+    if(iscalculate){
+      //we will use TransactionSender here 
+      //Do transaction on L1 with updating user reward and also update rewards calculation status
+      console.log("Lithium Cordinator submit tx here ")
     }
   }
-  async _processQuestion(question: Question) {
-    try {
-      const transactionSender = new TransactionSender(this.web3, this.config);
-
-      //const from = await transactionSender.getAddress(this.config.privateKey);
-    } catch (err: any) {
-      throw new Error(`Exception processing logs ${err}`);
-    }
-  }
+  async _processQuestion(question: number[]): Promise<boolean>{
+    //Call to python service for getting rewards 
+    //it will return true or false if python service return result
+    return true;
 }
-export default Cordinator;
+}
+
+export default Cordinator
