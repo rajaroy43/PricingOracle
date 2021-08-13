@@ -1,9 +1,9 @@
-version: "3.8"
+version: "3"
 
 services:
     node:
         container_name: reward_coordinator
-        build: ./node
+        build: ./reward_coordinator
         ports:
             - "8000:8000"
         stdin_open: true
@@ -11,7 +11,7 @@ services:
 
     python:
         container_name: reward_calculator
-        build: ./python
+        build: ./reward_calculator
         ports:
             - "8001:8001"
         stdin_open: true
