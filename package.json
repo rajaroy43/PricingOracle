@@ -28,6 +28,7 @@
     "watch": "yarn workspace @scaffold-eth/hardhat watch",
     "accounts": "yarn workspace @scaffold-eth/hardhat accounts",
     "balance": "yarn workspace @scaffold-eth/hardhat balance",
+    "coordinator": "yarn workspace off-chain  start-coordinator",
     "send": "yarn workspace @scaffold-eth/hardhat send",
     "ipfs": "yarn workspace @scaffold-eth/react-app ipfs",
     "surge": "yarn workspace @scaffold-eth/react-app surge",
@@ -69,5 +70,8 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^1.21.6",
     "@graphql-codegen/typescript-operations": "^1.18.3"
+  },
+  "dependencies": {
+    "typescript": "^4.3.5"
   }
 }
