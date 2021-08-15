@@ -178,8 +178,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.description =  description;
     question.answerSet = answerSet;
     question.endTime = endTime;
-    questions.push(question);
     question.pricingTime = pricingTime;
+    questions.push(question);
     Question storage storedQuestion = questions[id];
     storedQuestion.answerSet.push(0);
     for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
