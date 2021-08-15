@@ -40,7 +40,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
-
+// questionId => groupOfAnswerProvided
+  mapping(uint256 =>  uint256[])  answerSetsGroups;
+  // categoryId=> groupOfQuestion ids
+  mapping(uint256=>uint256[]) questionSetsGroup;
   event CategoryAdded(
     uint256 id,
     string label
@@ -178,8 +181,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.description =  description;
     question.answerSet = answerSet;
     question.endTime = endTime;
-    questions.push(question);
     question.pricingTime = pricingTime;
+    questions.push(question);
+    questionSetsGroup[categoryId].push(id);
     Question storage storedQuestion = questions[id];
     storedQuestion.answerSet.push(0);
     for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
@@ -228,7 +232,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     answer.stakeAmount = _stakeAmount;
 
     answers[_questionId][msg.sender] = answer;
-
+    answerSetsGroups[_questionId].push(_answerIndex);
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
 
@@ -380,5 +384,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(question.isRewardUpdated==RewardUpdated.rewardNotupdated,"Rewards is already updated");
     question.isRewardUpdated = RewardUpdated.rewardUpdated;
     emit RewardStatus(questionId,question.isRewardUpdated);
+  }
+
+  function getAnswerGroups(uint256 questionId) public view returns(uint256[] memory){
+    require(questionId < questions.length, "Invalid question id");
+    return answerSetsGroups[questionId];
+  }
+  function getQuestionGroupsByCategory( uint16 categoryId) public view returns(uint256[] memory){
+    require(categories[categoryId] != 0, "Invalid categoryId");
+    return questionSetsGroup[categoryId];
   }
 }
