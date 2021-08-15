@@ -1,11 +1,11 @@
-const { ethers } = require("hardhat");
+const { ethers} = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
 use(solidity);
 
 describe("Lithium Pricing", async function () {
-  let lithiumPricing, lithiumReward, lithToken, account0, account1, account2, stakeAmount, transferAmount1, approveAmount;
+  let lithiumPricing, lithiumReward, lithToken, account0, account1, account2, stakeAmount, transferAmount1;
 
   describe("Contract Deployment", function () {
     it("Should deploy LithiumPricing, LithiumReward, LithToken", async function () {
@@ -46,6 +46,17 @@ describe("Lithium Pricing", async function () {
     });
 
     describe("Create a question", function () {
+      it("Should able to get 0  questionid with category id 0 ",async()=>{
+        const categoryID=0;
+        const questionSetsGroup=await lithiumPricing.getQuestionGroupsByCategory(categoryID);
+        expect(questionSetsGroup.length).to.be.equal(0);
+      });
+
+      it("Should not able to get  questionid with invalid category id  ",async()=>{
+        const categoryID=1;
+        await expect(lithiumPricing.getQuestionGroupsByCategory(categoryID)).to.be.reverted;
+      });
+
       it("Should be able to create a question with pricingTime", async function () {
         const senderBalance = await lithToken.balanceOf(account0.address)
         const block = await ethers.provider.getBlock()
@@ -74,7 +85,9 @@ describe("Lithium Pricing", async function () {
           description,
           finalAnswerSet
         )
-
+        const categoryID=0;
+        const questionSetsGroup=await lithiumPricing.getQuestionGroupsByCategory(categoryID);
+        expect(parseInt(questionSetsGroup[0])).to.be.equal(0);
         const senderBalanceAfter = await lithToken.balanceOf(account0.address)
 
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
@@ -101,12 +114,16 @@ describe("Lithium Pricing", async function () {
     });
 
     describe("Answer a question", function () {
-      it("Should be able to answer a question", async function () {
+
+      it("Should not able to get answer sets with invalid question  id  ",async()=>{
+        const categoryID=1;
+        await expect(lithiumPricing.getQuestionGroupsByCategory(categoryID)).to.be.reverted;
+      });
+      it("Should be able to answer a question and get groups answer with individual id", async function () {
         const senderBalance = await lithToken.balanceOf(account1.address)
         const ids = [0]
         const stakeAmounts = [stakeAmount]
         const answerIndexes = [1]
-
         await expect(lithiumPricing.connect(account1).answerQuestions(
           ids,
           stakeAmounts,
@@ -117,7 +134,8 @@ describe("Lithium Pricing", async function () {
           stakeAmounts[0],
           answerIndexes[0]
         )
-
+        const  answerGroups=await lithiumPricing.getAnswerGroups(ids[0]);
+        expect(parseInt(answerGroups[0])).to.be.equal( answerIndexes[0]);
         const senderBalanceAfter = await lithToken.balanceOf(account1.address)
 
         expect(stakeAmounts[0].add(senderBalanceAfter)).to.equal(senderBalance)
