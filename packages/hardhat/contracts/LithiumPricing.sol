@@ -25,6 +25,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
     RewardUpdated isRewardUpdated;//reward will be Updated by LithiumCordinator once deadline passed
+    uint256 pricingTime;//Indicate when the asset should be priced for
   }
 
   struct Answer {
@@ -158,6 +159,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function createQuestion(
     uint16 categoryId,
     uint256 bounty,
+    uint256 pricingTime,
     uint256 endTime,
     string memory description,
     uint256[] memory answerSet
@@ -177,14 +179,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.answerSet = answerSet;
     question.endTime = endTime;
     questions.push(question);
-    
+    question.pricingTime = pricingTime;
     Question storage storedQuestion = questions[id];
     storedQuestion.answerSet.push(0);
     for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
       storedQuestion.answerSetTotalStaked.push(0);
     }
     
-    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
+    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
   }
 
   /**
