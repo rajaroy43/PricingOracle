@@ -46,10 +46,11 @@ describe("Lithium Pricing", async function () {
     });
 
     describe("Create a question", function () {
-      it("Should be able to create a question", async function () {
+      it("Should be able to create a question with pricingTime", async function () {
         const senderBalance = await lithToken.balanceOf(account0.address)
         const block = await ethers.provider.getBlock()
-        const endTime = block.timestamp + 5
+        const pricingTime=block.timestamp+3
+        const endTime = block.timestamp + 4
         const description = "foo"
         const bounty =  transferAmount1
         const answerSet = [50]
@@ -59,12 +60,14 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
         )).emit(lithiumPricing, "QuestionCreated").withArgs(
           0,
           bounty,
+          pricingTime,
           endTime,
           categoryId,
           account0.address,
