@@ -48,7 +48,7 @@ interface ILithiumPricing {
   function createQuestion (
     uint16 categoryId,
     uint256 bounty,
-    uint pricingTime,
+    uint256 pricingTime,
     uint256 endTime,
     string memory description,
     uint256[] memory answerSet
@@ -85,7 +85,7 @@ interface ILithiumPricing {
   event QuestionCreated (
     uint256 id,
     uint256 bounty,
-    uint pricingTime,
+    uint256 pricingTime,
     uint256 endTime,
     uint16 categoryId,
     address owner,

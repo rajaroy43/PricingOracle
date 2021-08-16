@@ -23,7 +23,10 @@ export const QUESTION_FIELDS = gql`
       owner {
         id
       }
-      categoryId
+      category {
+        id
+        label
+      }
       description
       answerSet
       answerSetTotalStaked
@@ -100,7 +103,10 @@ export const GET_USER  = gql`
         owner {
           id
         }
-        categoryId
+        category {
+          id
+          label
+        }
         description
         answerSet
         answerSetTotalStaked

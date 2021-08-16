@@ -11,7 +11,11 @@ import "./ILithiumReward.sol";
 contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
-  enum RewardUpdated{rewardNotupdated,rewardUpdated}
+  enum RewardCalculated{NotCalculated,Calculated}
+
+  uint8 minAnswerSetLength = 2;
+  uint8 maxAnswerSetLength = 2;
+
   bytes32[] categories; 
 
   struct Question {
@@ -24,7 +28,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
-    RewardUpdated isRewardUpdated;//reward will be Updated by LithiumCordinator once deadline passed
+    RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
     uint256 pricingTime;//Indicate when the asset should be priced for
   }
 
@@ -49,16 +53,16 @@ contract LithiumPricing is ILithiumPricing, Roles {
     string label
   );
 
-  event RewardStatus(
+  event RewardCalculatedStatus(
     uint256 questionId,
-    RewardUpdated isupdated
+    RewardCalculated isupdated
   );
 
-  event LithiumRewardAddress(
+  event SetLithiumRewardAddress(
     address rewardAddress
   );
 
-  event LithiumTokenAddress(
+  event SetLithiumTokenAddress(
     address lithiumTokenAddress
   );
 
@@ -98,7 +102,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     LithiumToken = IERC20(_tokenAddress);
-    emit LithiumTokenAddress(address(LithiumToken));
+    emit SetLithiumTokenAddress(address(LithiumToken));
   }
 
   /**
@@ -109,7 +113,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumRewardAddress(address _rewardAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     lithiumReward = ILithiumReward(_rewardAddress);
-    emit LithiumRewardAddress(address(lithiumReward));
+    emit SetLithiumRewardAddress(address(lithiumReward));
   }
 
   /**
@@ -128,13 +132,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
     * - if `recipient` is a contract, it must implement the {IERC777Recipient}
     * interface.
     */
-  function isValidAnswerSet(uint256[] memory answerSet) internal pure {
-    require(answerSet[0] != 0, "Zero cannot be in answer set");
-    if (answerSet.length > 1) {
-      for (uint256 i = 1; i < answerSet.length; i++) {
-        require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
-      }
+  function isValidAnswerSet(uint256[] memory answerSet) internal view {
+    require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
+
+    for (uint256 i = 1; i < answerSet.length; i++) {
+      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
     }
+
   }
 
   /**
@@ -143,12 +147,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * the `bounty` is amount of tokens the questioner is offering for pricing information
   * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
   * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
-  * the `answerSet` is any array of values that represent less than or greater than prices in usd
+  * the `answerSet` is an array of values that represent equal to or greater than prices in usd
+  *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
+  *   with the last value representing the statement 'equal to or greater than the selected value'
   *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
-      would be [35000]
-      An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
-      would be [35000, 37000]
-  *   A 0 is appended to the answer set to represent > the highest value
+  *   would be [0,35000]
+  *   An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+  *   would be [0,35000,37000]
   *
   * Emits a { QuestionCreated } event.
   *
@@ -168,11 +173,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
+    require(pricingTime>endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
+    isValidAnswerSet(answerSet);
 
     LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
+    uint256[] memory answerSetTotalStaked = new uint256[](answerSet.length);
     Question memory question;
     question.id = id;
     question.categoryId = categoryId;
@@ -180,17 +188,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.owner = msg.sender;
     question.description =  description;
     question.answerSet = answerSet;
+    question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     question.pricingTime = pricingTime;
     questions.push(question);
     questionSetsGroup[categoryId].push(id);
-    Question storage storedQuestion = questions[id];
-    storedQuestion.answerSet.push(0);
-    for (uint256 i = 0; i < storedQuestion.answerSet.length; i++) {
-      storedQuestion.answerSetTotalStaked.push(0);
-    }
-    
-    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, storedQuestion.answerSet);
+    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
   }
 
   /**
@@ -225,12 +228,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
 
     Answer memory answer;
-  
     answer.answerer = msg.sender;
     answer.questionId = _questionId;
     answer.answerIndex = _answerIndex;
     answer.stakeAmount = _stakeAmount;
-
     answers[_questionId][msg.sender] = answer;
     answerSetsGroups[_questionId].push(_answerIndex);
     question.totalStaked = question.totalStaked + _stakeAmount;
@@ -366,7 +367,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
    /**
   * @dev Allow Lithium Coordinator to submit status of rewards 
-  * the `questionId` is the ids of the questions to updated the status of reward
+  * the `questionId` is the id of the question to updated the status of reward
   *
   * Requirements
   *
@@ -376,14 +377,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - question id must be valid 
   */
 
-  function updateRewardStatus(uint256 questionId)external{
+  function updateRewardCalculatedStatus(uint256 questionId)external{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionId < questions.length, "Invalid question id");
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
-    require(question.isRewardUpdated==RewardUpdated.rewardNotupdated,"Rewards is already updated");
-    question.isRewardUpdated = RewardUpdated.rewardUpdated;
-    emit RewardStatus(questionId,question.isRewardUpdated);
+    require(question.isRewardCalculated==RewardCalculated.NotCalculated,"Rewards is already updated");
+    question.isRewardCalculated= RewardCalculated.Calculated;
+    emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
 
   function getAnswerGroups(uint256 questionId) public view returns(uint256[] memory){

@@ -27,6 +27,8 @@ dataSources:
           handler: handleQuestionAnswered
         - event: RewardClaimed(uint256,address,uint256)
           handler: handleRewardClaimed
+        - event: CategoryAdded(uint256,string)
+          handler: handleCategoryAdded
       file: ./src/mapping.ts
 
   - kind: ethereum/contract
