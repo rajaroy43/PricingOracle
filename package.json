@@ -53,7 +53,8 @@
     "deploy-and-graph": "yarn deploy && yarn graph-ship-local",
     "theme": "yarn workspace @scaffold-eth/react-app theme",
     "watch-theme": "yarn workspace @scaffold-eth/react-app watch",
-    "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml"
+    "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml",
+    "start-reward-coordinator": "cd docker && docker-compose up"
   },
   "workspaces": {
     "packages": [
