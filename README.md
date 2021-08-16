@@ -155,6 +155,11 @@ the app should be available at http://localhost:3000/
 
 ### Run the Cordinator
 
+#### Deploy Contracts to Rinkeby
+set the RINKEBY_PROVIDER_ENDPOINT and RINKEBY_PRIVATE_KEY in packages/hardhat/.env
+then from project root run
+```
+yarn deploy-rinkeby
 ```
 yarn cordinator
 
