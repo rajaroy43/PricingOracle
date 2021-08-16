@@ -29,6 +29,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
     RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
+    uint256 pricingTime;//Indicate when the asset should be priced for
   }
 
   struct Answer {
@@ -163,11 +164,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function createQuestion(
     uint16 categoryId,
     uint256 bounty,
+    uint256 pricingTime,
     uint256 endTime,
     string memory description,
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
+    require(pricingTime>endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
     isValidAnswerSet(answerSet);
@@ -184,9 +187,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.answerSet = answerSet;
     question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
+    question.pricingTime = pricingTime;
     questions.push(question);
         
-    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, answerSet);
+    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
   }
 
   /**

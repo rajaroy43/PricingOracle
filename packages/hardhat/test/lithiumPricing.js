@@ -62,9 +62,10 @@ describe("Lithium Pricing", async function () {
     
 
     describe("Create a question", function () {
-      it("Should be able to create a question", async function () {
+      it("Should be able to create a question with pricingTime", async function () {
         const senderBalance = await lithToken.balanceOf(account0.address)
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo"
         const bounty =  transferAmount1
@@ -74,12 +75,14 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
         )).emit(lithiumPricing, "QuestionCreated").withArgs(
           0,
           bounty,
+          pricingTime,
           endTime,
           categoryId,
           account0.address,
@@ -92,6 +95,26 @@ describe("Lithium Pricing", async function () {
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
 
       });
+
+      it("Should not able to create a question with pricingTime greater than end time", async function () {
+        const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+3
+        const endTime = block.timestamp + 5
+        const description = "hello"
+        const bounty =  transferAmount1
+        const answerSet = [0,50]
+        const categoryId = 0
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          pricingTime,
+          endTime,
+          description,
+          answerSet
+        )).to.be.revertedWith("Pricing time of asset must be greater than endtime");
+        });
+
     });
 
     describe("Answer a question", function () {
@@ -145,6 +168,7 @@ describe("Lithium Pricing", async function () {
       it("Should fail to create a question with an invalid categoryId", async function () {
         const block = await ethers.provider.getBlock()
         const endTime = block.timestamp + 5
+        const pricingTime=block.timestamp+7
         const description = "foo1"
         const bounty =  transferAmount1
         const answerSet = [0,50]
@@ -153,6 +177,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -162,6 +187,7 @@ describe("Lithium Pricing", async function () {
 
       it("Should fail to create a question with an invalid answerSet length: too few", async function () {
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
@@ -171,6 +197,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -180,6 +207,7 @@ describe("Lithium Pricing", async function () {
 
       it("Should fail to create a question with an invalid answerSet length: too many", async function () {
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
@@ -189,6 +217,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -199,6 +228,7 @@ describe("Lithium Pricing", async function () {
 
       it("Should fail to create a question with an invalid answerSet order", async function () {
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
@@ -208,6 +238,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
