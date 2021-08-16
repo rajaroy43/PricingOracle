@@ -11,7 +11,7 @@ import "./ILithiumReward.sol";
 contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
-  enum RewardUpdated{rewardNotupdated,rewardUpdated}
+  enum RewardCalculated{NotCalculated,Calculated}
   bytes32[] categories; 
 
   struct Question {
@@ -24,7 +24,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
-    RewardUpdated isRewardUpdated;//reward will be Updated by LithiumCordinator once deadline passed
+    RewardCalculated isRewardUpdated;//reward will be Updated by LithiumCordinator once deadline passed
   }
 
   struct Answer {
@@ -45,16 +45,16 @@ contract LithiumPricing is ILithiumPricing, Roles {
     string label
   );
 
-  event RewardStatus(
+  event RewardCalculatedStatus(
     uint256 questionId,
-    RewardUpdated isupdated
+    RewardCalculated isupdated
   );
 
-  event LithiumRewardAddress(
+  event SetLithiumRewardAddress(
     address rewardAddress
   );
 
-  event LithiumTokenAddress(
+  event SetLithiumTokenAddress(
     address lithiumTokenAddress
   );
 
@@ -94,7 +94,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     LithiumToken = IERC20(_tokenAddress);
-    emit LithiumTokenAddress(address(LithiumToken));
+    emit SetLithiumTokenAddress(address(LithiumToken));
   }
 
   /**
@@ -105,7 +105,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumRewardAddress(address _rewardAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     lithiumReward = ILithiumReward(_rewardAddress);
-    emit LithiumRewardAddress(address(lithiumReward));
+    emit SetLithiumRewardAddress(address(lithiumReward));
   }
 
   /**
@@ -370,13 +370,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - question id must be valid 
   */
 
-  function updateRewardStatus(uint256 questionId)external{
+  function updateRewardCalculatedStatus(uint256 questionId)external{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionId < questions.length, "Invalid question id");
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
-    require(question.isRewardUpdated==RewardUpdated.rewardNotupdated,"Rewards is already updated");
-    question.isRewardUpdated = RewardUpdated.rewardUpdated;
-    emit RewardStatus(questionId,question.isRewardUpdated);
+    require(question.isRewardUpdated==RewardCalculated.NotCalculated,"Rewards is already updated");
+    question.isRewardUpdated = RewardCalculated.Calculated;
+    emit RewardCalculatedStatus(questionId,question.isRewardUpdated);
   }
 }
