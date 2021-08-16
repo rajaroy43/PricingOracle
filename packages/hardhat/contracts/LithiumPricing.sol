@@ -360,7 +360,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
    /**
   * @dev Allow Lithium Coordinator to submit status of rewards 
-  * the `questionId` is the ids of the questions to updated the status of reward
+  * the `questionId` is the id of the question to updated the status of reward
   *
   * Requirements
   *
