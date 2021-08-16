@@ -28,7 +28,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
-    RewardCalculated isRewardUpdated;//reward will be Updated by LithiumCordinator once deadline passed
+    RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
   }
 
   struct Answer {
@@ -374,8 +374,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(questionId < questions.length, "Invalid question id");
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
-    require(question.isRewardUpdated==RewardCalculated.NotCalculated,"Rewards is already updated");
-    question.isRewardUpdated = RewardCalculated.Calculated;
-    emit RewardCalculatedStatus(questionId,question.isRewardUpdated);
+    require(question.isRewardCalculated==RewardCalculated.NotCalculated,"Rewards is already updated");
+    question.isRewardCalculated= RewardCalculated.Calculated;
+    emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
 }
