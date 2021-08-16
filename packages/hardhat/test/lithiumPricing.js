@@ -31,9 +31,6 @@ describe("Lithium Pricing", async function () {
       const rewardContract = await ethers.getContractFactory("LithiumReward")
       lithiumReward = await rewardContract.deploy(lithiumPricing.address)
     
-      await lithiumPricing.setLithiumTokenAddress(lithToken.address)
-    
-      await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
       await lithToken.connect(account1).approve(lithiumPricing.address, approveAmount)
 
       await lithToken.approve(lithiumPricing.address, approveAmount)
@@ -44,6 +41,25 @@ describe("Lithium Pricing", async function () {
 
 
     });
+
+    describe('Setting config for Lithium Pricing', () => {
+      it("should emit events for setting  lithium token",async()=>{
+
+      await expect(lithiumPricing.setLithiumTokenAddress(lithToken.address)).emit(
+        lithiumPricing,
+        "SetLithiumTokenAddress",
+      ).withArgs(lithToken.address)
+      });
+      it("should emit events for setting  lithium rewards",async()=>{
+
+        await expect(lithiumPricing.setLithiumRewardAddress(lithiumReward.address)).emit(
+          lithiumPricing,
+          "SetLithiumRewardAddress",
+        ).withArgs(lithiumReward.address)
+        });
+
+    })
+    
 
     describe("Create a question", function () {
       it("Should be able to create a question", async function () {
@@ -241,7 +257,31 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith("Must be admin")
       });
     });
-
+    describe("Reward Update status ", async function () {
+      const questionId = 0
+      it("Should allow admins to update reward status", async function () {
+        const calculatedewardStatus=1
+        await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
+        .emit(lithiumPricing, "RewardCalculatedStatus").withArgs(
+         questionId,
+         calculatedewardStatus
+       )
+      });
+      it("Should not allow non admins to update reward status", async function () {
+        await expect(lithiumPricing.connect(account1).
+              updateRewardCalculatedStatus(questionId)).
+              to.be.revertedWith("Must be admin")
+       });
+      it("Shound not update reward status again ",async function(){
+        await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
+        .to.be.revertedWith("Rewards is already updated")
+      });
+      it("Should not  update reward status for invalid questionId", async function () {
+        const invalidQuestionId = 19090
+        await expect(lithiumPricing.updateRewardCalculatedStatus(invalidQuestionId)).
+        to.be.revertedWith("Invalid question id")
+       });
+    });
 
   });
 });
