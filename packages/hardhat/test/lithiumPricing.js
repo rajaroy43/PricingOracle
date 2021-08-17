@@ -31,9 +31,6 @@ describe("Lithium Pricing", async function () {
       const rewardContract = await ethers.getContractFactory("LithiumReward")
       lithiumReward = await rewardContract.deploy(lithiumPricing.address)
     
-      await lithiumPricing.setLithiumTokenAddress(lithToken.address)
-    
-      await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
       await lithToken.connect(account1).approve(lithiumPricing.address, approveAmount)
 
       await lithToken.approve(lithiumPricing.address, approveAmount)
@@ -45,10 +42,30 @@ describe("Lithium Pricing", async function () {
 
     });
 
+    describe('Setting config for Lithium Pricing', () => {
+      it("should emit events for setting  lithium token",async()=>{
+
+      await expect(lithiumPricing.setLithiumTokenAddress(lithToken.address)).emit(
+        lithiumPricing,
+        "SetLithiumTokenAddress",
+      ).withArgs(lithToken.address)
+      });
+      it("should emit events for setting  lithium rewards",async()=>{
+
+        await expect(lithiumPricing.setLithiumRewardAddress(lithiumReward.address)).emit(
+          lithiumPricing,
+          "SetLithiumRewardAddress",
+        ).withArgs(lithiumReward.address)
+        });
+
+    })
+    
+
     describe("Create a question", function () {
-      it("Should be able to create a question", async function () {
+      it("Should be able to create a question with pricingTime", async function () {
         const senderBalance = await lithToken.balanceOf(account0.address)
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo"
         const bounty =  transferAmount1
@@ -58,12 +75,14 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
         )).emit(lithiumPricing, "QuestionCreated").withArgs(
           0,
           bounty,
+          pricingTime,
           endTime,
           categoryId,
           account0.address,
@@ -76,6 +95,26 @@ describe("Lithium Pricing", async function () {
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
 
       });
+
+      it("Should not able to create a question with pricingTime greater than end time", async function () {
+        const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+3
+        const endTime = block.timestamp + 5
+        const description = "hello"
+        const bounty =  transferAmount1
+        const answerSet = [0,50]
+        const categoryId = 0
+
+        await expect(lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          pricingTime,
+          endTime,
+          description,
+          answerSet
+        )).to.be.revertedWith("Pricing time of asset must be greater than endtime");
+        });
+
     });
 
     describe("Answer a question", function () {
@@ -129,6 +168,7 @@ describe("Lithium Pricing", async function () {
       it("Should fail to create a question with an invalid categoryId", async function () {
         const block = await ethers.provider.getBlock()
         const endTime = block.timestamp + 5
+        const pricingTime=block.timestamp+7
         const description = "foo1"
         const bounty =  transferAmount1
         const answerSet = [0,50]
@@ -137,6 +177,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -146,6 +187,7 @@ describe("Lithium Pricing", async function () {
 
       it("Should fail to create a question with an invalid answerSet length: too few", async function () {
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
@@ -155,6 +197,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -164,6 +207,7 @@ describe("Lithium Pricing", async function () {
 
       it("Should fail to create a question with an invalid answerSet length: too many", async function () {
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
@@ -173,6 +217,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -183,6 +228,7 @@ describe("Lithium Pricing", async function () {
 
       it("Should fail to create a question with an invalid answerSet order", async function () {
         const block = await ethers.provider.getBlock()
+        const pricingTime=block.timestamp+7
         const endTime = block.timestamp + 5
         const description = "foo2"
         const bounty =  transferAmount1
@@ -192,6 +238,7 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.createQuestion(
           categoryId,
           bounty,
+          pricingTime,
           endTime,
           description,
           answerSet
@@ -241,7 +288,31 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith("Must be admin")
       });
     });
-
+    describe("Reward Update status ", async function () {
+      const questionId = 0
+      it("Should allow admins to update reward status", async function () {
+        const calculatedewardStatus=1
+        await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
+        .emit(lithiumPricing, "RewardCalculatedStatus").withArgs(
+         questionId,
+         calculatedewardStatus
+       )
+      });
+      it("Should not allow non admins to update reward status", async function () {
+        await expect(lithiumPricing.connect(account1).
+              updateRewardCalculatedStatus(questionId)).
+              to.be.revertedWith("Must be admin")
+       });
+      it("Shound not update reward status again ",async function(){
+        await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
+        .to.be.revertedWith("Rewards is already updated")
+      });
+      it("Should not  update reward status for invalid questionId", async function () {
+        const invalidQuestionId = 19090
+        await expect(lithiumPricing.updateRewardCalculatedStatus(invalidQuestionId)).
+        to.be.revertedWith("Invalid question id")
+       });
+    });
 
   });
 });

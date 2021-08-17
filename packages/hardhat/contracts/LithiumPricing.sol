@@ -11,6 +11,7 @@ import "./ILithiumReward.sol";
 contract LithiumPricing is ILithiumPricing, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
+  enum RewardCalculated{NotCalculated,Calculated}
 
   uint8 minAnswerSetLength = 2;
   uint8 maxAnswerSetLength = 2;
@@ -27,6 +28,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
+    RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
+    uint256 pricingTime;//Indicate when the asset should be priced for
   }
 
   struct Answer {
@@ -45,6 +48,19 @@ contract LithiumPricing is ILithiumPricing, Roles {
   event CategoryAdded(
     uint256 id,
     string label
+  );
+
+  event RewardCalculatedStatus(
+    uint256 questionId,
+    RewardCalculated isupdated
+  );
+
+  event SetLithiumRewardAddress(
+    address rewardAddress
+  );
+
+  event SetLithiumTokenAddress(
+    address lithiumTokenAddress
   );
 
   constructor () {
@@ -83,6 +99,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     LithiumToken = IERC20(_tokenAddress);
+    emit SetLithiumTokenAddress(address(LithiumToken));
   }
 
   /**
@@ -93,6 +110,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function setLithiumRewardAddress(address _rewardAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     lithiumReward = ILithiumReward(_rewardAddress);
+    emit SetLithiumRewardAddress(address(lithiumReward));
   }
 
   /**
@@ -146,11 +164,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function createQuestion(
     uint16 categoryId,
     uint256 bounty,
+    uint256 pricingTime,
     uint256 endTime,
     string memory description,
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
+    require(pricingTime>endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
     isValidAnswerSet(answerSet);
@@ -167,9 +187,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.answerSet = answerSet;
     question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
+    question.pricingTime = pricingTime;
     questions.push(question);
         
-    emit QuestionCreated(id, bounty, endTime, categoryId, question.owner, description, answerSet);
+    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
   }
 
   /**
@@ -338,5 +359,27 @@ contract LithiumPricing is ILithiumPricing, Roles {
     for (uint256 i = 0; i < questionIds.length; i++) {
       claimReward(questionIds[i]);
     }
+  }
+
+   /**
+  * @dev Allow Lithium Coordinator to submit status of rewards 
+  * the `questionId` is the id of the question to updated the status of reward
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  * - endtime must be passed for answering question
+  * - rewards can't be updated again with same question id
+  * - question id must be valid 
+  */
+
+  function updateRewardCalculatedStatus(uint256 questionId)external{
+    require(isAdmin(msg.sender),"Must be admin");
+    require(questionId < questions.length, "Invalid question id");
+    Question storage question = questions[questionId];
+    require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
+    require(question.isRewardCalculated==RewardCalculated.NotCalculated,"Rewards is already updated");
+    question.isRewardCalculated= RewardCalculated.Calculated;
+    emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
 }
