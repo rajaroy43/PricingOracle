@@ -7,8 +7,10 @@ const Layout = ({ sideBar, main }: any) =>
     <Box width='20%'>
       {sideBar}
     </Box>
-    <div style={{ display: 'flex', marginTop: '1px', height: 'inherit' }}>
-      {main}
+    <div style={{ display: 'flex', marginTop: '2em', height: 'inherit' }}>
+      <div style={{ width: '80%', paddingLeft: '2.5%', marginTop: '2em' }}>
+        {main}
+      </div>
     </div>
   </Flex>
 
