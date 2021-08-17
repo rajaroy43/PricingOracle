@@ -62,16 +62,6 @@ describe("Lithium Pricing", async function () {
     
 
     describe("Create a question", function () {
-      it("Should able to get 0  questionid with category id 0 ",async()=>{
-        const categoryID=0;
-        const questionSetsGroup=await lithiumPricing.getQuestionGroupsByCategory(categoryID);
-        expect(questionSetsGroup.length).to.be.equal(0);
-      });
-
-      it("Should not able to get  questionid with invalid category id  ",async()=>{
-        const categoryID=1;
-        await expect(lithiumPricing.getQuestionGroupsByCategory(categoryID)).to.be.reverted;
-      });
 
       it("Should be able to create a question with pricingTime", async function () {
         const senderBalance = await lithToken.balanceOf(account0.address)
@@ -100,9 +90,6 @@ describe("Lithium Pricing", async function () {
           description,
           answerSet
         )
-        const categoryID=0;
-        const questionSetsGroup=await lithiumPricing.getQuestionGroupsByCategory(categoryID);
-        expect(parseInt(questionSetsGroup[0])).to.be.equal(0);
         const senderBalanceAfter = await lithToken.balanceOf(account0.address)
 
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
@@ -133,8 +120,8 @@ describe("Lithium Pricing", async function () {
     describe("Answer a question", function () {
 
       it("Should not able to get answer sets with invalid question  id  ",async()=>{
-        const categoryID=1;
-        await expect(lithiumPricing.getQuestionGroupsByCategory(categoryID)).to.be.reverted;
+        const questionId=1;
+        await expect(lithiumPricing.getAnswerGroups(questionId)).to.be.reverted;
       });
       it("Should be able to answer a question and get groups answer with individual id", async function () {
         const senderBalance = await lithToken.balanceOf(account1.address)

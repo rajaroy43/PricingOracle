@@ -46,8 +46,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   mapping(uint256 => mapping(address => Answer)) public answers;
 // questionId => groupOfAnswerProvided
   mapping(uint256 =>  uint256[])  answerSetsGroups;
-  // categoryId=> groupOfQuestion ids
-  mapping(uint256=>uint256[]) questionSetsGroup;
+
   event CategoryAdded(
     uint256 id,
     string label
@@ -192,7 +191,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.endTime = endTime;
     question.pricingTime = pricingTime;
     questions.push(question);
-    questionSetsGroup[categoryId].push(id);
     emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
   }
 
@@ -390,9 +388,5 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function getAnswerGroups(uint256 questionId) public view returns(uint256[] memory){
     require(questionId < questions.length, "Invalid question id");
     return answerSetsGroups[questionId];
-  }
-  function getQuestionGroupsByCategory( uint16 categoryId) public view returns(uint256[] memory){
-    require(categories[categoryId] != 0, "Invalid categoryId");
-    return questionSetsGroup[categoryId];
   }
 }
