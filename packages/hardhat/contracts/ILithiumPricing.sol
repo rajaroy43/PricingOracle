@@ -28,7 +28,8 @@ interface ILithiumPricing {
     uint256[] memory answerSetTotalStaked,
     uint256 bounty,
     uint256 totalStaked,
-    uint256 endTime
+    uint256 endTime,
+    uint256 pricingTime
   ); 
 
   /**
