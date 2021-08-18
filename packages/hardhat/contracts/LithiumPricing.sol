@@ -23,7 +23,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 id; // uinique identifier
     uint256 categoryId; // related category id
     string description; // explanation of asset to price ex 'The price of LITH will be higher then'
-    uint256[] answerSet; // the list of possible answers
+    AnswerSet answerSet; // the list of possible answers
     uint256[] answerSetTotalStaked; // the total staked for each answer
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
@@ -39,6 +39,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint16 answerIndex; // the index of the chosen answer in the question.answerSet
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
+
 
   Question[] questions;
 
@@ -180,18 +181,21 @@ contract LithiumPricing is ILithiumPricing, Roles {
     LithiumToken.transferFrom(msg.sender, address(this), bounty);
     uint256 id = questions.length;
     uint256[] memory answerSetTotalStaked = new uint256[](answerSet.length);
+    AnswerSet memory answersSet;
+    answersSet.id = random(id);
+    answersSet.answerIds = answerSet;
     Question memory question;
     question.id = id;
     question.categoryId = categoryId;
     question.bounty = bounty;
     question.owner = msg.sender;
-    question.description =  description;
-    question.answerSet = answerSet;
+    question.description = description;
+    question.answerSet = answersSet;
     question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     question.pricingTime = pricingTime;
     questions.push(question);
-    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
+    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answersSet);
   }
 
   /**
@@ -219,7 +223,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(_questionId < questions.length, "Invalid question id");
     Question storage question = questions[_questionId];
     require(question.endTime > block.timestamp, "Question is not longer active");
-    require(_answerIndex <= question.answerSet.length, "Invalid answer index");
+    require(_answerIndex <= question.answerSet.answerIds.length, "Invalid answer index");
     require(_stakeAmount > 0, "Stake amount must be greater than zero");
     require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
@@ -234,9 +238,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     answerSetsGroups[_questionId].push(_answerIndex);
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
-
     emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
-
   }
 
   function answerQuestions (
@@ -267,7 +269,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     id = question.id;
     categoryId = question.categoryId;
     description = question.description;
-    answerSet = question.answerSet;
+    answerSet = question.answerSet.answerIds;
     answerSetTotalStaked = question.answerSetTotalStaked;
     bounty = question.bounty;
     totalStaked = question.totalStaked;
@@ -305,7 +307,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) external view override returns (
     uint256[] memory
   ) {
-    return questions[_questionId].answerSet;
+    return questions[_questionId].answerSet.answerIds;
   }
 
   function getRewardTotal (
@@ -318,6 +320,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     return question.bounty + question.totalStaked;
   }
 
+  function random(uint256 questionId) private view returns (uint256) { 
+    return uint256(keccak256(abi.encodePacked(questionId,block.difficulty, block.timestamp)));
+  }
   /**
   * @dev Allow users to claim a reward for an answered question
   * the `questionId` is the id of the question to claim the reward for
@@ -384,8 +389,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.isRewardCalculated= RewardCalculated.Calculated;
     emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
-
-  function getAnswerGroups(uint256 questionId) public view returns(uint256[] memory){
+    function getAnswerGroups(uint256 questionId) public view returns(uint256[] memory){
     require(questionId < questions.length, "Invalid question id");
     return answerSetsGroups[questionId];
   }
