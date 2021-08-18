@@ -82,6 +82,10 @@ interface ILithiumPricing {
     uint256[] memory questionIds
   ) external;
 
+struct AnswerSet {
+  uint256 id ;// random uuid
+  uint256[] answerIds;
+}
   event QuestionCreated (
     uint256 id,
     uint256 bounty,
@@ -90,7 +94,7 @@ interface ILithiumPricing {
     uint16 categoryId,
     address owner,
     string description,
-    uint256[] answerSet
+    AnswerSet answerSet
   );
 
   event QuestionAnswered (
