@@ -72,24 +72,17 @@ describe("Lithium Pricing", async function () {
         const bounty =  transferAmount1
         const answerSet = [0,50]
         const categoryId = 0
-
-        await expect(lithiumPricing.createQuestion(
+        const tx= await lithiumPricing.createQuestion(
           categoryId,
           bounty,
           pricingTime,
           endTime,
           description,
           answerSet
-        )).emit(lithiumPricing, "QuestionCreated").withArgs(
-          0,
-          bounty,
-          pricingTime,
-          endTime,
-          categoryId,
-          account0.address,
-          description,
-          answerSet
-        )
+        );
+        const rec=await tx.wait();
+        expect(rec.events[2]["args"]["answerSet"]["answerIds"][0].toNumber()).to.equal(answerSet[0])
+        expect(rec.events[2]["args"]["answerSet"]["answerIds"][1].toNumber()).to.equal(answerSet[1])
         const senderBalanceAfter = await lithToken.balanceOf(account0.address)
 
         expect(bounty.add(senderBalanceAfter)).to.equal(senderBalance)
