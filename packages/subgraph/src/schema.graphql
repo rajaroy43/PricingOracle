@@ -34,6 +34,8 @@ type Question @entity {
   bounty: BigInt!
   totalStaked: BigInt!
   endTime: BigInt!
+  pricingTime: BigInt!
+  isRewardCalculated: Boolean!
   answerCount: BigInt!
   answers: [Answer!] @derivedFrom(field: "question")
   created: BigInt!

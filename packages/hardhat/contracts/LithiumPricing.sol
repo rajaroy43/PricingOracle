@@ -52,7 +52,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   event RewardCalculatedStatus(
     uint256 questionId,
-    RewardCalculated isupdated
+    RewardCalculated isCalculated
   );
 
   event SetLithiumRewardAddress(
@@ -258,7 +258,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory answerSetTotalStaked,
     uint256 bounty,
     uint256 totalStaked,
-    uint256 endTime
+    uint256 endTime,
+    uint256 pricingTime
   ) {
     Question storage question = questions[_id];
     owner = question.owner;
@@ -270,6 +271,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     bounty = question.bounty;
     totalStaked = question.totalStaked;
     endTime = question.endTime;
+    pricingTime = question.pricingTime;
   }
 
   function getAnswer (
@@ -372,14 +374,16 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-
   function updateRewardCalculatedStatus(uint256 questionId)external{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionId < questions.length, "Invalid question id");
+
     Question storage question = questions[questionId];
+
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
-    require(question.isRewardCalculated==RewardCalculated.NotCalculated,"Rewards is already updated");
-    question.isRewardCalculated= RewardCalculated.Calculated;
+    require(question.isRewardCalculated == RewardCalculated.NotCalculated,"Rewards is already updated");
+
+    question.isRewardCalculated = RewardCalculated.Calculated;
     emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
 }

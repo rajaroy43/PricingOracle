@@ -3,7 +3,8 @@ import {
   CategoryAdded,
   QuestionCreated,
   QuestionAnswered,
-  RewardClaimed
+  RewardClaimed,
+  RewardCalculatedStatus
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
@@ -66,6 +67,8 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.totalStaked = ZERO
   question.answerCount = ZERO
   question.endTime = event.params.endTime
+  question.pricingTime = event.params.pricingTime
+  question.isRewardCalculated = false
   question.created = event.block.timestamp
   question.save()
 
@@ -124,6 +127,12 @@ export function handleRewardClaimed(event: RewardClaimed): void {
   answer.save()
 }
 
+export function handleRewardCalculatedStatus(event: RewardCalculatedStatus): void {
+  let question = Question.load(event.params.questionId.toString())
+  question.isRewardCalculated = true
+  question.save()
+}
+
 export function handleTransfer(event: Transfer): void {
   let senderAddress = event.params.from.toHexString()
 
@@ -140,7 +149,6 @@ export function handleTransfer(event: Transfer): void {
   receiver.tokenBalance = receiver.tokenBalance.plus(event.params.value)
   receiver.save()
 }
-
 
 export function handleApproval(event: Approval): void {
   let appoverAddress = event.params.owner.toHexString()
