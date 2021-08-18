@@ -88,7 +88,7 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
   return {
     loading,
     error,
-    questions: data != null ? data.questions.map(selectQuestion) : null
+    questions: data != null ? data.questions.map(selectQuestion) : []
   } 
 }
 
