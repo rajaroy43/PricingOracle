@@ -45,8 +45,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
-//   questionId => groupOfanswerID
-  mapping(uint256 =>  uint256[])  answerSetsGroups;
 
   event CategoryAdded(
     uint256 id,
@@ -242,13 +240,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external override {
-    uint256[] memory answerIds=new uint256[](questionIds.length);
     for (uint256 i = 0; i < questionIds.length; i++) {
       answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
-      answerIds[i]=getUniqueId(questionIds[i],msg.sender);
-      answerSetsGroups[questionIds[i]].push(answerIds[i]);
     }
-    emit AnswerGroupSetSubmitted (msg.sender,answerIds);
+    emit AnswerGroupSetSubmitted(msg.sender,questionIds);
   }
 
   function getQuestion (
@@ -388,10 +383,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(question.isRewardCalculated==RewardCalculated.NotCalculated,"Rewards is already updated");
     question.isRewardCalculated= RewardCalculated.Calculated;
     emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
-  }
- function getAnswerSetsGroups(uint256 questionId) public view returns(uint256[] memory){
-    require(questionId < questions.length, "Invalid question id");
-    return answerSetsGroups[questionId];
   }
 
 }

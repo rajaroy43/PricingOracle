@@ -118,18 +118,12 @@ describe("Lithium Pricing", async function () {
 
     describe("Answer a question", function () {
 
-      it("Should not able to get answer sets with invalid question  id  ",async()=>{
-        const questionId=1;
-        await expect(lithiumPricing.getAnswerSetsGroups(questionId)).to.be.revertedWith("Invalid question id");
-      });
-
       it("Should be able to answer a question", async function () {account0
       
         const senderBalance = await lithToken.balanceOf(account1.address)
         const ids = [0]
         const stakeAmounts = [stakeAmount]
         const answerIndexes = [1]
-        const answerGroupIds=[ethers.utils.solidityKeccak256([ "uint256", "address" ],[ids[0],account1.address])];
         await expect(lithiumPricing.connect(account1).answerQuestions(
           ids,
           stakeAmounts,
@@ -139,7 +133,7 @@ describe("Lithium Pricing", async function () {
           account1.address,
           stakeAmounts[0],
           answerIndexes[0]
-        ).emit(lithiumPricing,"AnswerGroupSetSubmitted").withArgs(account1.address,answerGroupIds)
+        ).emit(lithiumPricing,"AnswerGroupSetSubmitted").withArgs(account1.address,ids)
         const senderBalanceAfter = await lithToken.balanceOf(account1.address)
 
         expect(stakeAmounts[0].add(senderBalanceAfter)).to.equal(senderBalance)
@@ -147,7 +141,6 @@ describe("Lithium Pricing", async function () {
         const sender2Balance = await lithToken.balanceOf(account2.address)
         const stake2Amounts = [ethers.utils.parseUnits("20.0", 18)]
         const answer2Indexes = [0]
-        const answerGroupIdsAccount2=[ethers.utils.solidityKeccak256([ "uint256", "address" ],[ids[0],account2.address])];
         await expect(lithiumPricing.connect(account2).answerQuestions(
           ids,
           stake2Amounts,
@@ -157,10 +150,7 @@ describe("Lithium Pricing", async function () {
           account2.address,
           stake2Amounts[0],
           answer2Indexes[0]
-        ).emit(lithiumPricing,"AnswerGroupSetSubmitted").withArgs(account2.address,answerGroupIdsAccount2)
-        const answerSetsGroups=await lithiumPricing.getAnswerSetsGroups(0);
-        expect(answerSetsGroups[0]).to.be.equal(answerGroupIds[0])
-        expect(answerSetsGroups[1]).to.be.equal(answerGroupIdsAccount2[0])
+        ).emit(lithiumPricing,"AnswerGroupSetSubmitted").withArgs(account2.address,ids)
         const sender2BalanceAfter = await lithToken.balanceOf(account2.address)
 
         expect(stake2Amounts[0].add(sender2BalanceAfter)).to.equal(sender2Balance)
