@@ -1,9 +1,8 @@
-const { ethers } = require("hardhat");
+const { ethers} = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 
 use(solidity);
-
 describe("Lithium Pricing", async function () {
   let lithiumPricing, lithiumReward, lithToken, account0, account1, account2, stakeAmount, transferAmount1, approveAmount;
 
@@ -118,12 +117,13 @@ describe("Lithium Pricing", async function () {
     });
 
     describe("Answer a question", function () {
-      it("Should be able to answer a question", async function () {
+
+      it("Should be able to answer a question", async function () {account0
+      
         const senderBalance = await lithToken.balanceOf(account1.address)
         const ids = [0]
         const stakeAmounts = [stakeAmount]
         const answerIndexes = [1]
-
         await expect(lithiumPricing.connect(account1).answerQuestions(
           ids,
           stakeAmounts,
@@ -133,8 +133,7 @@ describe("Lithium Pricing", async function () {
           account1.address,
           stakeAmounts[0],
           answerIndexes[0]
-        )
-
+        ).emit(lithiumPricing,"AnswerGroupSetSubmitted").withArgs(account1.address,ids)
         const senderBalanceAfter = await lithToken.balanceOf(account1.address)
 
         expect(stakeAmounts[0].add(senderBalanceAfter)).to.equal(senderBalance)
@@ -142,7 +141,6 @@ describe("Lithium Pricing", async function () {
         const sender2Balance = await lithToken.balanceOf(account2.address)
         const stake2Amounts = [ethers.utils.parseUnits("20.0", 18)]
         const answer2Indexes = [0]
-
         await expect(lithiumPricing.connect(account2).answerQuestions(
           ids,
           stake2Amounts,
@@ -152,8 +150,7 @@ describe("Lithium Pricing", async function () {
           account2.address,
           stake2Amounts[0],
           answer2Indexes[0]
-        )
-
+        ).emit(lithiumPricing,"AnswerGroupSetSubmitted").withArgs(account2.address,ids)
         const sender2BalanceAfter = await lithToken.balanceOf(account2.address)
 
         expect(stake2Amounts[0].add(sender2BalanceAfter)).to.equal(sender2Balance)

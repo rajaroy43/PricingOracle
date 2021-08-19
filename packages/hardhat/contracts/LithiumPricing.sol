@@ -40,6 +40,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
 
+
   Question[] questions;
 
   // questionId => answerer => Answer
@@ -183,13 +184,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.categoryId = categoryId;
     question.bounty = bounty;
     question.owner = msg.sender;
-    question.description =  description;
+    question.description = description;
     question.answerSet = answerSet;
     question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     question.pricingTime = pricingTime;
     questions.push(question);
-        
     emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
   }
 
@@ -232,9 +232,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     answers[_questionId][msg.sender] = answer;
     question.totalStaked = question.totalStaked + _stakeAmount;
     question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
-
     emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
-
   }
 
   function answerQuestions (
@@ -245,6 +243,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     for (uint256 i = 0; i < questionIds.length; i++) {
       answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
     }
+    emit AnswerGroupSetSubmitted(msg.sender,questionIds);
   }
 
   function getQuestion (
@@ -318,6 +317,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     return question.bounty + question.totalStaked;
   }
 
+  function getUniqueId(uint256 questionId,address caller) private pure returns (uint256) { 
+    return uint256(keccak256(abi.encodePacked(questionId,caller)));
+  }
   /**
   * @dev Allow users to claim a reward for an answered question
   * the `questionId` is the id of the question to claim the reward for
@@ -386,4 +388,5 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.isRewardCalculated = RewardCalculated.Calculated;
     emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
+
 }

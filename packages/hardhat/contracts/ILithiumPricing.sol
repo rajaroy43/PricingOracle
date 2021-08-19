@@ -101,6 +101,11 @@ interface ILithiumPricing {
     uint16 answerIndex
   );
 
+  event AnswerGroupSetSubmitted (
+  address answerer,
+  uint256[] questionIds
+);
+
   event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);
-   
+
 }
