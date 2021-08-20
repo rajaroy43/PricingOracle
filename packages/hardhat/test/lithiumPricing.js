@@ -1,7 +1,7 @@
 const { ethers} = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
-
+const {BigNumber} = ethers;
 use(solidity);
 describe("Lithium Pricing", async function () {
   let lithiumPricing, lithiumReward, lithToken, account0, account1, account2, stakeAmount, transferAmount1, approveAmount;
@@ -310,6 +310,54 @@ describe("Lithium Pricing", async function () {
         to.be.revertedWith("Invalid question id")
        });
     });
+    describe("Wisdom node reputation ", async function () {
+      const categoryIds=[[0,1],[1,2],[0,2]]
+      //fake repuation scores
+      const reputationScores=[[10,20],[0,5],[37,75]]
+
+      it("Should allow admins to update reputaions scrore", async function () {
+        const addressesToUpdate=[account0.address,account1.address,account2.address]
+        await expect(lithiumPricing.updateReputation(addressesToUpdate,categoryIds,reputationScores))
+        .emit(lithiumPricing, "ReputationUpdated").withArgs(
+          addressesToUpdate,BigNumber.from(categoryIds),BigNumber.from(reputationScores)
+       )
+       const getReputation=await lithiumPricing.getRepuation(account0.address,categoryIds[0][0]);
+       expect(getReputation).to.be.equal(reputationScores[0][0])
+      });
+
+      it("Should not allow non admins to update reputaions scrore", async function () {
+        const addressesToUpdate=[account0.address,account1.address,account2.address]
+        await expect(lithiumPricing.connect(account1).
+              updateReputation(addressesToUpdate,categoryIds,reputationScores)).
+              to.be.revertedWith("Must be admin")
+       });
+
+      it("Should not allow 0 address to update reputation", async function () {
+        const addressesToUpdate=[]
+        await expect(lithiumPricing.
+              updateReputation(addressesToUpdate,categoryIds,reputationScores)).
+              to.be.revertedWith("address length must be greater than zero")
+       });
+       
+       it("Should not update reputation with  invalid  array of  wisdom node address  ", async function () {
+        const addressesToUpdate=[account0.address]
+        const categoryIds=[[0,1],[1,2]]
+        //fake repuation scores
+        const reputationScores=[[10,20],[37,75]]
+        await expect(lithiumPricing.
+              updateReputation(addressesToUpdate,categoryIds,reputationScores)).
+              to.be.revertedWith("incomplete address array")
+       });
+       it("Should not update reputation with  invalid  array of categoryid and reputation", async function () {
+        const addressesToUpdate=[account0.address,account1.address]
+        const categoryIds=[[0,1],[1,2]]
+        //fake repuation scores
+        const reputationScores=[[10],[90]]
+        await expect(lithiumPricing.
+              updateReputation(addressesToUpdate,categoryIds,reputationScores)).
+              to.be.revertedWith("invalid categoryIds/reputationScore array")
+       });
+    })
 
   });
 });

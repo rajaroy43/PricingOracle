@@ -46,6 +46,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
 
+  mapping (address => mapping(uint256=>uint256)) userReputationScores;
+
   event CategoryAdded(
     uint256 id,
     string label
@@ -317,9 +319,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     return question.bounty + question.totalStaked;
   }
 
-  function getUniqueId(uint256 questionId,address caller) private pure returns (uint256) { 
-    return uint256(keccak256(abi.encodePacked(questionId,caller)));
-  }
   /**
   * @dev Allow users to claim a reward for an answered question
   * the `questionId` is the id of the question to claim the reward for
@@ -388,5 +387,20 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.isRewardCalculated = RewardCalculated.Calculated;
     emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
+  function updateReputation(address[] memory addressesToUpdate,uint256[][] memory categoryIds,uint256[][] memory  reputationScores) external  {
+    require(isAdmin(msg.sender),"Must be admin");
+    require(addressesToUpdate.length!=0,"address length must be greater than zero");
+    require(addressesToUpdate.length==categoryIds.length&&categoryIds.length==reputationScores.length,"incomplete address array");
+    for (uint256 i = 0; i < addressesToUpdate.length; i++) {
+      require(categoryIds[i].length==reputationScores[i].length,"invalid categoryIds/reputationScore array");
+      for(uint256 j=0;j<categoryIds[i].length;j++){
+        userReputationScores[addressesToUpdate[i]][categoryIds[i][j]]+=reputationScores[i][j];
+     }
+    }
+    emit ReputationUpdated(addressesToUpdate,categoryIds,reputationScores);
+  }
 
+  function getRepuation(address user,uint256 categoryId)public view returns(uint256){
+    return userReputationScores[user][categoryId];
+  }
 }
