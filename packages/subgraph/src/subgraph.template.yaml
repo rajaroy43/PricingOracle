@@ -31,6 +31,10 @@ dataSources:
           handler: handleCategoryAdded
         - event: RewardCalculatedStatus(uint256,uint8)
           handler: handleRewardCalculatedStatus
+        - event: SetLithiumRewardAddress(address)
+          handler: handleSetLithiumRewardAddress
+        - event: SetLithiumTokenAddress(address)
+          handler: handleSetLithiumTokenAddress
       file: ./src/mapping.ts
 
   - kind: ethereum/contract

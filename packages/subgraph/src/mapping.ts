@@ -1,20 +1,35 @@
-import { BigInt, dataSource, log } from "@graphprotocol/graph-ts"
+import { Address, BigInt } from "@graphprotocol/graph-ts"
 import {
   CategoryAdded,
   QuestionCreated,
   QuestionAnswered,
   RewardClaimed,
-  RewardCalculatedStatus
+  RewardCalculatedStatus,
+  SetLithiumRewardAddress,
+  SetLithiumTokenAddress
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
   Transfer,
   Approval
 } from "../generated/LithiumToken/LithiumToken"
-import { User, Question, Answer, QuestionCategory } from "../generated/schema"
+import { User, Question, Answer, QuestionCategory, PricingContractMeta } from "../generated/schema"
 
 let ZERO = BigInt.fromI32(0)
 let ONE = BigInt.fromI32(1)
+
+const PRICING_CONTRACT_META_ID = 'pricing_contract_meta'
+
+function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
+  let meta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
+  if (meta == null) {
+    meta = new PricingContractMeta(PRICING_CONTRACT_META_ID)
+    meta.address = address
+    meta.save()
+  }
+
+  return meta as PricingContractMeta
+}
 
 function getOrCreateUser(address: string): User {
   let user = User.load(address)
@@ -35,6 +50,19 @@ function getOrCreateUser(address: string): User {
   return user as User
 }
 
+export function handleSetLithiumRewardAddress(event: SetLithiumRewardAddress): void {
+  let meta = getOrCreatePricingContractMeta(event.address)
+  event.address
+  meta.rewardAddress = event.params.rewardAddress
+  meta.save()
+}
+
+export function handleSetLithiumTokenAddress(event: SetLithiumTokenAddress): void {
+  let meta = getOrCreatePricingContractMeta(event.address)
+  meta.tokenAddress = event.params.lithiumTokenAddress
+  meta.save()
+}
+
 export function handleCategoryAdded(event: CategoryAdded): void {
   let category = new QuestionCategory(event.params.id.toString())
   category.label = event.params.label
@@ -46,7 +74,6 @@ export function handleCategoryAdded(event: CategoryAdded): void {
 }
 
 export function handleQuestionCreated(event: QuestionCreated): void {
-  log.info('!!!!!!!handling question created', [])
   let ownerAddress = event.params.owner.toHexString()
 
   let user = getOrCreateUser(ownerAddress)
@@ -73,7 +100,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.save()
 
   let category = QuestionCategory.load(BigInt.fromI32(event.params.categoryId).toString())
-  category.questionCount = category.questionCount + ONE
+  category.questionCount = category.questionCount.plus(ONE)
   category.totalBounty = category.totalBounty.plus(event.params.bounty)
   category.save()
 }
@@ -154,12 +181,9 @@ export function handleApproval(event: Approval): void {
   let appoverAddress = event.params.owner.toHexString()
 
   let approver = getOrCreateUser(appoverAddress)
-  log.info('dataSource address {}', [dataSource.address().toHexString()])
   
-  let pricingAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3'// '0x8d555d45d60a57eb8d2da7562d7213ae91f71f0d'
-  log.info('<><><><><><>pricing address {}', [event.params.spender.toHexString()])
-  if (pricingAddress == event.params.spender.toHexString()) {
-    log.info('pricing approved {}', [pricingAddress])
+  let pricingMeta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
+  if (pricingMeta.address == event.params.spender) {
     approver.tokenApprovalBalance = approver.tokenApprovalBalance.plus(event.params.value)
     approver.save()
   }

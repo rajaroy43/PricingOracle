@@ -1,6 +1,13 @@
 # typings for graphql-code-generator, uncomment to generate Typscript types
 # scalar BigInt
 
+type PricingContractMeta @entity {
+  id: ID!
+  address: Bytes!
+  tokenAddress: Bytes
+  rewardAddress: Bytes
+}
+
 type User @entity {
   id: ID! # address
   questions: [Question!] @derivedFrom(field: "owner")
