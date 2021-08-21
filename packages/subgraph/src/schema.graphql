@@ -1,5 +1,6 @@
 # typings for graphql-code-generator, uncomment to generate Typscript types
 # scalar BigInt
+# scalar Bytes
 
 type PricingContractMeta @entity {
   id: ID!
