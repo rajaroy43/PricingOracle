@@ -35,6 +35,8 @@ dataSources:
           handler: handleSetLithiumRewardAddress
         - event: SetLithiumTokenAddress(address)
           handler: handleSetLithiumTokenAddress
+        - event: AnswerGroupSetSubmitted(address,uint256[])
+          handler: handleAnswerGroupSetSubmitted
       file: ./src/mapping.ts
 
   - kind: ethereum/contract
