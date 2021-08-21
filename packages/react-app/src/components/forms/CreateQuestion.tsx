@@ -28,6 +28,10 @@ const getForm = () => (submit: any, isValid: boolean) => (
         type="number" 
       />
       <DateTime
+        label="Pricing Time"
+        name="pricingTime"
+      />
+      <DateTime
         label="End Time"
         name="endTime"
       />
@@ -46,7 +50,8 @@ const getForm = () => (submit: any, isValid: boolean) => (
 )
 
 const getMethodArgs = (categoryId: string) => (values: any) => {
-  return [categoryId, parseUnits(values.bounty), values.endTime / 1000, values.description, [0, values.answerSet]]
+  console.log(`inside create Q vals ${JSON.stringify(values)}`)
+  return [categoryId, parseUnits(values.bounty), values.pricingTime, values.endTime, values.description, [0, values.answerSet]]
 }
 
 const CreateQuestionForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {
