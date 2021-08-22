@@ -9,6 +9,25 @@ module.exports = [
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "answerer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "questionIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "AnswerGroupSetSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "id",
         "type": "uint256"
@@ -72,6 +91,12 @@ module.exports = [
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "pricingTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "endTime",
         "type": "uint256"
       },
@@ -101,6 +126,50 @@ module.exports = [
       }
     ],
     "name": "QuestionCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address[]",
+        "name": "addressesToUpdate",
+        "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "categoryIds",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "reputationScores",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "ReputationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "questionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum LithiumPricing.RewardCalculated",
+        "name": "isCalculated",
+        "type": "uint8"
+      }
+    ],
+    "name": "RewardCalculatedStatus",
     "type": "event"
   },
   {
@@ -201,6 +270,32 @@ module.exports = [
       }
     ],
     "name": "RoleRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "rewardAddress",
+        "type": "address"
+      }
+    ],
+    "name": "SetLithiumRewardAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "lithiumTokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "SetLithiumTokenAddress",
     "type": "event"
   },
   {
@@ -319,6 +414,11 @@ module.exports = [
       {
         "internalType": "uint256",
         "name": "bounty",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pricingTime",
         "type": "uint256"
       },
       {
@@ -477,6 +577,35 @@ module.exports = [
       {
         "internalType": "uint256",
         "name": "endTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pricingTime",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "categoryId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRepuation",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -687,6 +816,42 @@ module.exports = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "addressesToUpdate",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "categoryIds",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "reputationScores",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "updateReputation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "questionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateRewardCalculatedStatus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ];
