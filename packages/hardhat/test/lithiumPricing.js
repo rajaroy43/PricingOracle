@@ -587,7 +587,7 @@ describe("Lithium Pricing", async function () {
       expect(getReputation).to.be.equal(reputationScores[0]);
     });
 
-    it("Should not allow non admins to update reputaions scrore", async function () {
+    it("Should not allow non admins to update reputaion scrores", async function () {
       const addressesToUpdate = [
         account0.address,
         account0.address,
