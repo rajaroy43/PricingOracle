@@ -49,7 +49,7 @@ describe("Lithium Pricing", async function () {
       expect(owner).equal(true);
     });
 
-    it("Shoul set initial category id as preIPO", async () => {
+    it("Should set initial category id as preIPO", async () => {
       const label = "preIPO";
       const categoryid = 0;
       const pricingContract = await ethers.getContractFactory("LithiumPricing");
@@ -174,7 +174,7 @@ describe("Lithium Pricing", async function () {
           description,
           answerSet
         )
-      ).to.be.reverted;
+      ).to.be.revertedWith("reverted with panic code 0x32");
     });
 
     it("Should fail to create a question with an invalid answerSet length: too few", async function () {
@@ -524,7 +524,7 @@ describe("Lithium Pricing", async function () {
           ).to.be.revertedWith("Must be admin");
         });
 
-        it("Shound not update reward status again ", async function () {
+        it("Should not update reward status again ", async function () {
           const calculatedewardStatus = 1;
           await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
             .emit(lithiumPricing, "RewardCalculatedStatus")
@@ -572,7 +572,7 @@ describe("Lithium Pricing", async function () {
       [37, 75],
     ];
 
-    it("Should allow admins to update reputaions scrore", async function () {
+    it("Should allow admins to update reputation scores", async function () {
       const addressesToUpdate = [
         account0.address,
         account1.address,
@@ -593,7 +593,7 @@ describe("Lithium Pricing", async function () {
       expect(getReputation).to.be.equal(reputationScores[0][0]);
     });
 
-    it("Should not allow non admins to update reputaions scrore", async function () {
+    it("Should not allow non admins to update reputation scores", async function () {
       const addressesToUpdate = [
         account0.address,
         account1.address,
