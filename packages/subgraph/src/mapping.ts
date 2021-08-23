@@ -1,5 +1,6 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts"
 import {
+  AnswerGroupSetSubmitted,
   CategoryAdded,
   QuestionCreated,
   QuestionAnswered,
@@ -13,12 +14,23 @@ import {
   Transfer,
   Approval
 } from "../generated/LithiumToken/LithiumToken"
-import { User, Question, Answer, QuestionCategory, PricingContractMeta } from "../generated/schema"
+import {
+  User,
+  Question,
+  Answer,
+  AnswerGroup,
+  QuestionCategory,
+  PricingContractMeta
+} from "../generated/schema"
 
 let ZERO = BigInt.fromI32(0)
 let ONE = BigInt.fromI32(1)
 
 const PRICING_CONTRACT_META_ID = 'pricing_contract_meta'
+
+function getAnswerId(answererAddress: string, questionId: string): string {
+  return answererAddress + "-" + questionId
+}
 
 function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
   let meta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
@@ -52,7 +64,6 @@ function getOrCreateUser(address: string): User {
 
 export function handleSetLithiumRewardAddress(event: SetLithiumRewardAddress): void {
   let meta = getOrCreatePricingContractMeta(event.address)
-  event.address
   meta.rewardAddress = event.params.rewardAddress
   meta.save()
 }
@@ -106,7 +117,6 @@ export function handleQuestionCreated(event: QuestionCreated): void {
 }
 
 export function handleQuestionAnswered(event: QuestionAnswered): void {
-
   let answererAddress = event.params.answerer.toHexString()
 
   let user = getOrCreateUser(answererAddress)
@@ -129,7 +139,8 @@ export function handleQuestionAnswered(event: QuestionAnswered): void {
   question.answerSetTotalStaked = answerSetTotalStaked
   question.save()
 
-  let answer = new Answer(event.params.questionId.toString() + '-' + answererAddress)
+  let answerId = getAnswerId(event.params.answerer.toHexString(), event.params.questionId.toString())
+  let answer = new Answer(answerId)
   answer.answerer = user.id
   answer.question = event.params.questionId.toString()
   answer.answerIndex = event.params.answerIndex
@@ -141,9 +152,7 @@ export function handleQuestionAnswered(event: QuestionAnswered): void {
 }
 
 export function handleRewardClaimed(event: RewardClaimed): void {
-
   let answererAddress = event.params.answerer.toHexString()
-
   let user = User.load(answererAddress)
   user.totalRewardsClaimed = user.totalRewardsClaimed.plus(event.params.rewardAmount)
   user.save()
@@ -152,6 +161,26 @@ export function handleRewardClaimed(event: RewardClaimed): void {
   answer.rewardClaimed = event.params.rewardAmount
   answer.status = "CLAIMED"
   answer.save()
+}
+
+export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): void {
+  let answererAddress = event.params.answerer.toHexString()
+  let answerer = User.load(answererAddress)
+  let answerGroupCount = answerer.answerGroups.length
+  let groupId = answerer.id + "-" + answerGroupCount.toString()
+  let answerGroupIds = new Array<string>()
+  let questionIds = event.params.questionIds
+
+  for (let i = 0; i< questionIds.length; i++) {
+    let questionId = questionIds[i]
+    let answerId = getAnswerId(answererAddress, questionId.toString())
+    answerGroupIds.push(answerId)
+  }
+
+  let answerGroup = new AnswerGroup(groupId)
+  answerGroup.answerer = answerer.id
+  answerGroup.answers = answerGroupIds
+  answerGroup.save()
 }
 
 export function handleRewardCalculatedStatus(event: RewardCalculatedStatus): void {

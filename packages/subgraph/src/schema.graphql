@@ -1,5 +1,6 @@
 # typings for graphql-code-generator, uncomment to generate Typscript types
 # scalar BigInt
+# scalar Bytes
 
 type PricingContractMeta @entity {
   id: ID!
@@ -12,6 +13,7 @@ type User @entity {
   id: ID! # address
   questions: [Question!] @derivedFrom(field: "owner")
   answers: [Answer!] @derivedFrom(field: "answerer")
+  answerGroups: [AnswerGroup!] @derivedFrom(field: "answerer")
   questionCount: BigInt!
   totalBounty: BigInt!
   answerCount: BigInt!
@@ -62,4 +64,11 @@ type Answer @entity {
   rewardClaimed: BigInt!
   status: AnswerStatus!
   created: BigInt!
+  group: AnswerGroup @derivedFrom(field: "answers")
+}
+
+type AnswerGroup @entity {
+  id: ID!
+  answers: [Answer!]!
+  answerer: User!
 }

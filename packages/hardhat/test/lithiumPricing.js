@@ -558,24 +558,19 @@ describe("Lithium Pricing", async function () {
       ).to.be.revertedWith("Must be admin");
     });
   });
-
   describe("Wisdom node reputation ", async function () {
-    const categoryIds = [
-      [0, 1],
-      [1, 2],
-      [0, 2],
-    ];
+    const categoryIds = [0, 1, 0, 1, 0, 1];
     //fake repuation scores
-    const reputationScores = [
-      [10, 20],
-      [0, 5],
-      [37, 75],
-    ];
+    const reputationScores = [10, 20, 0, 5, 37, 75];
 
-    it("Should allow admins to update reputation scores", async function () {
+    it("Should allow admins to update reputaion scrores", async function () {
+      await lithiumPricing.addCategory("Art Stuff");
       const addressesToUpdate = [
         account0.address,
+        account0.address,
         account1.address,
+        account1.address,
+        account2.address,
         account2.address,
       ];
       await expect(
@@ -585,18 +580,20 @@ describe("Lithium Pricing", async function () {
           reputationScores
         )
       ).emit(lithiumPricing, "ReputationUpdated");
-      //.withArgs(addressesToUpdate,categoryIds,reputationScores)
       const getReputation = await lithiumPricing.getRepuation(
         account0.address,
-        categoryIds[0][0]
+        categoryIds[0]
       );
-      expect(getReputation).to.be.equal(reputationScores[0][0]);
+      expect(getReputation).to.be.equal(reputationScores[0]);
     });
 
-    it("Should not allow non admins to update reputation scores", async function () {
+    it("Should not allow non admins to update reputaions scrore", async function () {
       const addressesToUpdate = [
         account0.address,
+        account0.address,
         account1.address,
+        account1.address,
+        account2.address,
         account2.address,
       ];
       await expect(
@@ -619,39 +616,42 @@ describe("Lithium Pricing", async function () {
 
     it("Should not update reputation with  invalid  array of  wisdom node address  ", async function () {
       const addressesToUpdate = [account0.address];
-      const categoryIds = [
-        [0, 1],
-        [1, 2],
-      ];
+      const categoryIds = [0, 1, 1, 2];
       //fake repuation scores
-      const reputationScores = [
-        [10, 20],
-        [37, 75],
-      ];
+      const reputationScores = [10, 20, 37, 75];
       await expect(
         lithiumPricing.updateReputation(
           addressesToUpdate,
           categoryIds,
           reputationScores
         )
-      ).to.be.revertedWith("incomplete address array");
+      ).to.be.revertedWith("argument array length mismatch");
     });
-
-    it("Should not update reputation with  invalid  array of categoryid and reputation", async function () {
+    it("Should not update reputation with  invalid  array of categoryids", async function () {
       const addressesToUpdate = [account0.address, account1.address];
-      const categoryIds = [
-        [0, 1],
-        [1, 2],
-      ];
+      const categoryIds = [0, 1, 1, 2];
       //fake repuation scores
-      const reputationScores = [[10], [90]];
+      const reputationScores = [10, 90];
       await expect(
         lithiumPricing.updateReputation(
           addressesToUpdate,
           categoryIds,
           reputationScores
         )
-      ).to.be.revertedWith("invalid categoryIds/reputationScore array");
+      ).to.be.revertedWith("argument array length mismatch");
+    });
+    it("Should not update reputation with  invalid  array of reputation scores", async function () {
+      const addressesToUpdate = [account0.address, account1.address];
+      const categoryIds = [0, 1];
+      //fake repuation scores
+      const reputationScores = [10, 90, 70];
+      await expect(
+        lithiumPricing.updateReputation(
+          addressesToUpdate,
+          categoryIds,
+          reputationScores
+        )
+      ).to.be.revertedWith("argument array length mismatch");
     });
   });
 });

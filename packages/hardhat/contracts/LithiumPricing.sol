@@ -387,15 +387,24 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.isRewardCalculated = RewardCalculated.Calculated;
     emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
   }
-  function updateReputation(address[] memory addressesToUpdate,uint256[][] memory categoryIds,uint256[][] memory  reputationScores) external  {
-    require(isAdmin(msg.sender),"Must be admin");
-    require(addressesToUpdate.length!=0,"address length must be greater than zero");
-    require(addressesToUpdate.length==categoryIds.length&&categoryIds.length==reputationScores.length,"incomplete address array");
+
+   /**
+  * @dev Allow Lithium Coordinator to update the reputation score of
+  * Emits a { ReputationUpdated } event.
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  * - the length of the array arguments must be equal
+  * - the categoryIds must all be valid
+  */
+  function updateReputation(address[] memory addressesToUpdate,uint256[] memory categoryIds,uint256[] memory  reputationScores) external  {
+    require(isAdmin(msg.sender), "Must be admin");
+    require(addressesToUpdate.length != 0, "address length must be greater than zero");
+    require(addressesToUpdate.length == categoryIds.length && categoryIds.length == reputationScores.length, "argument array length mismatch"); 
     for (uint256 i = 0; i < addressesToUpdate.length; i++) {
-      require(categoryIds[i].length==reputationScores[i].length,"invalid categoryIds/reputationScore array");
-      for(uint256 j=0;j<categoryIds[i].length;j++){
-        userReputationScores[addressesToUpdate[i]][categoryIds[i][j]]+=reputationScores[i][j];
-     }
+      require(categoryIds[i] < categories.length,"invalid categoryId");
+      userReputationScores[addressesToUpdate[i]][categoryIds[i]] += reputationScores[i];
     }
     emit ReputationUpdated(addressesToUpdate,categoryIds,reputationScores);
   }
