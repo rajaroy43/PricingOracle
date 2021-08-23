@@ -108,6 +108,6 @@ interface ILithiumPricing {
 
   event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);
 
-  event ReputationUpdated(address[] addressesToUpdate,uint256[][] categoryIds,uint256[][] reputationScores);
+  event ReputationUpdated(address[] addressesToUpdate,uint256[] categoryIds,uint256[] reputationScores);
 
 }
