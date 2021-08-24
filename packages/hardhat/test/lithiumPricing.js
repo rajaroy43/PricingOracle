@@ -57,6 +57,12 @@ describe("Lithium Pricing", async function () {
       await expect(lithiumPricing.deployTransaction)
         .to.emit(lithiumPricing, "CategoryAdded")
         .withArgs(categoryid, label);
+      const categoryIdHash = ethers.utils.solidityKeccak256(
+        ["string"],
+        [label]
+      );
+      const getCategoryIdHash = await lithiumPricing.categories(categoryid);
+      expect(getCategoryIdHash).to.be.equal(categoryIdHash);
     });
 
     it("should emit events for setting  lithium token", async () => {
@@ -73,6 +79,13 @@ describe("Lithium Pricing", async function () {
       ).to.be.revertedWith("Must be admin to set token address");
     });
 
+    it("should not allow  to set lithium token address with null address", async () => {
+      const NULL_ADDRESS = ethers.constants.AddressZero;
+      await expect(
+        lithiumPricing.setLithiumTokenAddress(NULL_ADDRESS)
+      ).to.be.revertedWith("Token Address can't be null");
+    });
+
     it("should emit events for setting  lithium rewards", async () => {
       await expect(
         lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
@@ -87,6 +100,13 @@ describe("Lithium Pricing", async function () {
           .connect(account1)
           .setLithiumRewardAddress(lithiumReward.address)
       ).to.be.revertedWith("Must be admin to set token address");
+    });
+
+    it("should not allow  to set lithium reward address with null address", async () => {
+      const NULL_ADDRESS = ethers.constants.AddressZero;
+      await expect(
+        lithiumPricing.setLithiumRewardAddress(NULL_ADDRESS)
+      ).to.be.revertedWith("Reward Address can't be null");
     });
   });
 
@@ -225,7 +245,7 @@ describe("Lithium Pricing", async function () {
       const endTime = block.timestamp + 5;
       const description = "foo2";
       const bounty = transferAmount1;
-      const answerSet = [50, 40];
+      const answerSet = [0, 0];
       const categoryId = 0;
 
       await expect(
@@ -240,6 +260,26 @@ describe("Lithium Pricing", async function () {
       ).to.be.revertedWith("Answers must be in ascending order");
     });
 
+    it("Should fail to create a question if 1st index is not equal to 0", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo2";
+      const bounty = transferAmount1;
+      const answerSet = [50, 40];
+      const categoryId = 0;
+
+      await expect(
+        lithiumPricing.createQuestion(
+          categoryId,
+          bounty,
+          pricingTime,
+          endTime,
+          description,
+          answerSet
+        )
+      ).to.be.revertedWith("AnswerSets must starts with 0");
+    });
     it("Should fail to create a question with enough bounty provided", async function () {
       const block = await ethers.provider.getBlock();
       const pricingTime = block.timestamp + 7;
@@ -340,6 +380,17 @@ describe("Lithium Pricing", async function () {
         expect(stake2Amounts[0].add(sender2BalanceAfter)).to.equal(
           sender2Balance
         );
+      });
+
+      it("Should not  able to answer a question for mismatch array invalid ids/stakeAmounts/answerIndexes", async function () {
+        const ids = [0];
+        const stakeAmounts = [stakeAmount, 12];
+        const answerIndexes = [1];
+        await expect(
+          lithiumPricing
+            .connect(account1)
+            .answerQuestions(ids, stakeAmounts, answerIndexes)
+        ).to.be.revertedWith("Array mismatch");
       });
 
       it("Should not  able to answer a question for invalid Question id", async function () {
@@ -483,6 +534,16 @@ describe("Lithium Pricing", async function () {
           ).to.be.revertedWith("Reward has already been claimed");
         });
 
+        it("Should not be able to claim reward with invalid questionID ", async function () {
+          const one_minute = 60 * 60;
+          await ethers.provider.send("evm_increaseTime", [one_minute]);
+          await ethers.provider.send("evm_mine");
+          const ids = [1];
+          await expect(lithiumPricing.claimRewards(ids)).to.be.revertedWith(
+            "Invalid question id"
+          );
+        });
+
         it("Should not able  claim reward if wisdom node doesn't give answer yet", async function () {
           const one_minute = 60 * 60;
           await ethers.provider.send("evm_increaseTime", [one_minute]);
@@ -543,12 +604,19 @@ describe("Lithium Pricing", async function () {
       });
     });
   });
+
   describe("Adding categories", function () {
     it("Should allow admins to add a category", async function () {
       const categoryLabel = "Art Stuff";
       await expect(lithiumPricing.addCategory(categoryLabel))
         .emit(lithiumPricing, "CategoryAdded")
         .withArgs(1, categoryLabel);
+      const categoryIdHash = ethers.utils.solidityKeccak256(
+        ["string"],
+        [categoryLabel]
+      );
+      const getCategoryIdHash = await lithiumPricing.categories(1);
+      expect(getCategoryIdHash).to.be.equal(categoryIdHash);
     });
 
     it("Should not allow non admins to add a category", async function () {
@@ -557,7 +625,15 @@ describe("Lithium Pricing", async function () {
         lithiumPricing.connect(account1).addCategory(categoryLabel)
       ).to.be.revertedWith("Must be admin");
     });
+
+    it("Should not allow to add a category with empty category label", async function () {
+      const categoryLabel = "";
+      await expect(
+        lithiumPricing.addCategory(categoryLabel)
+      ).to.be.revertedWith("Category label can't be null");
+    });
   });
+
   describe("Wisdom node reputation ", async function () {
     const categoryIds = [0, 1, 0, 1, 0, 1];
     //fake repuation scores
