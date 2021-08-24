@@ -106,6 +106,8 @@ interface ILithiumPricing {
   uint256[] questionIds
 );
 
+  event MinimumStakeUpdated(uint256 minimumStake);
+
   event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);
 
   event ReputationUpdated(address[] addressesToUpdate,uint256[] categoryIds,uint256[] reputationScores);

@@ -65,6 +65,11 @@ describe("Lithium Pricing", async function () {
       expect(getCategoryIdHash).to.be.equal(categoryIdHash);
     });
 
+    it("Should set minimum stake =0 initially", async () => {
+      const getMinimumStake = await lithiumPricing.minimumStake();
+      expect(getMinimumStake).equal(0);
+    });
+
     it("should emit events for setting  lithium token", async () => {
       await expect(lithiumPricing.setLithiumTokenAddress(lithToken.address))
         .emit(lithiumPricing, "SetLithiumTokenAddress")
@@ -431,15 +436,19 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith("Invalid answer index");
       });
 
-      it("Should not  able to answer is stake amount=0", async function () {
+      it("Should not  able to answer if stake amount < minimumStake amount", async function () {
         const ids = [0];
         const stakeAmounts = [0];
         const answerIndexes = [1];
+        const minimumStake = ethers.utils.parseUnits("10.0", 18);
+        await expect(lithiumPricing.updateMinimumStake(minimumStake))
+          .emit(lithiumPricing, "MinimumStakeUpdated")
+          .withArgs(minimumStake);
         await expect(
           lithiumPricing
             .connect(account1)
             .answerQuestions(ids, stakeAmounts, answerIndexes)
-        ).to.be.revertedWith("Stake amount must be greater than zero");
+        ).to.be.revertedWith("Stake amount must be greater than minimumStake");
       });
 
       it("Should not  be able to answer if don't have sufficient balance", async function () {
@@ -728,6 +737,25 @@ describe("Lithium Pricing", async function () {
           reputationScores
         )
       ).to.be.revertedWith("argument array length mismatch");
+    });
+  });
+
+  describe("Minimum Stake for answering questions", () => {
+    it("Should allow admins to set minimum stake ", async () => {
+      //minimum stake=10LITH tokens
+      const minimumStake = ethers.utils.parseUnits("10.0", 18);
+      await expect(lithiumPricing.updateMinimumStake(minimumStake))
+        .emit(lithiumPricing, "MinimumStakeUpdated")
+        .withArgs(minimumStake);
+      const getMinimumStake = await lithiumPricing.minimumStake();
+      expect(getMinimumStake).equal(minimumStake);
+    });
+
+    it("Should not allow admins to set minimum stake ", async () => {
+      const minimumStake = ethers.utils.parseUnits("10.0", 18);
+      await expect(
+        lithiumPricing.connect(account1).updateMinimumStake(minimumStake)
+      ).to.be.revertedWith("Must be admin");
     });
   });
 });

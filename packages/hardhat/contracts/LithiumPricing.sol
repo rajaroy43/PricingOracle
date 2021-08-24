@@ -49,7 +49,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
   mapping(uint256 => mapping(address => Answer)) public answers;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
-
+  // minimumStake put by wisdom nodes when answering question
+  uint256 public minimumStake;
   event CategoryAdded(
     uint256 id,
     string label
@@ -224,7 +225,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     Question storage question = questions[_questionId];
     require(question.endTime > block.timestamp, "Question is not longer active");
     require(_answerIndex <= question.answerSet.length, "Invalid answer index");
-    require(_stakeAmount > 0, "Stake amount must be greater than zero");
+    require(_stakeAmount >= minimumStake, "Stake amount must be greater than minimumStake");
     require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
@@ -394,7 +395,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
    /**
-  * @dev Allow Lithium Coordinator to update the reputation score of
+  * @dev Allow Lithium Coordinator to update the reputation score of wisdom nodes
   * Emits a { ReputationUpdated } event.
   *
   * Requirements
@@ -417,4 +418,19 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function getRepuation(address user,uint256 categoryId)public view returns(uint256){
     return userReputationScores[user][categoryId];
   }
+
+   /**
+  * @dev Allow Lithium Coordinator to update the MinimumStake 
+  * Emits a { MinimumStakeUpdated} event.
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  */
+  function updateMinimumStake(uint256 _minimumStake)external {
+    require(isAdmin(msg.sender), "Must be admin");
+    minimumStake=_minimumStake;
+    emit MinimumStakeUpdated(_minimumStake);
+  }
+
 }
