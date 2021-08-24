@@ -91,7 +91,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function addCategory(string memory _label) public {
     require(isAdmin(msg.sender), "Must be admin");
-    require(bytes(_label).length!=0, "Category label can't be null");
+    require(bytes(_label).length != 0, "Category label can't be null");
     _addCategory(_label);
   }
 
@@ -104,7 +104,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
-    require(_tokenAddress!=NULL_ADDRESS,"Token Address can't be null");
+    require(_tokenAddress != NULL_ADDRESS,"Token Address can't be null");
     LithiumToken = IERC20(_tokenAddress);
     emit SetLithiumTokenAddress(address(LithiumToken));
   }
@@ -115,7 +115,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function setLithiumRewardAddress(address _rewardAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
-    require(_rewardAddress!=NULL_ADDRESS,"Reward Address can't be null");
+    require(_rewardAddress != NULL_ADDRESS,"Reward Address can't be null");
     lithiumReward = ILithiumReward(_rewardAddress);
     emit SetLithiumRewardAddress(address(lithiumReward));
   }
@@ -138,9 +138,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     */
   function isValidAnswerSet(uint256[] memory answerSet) internal view {
     require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
-    require(answerSet[0]==0,"AnswerSets must starts with 0");
+    require(answerSet[0] == 0,"AnswerSets must starts with 0");
     for (uint256 i = 1; i < answerSet.length; i++) {
-      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
+      require(answerSet[i] > answerSet[i-1] , "Answers must be in ascending order");        
     }
   }
 
@@ -176,7 +176,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
-    require(pricingTime>endTime,"Pricing time of asset must be greater than endtime");
+    require(pricingTime > endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
     isValidAnswerSet(answerSet);
@@ -245,7 +245,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external override {
-    require(questionIds.length==stakeAmounts.length&&questionIds.length==answerIndexes.length,"Array mismatch");
+    require(questionIds.length == stakeAmounts.length && questionIds.length == answerIndexes.length,"Array mismatch");
     for (uint256 i = 0; i < questionIds.length; i++) {
       answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
     }
