@@ -4,5 +4,5 @@ COPY requirements.txt /
 RUN pip3 install -r /requirements.txt
 
 COPY app.py /
-
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:8001", "app:app"]
+ENV FLASK_RUN_PORT=9001
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9001", "app:app"]

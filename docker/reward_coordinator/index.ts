@@ -3,7 +3,7 @@ import http from "http"
 const app = express()
 
 app.get('/', ((req, res) => {
-    http.get('http://reward_calculator:8001/ping-me', (resp) => {
+    http.get('http://reward_calculator:9001/ping-me', (resp) => {
         let data = '';
 
         // A chunk of data has been received.
@@ -23,7 +23,7 @@ app.get('/', ((req, res) => {
     res.send("Hello from the node server");
 }))
 
-const port = 8000;
+const port = 9000;
 
 /*
 node is polling from 3rd party, munge data, transform it, then ship to python
