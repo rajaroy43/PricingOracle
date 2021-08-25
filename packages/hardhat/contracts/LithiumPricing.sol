@@ -16,7 +16,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   uint8 minAnswerSetLength = 2;
   uint8 maxAnswerSetLength = 2;
 
-  bytes32[] categories; 
+  bytes32[] public categories; 
 
   struct Question {
     address owner; // question creator
@@ -43,11 +43,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   Question[] questions;
 
+  address constant public NULL_ADDRESS=address(0);
+
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
-
+  // minimumStake put by wisdom nodes when answering question
+  uint256 public minimumStake;
   event CategoryAdded(
     uint256 id,
     string label
@@ -89,6 +92,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function addCategory(string memory _label) public {
     require(isAdmin(msg.sender), "Must be admin");
+    require(bytes(_label).length != 0, "Category label can't be null");
     _addCategory(_label);
   }
 
@@ -101,6 +105,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
+    require(_tokenAddress != NULL_ADDRESS,"Token Address can't be null");
     LithiumToken = IERC20(_tokenAddress);
     emit SetLithiumTokenAddress(address(LithiumToken));
   }
@@ -108,10 +113,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
   /**
   * @dev Sets the address of the LithiumReward.
   *
-
   */
   function setLithiumRewardAddress(address _rewardAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
+    require(_rewardAddress != NULL_ADDRESS,"Reward Address can't be null");
     lithiumReward = ILithiumReward(_rewardAddress);
     emit SetLithiumRewardAddress(address(lithiumReward));
   }
@@ -134,11 +139,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     */
   function isValidAnswerSet(uint256[] memory answerSet) internal view {
     require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
-
+    require(answerSet[0] == 0,"AnswerSets must starts with 0");
     for (uint256 i = 1; i < answerSet.length; i++) {
-      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
+      require(answerSet[i] > answerSet[i-1] , "Answers must be in ascending order");        
     }
-
   }
 
   /**
@@ -173,7 +177,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory answerSet
   ) external override {
     require(endTime > block.timestamp, "Endtime must be in the future");
-    require(pricingTime>endTime,"Pricing time of asset must be greater than endtime");
+    require(pricingTime > endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
     isValidAnswerSet(answerSet);
@@ -221,7 +225,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     Question storage question = questions[_questionId];
     require(question.endTime > block.timestamp, "Question is not longer active");
     require(_answerIndex <= question.answerSet.length, "Invalid answer index");
-    require(_stakeAmount > 0, "Stake amount must be greater than zero");
+    require(_stakeAmount >= minimumStake, "Stake amount must be greater than minimumStake");
     require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
@@ -242,6 +246,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external override {
+    require(questionIds.length == stakeAmounts.length && questionIds.length == answerIndexes.length,"Array mismatch");
     for (uint256 i = 0; i < questionIds.length; i++) {
       answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
     }
@@ -332,6 +337,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function claimReward (
     uint256 _questionId
   ) internal {
+    require(_questionId < questions.length, "Invalid question id");
     Question storage question = questions[_questionId];
     require(question.endTime <= block.timestamp, "Question is still active and cannot be claimed");
     Answer storage answer = answers[_questionId][msg.sender];
@@ -389,7 +395,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
    /**
-  * @dev Allow Lithium Coordinator to update the reputation score of
+  * @dev Allow Lithium Coordinator to update the reputation score of wisdom nodes
   * Emits a { ReputationUpdated } event.
   *
   * Requirements
@@ -412,4 +418,19 @@ contract LithiumPricing is ILithiumPricing, Roles {
   function getRepuation(address user,uint256 categoryId)public view returns(uint256){
     return userReputationScores[user][categoryId];
   }
+
+   /**
+  * @dev Allow Lithium Coordinator to update the MinimumStake 
+  * Emits a { MinimumStakeUpdated} event.
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  */
+  function updateMinimumStake(uint256 _minimumStake)external {
+    require(isAdmin(msg.sender), "Must be admin");
+    minimumStake=_minimumStake;
+    emit MinimumStakeUpdated(_minimumStake);
+  }
+
 }
