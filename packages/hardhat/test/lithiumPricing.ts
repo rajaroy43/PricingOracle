@@ -200,7 +200,9 @@ describe("Lithium Pricing", async function () {
           description,
           answerSet
         )
-      ).to.be.reverted;
+      ).to.be.revertedWith(
+        "VM Exception while processing transaction: revert "
+      );
     });
 
     it("Should fail to create a question with an invalid answerSet length: too few", async function () {
