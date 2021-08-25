@@ -3,16 +3,17 @@ const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const { BigNumber } = ethers;
 use(solidity);
+import { Wallet } from "@ethersproject/wallet";
+import { LithiumPricing, LithiumReward, LithiumToken } from "../typechain";
 describe("Lithium Pricing", async function () {
-  let lithiumPricing,
-    lithiumReward,
-    lithToken,
-    account0,
-    account1,
-    account2,
-    stakeAmount,
-    transferAmount1;
-
+  let lithiumPricing: LithiumPricing,
+    lithiumReward: LithiumReward,
+    lithToken: LithiumToken,
+    account0: Wallet,
+    account1: Wallet,
+    account2: Wallet,
+    stakeAmount: any,
+    transferAmount1: any;
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
     account0 = accounts[0];
@@ -53,8 +54,8 @@ describe("Lithium Pricing", async function () {
       const label = "preIPO";
       const categoryid = 0;
       const pricingContract = await ethers.getContractFactory("LithiumPricing");
-      const lithiumPricing = await pricingContract.deploy();
-      await expect(lithiumPricing.deployTransaction)
+      const lithiumPricing: LithiumPricing = await pricingContract.deploy();
+      await expect(Promise.resolve(lithiumPricing.deployTransaction))
         .to.emit(lithiumPricing, "CategoryAdded")
         .withArgs(categoryid, label);
       const categoryIdHash = ethers.utils.solidityKeccak256(
@@ -199,7 +200,7 @@ describe("Lithium Pricing", async function () {
           description,
           answerSet
         )
-      ).to.be.revertedWith("reverted with panic code 0x32");
+      ).to.be.reverted;
     });
 
     it("Should fail to create a question with an invalid answerSet length: too few", async function () {
@@ -664,7 +665,9 @@ describe("Lithium Pricing", async function () {
           categoryIds,
           reputationScores
         )
-      ).emit(lithiumPricing, "ReputationUpdated");
+      )
+        .emit(lithiumPricing, "ReputationUpdated")
+        .withArgs(addressesToUpdate, categoryIds, reputationScores);
       const getReputation = await lithiumPricing.getRepuation(
         account0.address,
         categoryIds[0]
@@ -689,7 +692,7 @@ describe("Lithium Pricing", async function () {
     });
 
     it("Should not allow 0 address to update reputation", async function () {
-      const addressesToUpdate = [];
+      const addressesToUpdate: [] = [];
       await expect(
         lithiumPricing.updateReputation(
           addressesToUpdate,
