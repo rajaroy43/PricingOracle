@@ -17,6 +17,7 @@ import { task } from "hardhat/config";
 
 import "@nomiclabs/hardhat-waffle";
 import "@tenderly/hardhat-tenderly";
+import "solidity-coverage";
 
 import "@nomiclabs/hardhat-etherscan";
 import { Network } from "@ethersproject/networks";
