@@ -18,7 +18,9 @@ interface ILithiumPricing {
     uint16 categoryId,
     address owner,
     string description,
-    uint256[] answerSet
+    uint256[] answerSet,
+    QuestionType questionType
+
   );
 
   event QuestionAnswered (
@@ -61,7 +63,7 @@ interface ILithiumPricing {
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
   enum RewardCalculated{NotCalculated,Calculated}
-
+  enum QuestionType{ Pricing, GroundTruth }
   /** Getter Functions */
 
   /**
@@ -79,7 +81,8 @@ interface ILithiumPricing {
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime,
-    uint256 pricingTime
+    uint256 pricingTime,
+    QuestionType questionType
   ); 
 
   /**
@@ -122,6 +125,7 @@ interface ILithiumPricing {
     uint256 bounty,
     uint256 pricingTime,
     uint256 endTime,
+    QuestionType questionType,
     string memory description,
     uint256[] memory answerSet
   ) external;
