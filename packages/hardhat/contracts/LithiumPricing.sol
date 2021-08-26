@@ -2,21 +2,13 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Roles.sol";
-import "./ILithiumPricing.sol";
-import "./ILithiumReward.sol";
+import "./interfaces/ILithiumPricing.sol";
+import "./interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
  */
 contract LithiumPricing is ILithiumPricing, Roles {
-  IERC20 LithiumToken;
-  ILithiumReward lithiumReward;
-  enum RewardCalculated{NotCalculated,Calculated}
-
-  uint8 minAnswerSetLength = 2;
-  uint8 maxAnswerSetLength = 2;
-
-  bytes32[] public categories; 
 
   struct Question {
     address owner; // question creator
@@ -30,6 +22,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 endTime; // the time answering ends relative to block.timestamp
     RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
     uint256 pricingTime;//Indicate when the asset should be priced for
+    QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
   }
 
   struct QuestionGroup {
@@ -45,6 +38,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
 
+  IERC20 LithiumToken;
+  ILithiumReward lithiumReward;
+
+  uint8 minAnswerSetLength = 2;
+  uint8 maxAnswerSetLength = 2;
+
+  bytes32[] public categories; 
+
   Question[] questions;
   QuestionGroup[] public questionGroups;
 
@@ -57,77 +58,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
   // minimumStake put by wisdom nodes when answering question
   uint256 public minimumStake;
-  event CategoryAdded(
-    uint256 id,
-    string label
-  );
-
-  event RewardCalculatedStatus(
-    uint256 questionId,
-    RewardCalculated isCalculated
-  );
-
-  event SetLithiumRewardAddress(
-    address rewardAddress
-  );
-
-  event SetLithiumTokenAddress(
-    address lithiumTokenAddress
-  );
 
   constructor () {
     _addCategory("preIPO");
   }
 
     /**
-  * @dev Adds new category
-  *
-  */
-  function _addCategory(string memory _label) internal {
-    bytes32 hash = keccak256(abi.encodePacked(_label));
-    categories.push(hash);
-    emit CategoryAdded(categories.length - 1,  _label);
-  }
-
-  /**
-  * @dev public interface to add a new category
-  *
-  * Requirements
-  *
-  * - the caller must be an admin.
-  */
-  function addCategory(string memory _label) public {
-    require(isAdmin(msg.sender), "Must be admin");
-    require(bytes(_label).length != 0, "Category label can't be null");
-    _addCategory(_label);
-  }
-
-  /**
-  * @dev Sets the address of the LithiumToken.
-  *
-  * Requirements
-  *
-  * - the caller must be an admin.
-  */
-  function setLithiumTokenAddress(address _tokenAddress) public {
-    require(isAdmin(msg.sender), "Must be admin to set token address");
-    require(_tokenAddress != NULL_ADDRESS,"Token Address can't be null");
-    LithiumToken = IERC20(_tokenAddress);
-    emit SetLithiumTokenAddress(address(LithiumToken));
-  }
-
-  /**
-  * @dev Sets the address of the LithiumReward.
-  *
-  */
-  function setLithiumRewardAddress(address _rewardAddress) public {
-    require(isAdmin(msg.sender), "Must be admin to set token address");
-    require(_rewardAddress != NULL_ADDRESS,"Reward Address can't be null");
-    lithiumReward = ILithiumReward(_rewardAddress);
-    emit SetLithiumRewardAddress(address(lithiumReward));
-  }
-
-  /**
     * @dev Checks if an answer set is valid
     *
     * A valid answer set must have at least one value greater than zero and
@@ -147,9 +83,107 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
     require(answerSet[0] == 0,"AnswerSets must starts with 0");
     for (uint256 i = 1; i < answerSet.length; i++) {
-      require(answerSet[i] > answerSet[i-1] , "Answers must be in ascending order");        
+      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
     }
   }
+
+  function getQuestion (
+    uint256 _id
+  ) external view override returns (
+    address owner,
+    uint256 id,
+    uint256 categoryId,
+    string memory description,
+    uint256[] memory answerSet,
+    uint256[] memory answerSetTotalStaked,
+    uint256 bounty,
+    uint256 totalStaked,
+    uint256 endTime,
+    uint256 pricingTime,
+    QuestionType questionType
+  ) {
+    Question storage question = questions[_id];
+    owner = question.owner;
+    id = question.id;
+    categoryId = question.categoryId;
+    description = question.description;
+    answerSet = question.answerSet;
+    answerSetTotalStaked = question.answerSetTotalStaked;
+    bounty = question.bounty;
+    totalStaked = question.totalStaked;
+    endTime = question.endTime;
+    pricingTime = question.pricingTime;
+    questionType = question.questionType;
+  }
+
+  //Get all data for question and about the answer  with questionId _id and answr submitter as _answerer
+  function getAnswer (
+    uint256 _questionId,
+    address _answerer
+  ) external view override returns (
+    address answerer,
+    uint256 questionId,
+    uint16 answerIndex,
+    uint256 stakeAmount,
+    AnswerStatus status
+  ) {
+    Answer storage answer = answers[_questionId][_answerer];
+    answerer = answer.answerer;
+    questionId = answer.questionId;
+    answerIndex = answer.answerIndex;
+    stakeAmount = answer.stakeAmount;
+    status = answer.status;
+  }
+//get staked amount for Question with id _questionId
+//Remember it will exclude the bounty that were offer by wisdom node
+  function getAnswerSetTotals (
+    uint256 _questionId
+  ) external view override returns (
+    uint256[] memory
+  ) {
+    return questions[_questionId].answerSetTotalStaked;
+  }
+
+  //Get all possible answer for a question with id _questionId
+
+  function getAnswerSet (
+    uint256 _questionId
+  ) external view override returns (
+    uint256[] memory
+  ) {
+    return questions[_questionId].answerSet;
+  }
+
+  //get total staked amount for Question with id
+  //remember it include totalStakedLithToken+Bounty
+
+  function getRewardTotal (
+    uint256 _questionId
+  ) external view override returns (
+    uint256
+  ) {
+    Question storage question = questions[_questionId];
+
+    return question.bounty + question.totalStaked;
+  }
+
+  //get reputation of a user  with user address user category id  categoryId 
+
+  function getRepuation(address user,uint256 categoryId)public view returns(uint256){
+    return userReputationScores[user][categoryId];
+  }
+
+
+    /**
+  * @dev Adds new category
+  *
+  */
+  function _addCategory(string memory _label) internal {
+    bytes32 hash = keccak256(abi.encodePacked(_label));
+    categories.push(hash);
+    emit CategoryAdded(categories.length - 1,  _label);
+  }
+
 
   /**
   * @dev Adds a Question to contract storage.
@@ -179,6 +213,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty,
     uint256 pricingTime,
     uint256 endTime,
+    QuestionType questionType,
     string memory description,
     uint256[] memory answerSet
   ) internal {
@@ -201,90 +236,22 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     question.pricingTime = pricingTime;
+    question.questionType = questionType;
     questions.push(question);
-    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
-  }
-
-  /**
-  * @dev external interface for _createQuestion method
-  * the `categoryId` is the id for the related category
-  * the `bounty` is amount of tokens the questioner is offering for pricing information
-  * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
-  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
-  * the `answerSet` is an array of values that represent equal to or greater than prices in usd
-  *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
-  *   with the last value representing the statement 'equal to or greater than the selected value'
-  *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
-  *   would be [0,35000]
-  *   An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
-  *   would be [0,35000,37000]
-  */
-  function createQuestion(
-    uint16 categoryId,
-    uint256 bounty,
-    uint256 pricingTime,
-    uint256 endTime,
-    string memory description,
-    uint256[] memory answerSet
-  ) external override {
-    _createQuestion(
-      categoryId,
+    emit QuestionCreated(
+      id,
       bounty,
       pricingTime,
       endTime,
+      categoryId,
+      question.owner,
       description,
-      answerSet
+      answerSet, 
+      questionType
     );
   }
 
-    /**
-  * @dev Given an array of question values creates a Question for each one and a QuestionSet for the entire array
-  *
-  * Emits a { QuestionGroupCreated } event.
-  *
-  */
-  function createQuestionGroup(
-    uint16[] memory categoryIds,
-    uint256[] memory bounties,
-    uint256[] memory pricingTimes,
-    uint256[] memory endTimes,
-    string[] memory descriptions,
-    uint256[][] memory answerSets
-  ) external override {
-    require(
-      categoryIds.length == bounties.length
-      && categoryIds.length == pricingTimes.length
-      && categoryIds.length == endTimes.length
-      && categoryIds.length == descriptions.length
-      && categoryIds.length == answerSets.length,
-      "Array mismatch");
-
-    // get the pending id for the initial question in the set
-    uint256 initialQuestionId = questions.length;
-
-    // create an array to track the ids of the created questions
-    uint256[] memory questionIds;
-    for (uint256 i = 0; i < categoryIds.length; i++) {
-      _createQuestion(
-        categoryIds[i],
-        bounties[i],
-        pricingTimes[i],
-        endTimes[i],
-        descriptions[i],
-        answerSets[i]
-      );
-      questionIds[i] = initialQuestionId + i;
-    }
-
-    QuestionGroup memory questionGroup;
-    questionGroup.id = questionGroups.length;
-    questionGroup.questionIds = questionIds;
-    questionGroups.push(questionGroup);
-
-    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionIds);
-  }
-
-  /**
+   /**
   * @dev Adds an Answer to contract storage.
   * the `questionId` is the id of the question being answered
   * the `stakeAmount` is the amount of LITH the answerer wants to stake on the answer
@@ -326,90 +293,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
   }
 
-  function answerQuestions (
-    uint256[] memory questionIds,
-    uint256[] memory stakeAmounts,
-    uint16[] memory answerIndexes
-  ) external override {
-    require(questionIds.length == stakeAmounts.length && questionIds.length == answerIndexes.length,"Array mismatch");
-    for (uint256 i = 0; i < questionIds.length; i++) {
-      answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
-    }
-    emit AnswerGroupSetSubmitted(msg.sender,questionIds);
-  }
-
-  function getQuestion (
-    uint256 _id
-  ) external view override returns (
-    address owner,
-    uint256 id,
-    uint256 categoryId,
-    string memory description,
-    uint256[] memory answerSet,
-    uint256[] memory answerSetTotalStaked,
-    uint256 bounty,
-    uint256 totalStaked,
-    uint256 endTime,
-    uint256 pricingTime
-  ) {
-    Question storage question = questions[_id];
-    owner = question.owner;
-    id = question.id;
-    categoryId = question.categoryId;
-    description = question.description;
-    answerSet = question.answerSet;
-    answerSetTotalStaked = question.answerSetTotalStaked;
-    bounty = question.bounty;
-    totalStaked = question.totalStaked;
-    endTime = question.endTime;
-    pricingTime = question.pricingTime;
-  }
-
-  function getAnswer (
-    uint256 _questionId,
-    address _answerer
-  ) external view override returns (
-    address answerer,
-    uint256 questionId,
-    uint16 answerIndex,
-    uint256 stakeAmount,
-    AnswerStatus status
-  ) {
-    Answer storage answer = answers[_questionId][_answerer];
-    answerer = answer.answerer;
-    questionId = answer.questionId;
-    answerIndex = answer.answerIndex;
-    stakeAmount = answer.stakeAmount;
-    status = answer.status;
-  }
-
-  function getAnswerSetTotals (
-    uint256 _questionId
-  ) external view override returns (
-    uint256[] memory
-  ) {
-    return questions[_questionId].answerSetTotalStaked;
-  }
-
-  function getAnswerSet (
-    uint256 _questionId
-  ) external view override returns (
-    uint256[] memory
-  ) {
-    return questions[_questionId].answerSet;
-  }
-
-  function getRewardTotal (
-    uint256 _questionId
-  ) external view override returns (
-    uint256
-  ) {
-    Question storage question = questions[_questionId];
-
-    return question.bounty + question.totalStaked;
-  }
-
-  /**
+ /**
   * @dev Allow users to claim a reward for an answered question
   * the `questionId` is the id of the question to claim the reward for
   * the reward amount is determined by the LithiumReward contract
@@ -438,24 +322,47 @@ contract LithiumPricing is ILithiumPricing, Roles {
     }
   }
 
-    /**
-  * @dev Allow users to claim rewards for answered questions
-  * the `questionIds` is the ids of the questions to claim the rewards for
+
+
+  /**
+  * @dev public interface to add a new category
   *
   * Requirements
   *
-  * - the caller must have answered the questions
+  * - the caller must be an admin.
   */
-
-  function claimRewards (
-    uint256[] memory questionIds
-  ) external override {
-    for (uint256 i = 0; i < questionIds.length; i++) {
-      claimReward(questionIds[i]);
-    }
+  function addCategory(string memory _label) public {
+    require(isAdmin(msg.sender), "Must be admin");
+    require(bytes(_label).length != 0, "Category label can't be null");
+    _addCategory(_label);
   }
 
-   /**
+  /**
+  * @dev Sets the address of the LithiumToken.
+  *
+  * Requirements
+  *
+  * - the caller must be an admin.
+  */
+  function setLithiumTokenAddress(address _tokenAddress) public {
+    require(isAdmin(msg.sender), "Must be admin to set token address");
+    require(_tokenAddress != NULL_ADDRESS,"Token Address can't be null");
+    LithiumToken = IERC20(_tokenAddress);
+    emit SetLithiumTokenAddress(address(LithiumToken));
+  }
+
+  /**
+  * @dev Sets the address of the LithiumReward.
+  *
+  */
+  function setLithiumRewardAddress(address _rewardAddress) public {
+    require(isAdmin(msg.sender), "Must be admin to set token address");
+    require(_rewardAddress != NULL_ADDRESS,"Reward Address can't be null");
+    lithiumReward = ILithiumReward(_rewardAddress);
+    emit SetLithiumRewardAddress(address(lithiumReward));
+  }
+
+ /**
   * @dev Allow Lithium Coordinator to submit status of rewards 
   * the `questionId` is the id of the question to updated the status of reward
   *
@@ -500,11 +407,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit ReputationUpdated(addressesToUpdate,categoryIds,reputationScores);
   }
 
-  function getRepuation(address user,uint256 categoryId)public view returns(uint256){
-    return userReputationScores[user][categoryId];
-  }
-
-   /**
+  /**
   * @dev Allow Lithium Coordinator to update the MinimumStake 
   * Emits a { MinimumStakeUpdated} event.
   *
@@ -518,4 +421,114 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit MinimumStakeUpdated(_minimumStake);
   }
 
+  /**
+  * @dev external interface for _createQuestion method
+  * the `categoryId` is the id for the related category
+  * the `bounty` is amount of tokens the questioner is offering for pricing information
+  * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
+  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
+  * the `answerSet` is an array of values that represent equal to or greater than prices in usd
+  *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
+  *   with the last value representing the statement 'equal to or greater than the selected value'
+  *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
+  *   would be [0,35000]
+  *   An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+  *   would be [0,35000,37000]
+  */
+  function createQuestion(
+    uint16 categoryId,
+    uint256 bounty,
+    uint256 pricingTime,
+    uint256 endTime,
+    QuestionType questionType,
+    string memory description,
+    uint256[] memory answerSet
+  ) external override {
+    _createQuestion(
+      categoryId,
+      bounty,
+      pricingTime,
+      endTime,
+      questionType,
+      description,
+      answerSet
+    );
+  }
+
+    /**
+  * @dev Given an array of question values creates a Question for each one and a QuestionSet for the entire array
+  *
+  * Emits a { QuestionGroupCreated } event.
+  *
+  */
+  function createQuestionGroup(
+    uint16[] memory categoryIds,
+    uint256[] memory bounties,
+    uint256[] memory pricingTimes,
+    uint256[] memory endTimes,
+    QuestionType[] memory questionTypes,
+    string[] memory descriptions,
+    uint256[][] memory answerSets
+  ) external override {
+    require(
+      categoryIds.length == bounties.length
+      && categoryIds.length == pricingTimes.length
+      && categoryIds.length == endTimes.length
+      && categoryIds.length == descriptions.length
+      && categoryIds.length == answerSets.length,
+      "Array mismatch");
+
+    // get the pending id for the initial question in the set
+    uint256 initialQuestionId = questions.length;
+
+    // create an array to track the ids of the created questions
+    uint256[] memory questionIds;
+    for (uint256 i = 0; i < categoryIds.length; i++) {
+      _createQuestion(
+        categoryIds[i],
+        bounties[i],
+        pricingTimes[i],
+        endTimes[i],
+        questionTypes[i],
+        descriptions[i],
+        answerSets[i]
+      );
+      questionIds[i] = initialQuestionId + i;
+    }
+
+    QuestionGroup memory questionGroup;
+    questionGroup.id = questionGroups.length;
+    questionGroup.questionIds = questionIds;
+    questionGroups.push(questionGroup);
+
+    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionIds);
+  }
+
+  function answerQuestions (
+    uint256[] memory questionIds,
+    uint256[] memory stakeAmounts,
+    uint16[] memory answerIndexes
+  ) external override {
+    require(questionIds.length == stakeAmounts.length && questionIds.length == answerIndexes.length,"Array mismatch");
+    for (uint256 i = 0; i < questionIds.length; i++) {
+      answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
+    }
+    emit AnswerGroupSetSubmitted(msg.sender,questionIds);
+  }
+ 
+    /**
+  * @dev Allow users to claim rewards for answered questions
+  * the `questionIds` is the ids of the questions to claim the rewards for
+  *
+  * Requirements
+  *
+  * - the caller must have answered the questions
+  */
+  function claimRewards (
+    uint256[] memory questionIds
+  ) external override {
+    for (uint256 i = 0; i < questionIds.length; i++) {
+      claimReward(questionIds[i]);
+    }
+  }
 }
