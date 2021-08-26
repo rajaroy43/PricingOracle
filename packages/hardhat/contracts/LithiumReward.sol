@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
-import "./ILithiumPricing.sol";
-import "./ILithiumReward.sol";
+import "./interfaces/ILithiumPricing.sol";
+import "./interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumReward
@@ -14,7 +14,7 @@ contract LithiumReward is ILithiumReward {
   constructor (address _pricingAddress) {
     lithiumPricing = ILithiumPricing(_pricingAddress);
   }
-
+  //topAnswerIndex is the final answer index
   function getTopAnswerIndex (
     uint256[] memory answerSetTotalStaked
   ) internal pure returns (
@@ -38,7 +38,8 @@ contract LithiumReward is ILithiumReward {
   function calculateReward(uint256 totalReward, uint256 userStake, uint256 totalAnswerStake) internal pure returns (uint256) {
     return totalReward * userStake / totalAnswerStake;
   }
-
+  
+  //get rewrad per answerer
   function getReward(
     uint256 _questionId,
     address _answerer

@@ -2,21 +2,13 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Roles.sol";
-import "./ILithiumPricing.sol";
-import "./ILithiumReward.sol";
+import "./interfaces/ILithiumPricing.sol";
+import "./interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
  */
 contract LithiumPricing is ILithiumPricing, Roles {
-  IERC20 LithiumToken;
-  ILithiumReward lithiumReward;
-  enum RewardCalculated{NotCalculated,Calculated}
-
-  uint8 minAnswerSetLength = 2;
-  uint8 maxAnswerSetLength = 2;
-
-  bytes32[] public categories; 
 
   struct Question {
     address owner; // question creator
@@ -40,6 +32,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
 
+  IERC20 LithiumToken;
+  ILithiumReward lithiumReward;
+
+  uint8 minAnswerSetLength = 2;
+  uint8 maxAnswerSetLength = 2;
+
+  bytes32[] public categories; 
 
   Question[] questions;
 
@@ -51,27 +50,121 @@ contract LithiumPricing is ILithiumPricing, Roles {
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
   // minimumStake put by wisdom nodes when answering question
   uint256 public minimumStake;
-  event CategoryAdded(
-    uint256 id,
-    string label
-  );
-
-  event RewardCalculatedStatus(
-    uint256 questionId,
-    RewardCalculated isCalculated
-  );
-
-  event SetLithiumRewardAddress(
-    address rewardAddress
-  );
-
-  event SetLithiumTokenAddress(
-    address lithiumTokenAddress
-  );
 
   constructor () {
     _addCategory("preIPO");
   }
+
+    /**
+    * @dev Checks if an answer set is valid
+    *
+    * A valid answer set must have at least one value greater than zero and
+    * must be in ascending order
+    * `operatorData`. See {IERC777Sender} and {IERC777Recipient}.
+    *
+    * Emits a {Sent} event.
+    *
+    * Requirements
+    *
+    * - the caller must have at least `amount` tokens.
+    * - `recipient` cannot be the zero address.
+    * - if `recipient` is a contract, it must implement the {IERC777Recipient}
+    * interface.
+    */
+  function isValidAnswerSet(uint256[] memory answerSet) internal view {
+    require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
+    require(answerSet[0] == 0,"AnswerSets must starts with 0");
+    for (uint256 i = 1; i < answerSet.length; i++) {
+      require(answerSet[i] > answerSet[i-1], "Answers must be in ascending order");        
+    }
+  }
+
+  //Get all data for question with questionId _id
+   function getQuestion (
+    uint256 _id
+  ) external view override returns (
+    address owner,
+    uint256 id,
+    uint256 categoryId,
+    string memory description,
+    uint256[] memory answerSet,
+    uint256[] memory answerSetTotalStaked,
+    uint256 bounty,
+    uint256 totalStaked,
+    uint256 endTime,
+    uint256 pricingTime
+  ) {
+    Question storage question = questions[_id];
+    owner = question.owner;
+    id = question.id;
+    categoryId = question.categoryId;
+    description = question.description;
+    answerSet = question.answerSet;
+    answerSetTotalStaked = question.answerSetTotalStaked;
+    bounty = question.bounty;
+    totalStaked = question.totalStaked;
+    endTime = question.endTime;
+    pricingTime = question.pricingTime;
+  }
+
+//Get all data for question and about the answer  with questionId _id and answr submitter as _answerer
+
+  function getAnswer (
+    uint256 _questionId,
+    address _answerer
+  ) external view override returns (
+    address answerer,
+    uint256 questionId,
+    uint16 answerIndex,
+    uint256 stakeAmount,
+    AnswerStatus status
+  ) {
+    Answer storage answer = answers[_questionId][_answerer];
+    answerer = answer.answerer;
+    questionId = answer.questionId;
+    answerIndex = answer.answerIndex;
+    stakeAmount = answer.stakeAmount;
+    status = answer.status;
+  }
+//get staked amount for Question with id _questionId
+//Remember it will exclude the bounty that were offer by wisdom node
+  function getAnswerSetTotals (
+    uint256 _questionId
+  ) external view override returns (
+    uint256[] memory
+  ) {
+    return questions[_questionId].answerSetTotalStaked;
+  }
+
+  //Get all possible answer for a question with id _questionId
+
+  function getAnswerSet (
+    uint256 _questionId
+  ) external view override returns (
+    uint256[] memory
+  ) {
+    return questions[_questionId].answerSet;
+  }
+
+  //get total staked amount for Question with id
+  //remember it include totalStakedLithToken+Bounty
+
+  function getRewardTotal (
+    uint256 _questionId
+  ) external view override returns (
+    uint256
+  ) {
+    Question storage question = questions[_questionId];
+
+    return question.bounty + question.totalStaked;
+  }
+
+  //get reputation of a user  with user address user category id  categoryId 
+
+  function getRepuation(address user,uint256 categoryId)public view returns(uint256){
+    return userReputationScores[user][categoryId];
+  }
+
 
     /**
   * @dev Adds new category
@@ -82,6 +175,79 @@ contract LithiumPricing is ILithiumPricing, Roles {
     categories.push(hash);
     emit CategoryAdded(categories.length - 1,  _label);
   }
+
+   /**
+  * @dev Adds an Answer to contract storage.
+  * the `questionId` is the id of the question being answered
+  * the `stakeAmount` is the amount of LITH the answerer wants to stake on the answer
+  * and it will be added to totalStake for the question
+  * and the answerSetTotal for the `answerIndex`
+  * the `answerIndex` is the index of the answer in the question.answerSet
+  *
+  * Emits a { QuestionAnswered } event.
+  *
+  * Requirements
+  *
+  * - the caller must have at least `stakeAmount` tokens.
+  * - `stakeAmount` must be greater than zero.
+  * - the answerIndex must correspond to a valid answer(see isValidAnswerSet).
+  * - the `endtime` must be in the future
+  */
+  function answerQuestion(
+    uint256 _questionId,
+    uint256 _stakeAmount,
+    uint16 _answerIndex
+  ) internal {
+    require(_questionId < questions.length, "Invalid question id");
+    Question storage question = questions[_questionId];
+    require(question.endTime > block.timestamp, "Question is not longer active");
+    require(_answerIndex <= question.answerSet.length, "Invalid answer index");
+    require(_stakeAmount >= minimumStake, "Stake amount must be greater than minimumStake");
+    require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
+    
+    LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
+
+    Answer memory answer;
+    answer.answerer = msg.sender;
+    answer.questionId = _questionId;
+    answer.answerIndex = _answerIndex;
+    answer.stakeAmount = _stakeAmount;
+    answers[_questionId][msg.sender] = answer;
+    question.totalStaked = question.totalStaked + _stakeAmount;
+    question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
+    emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
+  }
+
+ /**
+  * @dev Allow users to claim a reward for an answered question
+  * the `questionId` is the id of the question to claim the reward for
+  * the reward amount is determined by the LithiumReward contract
+  * Emits a { RewardClaimed } event.
+  *
+  * Requirements
+  *
+  * - the caller must have answered the question
+  */
+  function claimReward (
+    uint256 _questionId
+  ) internal {
+    require(_questionId < questions.length, "Invalid question id");
+    Question storage question = questions[_questionId];
+    require(question.endTime <= block.timestamp, "Question is still active and cannot be claimed");
+    Answer storage answer = answers[_questionId][msg.sender];
+    require(answer.status == AnswerStatus.Unclaimed, "Reward has already been claimed");
+
+    uint256 reward = lithiumReward.getReward(_questionId, msg.sender);
+
+    if (reward > 0) {
+      answer.status = AnswerStatus.Claimed;
+      LithiumToken.transfer(msg.sender, reward);
+
+      emit RewardClaimed(_questionId, msg.sender, reward);
+    }
+  }
+
+
 
   /**
   * @dev public interface to add a new category
@@ -121,28 +287,63 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit SetLithiumRewardAddress(address(lithiumReward));
   }
 
-  /**
-    * @dev Checks if an answer set is valid
-    *
-    * A valid answer set must have at least one value greater than zero and
-    * must be in ascending order
-    * `operatorData`. See {IERC777Sender} and {IERC777Recipient}.
-    *
-    * Emits a {Sent} event.
-    *
-    * Requirements
-    *
-    * - the caller must have at least `amount` tokens.
-    * - `recipient` cannot be the zero address.
-    * - if `recipient` is a contract, it must implement the {IERC777Recipient}
-    * interface.
-    */
-  function isValidAnswerSet(uint256[] memory answerSet) internal view {
-    require(minAnswerSetLength <= answerSet.length && answerSet.length <= maxAnswerSetLength, "Answer Set length invalid");
-    require(answerSet[0] == 0,"AnswerSets must starts with 0");
-    for (uint256 i = 1; i < answerSet.length; i++) {
-      require(answerSet[i] > answerSet[i-1] , "Answers must be in ascending order");        
+ /**
+  * @dev Allow Lithium Coordinator to submit status of rewards 
+  * the `questionId` is the id of the question to updated the status of reward
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  * - endtime must be passed for answering question
+  * - rewards can't be updated again with same question id
+  * - question id must be valid 
+  */
+  function updateRewardCalculatedStatus(uint256 questionId)external{
+    require(isAdmin(msg.sender),"Must be admin");
+    require(questionId < questions.length, "Invalid question id");
+
+    Question storage question = questions[questionId];
+
+    require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
+    require(question.isRewardCalculated == RewardCalculated.NotCalculated,"Rewards is already updated");
+
+    question.isRewardCalculated = RewardCalculated.Calculated;
+    emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
+  }
+
+   /**
+  * @dev Allow Lithium Coordinator to update the reputation score of wisdom nodes
+  * Emits a { ReputationUpdated } event.
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  * - the length of the array arguments must be equal
+  * - the categoryIds must all be valid
+  */
+  function updateReputation(address[] memory addressesToUpdate,uint256[] memory categoryIds,uint256[] memory  reputationScores) external  {
+    require(isAdmin(msg.sender), "Must be admin");
+    require(addressesToUpdate.length != 0, "address length must be greater than zero");
+    require(addressesToUpdate.length == categoryIds.length && categoryIds.length == reputationScores.length, "argument array length mismatch"); 
+    for (uint256 i = 0; i < addressesToUpdate.length; i++) {
+      require(categoryIds[i] < categories.length,"invalid categoryId");
+      userReputationScores[addressesToUpdate[i]][categoryIds[i]] += reputationScores[i];
     }
+    emit ReputationUpdated(addressesToUpdate,categoryIds,reputationScores);
+  }
+
+  /**
+  * @dev Allow Lithium Coordinator to update the MinimumStake 
+  * Emits a { MinimumStakeUpdated} event.
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  */
+  function updateMinimumStake(uint256 _minimumStake)external {
+    require(isAdmin(msg.sender), "Must be admin");
+    minimumStake=_minimumStake;
+    emit MinimumStakeUpdated(_minimumStake);
   }
 
   /**
@@ -199,48 +400,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
   }
 
-  /**
-  * @dev Adds an Answer to contract storage.
-  * the `questionId` is the id of the question being answered
-  * the `stakeAmount` is the amount of LITH the answerer wants to stake on the answer
-  * and it will be added to totalStake for the question
-  * and the answerSetTotal for the `answerIndex`
-  * the `answerIndex` is the index of the answer in the question.answerSet
-  *
-  * Emits a { QuestionAnswered } event.
-  *
-  * Requirements
-  *
-  * - the caller must have at least `stakeAmount` tokens.
-  * - `stakeAmount` must be greater than zero.
-  * - the answerIndex must correspond to a valid answer(see isValidAnswerSet).
-  * - the `endtime` must be in the future
-  */
-  function answerQuestion(
-    uint256 _questionId,
-    uint256 _stakeAmount,
-    uint16 _answerIndex
-  ) internal {
-    require(_questionId < questions.length, "Invalid question id");
-    Question storage question = questions[_questionId];
-    require(question.endTime > block.timestamp, "Question is not longer active");
-    require(_answerIndex <= question.answerSet.length, "Invalid answer index");
-    require(_stakeAmount >= minimumStake, "Stake amount must be greater than minimumStake");
-    require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
-    
-    LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
-
-    Answer memory answer;
-    answer.answerer = msg.sender;
-    answer.questionId = _questionId;
-    answer.answerIndex = _answerIndex;
-    answer.stakeAmount = _stakeAmount;
-    answers[_questionId][msg.sender] = answer;
-    question.totalStaked = question.totalStaked + _stakeAmount;
-    question.answerSetTotalStaked[_answerIndex] = question.answerSetTotalStaked[_answerIndex] + _stakeAmount;
-    emit QuestionAnswered(_questionId, msg.sender, _stakeAmount, _answerIndex);
-  }
-
+ 
   function answerQuestions (
     uint256[] memory questionIds,
     uint256[] memory stakeAmounts,
@@ -253,106 +413,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit AnswerGroupSetSubmitted(msg.sender,questionIds);
   }
 
-  function getQuestion (
-    uint256 _id
-  ) external view override returns (
-    address owner,
-    uint256 id,
-    uint256 categoryId,
-    string memory description,
-    uint256[] memory answerSet,
-    uint256[] memory answerSetTotalStaked,
-    uint256 bounty,
-    uint256 totalStaked,
-    uint256 endTime,
-    uint256 pricingTime
-  ) {
-    Question storage question = questions[_id];
-    owner = question.owner;
-    id = question.id;
-    categoryId = question.categoryId;
-    description = question.description;
-    answerSet = question.answerSet;
-    answerSetTotalStaked = question.answerSetTotalStaked;
-    bounty = question.bounty;
-    totalStaked = question.totalStaked;
-    endTime = question.endTime;
-    pricingTime = question.pricingTime;
-  }
-
-  function getAnswer (
-    uint256 _questionId,
-    address _answerer
-  ) external view override returns (
-    address answerer,
-    uint256 questionId,
-    uint16 answerIndex,
-    uint256 stakeAmount,
-    AnswerStatus status
-  ) {
-    Answer storage answer = answers[_questionId][_answerer];
-    answerer = answer.answerer;
-    questionId = answer.questionId;
-    answerIndex = answer.answerIndex;
-    stakeAmount = answer.stakeAmount;
-    status = answer.status;
-  }
-
-  function getAnswerSetTotals (
-    uint256 _questionId
-  ) external view override returns (
-    uint256[] memory
-  ) {
-    return questions[_questionId].answerSetTotalStaked;
-  }
-
-  function getAnswerSet (
-    uint256 _questionId
-  ) external view override returns (
-    uint256[] memory
-  ) {
-    return questions[_questionId].answerSet;
-  }
-
-  function getRewardTotal (
-    uint256 _questionId
-  ) external view override returns (
-    uint256
-  ) {
-    Question storage question = questions[_questionId];
-
-    return question.bounty + question.totalStaked;
-  }
-
-  /**
-  * @dev Allow users to claim a reward for an answered question
-  * the `questionId` is the id of the question to claim the reward for
-  * the reward amount is determined by the LithiumReward contract
-  * Emits a { RewardClaimed } event.
-  *
-  * Requirements
-  *
-  * - the caller must have answered the question
-  */
-  function claimReward (
-    uint256 _questionId
-  ) internal {
-    require(_questionId < questions.length, "Invalid question id");
-    Question storage question = questions[_questionId];
-    require(question.endTime <= block.timestamp, "Question is still active and cannot be claimed");
-    Answer storage answer = answers[_questionId][msg.sender];
-    require(answer.status == AnswerStatus.Unclaimed, "Reward has already been claimed");
-
-    uint256 reward = lithiumReward.getReward(_questionId, msg.sender);
-
-    if (reward > 0) {
-      answer.status = AnswerStatus.Claimed;
-      LithiumToken.transfer(msg.sender, reward);
-
-      emit RewardClaimed(_questionId, msg.sender, reward);
-    }
-  }
-
+ 
+ 
     /**
   * @dev Allow users to claim rewards for answered questions
   * the `questionIds` is the ids of the questions to claim the rewards for
@@ -369,68 +431,4 @@ contract LithiumPricing is ILithiumPricing, Roles {
       claimReward(questionIds[i]);
     }
   }
-
-   /**
-  * @dev Allow Lithium Coordinator to submit status of rewards 
-  * the `questionId` is the id of the question to updated the status of reward
-  *
-  * Requirements
-  *
-  * - the caller must be admin of this contract
-  * - endtime must be passed for answering question
-  * - rewards can't be updated again with same question id
-  * - question id must be valid 
-  */
-  function updateRewardCalculatedStatus(uint256 questionId)external{
-    require(isAdmin(msg.sender),"Must be admin");
-    require(questionId < questions.length, "Invalid question id");
-
-    Question storage question = questions[questionId];
-
-    require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
-    require(question.isRewardCalculated == RewardCalculated.NotCalculated,"Rewards is already updated");
-
-    question.isRewardCalculated = RewardCalculated.Calculated;
-    emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
-  }
-
-   /**
-  * @dev Allow Lithium Coordinator to update the reputation score of wisdom nodes
-  * Emits a { ReputationUpdated } event.
-  *
-  * Requirements
-  *
-  * - the caller must be admin of this contract
-  * - the length of the array arguments must be equal
-  * - the categoryIds must all be valid
-  */
-  function updateReputation(address[] memory addressesToUpdate,uint256[] memory categoryIds,uint256[] memory  reputationScores) external  {
-    require(isAdmin(msg.sender), "Must be admin");
-    require(addressesToUpdate.length != 0, "address length must be greater than zero");
-    require(addressesToUpdate.length == categoryIds.length && categoryIds.length == reputationScores.length, "argument array length mismatch"); 
-    for (uint256 i = 0; i < addressesToUpdate.length; i++) {
-      require(categoryIds[i] < categories.length,"invalid categoryId");
-      userReputationScores[addressesToUpdate[i]][categoryIds[i]] += reputationScores[i];
-    }
-    emit ReputationUpdated(addressesToUpdate,categoryIds,reputationScores);
-  }
-
-  function getRepuation(address user,uint256 categoryId)public view returns(uint256){
-    return userReputationScores[user][categoryId];
-  }
-
-   /**
-  * @dev Allow Lithium Coordinator to update the MinimumStake 
-  * Emits a { MinimumStakeUpdated} event.
-  *
-  * Requirements
-  *
-  * - the caller must be admin of this contract
-  */
-  function updateMinimumStake(uint256 _minimumStake)external {
-    require(isAdmin(msg.sender), "Must be admin");
-    minimumStake=_minimumStake;
-    emit MinimumStakeUpdated(_minimumStake);
-  }
-
 }
