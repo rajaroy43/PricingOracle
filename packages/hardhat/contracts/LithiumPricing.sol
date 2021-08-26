@@ -32,6 +32,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 pricingTime;//Indicate when the asset should be priced for
   }
 
+  struct QuestionGroup {
+    uint256 id;
+    uint256[] questionIds;
+  }
+
   struct Answer {
     address answerer; // the answer creator
     uint256 questionId; // the id of the question being answered
@@ -40,8 +45,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
 
-
   Question[] questions;
+  QuestionGroup[] public questionGroups;
+
 
   address constant public NULL_ADDRESS=address(0);
 
@@ -168,14 +174,14 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - the `endtime` must be in the future
   * - the category id must be valid
   */
-  function createQuestion(
+  function _createQuestion(
     uint16 categoryId,
     uint256 bounty,
     uint256 pricingTime,
     uint256 endTime,
     string memory description,
     uint256[] memory answerSet
-  ) external override {
+  ) internal {
     require(endTime > block.timestamp, "Endtime must be in the future");
     require(pricingTime > endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
@@ -197,6 +203,85 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.pricingTime = pricingTime;
     questions.push(question);
     emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
+  }
+
+  /**
+  * @dev external interface for _createQuestion method
+  * the `categoryId` is the id for the related category
+  * the `bounty` is amount of tokens the questioner is offering for pricing information
+  * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
+  * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
+  * the `answerSet` is an array of values that represent equal to or greater than prices in usd
+  *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
+  *   with the last value representing the statement 'equal to or greater than the selected value'
+  *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
+  *   would be [0,35000]
+  *   An answerSet for the question 'Will the price of the dow be less then $35,000, between $35,000 and $37,000, or greater than $37,000'
+  *   would be [0,35000,37000]
+  */
+  function createQuestion(
+    uint16 categoryId,
+    uint256 bounty,
+    uint256 pricingTime,
+    uint256 endTime,
+    string memory description,
+    uint256[] memory answerSet
+  ) external override {
+    _createQuestion(
+      categoryId,
+      bounty,
+      pricingTime,
+      endTime,
+      description,
+      answerSet
+    );
+  }
+
+    /**
+  * @dev Given an array of question values creates a Question for each one and a QuestionSet for the entire array
+  *
+  * Emits a { QuestionGroupCreated } event.
+  *
+  */
+  function createQuestionGroup(
+    uint16[] memory categoryIds,
+    uint256[] memory bounties,
+    uint256[] memory pricingTimes,
+    uint256[] memory endTimes,
+    string[] memory descriptions,
+    uint256[][] memory answerSets
+  ) external override {
+    require(
+      categoryIds.length == bounties.length
+      && categoryIds.length == pricingTimes.length
+      && categoryIds.length == endTimes.length
+      && categoryIds.length == descriptions.length
+      && categoryIds.length == answerSets.length,
+      "Array mismatch");
+
+    // get the pending id for the initial question in the set
+    uint256 initialQuestionId = questions.length;
+
+    // create an array to track the ids of the created questions
+    uint256[] memory questionIds;
+    for (uint256 i = 0; i < categoryIds.length; i++) {
+      _createQuestion(
+        categoryIds[i],
+        bounties[i],
+        pricingTimes[i],
+        endTimes[i],
+        descriptions[i],
+        answerSets[i]
+      );
+      questionIds[i] = initialQuestionId + i;
+    }
+
+    QuestionGroup memory questionGroup;
+    questionGroup.id = questionGroups.length;
+    questionGroup.questionIds = questionIds;
+    questionGroups.push(questionGroup);
+
+    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionIds);
   }
 
   /**
