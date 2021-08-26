@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN npm install
+RUN yarn install
+RUN npx tsc
 
 CMD [ "node", "dist/index.js" ]

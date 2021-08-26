@@ -17,9 +17,3 @@ services:
         stdin_open: true
         tty: true
 
-    ethereum:
-        image: ethereum/client-go
-        ports:
-            - "8545:8545"
-            - "30303:30303"
-
