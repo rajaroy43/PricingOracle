@@ -99,7 +99,7 @@ interface ILithiumPricing {
     AnswerStatus status
   );
 
-   function getAnswerSetTotals (
+  function getAnswerSetTotals (
     uint256 questionId
   ) external view returns (
     uint256[] memory
