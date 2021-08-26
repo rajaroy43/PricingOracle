@@ -2,10 +2,12 @@ pragma solidity ^0.8.0;
 
 /**
  * @title LithiumReward
- * Calculates the reward for a question answer.
+ * @notice Calculates the reward for a question answer.
  */
 interface ILithiumReward {
  
+  /** Getter Functions */
+  
   function getReward (
     uint256 _questionId,
     address _answerer
