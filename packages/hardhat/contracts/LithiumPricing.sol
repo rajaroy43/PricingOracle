@@ -22,6 +22,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 endTime; // the time answering ends relative to block.timestamp
     RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
     uint256 pricingTime;//Indicate when the asset should be priced for
+    QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
   }
 
   struct Answer {
@@ -92,7 +93,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty,
     uint256 totalStaked,
     uint256 endTime,
-    uint256 pricingTime
+    uint256 pricingTime,
+    QuestionType questionType
   ) {
     Question storage question = questions[_id];
     owner = question.owner;
@@ -105,6 +107,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     totalStaked = question.totalStaked;
     endTime = question.endTime;
     pricingTime = question.pricingTime;
+    questionType = question.questionType;
   }
 
 //Get all data for question and about the answer  with questionId _id and answr submitter as _answerer
@@ -353,6 +356,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * the `description` is a description of the asset to price, ex 'The price of LITH token will be higher then'
   * the `endtime` is when all voting stops and votes are tallied and payouts become eligible relative to the block.timestamp
   * the `answerSet` is an array of values that represent equal to or greater than prices in usd
+  * the `questionType` is the type of question as GroundType or PricingType
   *   Each answer except for the last represents the statement 'equal to or greather than the selected value and less than the next value in the array'
   *   with the last value representing the statement 'equal to or greater than the selected value'
   *   For example, an answerSet for the questions 'Will the price of the dow be greater or less than $35,000'
@@ -374,6 +378,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty,
     uint256 pricingTime,
     uint256 endTime,
+    QuestionType questionType,
     string memory description,
     uint256[] memory answerSet
   ) external override {
@@ -396,8 +401,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.answerSetTotalStaked = answerSetTotalStaked;
     question.endTime = endTime;
     question.pricingTime = pricingTime;
+    question.questionType=questionType;
     questions.push(question);
-    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet);
+    emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet,question.questionType);
   }
 
  
