@@ -1,5 +1,6 @@
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Roles.sol";
 import "./interfaces/ILithiumPricing.sol";
@@ -474,15 +475,15 @@ contract LithiumPricing is ILithiumPricing, Roles {
       categoryIds.length == bounties.length
       && categoryIds.length == pricingTimes.length
       && categoryIds.length == endTimes.length
+      && categoryIds.length == questionTypes.length
       && categoryIds.length == descriptions.length
       && categoryIds.length == answerSets.length,
       "Array mismatch");
 
     // get the pending id for the initial question in the set
     uint256 initialQuestionId = questions.length;
+    uint256[] memory questionIds = new uint256[](categoryIds.length);
 
-    // create an array to track the ids of the created questions
-    uint256[] memory questionIds;
     for (uint256 i = 0; i < categoryIds.length; i++) {
       _createQuestion(
         categoryIds[i],
@@ -498,10 +499,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
     QuestionGroup memory questionGroup;
     questionGroup.id = questionGroups.length;
-    questionGroup.questionIds = questionIds;
     questionGroups.push(questionGroup);
+    questionGroup.questionIds = questionIds;
 
-    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionIds);
+    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionGroup.questionIds);
   }
 
   function answerQuestions (
