@@ -411,15 +411,16 @@ describe("Lithium Pricing", async function () {
         const ids = [0];
         const stakeAmounts = [stakeAmount];
         const answerIndexes = [1];
+        const questionSetsId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         )
           .emit(lithiumPricing, "QuestionAnswered")
           .withArgs(0, account1.address, stakeAmounts[0], answerIndexes[0])
           .emit(lithiumPricing, "AnswerGroupSetSubmitted")
-          .withArgs(account1.address, ids);
+          .withArgs(account1.address, questionSetsId);
         const senderBalanceAfter = await lithToken.balanceOf(account1.address);
 
         expect(stakeAmounts[0].add(senderBalanceAfter)).to.equal(senderBalance);
@@ -430,12 +431,12 @@ describe("Lithium Pricing", async function () {
         await expect(
           lithiumPricing
             .connect(account2)
-            .answerQuestions(ids, stake2Amounts, answer2Indexes)
+            .answerQuestions(ids, questionSetsId, stake2Amounts, answer2Indexes)
         )
           .emit(lithiumPricing, "QuestionAnswered")
           .withArgs(0, account2.address, stake2Amounts[0], answer2Indexes[0])
           .emit(lithiumPricing, "AnswerGroupSetSubmitted")
-          .withArgs(account2.address, ids);
+          .withArgs(account2.address, questionSetsId);
         const sender2BalanceAfter = await lithToken.balanceOf(account2.address);
 
         expect(stake2Amounts[0].add(sender2BalanceAfter)).to.equal(
@@ -447,10 +448,11 @@ describe("Lithium Pricing", async function () {
         const ids = [0];
         const stakeAmounts = [stakeAmount, 12];
         const answerIndexes = [1];
+        const questionSetsId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Array mismatch");
       });
 
@@ -458,10 +460,11 @@ describe("Lithium Pricing", async function () {
         const ids = [1];
         const stakeAmounts = [stakeAmount];
         const answerIndexes = [1];
+        const questionSetsId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Invalid question id");
       });
 
@@ -470,13 +473,14 @@ describe("Lithium Pricing", async function () {
         const stakeAmounts = [stakeAmount];
         const answerIndexes = [1];
         const one_minute = 60 * 60;
+        const questionSetsId = 0;
         await ethers.provider.send("evm_increaseTime", [one_minute]);
         await ethers.provider.send("evm_mine");
 
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Question is not longer active");
       });
 
@@ -484,11 +488,11 @@ describe("Lithium Pricing", async function () {
         const ids = [0];
         const stakeAmounts = [stakeAmount];
         const answerIndexes = [12];
-
+        const questionSetsId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Invalid answer index");
       });
 
@@ -496,6 +500,7 @@ describe("Lithium Pricing", async function () {
         const ids = [0];
         const stakeAmounts = [0];
         const answerIndexes = [1];
+        const questionSetsId = 0;
         const minimumStake = ethers.utils.parseUnits("10.0", 18);
         await expect(lithiumPricing.updateMinimumStake(minimumStake))
           .emit(lithiumPricing, "MinimumStakeUpdated")
@@ -503,7 +508,7 @@ describe("Lithium Pricing", async function () {
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Stake amount must be greater than minimumStake");
       });
 
@@ -513,10 +518,11 @@ describe("Lithium Pricing", async function () {
           ethers.utils.parseUnits("1000000000000000.0", 18),
         ];
         const answerIndexes = [1];
+        const questionSetsId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Insufficient balance");
       });
 
@@ -525,13 +531,14 @@ describe("Lithium Pricing", async function () {
         const stakeAmounts = [stakeAmount];
         const answerIndexes = [1];
         const approveAmount = 0;
+        const questionSetsId = 0;
         await lithToken
           .connect(account1)
           .approve(lithiumPricing.address, approveAmount);
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes)
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
       });
 
@@ -540,9 +547,10 @@ describe("Lithium Pricing", async function () {
           const ids = [0];
           const stakeAmounts = [stakeAmount];
           const answerIndexes = [1];
+          const questionSetsId = 0;
           await lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, stakeAmounts, answerIndexes);
+            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes);
         });
 
         it("Should be able to claim reward", async function () {

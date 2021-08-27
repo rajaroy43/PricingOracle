@@ -32,6 +32,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint16 answerIndex; // the index of the chosen answer in the question.answerSet
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
+  struct AnswerGroup {
+    address answerer; // the answer creator
+    uint256 questionSetsId; // the id of the question being answered
+    uint256 stakeAmount; // the amount to stake in LITH token for the answersSetsGroup
+    uint16[] answerIndex; // the index of the chosen answer in the question.answerSet
+    AnswerStatus status; // the status of the AnswerSets, Unclaimed or Claimed
+}
 
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
@@ -47,6 +54,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
+
+  // questionSetsId =>  answerer => AnswerGroup
+  mapping(uint256=> mapping(address => AnswerGroup)) public answerGroups;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
   // minimumStake put by wisdom nodes when answering question
@@ -209,7 +219,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
-
     Answer memory answer;
     answer.answerer = msg.sender;
     answer.questionId = _questionId;
@@ -406,21 +415,27 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit QuestionCreated(id, bounty,pricingTime, endTime, categoryId, question.owner, description, answerSet,question.questionType);
   }
 
- 
+//using mock questionSetsId 
   function answerQuestions (
     uint256[] memory questionIds,
+    uint256 questionSetsId,
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external override {
     require(questionIds.length == stakeAmounts.length && questionIds.length == answerIndexes.length,"Array mismatch");
+    uint256 stakeGroupAmount;
     for (uint256 i = 0; i < questionIds.length; i++) {
       answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
+      stakeGroupAmount += stakeAmounts[i];
     }
-    emit AnswerGroupSetSubmitted(msg.sender,questionIds);
+    AnswerGroup memory answersGroup;
+    answersGroup.answerer = msg.sender;
+    answersGroup.questionSetsId = questionSetsId;
+    answersGroup.answerIndex = answerIndexes;
+    answersGroup.stakeAmount = stakeGroupAmount;
+    answerGroups[ questionSetsId][msg.sender] = answersGroup;
+    emit AnswerGroupSetSubmitted(msg.sender, questionSetsId);
   }
-
- 
- 
     /**
   * @dev Allow users to claim rewards for answered questions
   * the `questionIds` is the ids of the questions to claim the rewards for

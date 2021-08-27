@@ -32,7 +32,7 @@ interface ILithiumPricing {
 
   event AnswerGroupSetSubmitted (
   address answerer,
-  uint256[] questionIds
+  uint256 questionSetsId
 );
 
   event MinimumStakeUpdated(uint256 minimumStake);
@@ -132,6 +132,7 @@ interface ILithiumPricing {
 
   function answerQuestions (
     uint256[] memory questionIds,
+    uint256 questionSetsId,
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external;
