@@ -499,8 +499,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
     QuestionGroup memory questionGroup;
     questionGroup.id = questionGroups.length;
-    questionGroups.push(questionGroup);
     questionGroup.questionIds = questionIds;
+    questionGroups.push(questionGroup);
 
     emit QuestionGroupCreated(questionGroup.id, msg.sender, questionGroup.questionIds);
   }
