@@ -754,7 +754,225 @@ describe("Lithium Pricing", async function () {
 
       expect(bounty.add(senderBalanceAfter).add(bounty1)).to.equal(senderBalance);
     });
-    it("Should not create a question group with param length mismatch", async function () {
+    it("Should not create a question group with categoryIds param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [
+          categoryId,
+          categoryId1,
+          categoryId
+        ],
+        [
+          bounty,
+          bounty1
+        ],
+        [
+          pricingTime,
+          pricingTime1
+        ],
+        [
+          endTime,
+          endTime1
+        ],
+        [
+          questiontype,
+          questiontype
+        ],
+        [
+          description,
+          description1
+        ],
+        [
+          answerSet,
+          answerSet1
+        ]
+      ]
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+    it("Should not create a question group with bounties param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [
+          categoryId,
+          categoryId1
+        ],
+        [
+          bounty,
+          bounty1,
+          bounty
+        ],
+        [
+          pricingTime,
+          pricingTime1
+        ],
+        [
+          endTime,
+          endTime1
+        ],
+        [
+          questiontype,
+          questiontype
+        ],
+        [
+          description,
+          description1
+        ],
+        [
+          answerSet,
+          answerSet1
+        ]
+      ]
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+    it("Should not create a question group with pricingTimes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [
+          categoryId,
+          categoryId1
+        ],
+        [
+          bounty,
+          bounty1
+        ],
+        [
+          pricingTime,
+          pricingTime1,
+          pricingTime
+        ],
+        [
+          endTime,
+          endTime1
+        ],
+        [
+          questiontype,
+          questiontype
+        ],
+        [
+          description,
+          description1
+        ],
+        [
+          answerSet,
+          answerSet1
+        ]
+      ]
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+    it("Should not create a question group with endingTimes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [
+          categoryId,
+          categoryId1
+        ],
+        [
+          bounty,
+          bounty1
+        ],
+        [
+          pricingTime,
+          pricingTime1
+        ],
+        [
+          endTime,
+          endTime1,
+          endTime
+        ],
+        [
+          questiontype,
+          questiontype,
+          0
+        ],
+        [
+          description,
+          description1
+        ],
+        [
+          answerSet,
+          answerSet1
+        ]
+      ]
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with questionTypes param length mismatch", async function () {
       const block = await ethers.provider.getBlock();
       const pricingTime = block.timestamp + 7;
       const endTime = block.timestamp + 5;
@@ -801,6 +1019,118 @@ describe("Lithium Pricing", async function () {
         [
           answerSet,
           answerSet1
+        ]
+      ]
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with descriptions param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [
+          categoryId,
+          categoryId1
+        ],
+        [
+          bounty,
+          bounty1
+        ],
+        [
+          pricingTime,
+          pricingTime1
+        ],
+        [
+          endTime,
+          endTime1
+        ],
+        [
+          questiontype,
+          questiontype,
+          0
+        ],
+        [
+          description,
+          description1,
+          description
+        ],
+        [
+          answerSet,
+          answerSet1
+        ]
+      ]
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with answer sets param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [
+          categoryId,
+          categoryId1
+        ],
+        [
+          bounty,
+          bounty1
+        ],
+        [
+          pricingTime,
+          pricingTime1
+        ],
+        [
+          endTime,
+          endTime1
+        ],
+        [
+          questiontype,
+          questiontype,
+          0
+        ],
+        [
+          description,
+          description1
+        ],
+        [
+          answerSet,
+          answerSet1,
+          answerSet
         ]
       ]
       await expect(
