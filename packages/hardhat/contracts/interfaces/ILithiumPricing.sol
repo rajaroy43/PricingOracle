@@ -23,6 +23,12 @@ interface ILithiumPricing {
 
   );
 
+  event QuestionGroupCreated (
+    uint256 id,
+    address owner,
+    uint256[] questionIds
+  );
+
   event QuestionAnswered (
     uint256 questionId,
     address answerer,
@@ -128,6 +134,16 @@ interface ILithiumPricing {
     QuestionType questionType,
     string memory description,
     uint256[] memory answerSet
+  ) external;
+
+  function createQuestionGroup (
+    uint16[] memory categoryIds,
+    uint256[] memory bounties,
+    uint256[] memory pricingTimes,
+    uint256[] memory endTimes,
+    QuestionType[] memory questionTypes,
+    string[] memory descriptions,
+    uint256[][] memory answerSets
   ) external;
 
   function answerQuestions (
