@@ -23,6 +23,12 @@ interface ILithiumPricing {
 
   );
 
+  event QuestionGroupCreated (
+    uint256 id,
+    address owner,
+    uint256[] questionIds
+  );
+
   event QuestionAnswered (
     uint256 questionId,
     address answerer,
@@ -59,6 +65,9 @@ interface ILithiumPricing {
     address lithiumTokenAddress
   );
 
+  event GroupRewardClaimed(
+    uint256 questionGroupId, address answerer, uint256 totalRewardClaimed
+  );
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
@@ -130,16 +139,25 @@ interface ILithiumPricing {
     uint256[] memory answerSet
   ) external;
 
+  function createQuestionGroup (
+    uint16[] memory categoryIds,
+    uint256[] memory bounties,
+    uint256[] memory pricingTimes,
+    uint256[] memory endTimes,
+    QuestionType[] memory questionTypes,
+    string[] memory descriptions,
+    uint256[][] memory answerSets
+  ) external;
+
   function answerQuestions (
-    uint256[] memory questionIds,
-    uint256 questionSetsId,
+    uint256 questionGroupId,
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external;
 
   function claimRewards (
-    uint256[] memory questionIds
-  ) external;
+    uint256 questionGroupId
+  ) external returns(uint256);
 
-  
+
 }

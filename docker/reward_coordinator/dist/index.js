@@ -7,7 +7,7 @@ var express_1 = __importDefault(require("express"));
 var http_1 = __importDefault(require("http"));
 var app = express_1.default();
 app.get('/', (function (req, res) {
-    http_1.default.get('http://reward_calculator:8001/ping-me', function (resp) {
+    http_1.default.get('http://reward_calculator:9001/ping-me', function (resp) {
         var data = '';
         // A chunk of data has been received.
         resp.on('data', function (chunk) {
@@ -22,7 +22,7 @@ app.get('/', (function (req, res) {
     });
     res.send("Hello from the node server");
 }));
-var port = 8000;
+var port = 9000;
 /*
 node is polling from 3rd party, munge data, transform it, then ship to python
 

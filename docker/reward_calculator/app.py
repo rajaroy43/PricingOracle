@@ -8,7 +8,7 @@ LOGGER = logging.getLogger()
 
 @app.route("/ping-node", methods=['GET'])
 def ping_node():
-    message = requests.get('http://reward_coordinator:8000').content.decode()
+    message = requests.get('http://reward_coordinator:9000').content.decode()
     response = dict(time=datetime.now(), message=message)
     return jsonify(response)
 

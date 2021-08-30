@@ -396,111 +396,131 @@ describe("Lithium Pricing", async function () {
         const answerSet = [0, 50];
         const categoryId = 0;
         const questiontype = 0;
-        await lithiumPricing.createQuestion(
-          categoryId,
-          bounty,
-          pricingTime,
-          endTime,
-          questiontype,
-          description,
-          answerSet
-        );
+        // await lithiumPricing.createQuestion(
+        //   categoryId,
+        //   bounty,
+        //   pricingTime,
+        //   endTime,
+        //   questiontype,
+        //   description,
+        //   answerSet
+        // );
+
+        const pricingTime1 = block.timestamp + 7;
+        const endTime1 = block.timestamp + 5;
+        const description1 = "foo1";
+        const bounty1 = transferAmount1;
+        const answerSet1 = [0, 100];
+        const categoryId1 = 0;
+
+        const args = [
+          [categoryId, categoryId1],
+          [bounty, bounty1],
+          [pricingTime, pricingTime1],
+          [endTime, endTime1],
+          [questiontype, questiontype],
+          [description, description1],
+          [answerSet, answerSet1],
+        ];
+        //@ts-ignore
+        await lithiumPricing.createQuestionGroup(...args);
       });
       it("Should be able to answer a question", async function () {
         const senderBalance = await lithToken.balanceOf(account1.address);
-        const ids = [0];
-        const stakeAmounts = [stakeAmount];
-        const answerIndexes = [1];
-        const questionSetsId = 0;
+        const stakeAmounts = [stakeAmount, stakeAmount];
+        const answerIndexes = [1, 0];
+        const questionGroupId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         )
           .emit(lithiumPricing, "QuestionAnswered")
           .withArgs(0, account1.address, stakeAmounts[0], answerIndexes[0])
+          .withArgs(1, account1.address, stakeAmounts[1], answerIndexes[1])
           .emit(lithiumPricing, "AnswerGroupSetSubmitted")
-          .withArgs(account1.address, questionSetsId);
+          .withArgs(account1.address, questionGroupId);
         const senderBalanceAfter = await lithToken.balanceOf(account1.address);
 
-        expect(stakeAmounts[0].add(senderBalanceAfter)).to.equal(senderBalance);
+        expect(
+          stakeAmounts[0].add(stakeAmounts[1]).add(senderBalanceAfter)
+        ).to.equal(senderBalance);
 
         const sender2Balance = await lithToken.balanceOf(account2.address);
-        const stake2Amounts = [ethers.utils.parseUnits("20.0", 18)];
-        const answer2Indexes = [0];
+        const stake2Amounts = [
+          ethers.utils.parseUnits("20.0", 18),
+          ethers.utils.parseUnits("20.0", 18),
+        ];
+        const answer2Indexes = [0, 0];
         await expect(
           lithiumPricing
             .connect(account2)
-            .answerQuestions(ids, questionSetsId, stake2Amounts, answer2Indexes)
+            .answerQuestions(questionGroupId, stake2Amounts, answer2Indexes)
         )
           .emit(lithiumPricing, "QuestionAnswered")
           .withArgs(0, account2.address, stake2Amounts[0], answer2Indexes[0])
+          .withArgs(0, account2.address, stake2Amounts[1], answer2Indexes[1])
           .emit(lithiumPricing, "AnswerGroupSetSubmitted")
-          .withArgs(account2.address, questionSetsId);
+          .withArgs(account2.address, questionGroupId);
         const sender2BalanceAfter = await lithToken.balanceOf(account2.address);
 
-        expect(stake2Amounts[0].add(sender2BalanceAfter)).to.equal(
-          sender2Balance
-        );
+        expect(
+          stake2Amounts[0].add(stake2Amounts[1]).add(sender2BalanceAfter)
+        ).to.equal(sender2Balance);
       });
 
       it("Should not  able to answer a question for mismatch array invalid ids/stakeAmounts/answerIndexes", async function () {
-        const ids = [0];
         const stakeAmounts = [stakeAmount, 12];
         const answerIndexes = [1];
-        const questionSetsId = 0;
+        const questionGroupId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Array mismatch");
       });
 
-      it("Should not  able to answer a question for invalid Question id", async function () {
-        const ids = [1];
-        const stakeAmounts = [stakeAmount];
-        const answerIndexes = [1];
-        const questionSetsId = 0;
+      it("Should not  able to answer a question for invalid questionGroup id", async function () {
+        const stakeAmounts = [stakeAmount, stakeAmount];
+        const answerIndexes = [1, 0];
+        const questionGroupId = 1;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
-        ).to.be.revertedWith("Invalid question id");
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
+        ).to.be.revertedWith("Invalid question group id");
       });
 
       it("Should not  able to answer if deadline of question hasbeen reached", async function () {
-        const ids = [0];
-        const stakeAmounts = [stakeAmount];
-        const answerIndexes = [1];
+        const stakeAmounts = [stakeAmount, stakeAmount];
+        const answerIndexes = [1, 0];
         const one_minute = 60 * 60;
-        const questionSetsId = 0;
+        const questionGroupId = 0;
         await ethers.provider.send("evm_increaseTime", [one_minute]);
         await ethers.provider.send("evm_mine");
 
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Question is not longer active");
       });
 
       it("Should not  able to answer if out of range answer is given", async function () {
-        const ids = [0];
-        const stakeAmounts = [stakeAmount];
-        const answerIndexes = [12];
-        const questionSetsId = 0;
+        const stakeAmounts = [stakeAmount, stakeAmount];
+        const answerIndexes = [12, 0];
+        const questionGroupId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Invalid answer index");
       });
 
       it("Should not  able to answer if stake amount < minimumStake amount", async function () {
-        const ids = [0];
-        const stakeAmounts = [0];
-        const answerIndexes = [1];
-        const questionSetsId = 0;
+        const stakeAmounts = [0, stakeAmount];
+        const answerIndexes = [1, 0];
+        const questionGroupId = 0;
         const minimumStake = ethers.utils.parseUnits("10.0", 18);
         await expect(lithiumPricing.updateMinimumStake(minimumStake))
           .emit(lithiumPricing, "MinimumStakeUpdated")
@@ -508,49 +528,47 @@ describe("Lithium Pricing", async function () {
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Stake amount must be greater than minimumStake");
       });
 
       it("Should not  be able to answer if don't have sufficient balance", async function () {
-        const ids = [0];
         const stakeAmounts = [
           ethers.utils.parseUnits("1000000000000000.0", 18),
+          ethers.utils.parseUnits("1000000000000000.0", 18),
         ];
-        const answerIndexes = [1];
-        const questionSetsId = 0;
+        const answerIndexes = [1, 0];
+        const questionGroupId = 0;
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("Insufficient balance");
       });
 
       it("Should not  able to answer if approve amount is less than stake amount", async function () {
-        const ids = [0];
-        const stakeAmounts = [stakeAmount];
-        const answerIndexes = [1];
+        const stakeAmounts = [stakeAmount, stakeAmount];
+        const answerIndexes = [1, 0];
         const approveAmount = 0;
-        const questionSetsId = 0;
+        const questionGroupId = 0;
         await lithToken
           .connect(account1)
           .approve(lithiumPricing.address, approveAmount);
         await expect(
           lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
         ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
       });
 
       describe("Claim reward", function () {
         beforeEach(async () => {
-          const ids = [0];
-          const stakeAmounts = [stakeAmount];
-          const answerIndexes = [1];
-          const questionSetsId = 0;
+          const questionGroupId = 0;
+          const stakeAmounts = [stakeAmount, stakeAmount];
+          const answerIndexes = [0, 0];
           await lithiumPricing
             .connect(account1)
-            .answerQuestions(ids, questionSetsId, stakeAmounts, answerIndexes);
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes);
         });
 
         it("Should be able to claim reward", async function () {
@@ -558,26 +576,33 @@ describe("Lithium Pricing", async function () {
           await ethers.provider.send("evm_increaseTime", [one_minute]);
           await ethers.provider.send("evm_mine");
           const senderBalance = await lithToken.balanceOf(account1.address);
-          const ids = [0];
-          //stake amount+bounty amount
-          const rewardAmount = ethers.utils.parseUnits("125.0", 18);
-
-          await expect(lithiumPricing.connect(account1).claimRewards(ids))
+          const questionGroupId = 0;
+          //staked amount+bounty amount
+          const rewardAmount1 = ethers.utils.parseUnits("125.0", 18);
+          const rewardAmount2 = ethers.utils.parseUnits("125.0", 18);
+          const totalRewardClaimed = rewardAmount1.add(rewardAmount2);
+          await expect(
+            lithiumPricing.connect(account1).claimRewards(questionGroupId)
+          )
             .emit(lithiumPricing, "RewardClaimed")
-            .withArgs(0, account1.address, rewardAmount);
-
+            .withArgs(0, account1.address, rewardAmount1)
+            .withArgs(1, account1.address, rewardAmount2)
+            .emit(lithiumPricing, "GroupRewardClaimed")
+            .withArgs(questionGroupId, account1.address, totalRewardClaimed);
           const senderBalanceAfter = await lithToken.balanceOf(
             account1.address
           );
 
-          expect(rewardAmount.add(senderBalance)).to.equal(senderBalanceAfter);
+          expect(totalRewardClaimed.add(senderBalance)).to.equal(
+            senderBalanceAfter
+          );
         });
 
         it("Should not able  to claim reward if deadline not be reached yet", async function () {
-          const ids = [0];
+          const questionGroupId = 0;
 
           await expect(
-            lithiumPricing.connect(account1).claimRewards(ids)
+            lithiumPricing.connect(account1).claimRewards(questionGroupId)
           ).to.be.revertedWith(
             "Question is still active and cannot be claimed"
           );
@@ -588,32 +613,40 @@ describe("Lithium Pricing", async function () {
           await ethers.provider.send("evm_increaseTime", [one_minute]);
           await ethers.provider.send("evm_mine");
           const senderBalance = await lithToken.balanceOf(account1.address);
-          const ids = [0];
-          //stake amount+bounty amount
-          const rewardAmount = ethers.utils.parseUnits("125.0", 18);
-
-          await expect(lithiumPricing.connect(account1).claimRewards(ids))
+          const questionGroupId = 0;
+          //staked amount+bounty amount
+          const rewardAmount1 = ethers.utils.parseUnits("125.0", 18);
+          const rewardAmount2 = ethers.utils.parseUnits("125.0", 18);
+          const totalRewardClaimed = rewardAmount1.add(rewardAmount2);
+          await expect(
+            lithiumPricing.connect(account1).claimRewards(questionGroupId)
+          )
             .emit(lithiumPricing, "RewardClaimed")
-            .withArgs(0, account1.address, rewardAmount);
+            .withArgs(0, account1.address, rewardAmount1)
+            .withArgs(1, account1.address, rewardAmount2)
+            .emit(lithiumPricing, "GroupRewardClaimed")
+            .withArgs(questionGroupId, account1.address, totalRewardClaimed);
 
           const senderBalanceAfter = await lithToken.balanceOf(
             account1.address
           );
 
-          expect(rewardAmount.add(senderBalance)).to.equal(senderBalanceAfter);
+          expect(totalRewardClaimed.add(senderBalance)).to.equal(
+            senderBalanceAfter
+          );
 
           await expect(
-            lithiumPricing.connect(account1).claimRewards(ids)
-          ).to.be.revertedWith("Reward has already been claimed");
+            lithiumPricing.connect(account1).claimRewards(questionGroupId)
+          ).to.be.revertedWith("Group Rewards has already been claimed");
         });
 
-        it("Should not be able to claim reward with invalid questionID ", async function () {
+        it("Should not be able to claim reward with invalid question Group Id ", async function () {
           const one_minute = 60 * 60;
           await ethers.provider.send("evm_increaseTime", [one_minute]);
           await ethers.provider.send("evm_mine");
           const ids = [1];
           await expect(lithiumPricing.claimRewards(ids)).to.be.revertedWith(
-            "Invalid question id"
+            "Invalid question group id"
           );
         });
 
@@ -622,10 +655,10 @@ describe("Lithium Pricing", async function () {
           await ethers.provider.send("evm_increaseTime", [one_minute]);
           await ethers.provider.send("evm_mine");
           const senderBalance = await lithToken.balanceOf(account0.address);
-          const ids = [0];
+          const questionGroupId = 0;
           await expect(
-            lithiumPricing.connect(account0).claimRewards(ids)
-          ).to.be.revertedWith("Answer must be correct to claim reward");
+            lithiumPricing.connect(account0).claimRewards(questionGroupId)
+          ).to.be.revertedWith("User haven't submit answer");
 
           const senderBalanceAfter = await lithToken.balanceOf(
             account0.address
@@ -675,6 +708,297 @@ describe("Lithium Pricing", async function () {
           ).to.be.revertedWith("Invalid question id");
         });
       });
+    });
+  });
+
+  describe("Create a question group", function () {
+    beforeEach(async function () {
+      await lithiumPricing.setLithiumTokenAddress(lithToken.address);
+      await lithiumPricing.setLithiumRewardAddress(lithiumReward.address);
+    });
+    it("Should be able to create a question group", async function () {
+      const senderBalance = await lithToken.balanceOf(account0.address);
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+      ];
+      const createQuestionGroupTx = await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      );
+      //createQuestionGroupTx
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionCreated")
+        .withArgs(
+          0,
+          bounty,
+          pricingTime,
+          endTime,
+          categoryId,
+          account0.address,
+          description,
+          answerSet,
+          questiontype
+        );
+
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionGroupCreated")
+        .withArgs(0, account0.address, [0, 1]);
+
+      const senderBalanceAfter = await lithToken.balanceOf(account0.address);
+
+      expect(bounty.add(senderBalanceAfter).add(bounty1)).to.equal(
+        senderBalance
+      );
+    });
+    it("Should not create a question group with categoryIds param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1, categoryId],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+    it("Should not create a question group with bounties param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1, bounty],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+    it("Should not create a question group with pricingTimes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1, pricingTime],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+    it("Should not create a question group with endingTimes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1, endTime],
+        [questiontype, questiontype, 0],
+        [description, description1],
+        [answerSet, answerSet1],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with questionTypes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype, 0],
+        [description, description1],
+        [answerSet, answerSet1],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with descriptions param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype, 0],
+        [description, description1, description],
+        [answerSet, answerSet1],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with answer sets param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype, 0],
+        [description, description1],
+        [answerSet, answerSet1, answerSet],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
     });
   });
 

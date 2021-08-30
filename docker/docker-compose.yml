@@ -5,7 +5,7 @@ services:
         container_name: reward_coordinator
         build: ./reward_coordinator
         ports:
-            - "8000:8000"
+            - "9000:9000"
         stdin_open: true
         tty: true
 
@@ -13,6 +13,13 @@ services:
         container_name: reward_calculator
         build: ./reward_calculator
         ports:
-            - "8001:8001"
+            - "9001:9001"
         stdin_open: true
         tty: true
+
+    ethereum:
+        image: ethereum/client-go
+        ports:
+            - "8545:8545"
+            - "30303:30303"
+
