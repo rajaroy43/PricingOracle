@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { GetNavItemParams, PageParams } from '../../../types/navigation';
 import NavMenu from '../../navigation/NavMenu';
-import ConnectedWallet from '../../users/ConnectedWallet';
+import UserProfile from '../../users/UserProfile';
 
 import lithiumLogo from '../../../assets/logo-lithium.svg';
 
@@ -29,7 +29,7 @@ const ConnectedSideBar = ({navMenu, getNavItems}: {navMenu: PageParams, getNavIt
         <img src={lithiumLogo} alt="Lithium Finance" className={classes.logo} />
       </RouterLink>
       <div style={{marginTop: '12px'}}>
-        <ConnectedWallet />
+        <UserProfile walletAddress={navMenu.walletAddress} />
       </div>
       <div>
         <NavMenu {...navMenu} getNavItems={getNavItems} />

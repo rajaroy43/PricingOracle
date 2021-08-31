@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { UserView } from '../../types/user'
+import { subgraphClient } from '../../client'
+import { useGetUser } from '../../queries/user'
 import Badge from './Badge'
 import Button from '../atoms/inputs/buttons/Button'
 import Flex from '../atoms/Flex'
+import LoadingCircle from '../atoms/Loading'
 import UserBalances from './UserBalances'
+import { WalletContext } from '../providers/WalletProvider';
+import SelectWalletForm from '../forms/SelectWallet';
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -18,18 +23,30 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UserProfile = ({user}: {user: UserView}) => {
+const UserProfile = ({ walletAddress }: {walletAddress: any}) => {
+  // @ts-ignore
+  const { address, setWallet } = useContext(WalletContext);
+  // @ts-ignore
+  const { loading, user } = useGetUser(subgraphClient, walletAddress);
   const classes = useStyles();
 
-  return (
-    <div className={classes.userProfile}>
-      <Badge address={user.id} />
-      <UserBalances user={user}/>
-      <Flex justifyContent="flex-end" mt="1rem">
-        <Button onClick={() => {}}label="Claim all" />
-      </Flex>
-    </div>
-  )
+  if (loading) {
+    return <LoadingCircle />
+  } 
+
+  if (walletAddress && user) {
+    return (
+      <div className={classes.userProfile}>
+        <Badge address={user.id} />
+        <UserBalances user={user}/>
+        <Flex justifyContent="flex-end" mt="1rem">
+          <Button onClick={() => {}}label="Claim all" />
+        </Flex>
+      </div>
+    )
+  }
+
+  return <SelectWalletForm setWallet={setWallet} />
 }
 
 export default UserProfile
