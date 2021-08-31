@@ -1,7 +1,11 @@
-export interface NavMenuParams {
+export interface PageParams {
   activePage: string
   isWalletConnected: boolean
   walletAddress: string | null
+}
+
+export interface NavMenuParams extends PageParams {
+  getNavItems: GetNavItemParams[]
 }
 
 export interface GetUrl {
