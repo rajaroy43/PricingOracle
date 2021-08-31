@@ -18,6 +18,7 @@ export interface GetIsActive {
 
 export interface GetNavItemParams {
   id: string
+  icon: string
   label: string
   getUrl: GetUrl
   getShouldRender: GetShouldRender
@@ -26,6 +27,7 @@ export interface GetNavItemParams {
 
 export interface NavItemParams {
   id: string
+  icon: string
   label: string
   url: string
   shouldRender: boolean
