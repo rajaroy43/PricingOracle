@@ -3,7 +3,7 @@ import { subgraphClient } from '../../client'
 import { useGetUser } from '../../queries/user'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
-import Template from '../../components/Template'
+import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import UserDashboard from '../users/UserDashboard'
 
 const Account = ({match}: any) => {
@@ -23,7 +23,7 @@ const Account = ({match}: any) => {
   }
 
   const main = (
-    <Template {...sideBarProps}>
+    <WisdomNodeTemplate pageProps={sideBarProps}>
       <h1>Lithium Profile for {urlAddress}</h1>
       {loading ?
           <LoadingCircle />
@@ -33,7 +33,7 @@ const Account = ({match}: any) => {
             :
             <div>No user</div>
       }
-    </Template>
+    </WisdomNodeTemplate>
   )
   return main;
 }

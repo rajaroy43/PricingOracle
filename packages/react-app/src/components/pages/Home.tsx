@@ -3,7 +3,7 @@ import { subgraphClient } from '../../client'
 import { useGetQuestions } from '../../queries/question'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
-import Template from '../../components/Template'
+import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import QuestionList from '../questions/QuestionList'
 
 const Home = () => {
@@ -19,7 +19,7 @@ const Home = () => {
   }
 
   const main = (
-    <Template {...sideBarProps}>
+    <WisdomNodeTemplate pageProps={sideBarProps}>
         <h1>Lithium Finance</h1>
      {loading  ?
         <LoadingCircle />
@@ -28,7 +28,7 @@ const Home = () => {
         :
         'Error Loading Questions'
      }
-    </Template>
+    </WisdomNodeTemplate>
   )
   return  main;
 }
