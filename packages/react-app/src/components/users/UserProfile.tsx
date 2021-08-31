@@ -1,19 +1,32 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles';
 import { UserView } from '../../types/user'
-import AnswerList from '../answers/AnswerList'
+import Badge from './Badge'
+import Button from '../atoms/inputs/buttons/Button'
 import Flex from '../atoms/Flex'
-import QuestionList from '../questions/QuestionList'
 import UserBalances from './UserBalances'
-import UserInputRow from './UserInputRow'
 
-const UserProfile = ({user, connectedWallet}: {user: UserView, connectedWallet?: any}) => {
+const useStyles = makeStyles(theme => ({
+  userProfile: {
+    backgroundColor: '#222222',
+    border: 0,
+    color: '#ffffff',
+    padding: '12px'
+  },
+  buttonClaim: {
+    
+  }
+}));
+
+const UserProfile = ({user}: {user: UserView}) => {
+  const classes = useStyles();
+
   return (
-    <div>
-      { connectedWallet && <UserInputRow connectedWallet={connectedWallet} pricingIsApproved={user.pricingIsApproved} /> }
+    <div className={classes.userProfile}>
+      <Badge address={user.id} />
       <UserBalances user={user}/>
-      <Flex  justifyContent='space-around' mt='3em'>
-        <QuestionList questions={user.questionViews} />
-        <AnswerList answers={user.answerViews} />
+      <Flex justifyContent="flex-end" mt="1rem">
+        <Button onClick={() => {}}label="Claim all" />
       </Flex>
     </div>
   )

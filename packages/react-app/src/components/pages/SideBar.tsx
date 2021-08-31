@@ -1,24 +1,38 @@
-import React, { Fragment } from 'react'
+import React  from 'react'
 import { Link as RouterLink } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
 import { NavMenuParams } from '../../types/navigation';
-import Box from '../atoms/Box';
 import NavMenu from '../navigation/NavMenu';
 import ConnectedWallet from '../users/ConnectedWallet';
 
+import lithiumLogo from '../../assets/logo-lithium.svg';
+
+const useStyles = makeStyles(theme => ({
+  sidebar: {
+    backgroundColor: '#000000',
+    border: 0,
+    padding: '16px'
+  },
+  logo: {
+    width: '100px'
+  }
+}));
 
 const SideBar = (props: NavMenuParams) => {
+  const classes = useStyles();
+
   return (
-    <Box flexDirection="column" alignItems="center">
+    <div className={classes.sidebar}>
       <RouterLink to="/">
-        <div style={{ marginTop: '1em'}}>Lithium Finance</div>
+        <img src={lithiumLogo} alt="Lithium Finance" className={classes.logo} />
       </RouterLink>
-      <div style={{marginTop: '1em'}}>
+      <div style={{marginTop: '12px'}}>
         <ConnectedWallet />
       </div>
       <div>
         <NavMenu {...props} />
       </div>
-  </Box>
+    </div>
   )
 }
 
