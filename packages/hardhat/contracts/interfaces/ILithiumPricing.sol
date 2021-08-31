@@ -38,7 +38,7 @@ interface ILithiumPricing {
 
   event AnswerGroupSetSubmitted (
   address answerer,
-  uint256 questionSetsId
+  uint256 questionSetId
 );
 
   event MinimumStakeUpdated(uint256 minimumStake);

@@ -41,7 +41,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     address answerer; // the answer creator
     uint256 questionGroupId; // the id of the question being answered
     uint256[] stakeAmounts; // the amount to stake in LITH token for the answersSetsGroup
-    uint16[] answerIndex; // the index of the chosen answer in the question.answerSet
+    uint16[] answerIndexes; // the index of the chosen answer in the question.answerSet
     AnswerStatus status; // the status of the AnswerSets, Unclaimed or Claimed
 }
 
@@ -523,7 +523,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     AnswerGroup memory answersGroup;
     answersGroup.answerer = msg.sender;
     answersGroup.questionGroupId = questionGroupId;
-    answersGroup.answerIndex = answerIndexes;
+    answersGroup.answerIndexes = answerIndexes;
     answersGroup.stakeAmounts = stakeAmounts;
     answerGroups[questionGroupId][msg.sender] = answersGroup;
     emit AnswerGroupSetSubmitted(msg.sender,questionGroupId);
