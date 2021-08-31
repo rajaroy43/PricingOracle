@@ -125,9 +125,7 @@ interface GetUserResponse extends QueryResponse {
 }
 
 export const useGetUser = (client: any, id: string): GetUserResponse => {
-  if (id) {
-    id = id.split('').map(f => f.toLowerCase()).join('')
-  }
+  id = id.split('').map(f => f.toLowerCase()).join('')
   
   const {loading, error, data} = useQuery<GetUserData, UserQueryVars>(
     GET_USER,

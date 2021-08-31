@@ -1,11 +1,11 @@
-import React  from 'react'
+import React from 'react'
 import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { NavMenuParams } from '../../types/navigation';
-import NavMenu from '../navigation/NavMenu';
-import ConnectedWallet from '../users/ConnectedWallet';
+import { GetNavItemParams, PageParams } from '../../../types/navigation';
+import NavMenu from '../../navigation/NavMenu';
+import ConnectedWallet from '../../users/ConnectedWallet';
 
-import lithiumLogo from '../../assets/logo-lithium.svg';
+import lithiumLogo from '../../../assets/logo-lithium.svg';
 
 const useStyles = makeStyles(theme => ({
   sidebar: {
@@ -18,7 +18,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SideBar = (props: NavMenuParams) => {
+// Wisdom Node ConnectedSideBar
+const ConnectedSideBar = ({navMenu, getNavItems}: {navMenu: PageParams, getNavItems: GetNavItemParams[]}
+  ) => {
   const classes = useStyles();
 
   return (
@@ -30,10 +32,10 @@ const SideBar = (props: NavMenuParams) => {
         <ConnectedWallet />
       </div>
       <div>
-        <NavMenu {...props} />
+        <NavMenu {...navMenu} getNavItems={getNavItems} />
       </div>
     </div>
   )
 }
 
-export default SideBar
+export default ConnectedSideBar
