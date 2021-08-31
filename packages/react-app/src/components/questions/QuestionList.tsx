@@ -7,7 +7,7 @@ const QuestionList = ({questions}: {questions: QuestionView[]}) => {
     <div>
       <h3>Questions</h3>
       {questions.length ?
-        questions.map((question => <QuestionItem id={question.id} question={question} />))
+        questions.map((question => <QuestionItem id={question.id} question={question} key={question.id} />))
         :
         <div>No Questions</div>
       }
