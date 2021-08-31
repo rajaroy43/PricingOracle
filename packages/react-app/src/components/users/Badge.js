@@ -29,7 +29,7 @@ const Badge = ({ address }) => {
   }
 
   return (
-      <Link to={`/account/${address}`} element={<Box style={{margin: 0, padding: 0}}>
+      <Link to={`/wisdomnode/account/${address}`} element={<Box style={{margin: 0, padding: 0}}>
         <Blockie address={address} />
         <div className={classes.badgeAddress} >
           <Address address={address} length={4} />
