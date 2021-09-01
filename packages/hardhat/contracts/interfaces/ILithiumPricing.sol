@@ -38,7 +38,7 @@ interface ILithiumPricing {
 
   event AnswerGroupSetSubmitted (
   address answerer,
-  uint256[] questionIds
+  uint256 questionSetId
 );
 
   event MinimumStakeUpdated(uint256 minimumStake);
@@ -65,6 +65,9 @@ interface ILithiumPricing {
     address lithiumTokenAddress
   );
 
+  event GroupRewardClaimed(
+    uint256 questionGroupId, address answerer, uint256 totalRewardClaimed
+  );
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
@@ -147,14 +150,14 @@ interface ILithiumPricing {
   ) external;
 
   function answerQuestions (
-    uint256[] memory questionIds,
+    uint256 questionGroupId,
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external;
 
   function claimRewards (
-    uint256[] memory questionIds
-  ) external;
+    uint256 questionGroupId
+  ) external returns(uint256);
 
-  
+
 }

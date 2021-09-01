@@ -47,14 +47,14 @@ contract LithiumReward is ILithiumReward {
     uint256
   ) {
 
-    (
+    ( address answerer
       ,
       ,
       uint256 answerIndex,
       uint256 stakeAmount,
       
     ) = lithiumPricing.getAnswer(_questionId, _answerer);
-
+    require(answerer != address(0),"User haven't submit answer");
     uint256[] memory answerSetTotalStaked = lithiumPricing.getAnswerSetTotals(_questionId);
     uint256 topAnswerIndex = getTopAnswerIndex(answerSetTotalStaked);
 

@@ -1,6 +1,5 @@
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Roles.sol";
 import "./interfaces/ILithiumPricing.sol";
@@ -38,6 +37,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint16 answerIndex; // the index of the chosen answer in the question.answerSet
     AnswerStatus status; // the status of the Answer, Unclaimed or Claimed
   }
+  struct AnswerGroup {
+    address answerer; // the answer creator
+    uint256 questionGroupId; // the id of the question being answered
+    uint256[] stakeAmounts; // the amount to stake in LITH token for the answersSetsGroup
+    uint16[] answerIndexes; // the index of the chosen answer in the question.answerSet
+    AnswerStatus status; // the status of the AnswerSets, Unclaimed or Claimed
+}
 
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
@@ -55,6 +61,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   // questionId => answerer => Answer
   mapping(uint256 => mapping(address => Answer)) public answers;
+
+  // questionGroupId =>  answerer => AnswerGroup
+  mapping(uint256=> mapping(address => AnswerGroup)) public answerGroups;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
   // minimumStake put by wisdom nodes when answering question
@@ -282,7 +291,6 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
     
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
-
     Answer memory answer;
     answer.answerer = msg.sender;
     answer.questionId = _questionId;
@@ -306,19 +314,15 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function claimReward (
     uint256 _questionId
-  ) internal {
-    require(_questionId < questions.length, "Invalid question id");
+  ) internal returns(uint256 reward ){
     Question storage question = questions[_questionId];
     require(question.endTime <= block.timestamp, "Question is still active and cannot be claimed");
     Answer storage answer = answers[_questionId][msg.sender];
     require(answer.status == AnswerStatus.Unclaimed, "Reward has already been claimed");
-
-    uint256 reward = lithiumReward.getReward(_questionId, msg.sender);
-
+    reward = lithiumReward.getReward(_questionId, msg.sender);
     if (reward > 0) {
       answer.status = AnswerStatus.Claimed;
       LithiumToken.transfer(msg.sender, reward);
-
       emit RewardClaimed(_questionId, msg.sender, reward);
     }
   }
@@ -506,15 +510,23 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
   function answerQuestions (
-    uint256[] memory questionIds,
+    uint256 questionGroupId,
     uint256[] memory stakeAmounts,
     uint16[] memory answerIndexes
   ) external override {
+    require(questionGroupId < questionGroups.length, "Invalid question group id");
+    uint256[] memory questionIds = questionGroups[questionGroupId].questionIds;
     require(questionIds.length == stakeAmounts.length && questionIds.length == answerIndexes.length,"Array mismatch");
     for (uint256 i = 0; i < questionIds.length; i++) {
       answerQuestion(questionIds[i], stakeAmounts[i], answerIndexes[i]);
     }
-    emit AnswerGroupSetSubmitted(msg.sender,questionIds);
+    AnswerGroup memory answersGroup;
+    answersGroup.answerer = msg.sender;
+    answersGroup.questionGroupId = questionGroupId;
+    answersGroup.answerIndexes = answerIndexes;
+    answersGroup.stakeAmounts = stakeAmounts;
+    answerGroups[questionGroupId][msg.sender] = answersGroup;
+    emit AnswerGroupSetSubmitted(msg.sender,questionGroupId);
   }
  
     /**
@@ -526,10 +538,16 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - the caller must have answered the questions
   */
   function claimRewards (
-    uint256[] memory questionIds
-  ) external override {
+    uint256 questionGroupId
+  ) external override returns(uint256 totalRewardClaimed){
+    require(questionGroupId < questionGroups.length, "Invalid question group id");
+    AnswerGroup  storage answerGroup = answerGroups[questionGroupId][msg.sender];
+    require(answerGroup.status == AnswerStatus.Unclaimed, "Group Rewards has already been claimed");
+    uint256[] memory questionIds = questionGroups[questionGroupId].questionIds;
     for (uint256 i = 0; i < questionIds.length; i++) {
-      claimReward(questionIds[i]);
+      totalRewardClaimed += claimReward(questionIds[i]);
     }
+    answerGroup.status = AnswerStatus.Claimed;
+    emit GroupRewardClaimed(questionGroupId,msg.sender,totalRewardClaimed);
   }
 }
