@@ -20,9 +20,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
-    RewardCalculated isRewardCalculated;//reward status will be Updated by LithiumCordinator once deadline passed
+    StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     uint256 pricingTime;//Indicate when the asset should be priced for
     QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
+    uint256 finalAnswer;//Final answer of a question
   }
 
   struct QuestionGroup {
@@ -39,10 +40,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
   struct AnswerGroup {
     address answerer; // the answer creator
-    uint256 questionGroupId; // the id of the question being answered
+    uint256 questionGroupId; // the id of the questions being answered
     uint256[] stakeAmounts; // the amount to stake in LITH token for the answersSetsGroup
     uint16[] answerIndexes; // the index of the chosen answer in the question.answerSet
     AnswerStatus status; // the status of the AnswerSets, Unclaimed or Claimed
+    uint256 rewardAmount;//reward rate can be negative,zero or positive
+    StatusCalculated isRewardCalculated;//rewardcalculated status for answergroup
 }
 
   IERC20 LithiumToken;
@@ -144,6 +147,29 @@ contract LithiumPricing is ILithiumPricing, Roles {
     stakeAmount = answer.stakeAmount;
     status = answer.status;
   }
+
+    //Get all data for question and about the answer  with questionId _id and answr submitter as _answerer
+  function getAnswerGroup (
+    uint256 _groupId,
+    address _answerer
+  ) external view override returns (
+    address answerer,
+    uint256 questionGroupId,
+    uint16[] memory answerIndexes,
+    uint256 stakeAmount,
+    AnswerStatus status,
+    uint256 rewardAmount
+  ) {
+    AnswerGroup storage answerGroup  = answerGroups[_groupId][_answerer];
+    for(uint256 i=0; i< answerGroup.stakeAmounts.length; i++){
+      stakeAmount += answerGroup.stakeAmounts[i];
+    }
+    answerer = answerGroup.answerer;
+    questionGroupId = answerGroup.questionGroupId;
+    answerIndexes = answerGroup.answerIndexes;
+    status = answerGroup.status;
+    rewardAmount = answerGroup.rewardAmount;
+  }
 //get staked amount for Question with id _questionId
 //Remember it will exclude the bounty that were offer by wisdom node
   function getAnswerSetTotals (
@@ -168,13 +194,18 @@ contract LithiumPricing is ILithiumPricing, Roles {
   //remember it include totalStakedLithToken+Bounty
 
   function getRewardTotal (
-    uint256 _questionId
+    uint256 _groupId
   ) external view override returns (
     uint256
   ) {
-    Question storage question = questions[_questionId];
+    uint256[] memory questionIds = questionGroups[_groupId].questionIds;
+    uint256 totalRewardPerGroup;
+    for (uint256 i = 0; i < questionIds.length; i++) {
+      Question storage question = questions[i];
+      totalRewardPerGroup += question.bounty + question.totalStaked;
+    }
 
-    return question.bounty + question.totalStaked;
+    return totalRewardPerGroup;
   }
 
   //get reputation of a user  with user address user category id  categoryId 
@@ -313,17 +344,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - the caller must have answered the question
   */
   function claimReward (
-    uint256 _questionId
+    uint256 _questionGroupId
   ) internal returns(uint256 reward ){
-    Question storage question = questions[_questionId];
-    require(question.endTime <= block.timestamp, "Question is still active and cannot be claimed");
-    Answer storage answer = answers[_questionId][msg.sender];
-    require(answer.status == AnswerStatus.Unclaimed, "Reward has already been claimed");
-    reward = lithiumReward.getReward(_questionId, msg.sender);
+    reward = lithiumReward.getReward(_questionGroupId,msg.sender);
     if (reward > 0) {
-      answer.status = AnswerStatus.Claimed;
       LithiumToken.transfer(msg.sender, reward);
-      emit RewardClaimed(_questionId, msg.sender, reward);
+      emit RewardClaimed(_questionGroupId, msg.sender, reward);
     }
   }
 
@@ -378,17 +404,17 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-  function updateRewardCalculatedStatus(uint256 questionId)external{
+  function updateFinalAnswerStatus(uint256 questionId, uint256 answer)external override{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionId < questions.length, "Invalid question id");
 
     Question storage question = questions[questionId];
 
     require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
-    require(question.isRewardCalculated == RewardCalculated.NotCalculated,"Rewards is already updated");
-
-    question.isRewardCalculated = RewardCalculated.Calculated;
-    emit RewardCalculatedStatus(questionId,question.isRewardCalculated);
+    require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
+    question.finalAnswer = answer;
+    question.isAnswerCalculated = StatusCalculated.Calculated;
+    emit FinalAnswerCalculatedStatus(questionId,question.isAnswerCalculated,answer);
   }
 
    /**
@@ -401,7 +427,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - the length of the array arguments must be equal
   * - the categoryIds must all be valid
   */
-  function updateReputation(address[] memory addressesToUpdate,uint256[] memory categoryIds,uint256[] memory  reputationScores) external  {
+  function updateReputation(address[] memory addressesToUpdate,uint256[] memory categoryIds,uint256[] memory  reputationScores) external  override{
     require(isAdmin(msg.sender), "Must be admin");
     require(addressesToUpdate.length != 0, "address length must be greater than zero");
     require(addressesToUpdate.length == categoryIds.length && categoryIds.length == reputationScores.length, "argument array length mismatch"); 
@@ -420,10 +446,22 @@ contract LithiumPricing is ILithiumPricing, Roles {
   *
   * - the caller must be admin of this contract
   */
-  function updateMinimumStake(uint256 _minimumStake)external {
+  function updateMinimumStake(uint256 _minimumStake)external override {
     require(isAdmin(msg.sender), "Must be admin");
     minimumStake=_minimumStake;
     emit MinimumStakeUpdated(_minimumStake);
+  }
+
+  function updateGroupRewardAmounts(address[] memory addressesToUpdate,uint256[] memory groupIds, uint256[] memory rewardAmounts) external override{
+    require(isAdmin(msg.sender), "Must be admin");
+    require(addressesToUpdate.length == groupIds.length && addressesToUpdate.length == rewardAmounts.length,"Array mismatch");
+    for (uint256 i = 0; i < groupIds.length; i++) {
+      AnswerGroup  storage answerGroup = answerGroups[groupIds[i]][addressesToUpdate[i]];
+      require(answerGroup.answerer == addressesToUpdate[i] ,"Not valid answerer");
+      answerGroup.rewardAmount = rewardAmounts[i];
+      answerGroup.isRewardCalculated = StatusCalculated.Calculated;
+    }
+    emit GroupRewardUpdated(addressesToUpdate,groupIds,rewardAmounts);
   }
 
   /**
@@ -539,15 +577,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function claimRewards (
     uint256 questionGroupId
-  ) external override returns(uint256 totalRewardClaimed){
+  ) external override {
     require(questionGroupId < questionGroups.length, "Invalid question group id");
     AnswerGroup  storage answerGroup = answerGroups[questionGroupId][msg.sender];
     require(answerGroup.status == AnswerStatus.Unclaimed, "Group Rewards has already been claimed");
-    uint256[] memory questionIds = questionGroups[questionGroupId].questionIds;
-    for (uint256 i = 0; i < questionIds.length; i++) {
-      totalRewardClaimed += claimReward(questionIds[i]);
-    }
+    require(answerGroup.isRewardCalculated == StatusCalculated.Calculated,"Reward not calculated yet");
+    claimReward(questionGroupId);
     answerGroup.status = AnswerStatus.Claimed;
-    emit GroupRewardClaimed(questionGroupId,msg.sender,totalRewardClaimed);
   }
 }
