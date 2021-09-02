@@ -70,6 +70,7 @@ type Question @entity {
 type QuestionGroup @entity {
   id: ID!
   questions: [Question!]!
+  endTime: BigInt!
 }
 
 type Answer @entity {

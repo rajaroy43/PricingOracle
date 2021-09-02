@@ -132,7 +132,15 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   let id = event.params.id.toString()
   let questionGroup = new QuestionGroup(id)
   let questionIds = event.params.questionIds as string[]
+  let endTime = ZERO
+  for(let i = 0; i < questionIds.length; i++) {
+    let question = Question.load(questionIds[i])
+    if (endTime < question.endTime) {
+      endTime = question.endTime
+    }
+  }
   questionGroup.questions = questionIds
+  questionGroup.endTime = endTime
   questionGroup.save()
 }
 
