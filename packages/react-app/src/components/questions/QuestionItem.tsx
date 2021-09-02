@@ -7,7 +7,7 @@ import Flex from '../atoms/Flex'
 const QuestionItem = ({id, question}: {id: string, question: QuestionView}) => {
   return (
     <Flex flexDirection='column' mb='2em'>
-      <RouterLink to={`/question/${question.id}`}>
+      <RouterLink to={`/wisdomnode/question/${question.id}`}>
         <div>#{question.id} - {question.description}</div>
       </RouterLink> 
       <div>Asked by <Address address={question.owner.id} length={4} /></div>
