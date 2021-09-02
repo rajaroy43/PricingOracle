@@ -3,9 +3,8 @@ import { subgraphClient } from '../../client'
 import { useGetQuestion } from '../../queries/question'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
+import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import QuestionDetail from '../questions/QuestionDetail'
-import Base from './Base'
-import SideBar from './SideBar'
 
 const Question = ({match}) => {
   const id = match.params.id
@@ -18,22 +17,17 @@ const Question = ({match}) => {
     // @ts-ignore
     walletAddress: connectedWallet.address
   }
+
   const main = (
-    <div>
+    <WisdomNodeTemplate pageProps={sideBarProps}>
       {loading ?
           <LoadingCircle />
           :
           <QuestionDetail question={question} connectedWallet={connectedWallet} />
       }
-    </div>
+    </WisdomNodeTemplate>
   )
-  return (
-    <Base
-      main={main}
-      sideBar={<SideBar {...sideBarProps} />}
-    />
-  )
-
+  return main;
 }
 
 export default Question

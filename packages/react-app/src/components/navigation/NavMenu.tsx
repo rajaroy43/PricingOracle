@@ -1,66 +1,38 @@
 import React from 'react'
 import { GetNavItemParams, NavMenuParams, NavItemParams, GetIsActive } from '../../types/navigation'
+import { makeStyles } from '@material-ui/core/styles';
 import Box from '../atoms/Box'
 import NavMenuItem from './NavMenuItem'
-
 
 const  prepareNavItem = (
   menuProps: NavMenuParams, itemProps: GetNavItemParams
 ): NavItemParams => {
   return {
     id: itemProps.id,
+    icon: itemProps.icon,
     label: itemProps.label,
     url: itemProps.getUrl(menuProps),
     shouldRender: itemProps.getShouldRender(menuProps),
-    isActive: itemProps.getIsActive(menuProps, itemProps)
+    isActive: itemProps.getIsActive(menuProps, itemProps),
   }
 }
 
-const getIsActive: GetIsActive = (menuProps, itemProps) => {
-  return menuProps.activePage === itemProps.id
-}
-
-export const baseMenuItem = {
-  getIsActive
-}
-
-const navItems: GetNavItemParams[] = [
-  {
-    ...baseMenuItem,
-    id: 'dashboard',
-    label: 'Dashboard',
-    getUrl: (params) => {
-      return params.isWalletConnected ?
-        `/account/${params.walletAddress}`
-        :
-        '/'
-    },
-    getShouldRender: (params) => {
-      return params.isWalletConnected
-    },
-
+const useStyles = makeStyles(theme => ({
+  navMenus: {
+    margin: 0,
+    padding: '16px 0 0 0'
   },
-  {
-    ...baseMenuItem,
-    id: 'available_sets',
-    label: 'Available Questions',
-    getUrl: (params) => {
-      return params.isWalletConnected ?
-        `/available-sets/${params.walletAddress}`
-        :
-        '/'
-    },
-    getShouldRender: (_) => {
-      return true
-    },
-  }
-]
+}));  
 
-const NavMenu = (props: NavMenuParams) => {
-  const preppedItems = navItems.map(item => prepareNavItem(props, item))
+const NavMenu = (props: NavMenuParams) => {  
+  const classes = useStyles();
+
+  const preppedItems = props.getNavItems.map(item => prepareNavItem(props, item))
   return (
-    <Box flexDirection="column">
-      {preppedItems.map(navItem => <NavMenuItem key={navItem.id} {...navItem} />)}
+    <Box flexDirection="column" className={classes.navMenus}>
+      {preppedItems.map(navItem => (
+          <NavMenuItem key={navItem.id} {...navItem} />
+      ))}
     </Box>
   )
 }

@@ -3,13 +3,13 @@ import { subgraphClient } from '../../client'
 import { useGetQuestions } from '../../queries/question'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
+import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import QuestionList from '../questions/QuestionList'
-import Base from './Base'
-import SideBar from './SideBar'
 
 const Home = () => {
   const connectedWallet = useContext(WalletContext)
   const {loading, questions} = useGetQuestions(subgraphClient)
+
   const sideBarProps = {
     activePage: '',
     // @ts-ignore
@@ -17,9 +17,10 @@ const Home = () => {
     // @ts-ignore
     walletAddress: connectedWallet.address
   }
+
   const main = (
-    <div>
-           <h1>Lithium Finance</h1>
+    <WisdomNodeTemplate pageProps={sideBarProps}>
+        <h1>Lithium Finance</h1>
      {loading  ?
         <LoadingCircle />
         :
@@ -27,9 +28,9 @@ const Home = () => {
         :
         'Error Loading Questions'
      }
-    </div>
+    </WisdomNodeTemplate>
   )
-  return <Base main={main} sideBar={<SideBar {...sideBarProps} />} />
+  return  main;
 }
 
 export default Home
