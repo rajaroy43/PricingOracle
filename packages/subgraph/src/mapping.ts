@@ -32,7 +32,7 @@ const PRICING_CONTRACT_META_ID = 'pricing_contract_meta'
 
 let QUESTION_TYPES = new Array<String>(2)
 QUESTION_TYPES[0] = "Pricing"
-QUESTION_TYPES[1] = "GrountTruth"
+QUESTION_TYPES[1] = "GroundTruth"
 
 function getAnswerId(answererAddress: string, questionId: string): string {
   return answererAddress + "-" + questionId
