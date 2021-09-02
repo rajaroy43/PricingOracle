@@ -2,6 +2,21 @@
 # scalar BigInt
 # scalar Bytes
 
+enum AnswerStatus {
+  Unclaimed
+  Claimed
+}
+
+enum RewardCalculated {
+  NotCalculated
+  Calculated
+}
+
+enum QuestionType {
+  Pricing
+  GroundTruth
+}
+
 type PricingContractMeta @entity {
   id: ID!
   address: Bytes!
@@ -13,10 +28,11 @@ type User @entity {
   id: ID! # address
   questions: [Question!] @derivedFrom(field: "owner")
   answers: [Answer!] @derivedFrom(field: "answerer")
-  answerGroups: [AnswerGroup!] @derivedFrom(field: "answerer")
+  answerGroups: [AnswerGroup!] @derivedFrom(field: "owner")
   questionCount: BigInt!
   totalBounty: BigInt!
   answerCount: BigInt!
+  answerGroupCount: BigInt!
   totalRewardsClaimed: BigInt!
   totalStaked: BigInt!
   tokenBalance: BigInt!
@@ -35,6 +51,7 @@ type QuestionCategory @entity {
 
 type Question @entity {
   id: ID!
+  questionType: QuestionType!
   owner: User!
   category: QuestionCategory!
   description: String!
@@ -44,15 +61,15 @@ type Question @entity {
   totalStaked: BigInt!
   endTime: BigInt!
   pricingTime: BigInt!
-  isRewardCalculated: Boolean!
+  isRewardCalculated: RewardCalculated!
   answerCount: BigInt!
   answers: [Answer!] @derivedFrom(field: "question")
   created: BigInt!
 }
 
-enum AnswerStatus {
-  UNCLAIMED
-  CLAIMED
+type QuestionGroup @entity {
+  id: ID!
+  questions: [Question!]!
 }
 
 type Answer @entity {
@@ -69,6 +86,7 @@ type Answer @entity {
 
 type AnswerGroup @entity {
   id: ID!
+  questionGroup: QuestionGroup!
   answers: [Answer!]!
-  answerer: User!
+  owner: User!
 }
