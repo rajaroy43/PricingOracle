@@ -53,9 +53,9 @@ interface ILithiumPricing {
   );
 
   event FinalAnswerCalculatedStatus(
-    uint256 questionId,
-    StatusCalculated isCalculated,
-    uint256 finalAnswer
+    uint256[] questionIds,
+    uint256[] finalAnswerIndex,
+    uint256[] finalAnswerValue
   );
 
   event SetLithiumRewardAddress(
@@ -74,24 +74,7 @@ interface ILithiumPricing {
   enum QuestionType{ Pricing, GroundTruth }
   /** Getter Functions */
 
-  /**
-  * @dev Returns a Question.
-  */
-  function getQuestion (
-    uint256 _id
-  ) external view returns (
-    address owner,
-    uint256 id,
-    uint256 categoryId,
-    string memory description,
-    uint256[] memory answerSet,
-    uint256[] memory answerSetTotalStaked,
-    uint256 bounty,
-    uint256 totalStaked,
-    uint256 endTime,
-    uint256 pricingTime,
-    QuestionType questionType
-  ); 
+ 
 
   /**
     * @dev Returns an Answer.
@@ -116,7 +99,8 @@ interface ILithiumPricing {
     uint16[] memory answerIndexes,
     uint256 stakeAmount,
     AnswerStatus status,
-    uint256 rewardAmount
+    uint256 rewardAmount,
+    StatusCalculated isRewardCalculated
   ) ;
   
   function getAnswerSetTotals (
@@ -141,8 +125,7 @@ interface ILithiumPricing {
 /* External Functions */
 
   function updateFinalAnswerStatus(
-    uint256 questionId, 
-    uint256 answer
+   uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue
     )external;
 
   function updateReputation(
