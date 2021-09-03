@@ -32,7 +32,8 @@ contract LithiumReward is ILithiumReward {
       ,
       uint256 stakeAmount,
       ,
-      uint256 rewardAmount
+      uint256 rewardAmount,
+      
     ) = lithiumPricing.getAnswerGroup(_groupId, _answerer);
     
     require(answerer != address(0),"User haven't submit answer");

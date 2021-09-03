@@ -23,7 +23,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     uint256 pricingTime;//Indicate when the asset should be priced for
     QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
-    uint256 finalAnswer;//Final answer of a question
+    uint256 finalAnswerIndex;//Final answer index  of a question
+    uint256 finalAnswerValue;//Final answer vaule of question 
   }
 
   struct QuestionGroup {
@@ -70,6 +71,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
   // minimumStake put by wisdom nodes when answering question
+
   uint256 public minimumStake;
 
   constructor () {
@@ -100,34 +102,15 @@ contract LithiumPricing is ILithiumPricing, Roles {
     }
   }
 
+  // Get question data
   function getQuestion (
     uint256 _id
-  ) external view override returns (
-    address owner,
-    uint256 id,
-    uint256 categoryId,
-    string memory description,
-    uint256[] memory answerSet,
-    uint256[] memory answerSetTotalStaked,
-    uint256 bounty,
-    uint256 totalStaked,
-    uint256 endTime,
-    uint256 pricingTime,
-    QuestionType questionType
+  ) external view  returns (
+    Question memory
   ) {
     Question storage question = questions[_id];
-    owner = question.owner;
-    id = question.id;
-    categoryId = question.categoryId;
-    description = question.description;
-    answerSet = question.answerSet;
-    answerSetTotalStaked = question.answerSetTotalStaked;
-    bounty = question.bounty;
-    totalStaked = question.totalStaked;
-    endTime = question.endTime;
-    pricingTime = question.pricingTime;
-    questionType = question.questionType;
-  }
+    return question;
+    }
 
   //Get all data for question and about the answer  with questionId _id and answr submitter as _answerer
   function getAnswer (
@@ -158,7 +141,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint16[] memory answerIndexes,
     uint256 stakeAmount,
     AnswerStatus status,
-    uint256 rewardAmount
+    uint256 rewardAmount,
+    StatusCalculated isRewardCalculated
   ) {
     AnswerGroup storage answerGroup  = answerGroups[_groupId][_answerer];
     for(uint256 i=0; i< answerGroup.stakeAmounts.length; i++){
@@ -169,7 +153,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     answerIndexes = answerGroup.answerIndexes;
     status = answerGroup.status;
     rewardAmount = answerGroup.rewardAmount;
+    isRewardCalculated = answerGroup.isRewardCalculated;
   }
+
 //get staked amount for Question with id _questionId
 //Remember it will exclude the bounty that were offer by wisdom node
   function getAnswerSetTotals (
@@ -190,8 +176,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     return questions[_questionId].answerSet;
   }
 
-  //get total staked amount for Question with id
-  //remember it include totalStakedLithToken+Bounty
+  //get total staked amount for Question group 
+  //remember it include totalStakedLithToken +Bounty for question group
 
   function getRewardTotal (
     uint256 _groupId
@@ -334,15 +320,12 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
  /**
-  * @dev Allow users to claim a reward for an answered question
-  * the `questionId` is the id of the question to claim the reward for
-  * the reward amount is determined by the LithiumReward contract
+  * @dev Allow users to claim a reward for an questionGroup id
+  * the `_questionGroupId` is the id of the questionGroup to claim the reward .
+  * The reward amount is determined by the LithiumReward contract
   * Emits a { RewardClaimed } event.
-  *
-  * Requirements
-  *
-  * - the caller must have answered the question
   */
+
   function claimReward (
     uint256 _questionGroupId
   ) internal returns(uint256 reward ){
@@ -394,27 +377,37 @@ contract LithiumPricing is ILithiumPricing, Roles {
   }
 
  /**
-  * @dev Allow Lithium Coordinator to submit status of rewards 
-  * the `questionId` is the id of the question to updated the status of reward
-  *
+  * @dev Allow Lithium Coordinator to submit final answer value and its index 
+  * the `questionIds` is the  array of question id  
+  * the `finalAnswerIndex` is the array  for final answer index of questionIds
+  * the `finalAnswerValue` is the array  for final answer value of questionIds
   * Requirements
   *
   * - the caller must be admin of this contract
-  * - endtime must be passed for answering question
+  * - endtime must be passed for all  question 
+  * - the length of the array arguments must be equal
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-  function updateFinalAnswerStatus(uint256 questionId, uint256 answer)external override{
+  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue)external override{
     require(isAdmin(msg.sender),"Must be admin");
+    require(questionIds.length != 0, "question IDs length must be greater than zero");
+    require(questionIds.length == finalAnswerIndex.length && questionIds.length == finalAnswerValue.length,"argument array length mismatch"); 
+    for(uint256 i=0;i< questionIds.length ;i++)
+    {
+    uint256 questionId = questionIds[i];
     require(questionId < questions.length, "Invalid question id");
 
     Question storage question = questions[questionId];
 
-    require(question.endTime <= block.timestamp, "Question is still active and rewards can't be updated");
+    require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
-    question.finalAnswer = answer;
+    question.finalAnswerIndex = finalAnswerIndex[i];
+    question.finalAnswerValue = finalAnswerValue[i];
     question.isAnswerCalculated = StatusCalculated.Calculated;
-    emit FinalAnswerCalculatedStatus(questionId,question.isAnswerCalculated,answer);
+    }
+    
+    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndex,finalAnswerValue);
   }
 
    /**
@@ -452,10 +445,28 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit MinimumStakeUpdated(_minimumStake);
   }
 
+/**
+  * @dev Allow Lithium Coordinator to update the answer group rewrads
+  * the `addressesToUpdate` is the  array of wisdom node  addresses 
+  * the `groupIds` is the array of answer group id for respective wisdom node address
+  * the `rewardAmounts` is the array of final rewards for respective wisdom node address
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  * - the length of the array arguments must be equal
+  * - answer must be calculated for groupids(all question id that belong in groupIds)
+  * - rewards can't be updated again with same question id
+  * - question id must be valid 
+  */
   function updateGroupRewardAmounts(address[] memory addressesToUpdate,uint256[] memory groupIds, uint256[] memory rewardAmounts) external override{
     require(isAdmin(msg.sender), "Must be admin");
     require(addressesToUpdate.length == groupIds.length && addressesToUpdate.length == rewardAmounts.length,"Array mismatch");
     for (uint256 i = 0; i < groupIds.length; i++) {
+      uint256[] memory questionIds = questionGroups[groupIds[i]].questionIds;
+      for(uint256 j=0 ; j<questionIds.length ; j++){
+         Question storage question = questions[questionIds[j]];
+         require(question.isAnswerCalculated == StatusCalculated.Calculated,"Answer is not yet calculated");
+      }
       AnswerGroup  storage answerGroup = answerGroups[groupIds[i]][addressesToUpdate[i]];
       require(answerGroup.answerer == addressesToUpdate[i] ,"Not valid answerer");
       answerGroup.rewardAmount = rewardAmounts[i];
@@ -567,7 +578,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     emit AnswerGroupSetSubmitted(msg.sender,questionGroupId);
   }
  
-    /**
+  /**
   * @dev Allow users to claim rewards for answered questions
   * the `questionIds` is the ids of the questions to claim the rewards for
   *
