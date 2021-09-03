@@ -43,7 +43,7 @@ interface ILithiumPricing {
 
   event MinimumStakeUpdated(uint256 minimumStake);
 
-  event RewardClaimed(uint256 questionId, address answerer, uint256 rewardAmount);
+  event RewardClaimed(uint256 questionGroupId, address answerer, uint256 rewardAmount);
 
   event ReputationUpdated(address[] addressesToUpdate,uint256[] categoryIds,uint256[] reputationScores);
 
@@ -52,9 +52,10 @@ interface ILithiumPricing {
     string label
   );
 
-  event RewardCalculatedStatus(
-    uint256 questionId,
-    RewardCalculated isCalculated
+  event FinalAnswerCalculatedStatus(
+    uint256[] questionIds,
+    uint256[] finalAnswerIndex,
+    uint256[] finalAnswerValue
   );
 
   event SetLithiumRewardAddress(
@@ -65,34 +66,15 @@ interface ILithiumPricing {
     address lithiumTokenAddress
   );
 
-  event GroupRewardClaimed(
-    uint256 questionGroupId, address answerer, uint256 totalRewardClaimed
-  );
+  event GroupRewardUpdated(address[] addressesToUpdate,uint256[] groupIds,uint256[] rewardAmounts);
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
-  enum RewardCalculated{NotCalculated,Calculated}
+  enum StatusCalculated{NotCalculated,Calculated}
   enum QuestionType{ Pricing, GroundTruth }
   /** Getter Functions */
 
-  /**
-  * @dev Returns a Question.
-  */
-  function getQuestion (
-    uint256 _id
-  ) external view returns (
-    address owner,
-    uint256 id,
-    uint256 categoryId,
-    string memory description,
-    uint256[] memory answerSet,
-    uint256[] memory answerSetTotalStaked,
-    uint256 bounty,
-    uint256 totalStaked,
-    uint256 endTime,
-    uint256 pricingTime,
-    QuestionType questionType
-  ); 
+ 
 
   /**
     * @dev Returns an Answer.
@@ -108,6 +90,19 @@ interface ILithiumPricing {
     AnswerStatus status
   );
 
+ function getAnswerGroup (
+    uint256 _groupId,
+    address _answerer
+  ) external view returns (
+    address answerer,
+    uint256 questionGroupId,
+    uint16[] memory answerIndexes,
+    uint256 stakeAmount,
+    AnswerStatus status,
+    uint256 rewardAmount,
+    StatusCalculated isRewardCalculated
+  ) ;
+  
   function getAnswerSetTotals (
     uint256 questionId
   ) external view returns (
@@ -129,6 +124,26 @@ interface ILithiumPricing {
 
 /* External Functions */
 
+  function updateFinalAnswerStatus(
+   uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue
+    )external;
+
+  function updateReputation(
+    address[] memory addressesToUpdate,
+    uint256[] memory categoryIds,
+    uint256[] memory  reputationScores
+    ) external;
+  
+  function updateMinimumStake (
+    uint256 _minimumStake
+    )external;
+
+  function updateGroupRewardAmounts(
+    address[] memory addressesToUpdate,
+    uint256[] memory groupIds, 
+    uint256[] memory rewardAmounts
+    ) external;
+  
   function createQuestion (
     uint16 categoryId,
     uint256 bounty,
@@ -157,7 +172,7 @@ interface ILithiumPricing {
 
   function claimRewards (
     uint256 questionGroupId
-  ) external returns(uint256);
+  ) external ;
 
 
 }

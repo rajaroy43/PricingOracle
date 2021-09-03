@@ -917,151 +917,328 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
       });
 
-      describe("Claim rewards for a question group", function () {
+      it("Should not  update final answer status if question deadline is not ended yet", async () => {
+        const questionIds = [0, 1];
+        const finalAnswerIndex = [1, 1];
+        const finalAnswerValue = [50, 100];
+
+        await expect(
+          lithiumPricing.updateFinalAnswerStatus(
+            questionIds,
+            finalAnswerIndex,
+            finalAnswerValue
+          )
+        ).to.be.revertedWith(
+          "Question is still active and Final Answer status can't be updated"
+        );
+      });
+
+      describe("Reward Mechanism ", async () => {
         beforeEach(async () => {
           const questionGroupId = 0;
           const stakeAmounts = [stakeAmount, stakeAmount];
-          const answerIndexes = [0, 0];
+          const answerIndexes = [1, 1];
           await lithiumPricing
             .connect(account1)
             .answerQuestions(questionGroupId, stakeAmounts, answerIndexes);
-        });
 
-        it("Should be able to claim reward", async function () {
           const one_minute = 60 * 60;
           await ethers.provider.send("evm_increaseTime", [one_minute]);
           await ethers.provider.send("evm_mine");
-          const senderBalance = await lithToken.balanceOf(account1.address);
-          const questionGroupId = 0;
-          //staked amount+bounty amount
-          const rewardAmount1 = ethers.utils.parseUnits("125.0", 18);
-          const rewardAmount2 = ethers.utils.parseUnits("125.0", 18);
-          const totalRewardClaimed = rewardAmount1.add(rewardAmount2);
+        });
+
+        it("Should able to update final answer status", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+
+          //Before updating final answer status
+          const beforeUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+          expect(beforeUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
+            0
+          );
+          expect(beforeUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
+            0
+          );
+          expect(
+            beforeUpdatingAnswerStatusquestion1.isAnswerCalculated
+          ).to.equal(0);
+          const beforeUpdatingAnswerStatusquestion2 =
+            await lithiumPricing.getQuestion(questionIds[1]);
+          expect(beforeUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
+            0
+          );
+          expect(beforeUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
+            0
+          );
+          expect(
+            beforeUpdatingAnswerStatusquestion2.isAnswerCalculated
+          ).to.equal(0);
+
           await expect(
-            lithiumPricing.connect(account1).claimRewards(questionGroupId)
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            )
           )
-            .emit(lithiumPricing, "RewardClaimed")
-            .withArgs(0, account1.address, rewardAmount1)
-            .withArgs(1, account1.address, rewardAmount2)
-            .emit(lithiumPricing, "GroupRewardClaimed")
-            .withArgs(questionGroupId, account1.address, totalRewardClaimed);
-          const senderBalanceAfter = await lithToken.balanceOf(
-            account1.address
-          );
+            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+            .withArgs(questionIds, finalAnswerIndex, finalAnswerValue);
 
-          expect(totalRewardClaimed.add(senderBalance)).to.equal(
-            senderBalanceAfter
+          const afterUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+
+          expect(afterUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
+            finalAnswerIndex[0]
           );
+          expect(afterUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
+            finalAnswerValue[0]
+          );
+          expect(
+            afterUpdatingAnswerStatusquestion1.isAnswerCalculated
+          ).to.equal(1);
+
+          const afterUpdatingAnswerStatusquestion2 =
+            await lithiumPricing.getQuestion(questionIds[1]);
+          expect(afterUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
+            finalAnswerIndex[1]
+          );
+          expect(afterUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
+            finalAnswerValue[1]
+          );
+          expect(
+            afterUpdatingAnswerStatusquestion2.isAnswerCalculated
+          ).to.equal(1);
         });
 
-        it("Should not able  to claim reward if deadline not be reached yet", async function () {
-          const questionGroupId = 0;
+        it("Should not allow non admin to update final answer status ", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
 
-          await expect(
-            lithiumPricing.connect(account1).claimRewards(questionGroupId)
-          ).to.be.revertedWith(
-            "Question is still active and cannot be claimed"
-          );
-        });
-
-        it("Should not be able to claim reward again ", async function () {
-          const one_minute = 60 * 60;
-          await ethers.provider.send("evm_increaseTime", [one_minute]);
-          await ethers.provider.send("evm_mine");
-          const senderBalance = await lithToken.balanceOf(account1.address);
-          const questionGroupId = 0;
-          //staked amount+bounty amount
-          const rewardAmount1 = ethers.utils.parseUnits("125.0", 18);
-          const rewardAmount2 = ethers.utils.parseUnits("125.0", 18);
-          const totalRewardClaimed = rewardAmount1.add(rewardAmount2);
-          await expect(
-            lithiumPricing.connect(account1).claimRewards(questionGroupId)
-          )
-            .emit(lithiumPricing, "RewardClaimed")
-            .withArgs(0, account1.address, rewardAmount1)
-            .withArgs(1, account1.address, rewardAmount2)
-            .emit(lithiumPricing, "GroupRewardClaimed")
-            .withArgs(questionGroupId, account1.address, totalRewardClaimed);
-
-          const senderBalanceAfter = await lithToken.balanceOf(
-            account1.address
-          );
-
-          expect(totalRewardClaimed.add(senderBalance)).to.equal(
-            senderBalanceAfter
-          );
-
-          await expect(
-            lithiumPricing.connect(account1).claimRewards(questionGroupId)
-          ).to.be.revertedWith("Group Rewards has already been claimed");
-        });
-
-        it("Should not be able to claim reward with invalid question Group Id ", async function () {
-          const one_minute = 60 * 60;
-          await ethers.provider.send("evm_increaseTime", [one_minute]);
-          await ethers.provider.send("evm_mine");
-          const ids = [1];
-          await expect(lithiumPricing.claimRewards(ids)).to.be.revertedWith(
-            "Invalid question group id"
-          );
-        });
-
-        it("Should not able  claim reward if wisdom node doesn't give answer yet", async function () {
-          const one_minute = 60 * 60;
-          await ethers.provider.send("evm_increaseTime", [one_minute]);
-          await ethers.provider.send("evm_mine");
-          const senderBalance = await lithToken.balanceOf(account0.address);
-          const questionGroupId = 0;
-          await expect(
-            lithiumPricing.connect(account0).claimRewards(questionGroupId)
-          ).to.be.revertedWith("User haven't submit answer");
-
-          const senderBalanceAfter = await lithToken.balanceOf(
-            account0.address
-          );
-
-          expect(senderBalance).to.equal(senderBalanceAfter);
-        });
-      });
-
-      describe("Reward Update status ", async function () {
-        beforeEach(async () => {
-          const one_minute = 60 * 60;
-          await ethers.provider.send("evm_increaseTime", [one_minute]);
-          await ethers.provider.send("evm_mine");
-        });
-
-        const questionId = 0;
-        it("Should allow admins to update reward status", async function () {
-          const calculatedewardStatus = 1;
-          await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
-            .emit(lithiumPricing, "RewardCalculatedStatus")
-            .withArgs(questionId, calculatedewardStatus);
-        });
-
-        it("Should not allow non admins to update reward status", async function () {
           await expect(
             lithiumPricing
-              .connect(account1)
-              .updateRewardCalculatedStatus(questionId)
+              .connect(account2)
+              .updateFinalAnswerStatus(
+                questionIds,
+                finalAnswerIndex,
+                finalAnswerValue
+              )
           ).to.be.revertedWith("Must be admin");
         });
 
-        it("Should not update reward status again ", async function () {
-          const calculatedewardStatus = 1;
-          await expect(lithiumPricing.updateRewardCalculatedStatus(questionId))
-            .emit(lithiumPricing, "RewardCalculatedStatus")
-            .withArgs(questionId, calculatedewardStatus);
+        it("Should not allow  admin to update final answer status if having invalid question id", async () => {
+          //invalid question id here
+          const questionIds = [0, 81];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+
           await expect(
-            lithiumPricing.updateRewardCalculatedStatus(questionId)
-          ).to.be.revertedWith("Rewards is already updated");
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            )
+          ).to.be.revertedWith("Invalid question id");
         });
 
-        it("Should not  update reward status for invalid questionId", async function () {
-          const invalidQuestionId = 19090;
+        it("Should not  update final answer status if passing questionIds as empty array", async () => {
+          const questionIds: number[] = [];
+          const finalAnswerIndex: number[] = [];
+          const finalAnswerValue: number[] = [];
+
           await expect(
-            lithiumPricing.updateRewardCalculatedStatus(invalidQuestionId)
-          ).to.be.revertedWith("Invalid question id");
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            )
+          ).to.be.revertedWith("question IDs length must be greater than zero");
+        });
+
+        it("Should not  update final answer status if having mismath argument ", async () => {
+          //invalid question id here
+          const questionIds = [0, 1, 0];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            )
+          ).to.be.revertedWith("argument array length mismatch");
+        });
+
+        it("Should not  update final answer status again ", async () => {
+          //invalid question id here
+          const questionIds = [0, 1];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            )
+          )
+            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+            .withArgs(questionIds, finalAnswerIndex, finalAnswerValue);
+
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            )
+          ).to.be.revertedWith("Answer is already calculated");
+        });
+
+        it("Should not  update reward amounts if answer is not calculated ", async () => {
+          const addressesToUpdate = [account1.address];
+          const groupIds = [0];
+          const rewardAmounts = [2];
+          await expect(
+            lithiumPricing.updateGroupRewardAmounts(
+              addressesToUpdate,
+              groupIds,
+              rewardAmounts
+            )
+          ).to.be.revertedWith("Answer is not yet calculated");
+        });
+
+        describe("Update Group Reward Amounts", async () => {
+          beforeEach(async () => {
+            const questionIds = [0, 1];
+            const finalAnswerIndex = [1, 1];
+            const finalAnswerValue = [50, 100];
+
+            await lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue
+            );
+          });
+
+          it("Should allow adimn  to update reward amounts ", async () => {
+            const addressesToUpdate = [account1.address];
+            const groupIds = [0];
+            const rewardAmounts = [2];
+            await expect(
+              lithiumPricing.updateGroupRewardAmounts(
+                addressesToUpdate,
+                groupIds,
+                rewardAmounts
+              )
+            )
+              .emit(lithiumPricing, "GroupRewardUpdated")
+              .withArgs(addressesToUpdate, groupIds, rewardAmounts);
+          });
+
+          it("Should not allow non-adimn  to update reward amounts ", async () => {
+            const addressesToUpdate = [account1.address];
+            const groupIds = [0];
+            const rewardAmounts = [2];
+            await expect(
+              lithiumPricing
+                .connect(account2)
+                .updateGroupRewardAmounts(
+                  addressesToUpdate,
+                  groupIds,
+                  rewardAmounts
+                )
+            ).to.be.revertedWith("Must be admin");
+          });
+
+          it("Should not  update reward amounts for mismatch params ", async () => {
+            const addressesToUpdate = [account1.address, account2.address];
+            const groupIds = [0];
+            const rewardAmounts = [2];
+            await expect(
+              lithiumPricing.updateGroupRewardAmounts(
+                addressesToUpdate,
+                groupIds,
+                rewardAmounts
+              )
+            ).to.be.revertedWith("Array mismatch");
+          });
+
+          it("Should not able to claim reward , if Answer Group Reward not calculated yet", async function () {
+            const questionGroupId = 0;
+            await expect(
+              lithiumPricing.connect(account1).claimRewards(questionGroupId)
+            ).to.be.revertedWith("Reward not calculated yet");
+          });
+
+          describe("Claim rewards for a answers group", function () {
+            beforeEach(async () => {
+              const addressesToUpdate = [account1.address];
+              const groupIds = [0];
+              const rewardAmounts = [2];
+              await lithiumPricing.updateGroupRewardAmounts(
+                addressesToUpdate,
+                groupIds,
+                rewardAmounts
+              );
+            });
+
+            it("Should be able to claim reward", async function () {
+              const senderBalance = await lithToken.balanceOf(account1.address);
+              const questionGroupId = 0;
+
+              //account1 stake 25(for question id 1)+25 (for question id 2)
+              //total stake = 50
+              //now total rewards: 50*rewardsAmounts[0]=50*2 = 100LITH tokens
+              const totalClaimedrewardAmount = ethers.utils.parseUnits(
+                "100.0",
+                18
+              );
+              await expect(
+                lithiumPricing.connect(account1).claimRewards(questionGroupId)
+              ).emit(lithiumPricing, "RewardClaimed");
+              const senderBalanceAfter = await lithToken.balanceOf(
+                account1.address
+              );
+
+              expect(totalClaimedrewardAmount.add(senderBalance)).to.equal(
+                senderBalanceAfter
+              );
+            });
+
+            it("Should not be able to claim reward again ", async function () {
+              const senderBalance = await lithToken.balanceOf(account1.address);
+              const questionGroupId = 0;
+
+              const totalClaimedrewardAmount = ethers.utils.parseUnits(
+                "100.0",
+                18
+              );
+              await expect(
+                lithiumPricing.connect(account1).claimRewards(questionGroupId)
+              ).emit(lithiumPricing, "RewardClaimed");
+
+              const senderBalanceAfter = await lithToken.balanceOf(
+                account1.address
+              );
+
+              expect(totalClaimedrewardAmount.add(senderBalance)).to.equal(
+                senderBalanceAfter
+              );
+
+              await expect(
+                lithiumPricing.connect(account1).claimRewards(questionGroupId)
+              ).to.be.revertedWith("Group Rewards has already been claimed");
+            });
+
+            it("Should not be able to claim reward with invalid question Group Id ", async function () {
+              const ids = [1];
+              await expect(lithiumPricing.claimRewards(ids)).to.be.revertedWith(
+                "Invalid question group id"
+              );
+            });
+          });
         });
       });
     });
