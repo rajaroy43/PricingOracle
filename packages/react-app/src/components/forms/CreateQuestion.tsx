@@ -51,7 +51,7 @@ const getForm = () => (submit: any, isValid: boolean) => (
 
 const getMethodArgs = (categoryId: string) => (values: any) => {
   console.log(`inside create Q vals ${JSON.stringify(values)}`)
-  return [categoryId, parseUnits(values.bounty), values.pricingTime, values.endTime, values.description, [0, values.answerSet]]
+  return [categoryId, parseUnits(values.bounty), values.pricingTime, values.endTime, 0, values.description, [0, values.answerSet]]
 }
 
 const CreateQuestionForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {

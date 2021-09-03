@@ -14,15 +14,21 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
+        - PricingContractMeta
         - User
         - Question
+        - QuestionGroup
         - Answer
+        - AnswerGroup
+        - QuestionCategory
       abis:
         - name: LithiumPricing
           file: ./abis/LithiumPricing.json
       eventHandlers:
-        - event: QuestionCreated(uint256,uint256,uint256,uint256,uint16,address,string,uint256[])
+        - event: QuestionCreated(uint256,uint256,uint256,uint256,uint16,address,string,uint256[],uint8)
           handler: handleQuestionCreated
+        - event: QuestionGroupCreated(uint256,address,uint256[])
+          handler: handleQuestionGroupCreated
         - event: QuestionAnswered(uint256,address,uint256,uint16)
           handler: handleQuestionAnswered
         - event: RewardClaimed(uint256,address,uint256)
@@ -35,9 +41,10 @@ dataSources:
           handler: handleSetLithiumRewardAddress
         - event: SetLithiumTokenAddress(address)
           handler: handleSetLithiumTokenAddress
-        - event: AnswerGroupSetSubmitted(address,uint256[])
+        - event: AnswerGroupSetSubmitted(address,uint256)
           handler: handleAnswerGroupSetSubmitted
       file: ./src/mapping.ts
+
 
   - kind: ethereum/contract
     name: LithiumToken

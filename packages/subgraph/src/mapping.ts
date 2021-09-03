@@ -3,6 +3,7 @@ import {
   AnswerGroupSetSubmitted,
   CategoryAdded,
   QuestionCreated,
+  QuestionGroupCreated,
   QuestionAnswered,
   RewardClaimed,
   RewardCalculatedStatus,
@@ -17,6 +18,7 @@ import {
 import {
   User,
   Question,
+  QuestionGroup,
   Answer,
   AnswerGroup,
   QuestionCategory,
@@ -28,8 +30,16 @@ let ONE = BigInt.fromI32(1)
 
 const PRICING_CONTRACT_META_ID = 'pricing_contract_meta'
 
+let QUESTION_TYPES = new Array<String>(2)
+QUESTION_TYPES[0] = "Pricing"
+QUESTION_TYPES[1] = "GroundTruth"
+
 function getAnswerId(answererAddress: string, questionId: string): string {
   return answererAddress + "-" + questionId
+}
+
+function getAnswerGroupId(ownerAddress: string, questionGroupId: string): string {
+  return ownerAddress + "-" + questionGroupId
 }
 
 function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
@@ -51,6 +61,7 @@ function getOrCreateUser(address: string): User {
     user.questionCount = ZERO
     user.totalBounty = ZERO
     user.answerCount = ZERO
+    user.answerGroupCount = ZERO
     user.totalRewardsClaimed = ZERO
     user.totalStaked = ZERO
     user.tokenBalance = ZERO
@@ -97,6 +108,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
 
   let question = new Question(event.params.id.toString())
   question.owner = user.id
+  question.questionType = QUESTION_TYPES[event.params.questionType]
   question.category = BigInt.fromI32(event.params.categoryId).toString()
   question.description = event.params.description
   question.answerSet = event.params.answerSet
@@ -106,7 +118,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.answerCount = ZERO
   question.endTime = event.params.endTime
   question.pricingTime = event.params.pricingTime
-  question.isRewardCalculated = false
+  question.isRewardCalculated = "NotCalculated"
   question.created = event.block.timestamp
   question.save()
 
@@ -114,6 +126,22 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   category.questionCount = category.questionCount.plus(ONE)
   category.totalBounty = category.totalBounty.plus(event.params.bounty)
   category.save()
+}
+
+export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
+  let id = event.params.id.toString()
+  let questionGroup = new QuestionGroup(id)
+  let questionIds = event.params.questionIds as string[]
+  let endTime = ZERO
+  for(let i = 0; i < questionIds.length; i++) {
+    let question = Question.load(questionIds[i])
+    if (endTime < question.endTime) {
+      endTime = question.endTime
+    }
+  }
+  questionGroup.questions = questionIds
+  questionGroup.endTime = endTime
+  questionGroup.save()
 }
 
 export function handleQuestionAnswered(event: QuestionAnswered): void {
@@ -146,9 +174,34 @@ export function handleQuestionAnswered(event: QuestionAnswered): void {
   answer.answerIndex = event.params.answerIndex
   answer.stakeAmount = event.params.stakeAmount
   answer.rewardClaimed = ZERO
-  answer.status = "UNCLAIMED"
+  answer.status = "Unclaimed"
   answer.created = event.block.timestamp
   answer.save()
+}
+
+export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): void {
+  let owner = User.load(event.params.answerer.toHexString())
+  let questionGroupId = event.params.questionSetId.toString()
+  let answerGroupId = getAnswerGroupId(owner.id, questionGroupId)
+  let questionGroup = QuestionGroup.load(questionGroupId)
+  let answerIds = new Array<String>(questionGroup.questions.length)
+
+  let questions = questionGroup.questions as string[]
+  
+  for(let i = 0; i < questions.length;i++) {
+    let questionId = questions[i]
+    let answerId = getAnswerId(owner.id, questionId)
+    answerIds.push(answerId)
+  }
+
+  let answerGroup = new AnswerGroup(answerGroupId)
+  answerGroup.owner = owner.id
+  answerGroup.questionGroup = questionGroupId
+  answerGroup.answers = answerIds
+  answerGroup.save()
+
+  owner.answerGroupCount = owner.answerGroupCount.plus(ONE)
+  owner.save()
 }
 
 export function handleRewardClaimed(event: RewardClaimed): void {
@@ -159,33 +212,13 @@ export function handleRewardClaimed(event: RewardClaimed): void {
 
   let answer = new Answer(event.params.questionId.toString() + '-' + answererAddress)
   answer.rewardClaimed = event.params.rewardAmount
-  answer.status = "CLAIMED"
+  answer.status = "Claimed"
   answer.save()
-}
-
-export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): void {
-  let answererAddress = event.params.answerer.toHexString()
-  let answerer = User.load(answererAddress)
-  let answerGroupCount = answerer.answerGroups.length
-  let groupId = answerer.id + "-" + answerGroupCount.toString()
-  let answerGroupIds = new Array<string>()
-  let questionIds = event.params.questionIds
-
-  for (let i = 0; i< questionIds.length; i++) {
-    let questionId = questionIds[i]
-    let answerId = getAnswerId(answererAddress, questionId.toString())
-    answerGroupIds.push(answerId)
-  }
-
-  let answerGroup = new AnswerGroup(groupId)
-  answerGroup.answerer = answerer.id
-  answerGroup.answers = answerGroupIds
-  answerGroup.save()
 }
 
 export function handleRewardCalculatedStatus(event: RewardCalculatedStatus): void {
   let question = Question.load(event.params.questionId.toString())
-  question.isRewardCalculated = true
+  question.isRewardCalculated = "Calculated"
   question.save()
 }
 
