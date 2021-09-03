@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { Answer } from 'lithium-subgraph'
-import { QueryResponse } from './common'
+import { QueryResponse, ANSWER_FIELDS } from './common'
 import { AnswerView } from '../types/answer';
 import { selectAnswer } from '../selectors/answer';
 
@@ -14,19 +14,10 @@ interface GetAnswerData {
 }
 
 export const GET_ANSWER = gql`
+  ${ANSWER_FIELDS}
   query answer($answerId: ID!) {
     answer(id: $answerId) {
-      id
-      answerer {
-        id
-      }
-      question {
-        id
-        answerSet
-      }
-      answerIndex
-      stakeAmount
-      status
+      ...AnswerFields
     }
   }
 `;

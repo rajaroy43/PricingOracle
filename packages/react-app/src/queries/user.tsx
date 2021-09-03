@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { User } from 'lithium-subgraph'
-import { QueryResponse, QUESTION_FIELDS } from './common'
+import { QueryResponse, QUESTION_FIELDS, ANSWER_FIELDS, USER_FIELDS } from './common'
 import { UserView } from '../types/user';
 import { selectUser } from '../selectors/user';
 
@@ -16,20 +16,6 @@ interface GetUserData {
 interface GetUsersData {
   users: User[] 
 }
-
-export const USER_FIELDS = gql`
-    fragment UserFields on User {
-      id
-      questionCount
-      totalBounty
-      answerCount
-      totalRewardsClaimed
-      totalStaked
-      tokenBalance
-      tokenApprovalBalance
-      answers
-    }
-  `
 
 export const GET_USERS  = gql`
   ${USER_FIELDS}
@@ -62,23 +48,12 @@ export const useGetUsers = (client: any): GetUsersResponse => {
 export const GET_USER  = gql`
   ${USER_FIELDS}
   ${QUESTION_FIELDS}
+  ${ANSWER_FIELDS}
   query user($id: ID!) {
     user(id: $id) {
       ...UserFields
       answers {
-        id
-        answerer {
-          id
-        }
-        question {
-          id
-          answerSet
-        }
-        answerIndex
-        stakeAmount
-        rewardClaimed
-        status
-        created
+        ...AnswerFields
       }
       questions {
         ...QuestionFields
