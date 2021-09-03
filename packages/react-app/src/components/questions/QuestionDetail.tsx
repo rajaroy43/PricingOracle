@@ -1,6 +1,4 @@
 import React from 'react'
-import { subgraphClient } from '../../client'
-import { useGetAnswer } from '../../queries/answer'
 import { QuestionView } from '../../types/question'
 import QuestionAnswer from './QuestionAnswer'
 import QuestionInfo from './QuestionInfo'

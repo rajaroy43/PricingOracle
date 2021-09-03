@@ -16,7 +16,7 @@ const getNavItems: GetNavItemParams[] = [
         label: 'Dashboard',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdomnode/account/${params.walletAddress}`
+            `/wisdom-node/account/${params.walletAddress}`
             :
             '/'
         },
@@ -27,14 +27,11 @@ const getNavItems: GetNavItemParams[] = [
     },
     {
         ...baseMenuItem,
-        id: 'available_sets',
+        id: 'availableQuestions',
         icon: 'nav-icon-available-sets',
         label: 'Available Questions',
         getUrl: (params) => {
-        return params.isWalletConnected ?
-            `/available-sets/${params.walletAddress}`
-            :
-            '/'
+          return `/wisdom-node/available-questions`
         },
         getShouldRender: (_) => {
         return true
@@ -42,12 +39,12 @@ const getNavItems: GetNavItemParams[] = [
     },
     {
         ...baseMenuItem,
-        id: 'upcoming_questions',
+        id: 'upcomingQuestions',
         icon: 'nav-icon-upcoming-questions',
         label: 'Upcoming Questions',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/upcoming-questions/${params.walletAddress}`
+            `/wisdom-node/upcoming-questions/${params.walletAddress}`
             :
             '/'
         },
