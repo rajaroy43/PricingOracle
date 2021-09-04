@@ -6,6 +6,8 @@ import { ThemeProvider } from "@material-ui/styles";
 import Account from './components/pages/Account'
 import Home from './components/pages/Home'
 import Question from './components/pages/Question'
+import AvailableQuestions from './components/pages/AvailableQuestions'
+
 import theme from './components/Theme';
 import WalletProvider from "./components/providers/WalletProvider";
 import "./index.css";
@@ -19,8 +21,10 @@ class App extends Component {
           <HashRouter>
           <Switch>
             <Route exact path='/' component={Home} />
-            <Route exact path='/wisdomnode/account/:address' component={Account} />
-            <Route exact path='/wisdomnode/question/:id' component={Question} />
+            <Route exact path='/wisdom-node/account/:address' component={Account} />
+            <Route exact path='/wisdom-node/question/:id' component={Question} />
+            <Route exact path='/wisdom-node/available-questions' component={AvailableQuestions} />
+
           </Switch>
           </HashRouter>
         </WalletProvider>
