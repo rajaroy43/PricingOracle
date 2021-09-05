@@ -2,11 +2,13 @@ import { Address, BigInt } from "@graphprotocol/graph-ts"
 import {
   AnswerGroupSetSubmitted,
   CategoryAdded,
+  GroupRewardUpdated,
+  FinalAnswerCalculatedStatus,
   QuestionCreated,
   QuestionGroupCreated,
   QuestionAnswered,
+  ReputationUpdated,
   RewardClaimed,
-  RewardCalculatedStatus,
   SetLithiumRewardAddress,
   SetLithiumTokenAddress
 } from "../generated/LithiumPricing/LithiumPricing"
@@ -15,14 +17,16 @@ import {
   Transfer,
   Approval
 } from "../generated/LithiumToken/LithiumToken"
+
 import {
-  User,
-  Question,
-  QuestionGroup,
   Answer,
   AnswerGroup,
+  PricingContractMeta,
+  Question,
+  QuestionGroup,
   QuestionCategory,
-  PricingContractMeta
+  User,
+  UserCategoryReputation
 } from "../generated/schema"
 
 let ZERO = BigInt.fromI32(0)
@@ -53,6 +57,20 @@ function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
   return meta as PricingContractMeta
 }
 
+function getOrCreateUserCategoryReputation(userId: string, categoryId: string): UserCategoryReputation {
+  let id = userId + "-" + categoryId
+  let userCategoryReputation = UserCategoryReputation.load(id)
+  if (userCategoryReputation == null) {
+    userCategoryReputation = new UserCategoryReputation(id)
+    userCategoryReputation.user = userId
+    userCategoryReputation.category = categoryId
+    userCategoryReputation.score = ZERO
+    userCategoryReputation.save()
+  }
+
+  return userCategoryReputation as UserCategoryReputation
+}
+
 function getOrCreateUser(address: string): User {
   let user = User.load(address)
 
@@ -71,6 +89,24 @@ function getOrCreateUser(address: string): User {
   }
 
   return user as User
+}
+
+function updateUserCategoryReputation(userId: string, categoryId: string, score: BigInt): void {
+  let userCategoryReputation = getOrCreateUserCategoryReputation(userId, categoryId)
+  userCategoryReputation.score = score
+  userCategoryReputation.save()
+}
+
+export function handleReputationUpdated(event: ReputationUpdated): void {
+  let categoryIds: Array<BigInt> = event.params.categoryIds
+  let scores: Array<BigInt> = event.params.reputationScores
+  let addresses: Array<Address> = event.params.addressesToUpdate
+  for (let i = 0; i < categoryIds.length; i++) {
+    let categoryId = categoryIds[i]
+    let userId = addresses[i]
+    let score = scores[i]
+    updateUserCategoryReputation(userId.toHexString(), categoryId.toString(), score)
+  }
 }
 
 export function handleSetLithiumRewardAddress(event: SetLithiumRewardAddress): void {
@@ -118,7 +154,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.answerCount = ZERO
   question.endTime = event.params.endTime
   question.pricingTime = event.params.pricingTime
-  question.isRewardCalculated = "NotCalculated"
+  question.isAnswerCalculated = "NotCalculated"
   question.created = event.block.timestamp
   question.save()
 
@@ -128,18 +164,41 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   category.save()
 }
 
+function updateFinalAnswer(questionId: string, answerIndex: string, answerValue: string ): void {
+  let question = Question.load(questionId)
+  question.finalAnswerIndex =  BigInt.fromString(answerIndex).toI32()
+  question.finalAnswerValue = BigInt.fromString(answerValue)
+  question.save()
+}
+
+export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedStatus): void {
+  let questionIds: Array<BigInt> = event.params.questionIds
+  let answerIndexes: Array<BigInt> = event.params.answerIndexes
+  let answerValues: Array<BigInt> = event.params.answerValues
+  for (let i = 0; i < questionIds.length; i++) {
+    let questionId = questionIds[i]
+    let answerIndex = answerIndexes[i]
+    let answerValue = answerValues[i]
+    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString())
+  }
+}
+
 export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   let id = event.params.id.toString()
   let questionGroup = new QuestionGroup(id)
-  let questionIds = event.params.questionIds as string[]
+  let questionIds: Array<BigInt> = event.params.questionIds
+  let questionIdStrings: Array<string>
   let endTime = ZERO
   for(let i = 0; i < questionIds.length; i++) {
-    let question = Question.load(questionIds[i])
+    let questionId = questionIds[i]
+    let id = questionId.toString()
+    let question = Question.load(id)
     if (endTime < question.endTime) {
       endTime = question.endTime
     }
+    questionIdStrings.push(id)
   }
-  questionGroup.questions = questionIds
+  questionGroup.questions = questionIdStrings
   questionGroup.endTime = endTime
   questionGroup.save()
 }
@@ -173,8 +232,6 @@ export function handleQuestionAnswered(event: QuestionAnswered): void {
   answer.question = event.params.questionId.toString()
   answer.answerIndex = event.params.answerIndex
   answer.stakeAmount = event.params.stakeAmount
-  answer.rewardClaimed = ZERO
-  answer.status = "Unclaimed"
   answer.created = event.block.timestamp
   answer.save()
 }
@@ -198,10 +255,33 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
   answerGroup.owner = owner.id
   answerGroup.questionGroup = questionGroupId
   answerGroup.answers = answerIds
+  answerGroup.isRewardCalculated = "NotCalculated"
+  answerGroup.rewardAmount = ZERO
+  answerGroup.status = "Unclaimed"
   answerGroup.save()
 
   owner.answerGroupCount = owner.answerGroupCount.plus(ONE)
   owner.save()
+}
+
+function updateGroupReward(answerGroupId: string, amount: BigInt): void {
+  let answerGroup = AnswerGroup.load(answerGroupId)
+  answerGroup.rewardAmount = amount
+  answerGroup.isRewardCalculated = "Calculated"
+  answerGroup.save()
+}
+
+export function handleGroupRewardUpdated(event: GroupRewardUpdated): void {
+  let groupIds: Array<BigInt> = event.params.groupIds
+  let addresses: Array<Address> = event.params.addressesToUpdate
+  let rewardAmounts: Array<BigInt> = event.params.rewardAmounts
+  for (let i = 0; i < groupIds.length; i++) {
+    let questionGroupId = groupIds[i]
+    let address = addresses[i]
+    let answerGroupId = getAnswerGroupId(address.toHexString(), questionGroupId.toString())
+    let amount = rewardAmounts[i]
+    updateGroupReward(answerGroupId, amount)
+  }
 }
 
 export function handleRewardClaimed(event: RewardClaimed): void {
@@ -210,16 +290,10 @@ export function handleRewardClaimed(event: RewardClaimed): void {
   user.totalRewardsClaimed = user.totalRewardsClaimed.plus(event.params.rewardAmount)
   user.save()
 
-  let answer = new Answer(event.params.questionId.toString() + '-' + answererAddress)
-  answer.rewardClaimed = event.params.rewardAmount
-  answer.status = "Claimed"
-  answer.save()
-}
-
-export function handleRewardCalculatedStatus(event: RewardCalculatedStatus): void {
-  let question = Question.load(event.params.questionId.toString())
-  question.isRewardCalculated = "Calculated"
-  question.save()
+  let answerGroupId = getAnswerGroupId(user.id, event.params.questionGroupId.toString())
+  let answerGroup = AnswerGroup.load(answerGroupId)
+  answerGroup.status = "Claimed"
+  answerGroup.save()
 }
 
 export function handleTransfer(event: Transfer): void {

@@ -7,7 +7,7 @@ enum AnswerStatus {
   Claimed
 }
 
-enum RewardCalculated {
+enum StatusCalculated {
   NotCalculated
   Calculated
 }
@@ -49,6 +49,13 @@ type QuestionCategory @entity {
   questions: [Question!] @derivedFrom(field: "category")
 }
 
+type UserCategoryReputation @entity {
+  id: ID!
+  user: User!
+  category: QuestionCategory!
+  score: BigInt!
+}
+
 type Question @entity {
   id: ID!
   questionType: QuestionType!
@@ -61,10 +68,12 @@ type Question @entity {
   totalStaked: BigInt!
   endTime: BigInt!
   pricingTime: BigInt!
-  isRewardCalculated: RewardCalculated!
+  isAnswerCalculated: StatusCalculated!
   answerCount: BigInt!
   answers: [Answer!] @derivedFrom(field: "question")
   created: BigInt!
+  finalAnswerIndex: Int!
+  finalAnswerValue: BigInt!
 }
 
 type QuestionGroup @entity {
@@ -79,8 +88,6 @@ type Answer @entity {
   question: Question! 
   answerIndex: Int!
   stakeAmount: BigInt!
-  rewardClaimed: BigInt!
-  status: AnswerStatus!
   created: BigInt!
   group: AnswerGroup @derivedFrom(field: "answers")
 }
@@ -90,4 +97,7 @@ type AnswerGroup @entity {
   questionGroup: QuestionGroup!
   answers: [Answer!]!
   owner: User!
+  rewardAmount: BigInt!
+  status: AnswerStatus!
+  isRewardCalculated: StatusCalculated!
 }
