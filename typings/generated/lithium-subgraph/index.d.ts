@@ -20,8 +20,6 @@ export type Answer = {
   question: Question;
   answerIndex: Scalars['Int'];
   stakeAmount: Scalars['BigInt'];
-  rewardClaimed: Scalars['BigInt'];
-  status: AnswerStatus;
   created: Scalars['BigInt'];
   group?: Maybe<AnswerGroup>;
 };
@@ -29,13 +27,17 @@ export type Answer = {
 export type AnswerGroup = {
   __typename?: 'AnswerGroup';
   id: Scalars['ID'];
+  questionGroup: QuestionGroup;
   answers: Array<Answer>;
-  answerer: User;
+  owner: User;
+  rewardAmount: Scalars['BigInt'];
+  status: AnswerStatus;
+  isRewardCalculated: StatusCalculated;
 };
 
 export enum AnswerStatus {
-  Unclaimed = 'UNCLAIMED',
-  Claimed = 'CLAIMED'
+  Unclaimed = 'Unclaimed',
+  Claimed = 'Claimed'
 }
 
 
@@ -51,6 +53,7 @@ export type PricingContractMeta = {
 export type Question = {
   __typename?: 'Question';
   id: Scalars['ID'];
+  questionType: QuestionType;
   owner: User;
   category: QuestionCategory;
   description: Scalars['String'];
@@ -60,10 +63,12 @@ export type Question = {
   totalStaked: Scalars['BigInt'];
   endTime: Scalars['BigInt'];
   pricingTime: Scalars['BigInt'];
-  isRewardCalculated: Scalars['Boolean'];
+  isAnswerCalculated: StatusCalculated;
   answerCount: Scalars['BigInt'];
   answers?: Maybe<Array<Answer>>;
   created: Scalars['BigInt'];
+  finalAnswerIndex: Scalars['Int'];
+  finalAnswerValue: Scalars['BigInt'];
 };
 
 export type QuestionCategory = {
@@ -77,6 +82,23 @@ export type QuestionCategory = {
   questions?: Maybe<Array<Question>>;
 };
 
+export type QuestionGroup = {
+  __typename?: 'QuestionGroup';
+  id: Scalars['ID'];
+  questions: Array<Question>;
+  endTime: Scalars['BigInt'];
+};
+
+export enum QuestionType {
+  Pricing = 'Pricing',
+  GroundTruth = 'GroundTruth'
+}
+
+export enum StatusCalculated {
+  NotCalculated = 'NotCalculated',
+  Calculated = 'Calculated'
+}
+
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -86,8 +108,17 @@ export type User = {
   questionCount: Scalars['BigInt'];
   totalBounty: Scalars['BigInt'];
   answerCount: Scalars['BigInt'];
+  answerGroupCount: Scalars['BigInt'];
   totalRewardsClaimed: Scalars['BigInt'];
   totalStaked: Scalars['BigInt'];
   tokenBalance: Scalars['BigInt'];
   tokenApprovalBalance: Scalars['BigInt'];
+};
+
+export type UserCategoryReputation = {
+  __typename?: 'UserCategoryReputation';
+  id: Scalars['ID'];
+  user: User;
+  category: QuestionCategory;
+  score: Scalars['BigInt'];
 };
