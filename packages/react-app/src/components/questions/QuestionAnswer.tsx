@@ -16,14 +16,7 @@ const QuestionAnswer = ({question, connectedWallet, isFinished}: {question: Ques
         :
         answer ?
           isFinished ? 
-            answer.status == 'CLAIMED' ?  
-              'CLAIMED'
-              :
-              <ClaimRewardForm
-                questionId={question.id}
-                pricingInstance={connectedWallet.pricingInstance}
-                connectedAddress={connectedWallet.address}
-              />
+            'Not Answered'
             :
             'Answered'
           :

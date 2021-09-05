@@ -7,7 +7,7 @@ export interface QueryResponse {
 }
 
 export const QUESTION_FIELDS = gql`
-    fragment QuestionFields on Fields {
+    fragment QuestionFields on Question {
       id
       owner {
         id
@@ -22,7 +22,39 @@ export const QUESTION_FIELDS = gql`
       bounty
       totalStaked
       endTime
+      pricingTime
       answerCount
       created
+    }
+    `
+
+export const ANSWER_FIELDS = gql`
+  fragment AnswerFields on Answer {
+    id
+    answerer {
+      id
+    }
+    question {
+      id
+      answerSet
+    }
+    answerIndex
+    stakeAmount
+    rewardClaimed
+    status
+    created
+  }
+`
+
+export const USER_FIELDS = gql`
+    fragment UserFields on User {
+      id
+      questionCount
+      totalBounty
+      answerCount
+      totalRewardsClaimed
+      totalStaked
+      tokenBalance
+      tokenApprovalBalance
     }
   `
