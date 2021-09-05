@@ -152,6 +152,8 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.bounty = event.params.bounty
   question.totalStaked = ZERO
   question.answerCount = ZERO
+  question.finalAnswerIndex = ZERO.toI32()
+  question.finalAnswerValue = ZERO
   question.endTime = event.params.endTime
   question.pricingTime = event.params.pricingTime
   question.isAnswerCalculated = "NotCalculated"
