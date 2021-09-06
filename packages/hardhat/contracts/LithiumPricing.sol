@@ -20,11 +20,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 bounty; // to bounty offered by the questions creator in LITH tokens
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
-    StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     uint256 pricingTime;//Indicate when the asset should be priced for
-    QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
     uint256 finalAnswerIndex;//Final answer index  of a question
     uint256 finalAnswerValue;//Final answer vaule of question 
+    StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
+    QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
   }
 
   struct QuestionGroup {
@@ -44,10 +44,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 questionGroupId; // the id of the questions being answered
     uint256[] stakeAmounts; // the amount to stake in LITH token for the answersSetsGroup
     uint16[] answerIndexes; // the index of the chosen answer in the question.answerSet
-    AnswerStatus status; // the status of the AnswerSets, Unclaimed or Claimed
     uint256 rewardAmount;//reward rate can be negative,zero or positive
+    AnswerStatus status; // the status of the AnswerSets, Unclaimed or Claimed
     StatusCalculated isRewardCalculated;//rewardcalculated status for answergroup
-}
+  }
 
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
