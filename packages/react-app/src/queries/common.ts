@@ -31,6 +31,10 @@ export const QUESTION_FIELDS = gql`
 export const QUESTION_GROUP_FIELDS = gql`
   fragment QuestionGroupFields on QuestionGroup {
     id
+    category {
+      id
+      label
+    }
     endTime
   }
 `

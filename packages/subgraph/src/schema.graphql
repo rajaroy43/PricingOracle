@@ -37,6 +37,7 @@ type User @entity {
   totalStaked: BigInt!
   tokenBalance: BigInt!
   tokenApprovalBalance: BigInt!
+  categoryReputations: [UserCategoryReputation!] @derivedFrom(field: "user")
 }
 
 type QuestionCategory @entity {
@@ -78,6 +79,7 @@ type Question @entity {
 
 type QuestionGroup @entity {
   id: ID!
+  category: QuestionCategory!
   questions: [Question!]!
   endTime: BigInt!
 }

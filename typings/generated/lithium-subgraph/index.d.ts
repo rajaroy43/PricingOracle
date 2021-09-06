@@ -85,6 +85,7 @@ export type QuestionCategory = {
 export type QuestionGroup = {
   __typename?: 'QuestionGroup';
   id: Scalars['ID'];
+  category: QuestionCategory;
   questions: Array<Question>;
   endTime: Scalars['BigInt'];
 };
@@ -113,6 +114,7 @@ export type User = {
   totalStaked: Scalars['BigInt'];
   tokenBalance: Scalars['BigInt'];
   tokenApprovalBalance: Scalars['BigInt'];
+  categoryReputations?: Maybe<Array<UserCategoryReputation>>;
 };
 
 export type UserCategoryReputation = {

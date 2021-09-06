@@ -191,6 +191,7 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   let questionIds: Array<BigInt> = event.params.questionIds
   let questionIdStrings: Array<string>
   let endTime = ZERO
+  let categoryId = ''
   for(let i = 0; i < questionIds.length; i++) {
     let questionId = questionIds[i]
     let id = questionId.toString()
@@ -199,7 +200,9 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
       endTime = question.endTime
     }
     questionIdStrings.push(id)
+    categoryId = question.category
   }
+  questionGroup.category = categoryId
   questionGroup.questions = questionIdStrings
   questionGroup.endTime = endTime
   questionGroup.save()
