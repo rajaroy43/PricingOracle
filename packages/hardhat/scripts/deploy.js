@@ -5,38 +5,100 @@ const { config, ethers, tenderly, run, network } = require("hardhat");
 const { utils } = require("ethers");
 const R = require("ramda");
 
-
 const main = async () => {
-  const accounts = await ethers.getSigners()
-  account0 = accounts[0]
-  account1 = accounts[1]
-  account2 = accounts[2]
-  console.log(`Deploying to network ${network.name}`)
+  const accounts = await ethers.getSigners();
+  account0 = accounts[0];
+  account1 = accounts[1];
+  account2 = accounts[2];
+  console.log(`Deploying to network ${network.name}`);
   console.log("\n\n 📡 Deploying Pricing...\n");
   const lithiumPricing = await deploy("LithiumPricing");
   console.log("\n\n 📡 Deploying Token...\n");
 
-  
-  const lithToken = await deploy("LithiumToken", [account0.address]) // <-- add in constructor args like line 19 vvvv
+  const lithToken = await deploy("LithiumToken", [account0.address]); // <-- add in constructor args like line 19 vvvv
 
-  const lithiumReward = await deploy("LithiumReward", [lithiumPricing.address])
+  const lithiumReward = await deploy("LithiumReward", [lithiumPricing.address]);
 
-  await lithiumPricing.setLithiumTokenAddress(lithToken.address)
+  await lithiumPricing.setLithiumTokenAddress(lithToken.address);
 
-  await lithiumPricing.setLithiumRewardAddress(lithiumReward.address)
+  await lithiumPricing.setLithiumRewardAddress(lithiumReward.address);
 
-  await lithiumPricing.addCategory('Pre Coin Offering')
-  await lithiumPricing.addCategory('Art Collection')
+  await lithiumPricing.addCategory("Pre Coin Offering");
+  await lithiumPricing.addCategory("Art Collection");
 
-
-  const transferBalance = ethers.utils.parseUnits("1000.0", 18)
-  if (network.name === 'localhost') {
-    await lithToken.transfer(account1.address, transferBalance)
-    await lithToken.transfer(account2.address, transferBalance)
+  const transferBalance = ethers.utils.parseUnits("1000.0", 18);
+  if (network.name === "localhost") {
+    const approveAmount = ethers.utils.parseUnits("10000000000000.0", 18);
+    //Create QuestionsGroup
+    await lithToken.approve(lithiumPricing.address, approveAmount);
+    await lithToken
+      .connect(account1)
+      .approve(lithiumPricing.address, approveAmount);
+    await lithToken
+      .connect(account2)
+      .approve(lithiumPricing.address, approveAmount);
+    await lithToken.transfer(account1.address, transferBalance);
+    await lithToken.transfer(account2.address, transferBalance);
+    await createQuestiongroup(lithiumPricing);
+    console.log(chalk.magenta("QuestionGroups created ", "\n"));
   }
 
+  async function createQuestiongroup(lithiumPricing) {
+    const block = await ethers.provider.getBlock();
+    const pricingTime = block.timestamp + 700000000000;
+    const endTime = block.timestamp + 500000000000;
+    const description = `What is the price of an MRF share `;
+    const bounty = ethers.utils.parseUnits("80.0", 18);
+    const answerSet = [0, 50];
+    const categoryId = 0;
 
+    const pricingTime1 = block.timestamp + 700000000000;
+    const endTime1 = block.timestamp + 500000000000;
+    const description1 = `What is the price of an TATA NANO share  `;
+    const bounty1 = ethers.utils.parseUnits("120.0", 18);
+    const answerSet1 = [0, 1320];
+    const categoryId1 = 0;
 
+    const pricingTime2 = block.timestamp + 800000000000;
+    const endTime2 = block.timestamp + 200000000000;
+    const description2 = `What is the price of an Lithium Token share  `;
+    const bounty2 = ethers.utils.parseUnits("125.0", 18);
+    const answerSet2 = [0, 9870];
+    const categoryId2 = 0;
+
+    const pricingTime3 = block.timestamp + 1200000000000;
+    const endTime3 = block.timestamp + 300000000000;
+    const description3 = `What is the price of an TESLA-PRE-IPO  share  `;
+    const bounty3 = ethers.utils.parseUnits("183.0", 18);
+    const answerSet3 = [0, 9870];
+    const categoryId3 = 0;
+
+    const questiontype = 0;
+    const args1 = [
+      [categoryId, categoryId1, categoryId2, categoryId3],
+      [bounty, bounty1, bounty2, bounty3],
+      [pricingTime, pricingTime1, pricingTime2, pricingTime3],
+      [endTime, endTime1, endTime2, endTime3],
+      [questiontype, questiontype, questiontype, questiontype],
+      [description, description1, description2, description3],
+      [answerSet, answerSet1, answerSet2, answerSet3],
+    ];
+
+    const args2 = [
+      [categoryId, categoryId1, categoryId2, categoryId3],
+      [bounty, bounty1, bounty2, bounty3],
+      [pricingTime, pricingTime1, pricingTime2, pricingTime3],
+      [endTime, endTime1, endTime2, endTime3],
+      [questiontype, questiontype, questiontype, questiontype],
+      [description, description1, description2, description3],
+      [answerSet, answerSet1, answerSet2, answerSet3],
+    ];
+    const args = [args1, args2];
+    console.log("\n\n 📡 Creating question groups \n");
+    for (var i = 0; i < args.length; i++) {
+      await lithiumPricing.createQuestionGroup(...args[i]);
+    }
+  }
 
   //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!
   //const secondContract = await deploy("SecondContract")
@@ -54,14 +116,12 @@ const main = async () => {
   })
   */
 
-
   /*
   //If you want to send some ETH to a contract on deploy (make your constructor payable!)
   const yourContract = await deploy("YourContract", [], {
   value: ethers.utils.parseEther("0.05")
   });
   */
-
 
   /*
   //If you want to link a library into your contract:
@@ -70,7 +130,6 @@ const main = async () => {
    LibraryName: **LibraryAddress**
   });
   */
-
 
   //If you want to verify your contract on tenderly.co (see setup details in the scaffold-eth README!)
   /*
@@ -97,19 +156,30 @@ const main = async () => {
   );
 };
 
-const deploy = async (contractName, _args = [], overrides = {}, libraries = {}) => {
+const deploy = async (
+  contractName,
+  _args = [],
+  overrides = {},
+  libraries = {}
+) => {
   console.log(` 🛰  Deploying: ${contractName}`);
 
   const contractArgs = _args || [];
-  const contractArtifacts = await ethers.getContractFactory(contractName,{libraries: libraries});
+  const contractArtifacts = await ethers.getContractFactory(contractName, {
+    libraries: libraries,
+  });
   const deployed = await contractArtifacts.deploy(...contractArgs, overrides);
   const encoded = abiEncodeArgs(deployed, contractArgs);
   fs.writeFileSync(`artifacts/${contractName}.address`, deployed.address);
 
-  let extraGasInfo = ""
-  if(deployed&&deployed.deployTransaction){
-    const gasUsed = deployed.deployTransaction.gasLimit.mul(deployed.deployTransaction.gasPrice)
-    extraGasInfo = `${utils.formatEther(gasUsed)} ETH, tx hash ${deployed.deployTransaction.hash}`
+  let extraGasInfo = "";
+  if (deployed && deployed.deployTransaction) {
+    const gasUsed = deployed.deployTransaction.gasLimit.mul(
+      deployed.deployTransaction.gasPrice
+    );
+    extraGasInfo = `${utils.formatEther(gasUsed)} ETH, tx hash ${
+      deployed.deployTransaction.hash
+    }`;
   }
 
   console.log(
@@ -118,14 +188,11 @@ const deploy = async (contractName, _args = [], overrides = {}, libraries = {}) 
     "deployed to:",
     chalk.magenta(deployed.address)
   );
-  console.log(
-    " ⛽",
-    chalk.grey(extraGasInfo)
-  );
+  console.log(" ⛽", chalk.grey(extraGasInfo));
 
   await tenderly.persistArtifacts({
     name: contractName,
-    address: deployed.address
+    address: deployed.address,
   });
 
   if (!encoded || encoded.length <= 2) return deployed;
@@ -133,7 +200,6 @@ const deploy = async (contractName, _args = [], overrides = {}, libraries = {}) 
 
   return deployed;
 };
-
 
 // ------ utils -------
 
@@ -158,7 +224,9 @@ const abiEncodeArgs = (deployed, contractArgs) => {
 
 // checks if it is a Solidity file
 const isSolidity = (fileName) =>
-  fileName.indexOf(".sol") >= 0 && fileName.indexOf(".swp") < 0 && fileName.indexOf(".swap") < 0;
+  fileName.indexOf(".sol") >= 0 &&
+  fileName.indexOf(".swp") < 0 &&
+  fileName.indexOf(".swap") < 0;
 
 const readArgsFile = (contractName) => {
   let args = [];
@@ -173,34 +241,49 @@ const readArgsFile = (contractName) => {
 };
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // If you want to verify on https://tenderly.co/
-const tenderlyVerify = async ({contractName, contractAddress}) => {
+const tenderlyVerify = async ({ contractName, contractAddress }) => {
+  let tenderlyNetworks = [
+    "kovan",
+    "goerli",
+    "mainnet",
+    "rinkeby",
+    "ropsten",
+    "matic",
+    "mumbai",
+    "xDai",
+    "POA",
+  ];
+  let targetNetwork = process.env.HARDHAT_NETWORK || config.defaultNetwork;
 
-  let tenderlyNetworks = ["kovan","goerli","mainnet","rinkeby","ropsten","matic","mumbai","xDai","POA"]
-  let targetNetwork = process.env.HARDHAT_NETWORK || config.defaultNetwork
-
-  if(tenderlyNetworks.includes(targetNetwork)) {
-    console.log(chalk.blue(` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork}`))
+  if (tenderlyNetworks.includes(targetNetwork)) {
+    console.log(
+      chalk.blue(
+        ` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork}`
+      )
+    );
 
     await tenderly.persistArtifacts({
       name: contractName,
-      address: contractAddress
+      address: contractAddress,
     });
 
     let verification = await tenderly.verify({
-        name: contractName,
-        address: contractAddress,
-        network: targetNetwork
-      })
+      name: contractName,
+      address: contractAddress,
+      network: targetNetwork,
+    });
 
-    return verification
+    return verification;
   } else {
-      console.log(chalk.grey(` 🧐 Contract verification not supported on ${targetNetwork}`))
+    console.log(
+      chalk.grey(` 🧐 Contract verification not supported on ${targetNetwork}`)
+    );
   }
-}
+};
 
 main()
   .then(() => process.exit(0))
