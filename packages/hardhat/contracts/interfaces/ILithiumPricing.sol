@@ -55,7 +55,8 @@ interface ILithiumPricing {
   event FinalAnswerCalculatedStatus(
     uint256[] questionIds,
     uint256[] finalAnswerIndex,
-    uint256[] finalAnswerValue
+    uint256[] finalAnswerValue,
+    StatusCalculated[] answerStatus
   );
 
   event SetLithiumRewardAddress(
@@ -70,7 +71,8 @@ interface ILithiumPricing {
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
-  enum StatusCalculated{NotCalculated,Calculated}
+  //Invalid is for if answer can't be calculated
+  enum StatusCalculated{NotCalculated, Calculated, Invalid}
   enum QuestionType{ Pricing, GroundTruth }
   /** Getter Functions */
 
@@ -125,7 +127,7 @@ interface ILithiumPricing {
 /* External Functions */
 
   function updateFinalAnswerStatus(
-   uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue
+   uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue,StatusCalculated[] memory answerStatus
     )external;
 
   function updateReputation(

@@ -921,12 +921,13 @@ describe("Lithium Pricing", async function () {
         const questionIds = [0, 1];
         const finalAnswerIndex = [1, 1];
         const finalAnswerValue = [50, 100];
-
+        const answersStatus = [1, 1];
         await expect(
           lithiumPricing.updateFinalAnswerStatus(
             questionIds,
             finalAnswerIndex,
-            finalAnswerValue
+            finalAnswerValue,
+            answersStatus
           )
         ).to.be.revertedWith(
           "Question is still active and Final Answer status can't be updated"
@@ -951,7 +952,7 @@ describe("Lithium Pricing", async function () {
           const questionIds = [0, 1];
           const finalAnswerIndex = [1, 1];
           const finalAnswerValue = [50, 100];
-
+          const answersStatus = [1, 1];
           //Before updating final answer status
           const beforeUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
@@ -980,11 +981,17 @@ describe("Lithium Pricing", async function () {
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             )
           )
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(questionIds, finalAnswerIndex, finalAnswerValue);
+            .withArgs(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue,
+              answersStatus
+            );
 
           const afterUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
@@ -1016,14 +1023,15 @@ describe("Lithium Pricing", async function () {
           const questionIds = [0, 1];
           const finalAnswerIndex = [1, 1];
           const finalAnswerValue = [50, 100];
-
+          const answersStatus = [1, 1];
           await expect(
             lithiumPricing
               .connect(account2)
               .updateFinalAnswerStatus(
                 questionIds,
                 finalAnswerIndex,
-                finalAnswerValue
+                finalAnswerValue,
+                answersStatus
               )
           ).to.be.revertedWith("Must be admin");
         });
@@ -1033,26 +1041,44 @@ describe("Lithium Pricing", async function () {
           const questionIds = [0, 81];
           const finalAnswerIndex = [1, 1];
           const finalAnswerValue = [50, 100];
+          const answersStatus = [1, 1];
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             )
           ).to.be.revertedWith("Invalid question id");
+        });
+
+        it("Should not  update final answer status if passing answerstatus as NotCalculated", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+          const answersStatus = [0, 1];
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue,
+              answersStatus
+            )
+          ).to.be.revertedWith("Not allowed to updated status  Notcalculated");
         });
 
         it("Should not  update final answer status if passing questionIds as empty array", async () => {
           const questionIds: number[] = [];
           const finalAnswerIndex: number[] = [];
           const finalAnswerValue: number[] = [];
-
+          const answersStatus: number[] = [];
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             )
           ).to.be.revertedWith("question IDs length must be greater than zero");
         });
@@ -1062,12 +1088,13 @@ describe("Lithium Pricing", async function () {
           const questionIds = [0, 1, 0];
           const finalAnswerIndex = [1, 1];
           const finalAnswerValue = [50, 100];
-
+          const answersStatus = [1, 1];
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             )
           ).to.be.revertedWith("argument array length mismatch");
         });
@@ -1077,21 +1104,29 @@ describe("Lithium Pricing", async function () {
           const questionIds = [0, 1];
           const finalAnswerIndex = [1, 1];
           const finalAnswerValue = [50, 100];
+          const answersStatus = [1, 1];
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             )
           )
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(questionIds, finalAnswerIndex, finalAnswerValue);
+            .withArgs(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue,
+              answersStatus
+            );
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             )
           ).to.be.revertedWith("Answer is already calculated");
         });
@@ -1109,16 +1144,73 @@ describe("Lithium Pricing", async function () {
           ).to.be.revertedWith("Answer is not yet calculated");
         });
 
+        it("Should not  update final answer status if wrong status is passed ", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+          //Answer can't be calulated for question id 0
+          //so we mark as invalid
+          //and not able to update group rewards
+          const answersStatus = [1, 4];
+
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue,
+              answersStatus
+            )
+          ).to.be.reverted;
+        });
+
+        it("Should not  update reward amounts if answer can't be calculated ", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndex = [1, 1];
+          const finalAnswerValue = [50, 100];
+          //Answer can't be calulated for question id 0
+          //so we mark as invalid
+          //and not able to update group rewards
+          const answersStatus = [2, 1];
+
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue,
+              answersStatus
+            )
+          )
+            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+            .withArgs(
+              questionIds,
+              finalAnswerIndex,
+              finalAnswerValue,
+              answersStatus
+            );
+          const addressesToUpdate = [account1.address];
+          const groupIds = [0];
+          const rewardAmounts = [2];
+
+          await expect(
+            lithiumPricing.updateGroupRewardAmounts(
+              addressesToUpdate,
+              groupIds,
+              rewardAmounts
+            )
+          ).to.be.revertedWith("Answer is not yet calculated");
+        });
+
         describe("Update Group Reward Amounts", async () => {
           beforeEach(async () => {
             const questionIds = [0, 1];
             const finalAnswerIndex = [1, 1];
             const finalAnswerValue = [50, 100];
-
+            const answersStatus = [1, 1];
             await lithiumPricing.updateFinalAnswerStatus(
               questionIds,
               finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerValue,
+              answersStatus
             );
           });
 

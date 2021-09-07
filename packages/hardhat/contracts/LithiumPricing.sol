@@ -389,25 +389,24 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue)external override{
+  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue, StatusCalculated[] memory answerStatus)external override{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionIds.length != 0, "question IDs length must be greater than zero");
-    require(questionIds.length == finalAnswerIndex.length && questionIds.length == finalAnswerValue.length,"argument array length mismatch"); 
+    require(questionIds.length == finalAnswerIndex.length && questionIds.length == finalAnswerValue.length && questionIds.length == answerStatus.length,"argument array length mismatch"); 
     for(uint256 i=0;i< questionIds.length ;i++)
     {
     uint256 questionId = questionIds[i];
     require(questionId < questions.length, "Invalid question id");
-
+    require(answerStatus[i] != StatusCalculated.NotCalculated, "Not allowed to updated status  Notcalculated");
     Question storage question = questions[questionId];
 
     require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
     question.finalAnswerIndex = finalAnswerIndex[i];
     question.finalAnswerValue = finalAnswerValue[i];
-    question.isAnswerCalculated = StatusCalculated.Calculated;
+    question.isAnswerCalculated = answerStatus[i];
     }
-    
-    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndex,finalAnswerValue);
+    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndex,finalAnswerValue,answerStatus);
   }
 
    /**
