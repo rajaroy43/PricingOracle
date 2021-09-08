@@ -34,9 +34,17 @@ let ONE = BigInt.fromI32(1)
 
 const PRICING_CONTRACT_META_ID = 'pricing_contract_meta'
 
-let QUESTION_TYPES = new Array<String>(2)
+let QUESTION_TYPES = new Array<string>(2)
 QUESTION_TYPES[0] = "Pricing"
 QUESTION_TYPES[1] = "GroundTruth"
+
+let STATUS_CALCULATED = new Array<string>(2)
+STATUS_CALCULATED[0] = "NotCalculated"
+STATUS_CALCULATED[1] = "Calculated"
+
+let ANSWER_STATUS = new Array<string>(2)
+STATUS_CALCULATED[0] = "Unclaimed"
+STATUS_CALCULATED[1] = "Claimed"
 
 function getAnswerId(answererAddress: string, questionId: string): string {
   return answererAddress + "-" + questionId
@@ -156,7 +164,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.finalAnswerValue = ZERO
   question.endTime = event.params.endTime
   question.pricingTime = event.params.pricingTime
-  question.isAnswerCalculated = "NotCalculated"
+  question.isAnswerCalculated = STATUS_CALCULATED[0]
   question.created = event.block.timestamp
   question.save()
 
@@ -170,6 +178,7 @@ function updateFinalAnswer(questionId: string, answerIndex: string, answerValue:
   let question = Question.load(questionId)
   question.finalAnswerIndex =  BigInt.fromString(answerIndex).toI32()
   question.finalAnswerValue = BigInt.fromString(answerValue)
+  question.isAnswerCalculated = STATUS_CALCULATED[1]
   question.save()
 }
 
@@ -260,9 +269,9 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
   answerGroup.owner = owner.id
   answerGroup.questionGroup = questionGroupId
   answerGroup.answers = answerIds
-  answerGroup.isRewardCalculated = "NotCalculated"
+  answerGroup.isRewardCalculated = STATUS_CALCULATED[0]
   answerGroup.rewardAmount = ZERO
-  answerGroup.status = "Unclaimed"
+  answerGroup.status = ANSWER_STATUS[0]
   answerGroup.save()
 
   owner.answerGroupCount = owner.answerGroupCount.plus(ONE)
@@ -272,7 +281,7 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
 function updateGroupReward(answerGroupId: string, amount: BigInt): void {
   let answerGroup = AnswerGroup.load(answerGroupId)
   answerGroup.rewardAmount = amount
-  answerGroup.isRewardCalculated = "Calculated"
+  answerGroup.isRewardCalculated = STATUS_CALCULATED[1]
   answerGroup.save()
 }
 
@@ -297,7 +306,7 @@ export function handleRewardClaimed(event: RewardClaimed): void {
 
   let answerGroupId = getAnswerGroupId(user.id, event.params.questionGroupId.toString())
   let answerGroup = AnswerGroup.load(answerGroupId)
-  answerGroup.status = "Claimed"
+  answerGroup.status = ANSWER_STATUS[1]
   answerGroup.save()
 }
 
