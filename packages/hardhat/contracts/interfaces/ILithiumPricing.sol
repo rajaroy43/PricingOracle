@@ -54,8 +54,8 @@ interface ILithiumPricing {
 
   event FinalAnswerCalculatedStatus(
     uint256[] questionIds,
-    uint256[] finalAnswerIndex,
-    uint256[] finalAnswerValue
+    uint256[] answerIndexes,
+    uint256[] answerValues
   );
 
   event SetLithiumRewardAddress(
