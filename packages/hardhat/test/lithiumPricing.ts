@@ -131,6 +131,8 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
 
+      const startTime = block.timestamp + 3;
+
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
       const description1 = "foo1";
@@ -150,6 +152,7 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -167,7 +170,8 @@ describe("Lithium Pricing", async function () {
           account0.address,
           description,
           answerSet,
-          questiontype
+          questiontype,
+          startTime
         );
 
       createQuestionGroupTx
@@ -190,6 +194,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -209,6 +214,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -226,7 +232,8 @@ describe("Lithium Pricing", async function () {
           account0.address,
           description,
           answerSet,
-          questiontype0
+          questiontype0,
+          startTime
         );
 
       createQuestionGroupTx
@@ -240,7 +247,8 @@ describe("Lithium Pricing", async function () {
           account0.address,
           description1,
           answerSet1,
-          questiontype1
+          questiontype1,
+          startTime
         );
 
       createQuestionGroupTx
@@ -261,6 +269,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -279,6 +288,7 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -293,6 +303,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -311,6 +322,7 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -325,6 +337,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -343,6 +356,8 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -357,6 +372,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -372,9 +388,10 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1, endTime],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -390,6 +407,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -405,9 +423,10 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -423,6 +442,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -438,9 +458,10 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype],
         [description, description1, description],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -456,6 +477,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -471,9 +493,45 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1, answerSet],
+        [startTime, startTime],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with startTimes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const startTime = block.timestamp + 3;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1, endTime],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -490,6 +548,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 2;
       const endTime1 = block.timestamp + 5;
@@ -507,12 +566,87 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
         lithiumPricing.createQuestionGroup(...args)
       ).to.be.revertedWith(
         "Pricing time of asset must be greater than endtime"
+      );
+    });
+
+    it("Should fail to create  questionGroup  if any question with startTime of giving answer > endTime", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = endTime + 1;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+      const questiontype1 = 1;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype0, questiontype1],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith(
+        "startTime must be less than end time and current time"
+      );
+    });
+
+    it("Should fail to create  questionGroup  if any question with startTime of giving answer < current time", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp - 10;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+      const questiontype1 = 1;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype0, questiontype1],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith(
+        "startTime must be less than end time and current time"
       );
     });
 
@@ -525,6 +659,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -542,6 +677,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -558,6 +694,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -575,6 +712,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -591,6 +729,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -608,6 +747,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -632,6 +772,7 @@ describe("Lithium Pricing", async function () {
       const answerSet1 = [0, 0];
       const categoryId1 = 0;
       const questiontype1 = 1;
+      const startTime = block.timestamp + 3;
 
       const args = [
         [categoryId, categoryId1],
@@ -641,6 +782,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -657,6 +799,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -674,6 +817,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await expect(
         //@ts-ignore
@@ -690,6 +834,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -707,6 +852,7 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await lithToken.connect(account1).approve(lithiumPricing.address, bounty);
       await expect(
@@ -723,6 +869,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -743,12 +890,79 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
       ];
       await lithToken.connect(account1).approve(lithiumPricing.address, 0);
       await expect(
         //@ts-ignore
         lithiumPricing.connect(account1).createQuestionGroup(...args)
       ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
+    });
+
+    it("Should not  able to answer if starting time of question is not reached yet", async () => {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const startTime = block.timestamp + 4;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+      // QuestionType{ Pricing, GroundTruth }
+      //if questiontype = 0 ,then question is Pricing type
+      //if questiontype = 1 ,then question is GroundTruth type
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+      ];
+      const createQuestionGroupTx = await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      );
+      //createQuestionGroupTx
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionCreated")
+        .withArgs(
+          0,
+          bounty,
+          pricingTime,
+          endTime,
+          categoryId,
+          account0.address,
+          description,
+          answerSet,
+          questiontype,
+          startTime
+        );
+
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionGroupCreated")
+        .withArgs(0, account0.address, [0, 1]);
+
+      const stakeAmounts = [stakeAmount, stakeAmount];
+      const answerIndexes = [1, 0];
+      const questionGroupId = 0;
+      await expect(
+        lithiumPricing
+          .connect(account1)
+          .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
+      ).to.be.revertedWith("Answering question is not started yet");
     });
 
     describe("Answering  question group", function () {
@@ -761,6 +975,8 @@ describe("Lithium Pricing", async function () {
         const answerSet = [0, 50];
         const categoryId = 0;
         const questiontype = 0;
+
+        const startTime = block.timestamp + 1;
 
         const pricingTime1 = block.timestamp + 7;
         const endTime1 = block.timestamp + 5;
@@ -777,6 +993,7 @@ describe("Lithium Pricing", async function () {
           [questiontype, questiontype],
           [description, description1],
           [answerSet, answerSet1],
+          [startTime, startTime],
         ];
         //@ts-ignore
         await lithiumPricing.createQuestionGroup(...args);

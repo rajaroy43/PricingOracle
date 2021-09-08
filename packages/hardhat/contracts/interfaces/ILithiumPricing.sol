@@ -19,8 +19,8 @@ interface ILithiumPricing {
     address owner,
     string description,
     uint256[] answerSet,
-    QuestionType questionType
-
+    QuestionType questionType,
+    uint256 startTime
   );
 
   event QuestionGroupCreated (
@@ -153,7 +153,8 @@ interface ILithiumPricing {
     uint256 endTime,
     QuestionType questionType,
     string memory description,
-    uint256[] memory answerSet
+    uint256[] memory answerSet,
+    uint256 startTime
   ) external;
 
   function createQuestionGroup (
@@ -163,7 +164,8 @@ interface ILithiumPricing {
     uint256[] memory endTimes,
     QuestionType[] memory questionTypes,
     string[] memory descriptions,
-    uint256[][] memory answerSets
+    uint256[][] memory answerSets,
+    uint256[] memory startTimes
   ) external;
 
   function answerQuestions (

@@ -23,6 +23,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 pricingTime;//Indicate when the asset should be priced for
     uint256 finalAnswerIndex;//Final answer index  of a question
     uint256 finalAnswerValue;//Final answer vaule of question 
+    uint256 startTime; //startTime for answering question
     StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
   }
@@ -242,9 +243,11 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 endTime,
     QuestionType questionType,
     string memory description,
-    uint256[] memory answerSet
+    uint256[] memory answerSet,
+    uint256 startTime
   ) internal {
     require(endTime > block.timestamp, "Endtime must be in the future");
+    require(startTime >= block.timestamp && startTime <= endTime , "startTime must be less than end time and current time");
     require(pricingTime > endTime,"Pricing time of asset must be greater than endtime");
     require(LithiumToken.balanceOf(msg.sender) >= bounty, "Insufficient balance");
     require(categories[categoryId] != 0, "Invalid categoryId");
@@ -264,6 +267,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     question.endTime = endTime;
     question.pricingTime = pricingTime;
     question.questionType = questionType;
+    question.startTime = startTime;
     questions.push(question);
     emit QuestionCreated(
       id,
@@ -274,7 +278,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
       question.owner,
       description,
       answerSet, 
-      questionType
+      questionType,
+      startTime
     );
   }
 
@@ -302,6 +307,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) internal {
     require(_questionId < questions.length, "Invalid question id");
     Question storage question = questions[_questionId];
+    require(question.startTime <= block.timestamp, "Answering question is not started yet");
     require(question.endTime > block.timestamp, "Question is not longer active");
     require(_answerIndex <= question.answerSet.length, "Invalid answer index");
     require(_stakeAmount >= minimumStake, "Stake amount must be greater than minimumStake");
@@ -495,7 +501,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 endTime,
     QuestionType questionType,
     string memory description,
-    uint256[] memory answerSet
+    uint256[] memory answerSet,
+    uint256 startTime
   ) external override {
     _createQuestion(
       categoryId,
@@ -504,7 +511,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
       endTime,
       questionType,
       description,
-      answerSet
+      answerSet,
+      startTime
     );
   }
 
@@ -521,7 +529,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256[] memory endTimes,
     QuestionType[] memory questionTypes,
     string[] memory descriptions,
-    uint256[][] memory answerSets
+    uint256[][] memory answerSets,
+    uint256[] memory startTimes
   ) external override {
     require(
       categoryIds.length == bounties.length
@@ -529,7 +538,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
       && categoryIds.length == endTimes.length
       && categoryIds.length == questionTypes.length
       && categoryIds.length == descriptions.length
-      && categoryIds.length == answerSets.length,
+      && categoryIds.length == answerSets.length
+      && categoryIds.length == startTimes.length,
       "Array mismatch");
 
     // get the pending id for the initial question in the set
@@ -544,7 +554,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
         endTimes[i],
         questionTypes[i],
         descriptions[i],
-        answerSets[i]
+        answerSets[i],
+        startTimes[i]
       );
       questionIds[i] = initialQuestionId + i;
     }
