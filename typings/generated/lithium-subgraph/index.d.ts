@@ -20,8 +20,6 @@ export type Answer = {
   question: Question;
   answerIndex: Scalars['Int'];
   stakeAmount: Scalars['BigInt'];
-  rewardClaimed: Scalars['BigInt'];
-  status: AnswerStatus;
   created: Scalars['BigInt'];
   group?: Maybe<AnswerGroup>;
 };
@@ -32,6 +30,9 @@ export type AnswerGroup = {
   questionGroup: QuestionGroup;
   answers: Array<Answer>;
   owner: User;
+  rewardAmount: Scalars['BigInt'];
+  status: AnswerStatus;
+  isRewardCalculated: StatusCalculated;
 };
 
 export enum AnswerStatus {
@@ -62,10 +63,12 @@ export type Question = {
   totalStaked: Scalars['BigInt'];
   endTime: Scalars['BigInt'];
   pricingTime: Scalars['BigInt'];
-  isRewardCalculated: RewardCalculated;
+  isAnswerCalculated: StatusCalculated;
   answerCount: Scalars['BigInt'];
   answers?: Maybe<Array<Answer>>;
   created: Scalars['BigInt'];
+  finalAnswerIndex: Scalars['Int'];
+  finalAnswerValue: Scalars['BigInt'];
 };
 
 export type QuestionCategory = {
@@ -82,6 +85,7 @@ export type QuestionCategory = {
 export type QuestionGroup = {
   __typename?: 'QuestionGroup';
   id: Scalars['ID'];
+  category: QuestionCategory;
   questions: Array<Question>;
   endTime: Scalars['BigInt'];
 };
@@ -91,7 +95,7 @@ export enum QuestionType {
   GroundTruth = 'GroundTruth'
 }
 
-export enum RewardCalculated {
+export enum StatusCalculated {
   NotCalculated = 'NotCalculated',
   Calculated = 'Calculated'
 }
@@ -110,4 +114,13 @@ export type User = {
   totalStaked: Scalars['BigInt'];
   tokenBalance: Scalars['BigInt'];
   tokenApprovalBalance: Scalars['BigInt'];
+  categoryReputations?: Maybe<Array<UserCategoryReputation>>;
+};
+
+export type UserCategoryReputation = {
+  __typename?: 'UserCategoryReputation';
+  id: Scalars['ID'];
+  user: User;
+  category: QuestionCategory;
+  score: Scalars['BigInt'];
 };

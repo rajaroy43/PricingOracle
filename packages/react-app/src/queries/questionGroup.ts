@@ -36,7 +36,7 @@ export const GET_QUESTION_GROUPS  = gql`
 export const GET_ACTIVE_QUESTION_GROUPS  = gql`
   ${QUESTION_FIELDS}
   query questionGroups($now: String!) {
-    questionGroups(where: {endTime_lt: $now}) {
+    questionGroups(where: {endTime_gt: $now}) {
       id
       endTime
       questions {

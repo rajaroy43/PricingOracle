@@ -14,13 +14,14 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - PricingContractMeta
-        - User
-        - Question
-        - QuestionGroup
         - Answer
         - AnswerGroup
+        - PricingContractMeta
+        - Question
+        - QuestionGroup
         - QuestionCategory
+        - User
+        - UserCategoryReputation
       abis:
         - name: LithiumPricing
           file: ./abis/LithiumPricing.json
@@ -35,16 +36,19 @@ dataSources:
           handler: handleRewardClaimed
         - event: CategoryAdded(uint256,string)
           handler: handleCategoryAdded
-        - event: RewardCalculatedStatus(uint256,uint8)
-          handler: handleRewardCalculatedStatus
         - event: SetLithiumRewardAddress(address)
           handler: handleSetLithiumRewardAddress
         - event: SetLithiumTokenAddress(address)
           handler: handleSetLithiumTokenAddress
         - event: AnswerGroupSetSubmitted(address,uint256)
           handler: handleAnswerGroupSetSubmitted
+        - event: FinalAnswerCalculatedStatus(uint256[],uint256[],uint256[])
+          handler: handleFinalAnswerCalculatedStatus
+        - event: GroupRewardUpdated(address[],uint256[],uint256[])
+          handler: handleGroupRewardUpdated
+        - event: ReputationUpdated(address[],uint256[],uint256[])
+          handler: handleReputationUpdated
       file: ./src/mapping.ts
-
 
   - kind: ethereum/contract
     name: LithiumToken
