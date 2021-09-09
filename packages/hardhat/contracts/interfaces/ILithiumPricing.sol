@@ -27,7 +27,7 @@ interface ILithiumPricing {
     uint256 id,
     address owner,
     uint256[] questionIds,
-    uint16 minimumRequiredAnswer
+    uint16 minimumRequiredAnswers
   );
 
   event QuestionAnswered (
