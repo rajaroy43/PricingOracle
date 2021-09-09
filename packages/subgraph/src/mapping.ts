@@ -163,6 +163,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.finalAnswerIndex = ZERO.toI32()
   question.finalAnswerValue = ZERO
   question.endTime = event.params.endTime
+  question.startTime = event.params.startTime
   question.pricingTime = event.params.pricingTime
   question.isAnswerCalculated = STATUS_CALCULATED[0]
   question.created = event.block.timestamp
@@ -174,11 +175,11 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   category.save()
 }
 
-function updateFinalAnswer(questionId: string, answerIndex: string, answerValue: string ): void {
+function updateFinalAnswer(questionId: string, answerIndex: string, answerValue: string, status: string ): void {
   let question = Question.load(questionId)
   question.finalAnswerIndex =  BigInt.fromString(answerIndex).toI32()
   question.finalAnswerValue = BigInt.fromString(answerValue)
-  question.isAnswerCalculated = STATUS_CALCULATED[1]
+  question.isAnswerCalculated = status
   question.save()
 }
 
@@ -186,11 +187,13 @@ export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedSt
   let questionIds: Array<BigInt> = event.params.questionIds
   let answerIndexes: Array<BigInt> = event.params.answerIndexes
   let answerValues: Array<BigInt> = event.params.answerValues
+  let statuses: Array<i32> = event.params.answerStatuses
   for (let i = 0; i < questionIds.length; i++) {
     let questionId = questionIds[i]
     let answerIndex = answerIndexes[i]
     let answerValue = answerValues[i]
-    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString())
+    let status = statuses[i]
+    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString(), STATUS_CALCULATED[status])
   }
 }
 
@@ -200,6 +203,7 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   let questionIds: Array<BigInt> = event.params.questionIds
   let questionIdStrings: Array<string>
   let endTime = ZERO
+  let startTime = ZERO
   let categoryId = ''
   for(let i = 0; i < questionIds.length; i++) {
     let questionId = questionIds[i]
@@ -208,12 +212,17 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
     if (endTime < question.endTime) {
       endTime = question.endTime
     }
+    if (startTime < question.startTime) {
+      startTime = startTime
+    }
     questionIdStrings.push(id)
     categoryId = question.category
   }
   questionGroup.category = categoryId
   questionGroup.questions = questionIdStrings
   questionGroup.endTime = endTime
+  questionGroup.startTime = startTime
+  questionGroup.minimumRequiredAnswers = event.params.minimumRequiredAnswers
   questionGroup.save()
 }
 

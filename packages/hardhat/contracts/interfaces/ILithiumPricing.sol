@@ -19,14 +19,15 @@ interface ILithiumPricing {
     address owner,
     string description,
     uint256[] answerSet,
-    QuestionType questionType
-
+    QuestionType questionType,
+    uint256 startTime
   );
 
   event QuestionGroupCreated (
     uint256 id,
     address owner,
-    uint256[] questionIds
+    uint256[] questionIds,
+    uint16 minimumRequiredAnswers
   );
 
   event QuestionAnswered (
@@ -55,7 +56,8 @@ interface ILithiumPricing {
   event FinalAnswerCalculatedStatus(
     uint256[] questionIds,
     uint256[] answerIndexes,
-    uint256[] answerValues
+    uint256[] answerValues,
+    StatusCalculated[] answerStatuses
   );
 
   event SetLithiumRewardAddress(
@@ -68,9 +70,11 @@ interface ILithiumPricing {
 
   event GroupRewardUpdated(address[] addressesToUpdate,uint256[] groupIds,uint256[] rewardAmounts);
 
+
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
-  enum StatusCalculated{NotCalculated,Calculated}
+  //Invalid is for if answer can't be calculated
+  enum StatusCalculated{NotCalculated, Calculated, Invalid}
   enum QuestionType{ Pricing, GroundTruth }
   /** Getter Functions */
 
@@ -125,7 +129,10 @@ interface ILithiumPricing {
 /* External Functions */
 
   function updateFinalAnswerStatus(
-   uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue
+   uint256[] memory questionIds, 
+   uint256[] memory finalAnswerIndexes,
+   uint256[] memory finalAnswerValues,
+   StatusCalculated[] memory answerStatuses
     )external;
 
   function updateReputation(
@@ -135,7 +142,7 @@ interface ILithiumPricing {
     ) external;
   
   function updateMinimumStake (
-    uint256 _minimumStake
+    uint256 minimumStake
     )external;
 
   function updateGroupRewardAmounts(
@@ -143,6 +150,8 @@ interface ILithiumPricing {
     uint256[] memory groupIds, 
     uint256[] memory rewardAmounts
     ) external;
+
+
   
   function createQuestion (
     uint16 categoryId,
@@ -151,7 +160,8 @@ interface ILithiumPricing {
     uint256 endTime,
     QuestionType questionType,
     string memory description,
-    uint256[] memory answerSet
+    uint256[] memory answerSet,
+    uint256 startTime
   ) external;
 
   function createQuestionGroup (
@@ -161,7 +171,9 @@ interface ILithiumPricing {
     uint256[] memory endTimes,
     QuestionType[] memory questionTypes,
     string[] memory descriptions,
-    uint256[][] memory answerSets
+    uint256[][] memory answerSets,
+    uint256[] memory startTimes,
+    uint16 minimumRequiredAnswer
   ) external;
 
   function answerQuestions (

@@ -62,6 +62,7 @@ export type Question = {
   bounty: Scalars['BigInt'];
   totalStaked: Scalars['BigInt'];
   endTime: Scalars['BigInt'];
+  startTime: Scalars['BigInt'];
   pricingTime: Scalars['BigInt'];
   isAnswerCalculated: StatusCalculated;
   answerCount: Scalars['BigInt'];
@@ -88,6 +89,8 @@ export type QuestionGroup = {
   category: QuestionCategory;
   questions: Array<Question>;
   endTime: Scalars['BigInt'];
+  startTime: Scalars['BigInt'];
+  minimumRequiredAnswers: Scalars['Int'];
 };
 
 export enum QuestionType {
@@ -97,7 +100,8 @@ export enum QuestionType {
 
 export enum StatusCalculated {
   NotCalculated = 'NotCalculated',
-  Calculated = 'Calculated'
+  Calculated = 'Calculated',
+  Invalid = 'Invalid'
 }
 
 export type User = {

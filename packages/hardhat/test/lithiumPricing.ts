@@ -13,12 +13,15 @@ describe("Lithium Pricing", async function () {
     account1: Wallet,
     account2: Wallet,
     stakeAmount: any,
-    transferAmount1: any;
+    transferAmount1: any,
+    minimumRequiredAnswer: any;
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
     account0 = accounts[0];
     account1 = accounts[1];
     account2 = accounts[2];
+
+    minimumRequiredAnswer = 1;
     const approveAmount = ethers.utils.parseUnits("1000.0", 18);
     transferAmount1 = ethers.utils.parseUnits("100.0", 18);
     stakeAmount = ethers.utils.parseUnits("25.0", 18);
@@ -131,6 +134,8 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
 
+      const startTime = block.timestamp + 3;
+
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
       const description1 = "foo1";
@@ -150,6 +155,8 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -167,12 +174,13 @@ describe("Lithium Pricing", async function () {
           account0.address,
           description,
           answerSet,
-          questiontype
+          questiontype,
+          startTime
         );
 
       createQuestionGroupTx
         .emit(lithiumPricing, "QuestionGroupCreated")
-        .withArgs(0, account0.address, [0, 1]);
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
 
@@ -190,6 +198,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -209,6 +218,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -226,7 +237,8 @@ describe("Lithium Pricing", async function () {
           account0.address,
           description,
           answerSet,
-          questiontype0
+          questiontype0,
+          startTime
         );
 
       createQuestionGroupTx
@@ -240,12 +252,13 @@ describe("Lithium Pricing", async function () {
           account0.address,
           description1,
           answerSet1,
-          questiontype1
+          questiontype1,
+          startTime
         );
 
       createQuestionGroupTx
         .emit(lithiumPricing, "QuestionGroupCreated")
-        .withArgs(0, account0.address, [0, 1]);
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
 
@@ -261,6 +274,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -279,6 +293,8 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -293,6 +309,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -311,6 +328,8 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -325,6 +344,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -343,6 +363,9 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -357,6 +380,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -372,9 +396,11 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1, endTime],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -390,6 +416,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -405,9 +432,11 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -423,6 +452,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -438,9 +468,11 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype],
         [description, description1, description],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -456,6 +488,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -471,9 +504,47 @@ describe("Lithium Pricing", async function () {
         [bounty, bounty1],
         [pricingTime, pricingTime1],
         [endTime, endTime1],
-        [questiontype, questiontype, 0],
+        [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1, answerSet],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith("Array mismatch");
+    });
+
+    it("Should not create a question group with startTimes param length mismatch", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const startTime = block.timestamp + 3;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1, endTime],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -490,6 +561,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 2;
       const endTime1 = block.timestamp + 5;
@@ -507,12 +579,90 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
         lithiumPricing.createQuestionGroup(...args)
       ).to.be.revertedWith(
         "Pricing time of asset must be greater than endtime"
+      );
+    });
+
+    it("Should fail to create  questionGroup  if any question with startTime of giving answer > endTime", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = endTime + 1;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+      const questiontype1 = 1;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype0, questiontype1],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith(
+        "startTime must be less than end time and current time"
+      );
+    });
+
+    it("Should fail to create  questionGroup  if any question with startTime of giving answer < current time", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp - 10;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+      const questiontype1 = 1;
+
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype0, questiontype1],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      ).to.be.revertedWith(
+        "startTime must be less than end time and current time"
       );
     });
 
@@ -525,6 +675,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -542,6 +693,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -558,6 +711,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -575,6 +729,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -591,6 +747,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -608,6 +765,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -632,6 +791,7 @@ describe("Lithium Pricing", async function () {
       const answerSet1 = [0, 0];
       const categoryId1 = 0;
       const questiontype1 = 1;
+      const startTime = block.timestamp + 3;
 
       const args = [
         [categoryId, categoryId1],
@@ -641,6 +801,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -657,6 +819,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -674,6 +837,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await expect(
         //@ts-ignore
@@ -690,6 +855,7 @@ describe("Lithium Pricing", async function () {
       const answerSet = [0, 50];
       const categoryId = 0;
       const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -707,6 +873,8 @@ describe("Lithium Pricing", async function () {
         [questiontype0, questiontype1],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await lithToken.connect(account1).approve(lithiumPricing.address, bounty);
       await expect(
@@ -723,6 +891,7 @@ describe("Lithium Pricing", async function () {
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
+      const startTime = block.timestamp + 3;
 
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
@@ -743,12 +912,81 @@ describe("Lithium Pricing", async function () {
         [questiontype, questiontype],
         [description, description1],
         [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
       ];
       await lithToken.connect(account1).approve(lithiumPricing.address, 0);
       await expect(
         //@ts-ignore
         lithiumPricing.connect(account1).createQuestionGroup(...args)
       ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
+    });
+
+    it("Should not  able to answer if starting time of question is not reached yet", async () => {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const startTime = block.timestamp + 4;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+      // QuestionType{ Pricing, GroundTruth }
+      //if questiontype = 0 ,then question is Pricing type
+      //if questiontype = 1 ,then question is GroundTruth type
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      const createQuestionGroupTx = await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      );
+      //createQuestionGroupTx
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionCreated")
+        .withArgs(
+          0,
+          bounty,
+          pricingTime,
+          endTime,
+          categoryId,
+          account0.address,
+          description,
+          answerSet,
+          questiontype,
+          startTime
+        );
+
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionGroupCreated")
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
+
+      const stakeAmounts = [stakeAmount, stakeAmount];
+      const answerIndexes = [1, 0];
+      const questionGroupId = 0;
+      await expect(
+        lithiumPricing
+          .connect(account1)
+          .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
+      ).to.be.revertedWith("Answering question is not started yet");
     });
 
     describe("Answering  question group", function () {
@@ -761,6 +999,8 @@ describe("Lithium Pricing", async function () {
         const answerSet = [0, 50];
         const categoryId = 0;
         const questiontype = 0;
+
+        const startTime = block.timestamp + 1;
 
         const pricingTime1 = block.timestamp + 7;
         const endTime1 = block.timestamp + 5;
@@ -777,6 +1017,8 @@ describe("Lithium Pricing", async function () {
           [questiontype, questiontype],
           [description, description1],
           [answerSet, answerSet1],
+          [startTime, startTime],
+          minimumRequiredAnswer,
         ];
         //@ts-ignore
         await lithiumPricing.createQuestionGroup(...args);
@@ -919,14 +1161,15 @@ describe("Lithium Pricing", async function () {
 
       it("Should not  update final answer status if question deadline is not ended yet", async () => {
         const questionIds = [0, 1];
-        const finalAnswerIndex = [1, 1];
-        const finalAnswerValue = [50, 100];
-
+        const finalAnswerIndexes = [1, 1];
+        const finalAnswerValues = [50, 100];
+        const answersStatus = [1, 1];
         await expect(
           lithiumPricing.updateFinalAnswerStatus(
             questionIds,
-            finalAnswerIndex,
-            finalAnswerValue
+            finalAnswerIndexes,
+            finalAnswerValues,
+            answersStatus
           )
         ).to.be.revertedWith(
           "Question is still active and Final Answer status can't be updated"
@@ -949,9 +1192,9 @@ describe("Lithium Pricing", async function () {
 
         it("Should able to update final answer status", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndex = [1, 1];
-          const finalAnswerValue = [50, 100];
-
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          const answersStatuses = [1, 1];
           //Before updating final answer status
           const beforeUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
@@ -979,21 +1222,27 @@ describe("Lithium Pricing", async function () {
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             )
           )
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(questionIds, finalAnswerIndex, finalAnswerValue);
+            .withArgs(
+              questionIds,
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
+            );
 
           const afterUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
 
           expect(afterUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
-            finalAnswerIndex[0]
+            finalAnswerIndexes[0]
           );
           expect(afterUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
-            finalAnswerValue[0]
+            finalAnswerValues[0]
           );
           expect(
             afterUpdatingAnswerStatusquestion1.isAnswerCalculated
@@ -1002,10 +1251,10 @@ describe("Lithium Pricing", async function () {
           const afterUpdatingAnswerStatusquestion2 =
             await lithiumPricing.getQuestion(questionIds[1]);
           expect(afterUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
-            finalAnswerIndex[1]
+            finalAnswerIndexes[1]
           );
           expect(afterUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
-            finalAnswerValue[1]
+            finalAnswerValues[1]
           );
           expect(
             afterUpdatingAnswerStatusquestion2.isAnswerCalculated
@@ -1014,16 +1263,17 @@ describe("Lithium Pricing", async function () {
 
         it("Should not allow non admin to update final answer status ", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndex = [1, 1];
-          const finalAnswerValue = [50, 100];
-
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          const answersStatuses = [1, 1];
           await expect(
             lithiumPricing
               .connect(account2)
               .updateFinalAnswerStatus(
                 questionIds,
-                finalAnswerIndex,
-                finalAnswerValue
+                finalAnswerIndexes,
+                finalAnswerValues,
+                answersStatuses
               )
           ).to.be.revertedWith("Must be admin");
         });
@@ -1031,28 +1281,46 @@ describe("Lithium Pricing", async function () {
         it("Should not allow  admin to update final answer status if having invalid question id", async () => {
           //invalid question id here
           const questionIds = [0, 81];
-          const finalAnswerIndex = [1, 1];
-          const finalAnswerValue = [50, 100];
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          const answersStatuses = [1, 1];
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             )
           ).to.be.revertedWith("Invalid question id");
         });
 
-        it("Should not  update final answer status if passing questionIds as empty array", async () => {
-          const questionIds: number[] = [];
-          const finalAnswerIndex: number[] = [];
-          const finalAnswerValue: number[] = [];
-
+        it("Should not  update final answer status if passing answerstatus as NotCalculated", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          const answersStatuses = [0, 1];
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
+            )
+          ).to.be.revertedWith("Not allowed to updated status  Notcalculated");
+        });
+
+        it("Should not  update final answer status if passing questionIds as empty array", async () => {
+          const questionIds: number[] = [];
+          const finalAnswerIndexes: number[] = [];
+          const finalAnswerValues: number[] = [];
+          const answersStatuses: number[] = [];
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             )
           ).to.be.revertedWith("question IDs length must be greater than zero");
         });
@@ -1060,14 +1328,15 @@ describe("Lithium Pricing", async function () {
         it("Should not  update final answer status if having mismath argument ", async () => {
           //invalid question id here
           const questionIds = [0, 1, 0];
-          const finalAnswerIndex = [1, 1];
-          const finalAnswerValue = [50, 100];
-
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          const answersStatuses = [1, 1];
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             )
           ).to.be.revertedWith("argument array length mismatch");
         });
@@ -1075,23 +1344,31 @@ describe("Lithium Pricing", async function () {
         it("Should not  update final answer status again ", async () => {
           //invalid question id here
           const questionIds = [0, 1];
-          const finalAnswerIndex = [1, 1];
-          const finalAnswerValue = [50, 100];
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          const answersStatuses = [1, 1];
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             )
           )
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(questionIds, finalAnswerIndex, finalAnswerValue);
+            .withArgs(
+              questionIds,
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
+            );
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             )
           ).to.be.revertedWith("Answer is already calculated");
         });
@@ -1109,16 +1386,73 @@ describe("Lithium Pricing", async function () {
           ).to.be.revertedWith("Answer is not yet calculated");
         });
 
+        it("Should not  update final answer status if wrong status is passed ", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          //Answer can't be calulated for question id 0
+          //so we mark as invalid
+          //and not able to update group rewards
+          const answersStatuses = [1, 4];
+
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
+            )
+          ).to.be.reverted;
+        });
+
+        it("Should not  update reward amounts if answer can't be calculated ", async () => {
+          const questionIds = [0, 1];
+          const finalAnswerIndexes = [1, 1];
+          const finalAnswerValues = [50, 100];
+          //Answer can't be calulated for question id 0
+          //so we mark as invalid
+          //and not able to update group rewards
+          const answersStatuses = [2, 1];
+
+          await expect(
+            lithiumPricing.updateFinalAnswerStatus(
+              questionIds,
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
+            )
+          )
+            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+            .withArgs(
+              questionIds,
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
+            );
+          const addressesToUpdate = [account1.address];
+          const groupIds = [0];
+          const rewardAmounts = [2];
+
+          await expect(
+            lithiumPricing.updateGroupRewardAmounts(
+              addressesToUpdate,
+              groupIds,
+              rewardAmounts
+            )
+          ).to.be.revertedWith("Answer is not yet calculated");
+        });
+
         describe("Update Group Reward Amounts", async () => {
           beforeEach(async () => {
             const questionIds = [0, 1];
-            const finalAnswerIndex = [1, 1];
-            const finalAnswerValue = [50, 100];
-
+            const finalAnswerIndexes = [1, 1];
+            const finalAnswerValues = [50, 100];
+            const answersStatuses = [1, 1];
             await lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndex,
-              finalAnswerValue
+              finalAnswerIndexes,
+              finalAnswerValues,
+              answersStatuses
             );
           });
 

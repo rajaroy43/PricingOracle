@@ -10,6 +10,7 @@ enum AnswerStatus {
 enum StatusCalculated {
   NotCalculated
   Calculated
+  Invalid
 }
 
 enum QuestionType {
@@ -68,6 +69,7 @@ type Question @entity {
   bounty: BigInt!
   totalStaked: BigInt!
   endTime: BigInt!
+  startTime: BigInt!
   pricingTime: BigInt!
   isAnswerCalculated: StatusCalculated!
   answerCount: BigInt!
@@ -82,6 +84,8 @@ type QuestionGroup @entity {
   category: QuestionCategory!
   questions: [Question!]!
   endTime: BigInt!
+  startTime: BigInt!
+  minimumRequiredAnswers: Int!
 }
 
 type Answer @entity {
