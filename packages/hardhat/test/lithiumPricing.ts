@@ -13,12 +13,15 @@ describe("Lithium Pricing", async function () {
     account1: Wallet,
     account2: Wallet,
     stakeAmount: any,
-    transferAmount1: any;
+    transferAmount1: any,
+    minimumRequiredAnswers: any;
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
     account0 = accounts[0];
     account1 = accounts[1];
     account2 = accounts[2];
+
+    minimumRequiredAnswers = 1;
     const approveAmount = ethers.utils.parseUnits("1000.0", 18);
     transferAmount1 = ethers.utils.parseUnits("100.0", 18);
     stakeAmount = ethers.utils.parseUnits("25.0", 18);
@@ -153,6 +156,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -176,7 +180,7 @@ describe("Lithium Pricing", async function () {
 
       createQuestionGroupTx
         .emit(lithiumPricing, "QuestionGroupCreated")
-        .withArgs(0, account0.address, [0, 1]);
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswers);
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
 
@@ -215,6 +219,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -253,7 +258,7 @@ describe("Lithium Pricing", async function () {
 
       createQuestionGroupTx
         .emit(lithiumPricing, "QuestionGroupCreated")
-        .withArgs(0, account0.address, [0, 1]);
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswers);
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
 
@@ -289,6 +294,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -323,6 +329,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -358,6 +365,7 @@ describe("Lithium Pricing", async function () {
         [answerSet, answerSet1],
 
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -392,6 +400,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -427,6 +436,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -462,6 +472,7 @@ describe("Lithium Pricing", async function () {
         [description, description1, description],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -497,6 +508,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1, answerSet],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -532,6 +544,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -567,6 +580,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -604,6 +618,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -641,6 +656,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -678,6 +694,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -713,6 +730,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -748,6 +766,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -783,6 +802,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -818,6 +838,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await expect(
         //@ts-ignore
@@ -853,6 +874,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await lithToken.connect(account1).approve(lithiumPricing.address, bounty);
       await expect(
@@ -891,6 +913,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       await lithToken.connect(account1).approve(lithiumPricing.address, 0);
       await expect(
@@ -930,6 +953,7 @@ describe("Lithium Pricing", async function () {
         [description, description1],
         [answerSet, answerSet1],
         [startTime, startTime],
+        minimumRequiredAnswers,
       ];
       const createQuestionGroupTx = await expect(
         //@ts-ignore
@@ -953,7 +977,7 @@ describe("Lithium Pricing", async function () {
 
       createQuestionGroupTx
         .emit(lithiumPricing, "QuestionGroupCreated")
-        .withArgs(0, account0.address, [0, 1]);
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswers);
 
       const stakeAmounts = [stakeAmount, stakeAmount];
       const answerIndexes = [1, 0];
@@ -994,6 +1018,7 @@ describe("Lithium Pricing", async function () {
           [description, description1],
           [answerSet, answerSet1],
           [startTime, startTime],
+          minimumRequiredAnswers,
         ];
         //@ts-ignore
         await lithiumPricing.createQuestionGroup(...args);
