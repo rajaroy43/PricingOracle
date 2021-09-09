@@ -8,7 +8,7 @@ module.exports = async () => {
   const answerSet = [0, 50];
   const categoryId = 0;
 
-  const minimumRequiredAnswers = 1;
+  const minimumRequiredAnswer = 1;
 
   const pricingTime1 = block.timestamp + 700000000000;
   const endTime1 = block.timestamp + 500000000000;
@@ -43,7 +43,7 @@ module.exports = async () => {
     [description, description1, description2, description3],
     [answerSet, answerSet1, answerSet2, answerSet3],
     [startTime, startTime, startTime, startTime],
-    minimumRequiredAnswers,
+    minimumRequiredAnswer,
   ];
 
   const args2 = [
@@ -55,7 +55,7 @@ module.exports = async () => {
     [description, description1, description2, description3],
     [answerSet, answerSet1, answerSet2, answerSet3],
     [startTime, startTime, startTime, startTime],
-    minimumRequiredAnswers,
+    minimumRequiredAnswer,
   ];
   const args = [args1, args2];
   return args;

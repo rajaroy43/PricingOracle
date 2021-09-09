@@ -27,7 +27,7 @@ interface ILithiumPricing {
     uint256 id,
     address owner,
     uint256[] questionIds,
-    uint16 minimumRequiredAnswers
+    uint16 minimumRequiredAnswer
   );
 
   event QuestionAnswered (
@@ -57,7 +57,7 @@ interface ILithiumPricing {
     uint256[] questionIds,
     uint256[] answerIndexes,
     uint256[] answerValues,
-    StatusCalculated[] answerStatus
+    StatusCalculated[] answerStatuses
   );
 
   event SetLithiumRewardAddress(
@@ -129,7 +129,10 @@ interface ILithiumPricing {
 /* External Functions */
 
   function updateFinalAnswerStatus(
-   uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue,StatusCalculated[] memory answerStatus
+   uint256[] memory questionIds, 
+   uint256[] memory finalAnswerIndexes,
+   uint256[] memory finalAnswerValues,
+   StatusCalculated[] memory answerStatuses
     )external;
 
   function updateReputation(
@@ -170,7 +173,7 @@ interface ILithiumPricing {
     string[] memory descriptions,
     uint256[][] memory answerSets,
     uint256[] memory startTimes,
-    uint16 minimumRequiredAnswers
+    uint16 minimumRequiredAnswer
   ) external;
 
   function answerQuestions (

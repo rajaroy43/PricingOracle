@@ -31,7 +31,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   struct QuestionGroup {
     uint256 id;
     uint256[] questionIds;
-    uint16 minimumRequiredAnswers;
+    uint16 minimumRequiredAnswer;
   }
 
   struct Answer {
@@ -161,32 +161,32 @@ contract LithiumPricing is ILithiumPricing, Roles {
 //get staked amount for Question with id _questionId
 //Remember it will exclude the bounty that were offer by wisdom node
   function getAnswerSetTotals (
-    uint256 _questionId
+    uint256 questionId
   ) external view override returns (
     uint256[] memory
   ) {
-    return questions[_questionId].answerSetTotalStaked;
+    return questions[questionId].answerSetTotalStaked;
   }
 
   //Get all possible answer for a question with id _questionId
 
   function getAnswerSet (
-    uint256 _questionId
+    uint256 questionId
   ) external view override returns (
     uint256[] memory
   ) {
-    return questions[_questionId].answerSet;
+    return questions[questionId].answerSet;
   }
 
   //get total staked amount for Question group 
   //remember it include totalStakedLithToken +Bounty for question group
 
   function getRewardTotal (
-    uint256 _groupId
+    uint256 groupId
   ) external view override returns (
     uint256
   ) {
-    uint256[] memory questionIds = questionGroups[_groupId].questionIds;
+    uint256[] memory questionIds = questionGroups[groupId].questionIds;
     uint256 totalRewardPerGroup;
     for (uint256 i = 0; i < questionIds.length; i++) {
       Question storage question = questions[i];
@@ -396,23 +396,23 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndex,uint256[] memory finalAnswerValue, StatusCalculated[] memory answerStatus)external override{
+  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndexes,uint256[] memory finalAnswerValues, StatusCalculated[] memory answerStatuses)external override{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionIds.length != 0, "question IDs length must be greater than zero");
-    require(questionIds.length == finalAnswerIndex.length && questionIds.length == finalAnswerValue.length && questionIds.length == answerStatus.length,"argument array length mismatch"); 
+    require(questionIds.length == finalAnswerIndexes.length && questionIds.length == finalAnswerValues.length && questionIds.length == answerStatuses.length,"argument array length mismatch"); 
     for(uint256 i=0;i< questionIds.length ;i++)
     {
     uint256 questionId = questionIds[i];
     require(questionId < questions.length, "Invalid question id");
-    require(answerStatus[i] != StatusCalculated.NotCalculated, "Not allowed to updated status  Notcalculated");
+    require(answerStatuses[i] != StatusCalculated.NotCalculated, "Not allowed to updated status  Notcalculated");
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
-    question.finalAnswerIndex = finalAnswerIndex[i];
-    question.finalAnswerValue = finalAnswerValue[i];
-    question.isAnswerCalculated = answerStatus[i];
+    question.finalAnswerIndex = finalAnswerIndexes[i];
+    question.finalAnswerValue = finalAnswerValues[i];
+    question.isAnswerCalculated = answerStatuses[i];
     }
-    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndex,finalAnswerValue,answerStatus);
+    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndexes,finalAnswerValues,answerStatuses);
   }
 
    /**
@@ -532,7 +532,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
     string[] memory descriptions,
     uint256[][] memory answerSets,
     uint256[] memory startTimes,
-    uint16 minimumRequiredAnswers
+    uint16 minimumRequiredAnswer
   ) external override {
     require(
       categoryIds.length == bounties.length
@@ -565,10 +565,10 @@ contract LithiumPricing is ILithiumPricing, Roles {
     QuestionGroup memory questionGroup;
     questionGroup.id = questionGroups.length;
     questionGroup.questionIds = questionIds;
-    questionGroup.minimumRequiredAnswers = minimumRequiredAnswers;
+    questionGroup.minimumRequiredAnswer = minimumRequiredAnswer;
     questionGroups.push(questionGroup);
 
-    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionGroup.questionIds, questionGroup.minimumRequiredAnswers);
+    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionGroup.questionIds, questionGroup.minimumRequiredAnswer);
   }
 
   function answerQuestions (
