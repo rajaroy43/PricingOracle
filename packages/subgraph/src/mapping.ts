@@ -43,8 +43,8 @@ STATUS_CALCULATED[0] = "NotCalculated"
 STATUS_CALCULATED[1] = "Calculated"
 
 let ANSWER_STATUS = new Array<string>(2)
-STATUS_CALCULATED[0] = "Unclaimed"
-STATUS_CALCULATED[1] = "Claimed"
+ANSWER_STATUS[0] = "Unclaimed"
+ANSWER_STATUS[1] = "Claimed"
 
 function getAnswerId(answererAddress: string, questionId: string): string {
   return answererAddress + "-" + questionId
