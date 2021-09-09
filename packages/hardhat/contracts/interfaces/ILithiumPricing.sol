@@ -70,7 +70,6 @@ interface ILithiumPricing {
 
   event GroupRewardUpdated(address[] addressesToUpdate,uint256[] groupIds,uint256[] rewardAmounts);
 
-  event DefaultMinimumRequiredAnswersUpdated(uint16 defaultMinimumRequiredAnswers);
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
@@ -149,9 +148,7 @@ interface ILithiumPricing {
     uint256[] memory rewardAmounts
     ) external;
 
-  function updateMinimumDefaultRequiredAnswers(
-    uint16 defaultMinimumRequiredAnswers)
-    external ;
+
   
   function createQuestion (
     uint16 categoryId,
