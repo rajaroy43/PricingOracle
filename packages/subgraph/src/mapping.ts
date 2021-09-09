@@ -163,6 +163,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.finalAnswerIndex = ZERO.toI32()
   question.finalAnswerValue = ZERO
   question.endTime = event.params.endTime
+  question.startTime = event.params.startTime
   question.pricingTime = event.params.pricingTime
   question.isAnswerCalculated = STATUS_CALCULATED[0]
   question.created = event.block.timestamp
@@ -186,7 +187,7 @@ export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedSt
   let questionIds: Array<BigInt> = event.params.questionIds
   let answerIndexes: Array<BigInt> = event.params.answerIndexes
   let answerValues: Array<BigInt> = event.params.answerValues
-  let statuses: Array<i32> = event.params.statuses
+  let statuses: Array<i32> = event.params.answerStatuses
   for (let i = 0; i < questionIds.length; i++) {
     let questionId = questionIds[i]
     let answerIndex = answerIndexes[i]
