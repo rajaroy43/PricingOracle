@@ -8,8 +8,11 @@ module.exports = async () => {
   const answerSet = [0, 50];
   const categoryId = 0;
 
+  const minimumRequiredAnswers = 1;
+
   const pricingTime1 = block.timestamp + 700000000000;
   const endTime1 = block.timestamp + 500000000000;
+  const startTime = block.timestamp + 3;
   const description1 = `What is the price of an TATA NANO share  `;
   const bounty1 = ethers.utils.parseUnits("120.0", 18);
   const answerSet1 = [0, 1320];
@@ -39,6 +42,8 @@ module.exports = async () => {
     [questiontype, questiontype, questiontype, questiontype],
     [description, description1, description2, description3],
     [answerSet, answerSet1, answerSet2, answerSet3],
+    [startTime, startTime, startTime, startTime],
+    minimumRequiredAnswers,
   ];
 
   const args2 = [
@@ -49,6 +54,8 @@ module.exports = async () => {
     [questiontype, questiontype, questiontype, questiontype],
     [description, description1, description2, description3],
     [answerSet, answerSet1, answerSet2, answerSet3],
+    [startTime, startTime, startTime, startTime],
+    minimumRequiredAnswers,
   ];
   const args = [args1, args2];
   return args;

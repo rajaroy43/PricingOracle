@@ -10,9 +10,12 @@ const main = async () => {
   account0 = accounts[0];
   account1 = accounts[1];
   account2 = accounts[2];
+  const minimumRequiredAnswers = 1;
   console.log(`Deploying to network ${network.name}`);
   console.log("\n\n 📡 Deploying Pricing...\n");
-  const lithiumPricing = await deploy("LithiumPricing");
+  const lithiumPricing = await deploy("LithiumPricing", [
+    minimumRequiredAnswers,
+  ]);
   console.log("\n\n 📡 Deploying Token...\n");
 
   const lithToken = await deploy("LithiumToken", [account0.address]); // <-- add in constructor args like line 19 vvvv
