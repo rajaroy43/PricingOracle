@@ -26,7 +26,8 @@ interface ILithiumPricing {
   event QuestionGroupCreated (
     uint256 id,
     address owner,
-    uint256[] questionIds
+    uint256[] questionIds,
+    uint16 minimumRequiredAnswers
   );
 
   event QuestionAnswered (
@@ -68,6 +69,8 @@ interface ILithiumPricing {
   );
 
   event GroupRewardUpdated(address[] addressesToUpdate,uint256[] groupIds,uint256[] rewardAmounts);
+
+  event DefaultMinimumRequiredAnswersUpdated(uint16 defaultMinimumRequiredAnswers);
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
@@ -137,7 +140,7 @@ interface ILithiumPricing {
     ) external;
   
   function updateMinimumStake (
-    uint256 _minimumStake
+    uint256 minimumStake
     )external;
 
   function updateGroupRewardAmounts(
@@ -145,6 +148,10 @@ interface ILithiumPricing {
     uint256[] memory groupIds, 
     uint256[] memory rewardAmounts
     ) external;
+
+  function updateMinimumDefaultRequiredAnswers(
+    uint16 defaultMinimumRequiredAnswers)
+    external ;
   
   function createQuestion (
     uint16 categoryId,
@@ -165,7 +172,8 @@ interface ILithiumPricing {
     QuestionType[] memory questionTypes,
     string[] memory descriptions,
     uint256[][] memory answerSets,
-    uint256[] memory startTimes
+    uint256[] memory startTimes,
+    uint16 minimumRequiredAnswers
   ) external;
 
   function answerQuestions (

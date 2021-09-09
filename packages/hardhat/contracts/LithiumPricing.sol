@@ -24,13 +24,16 @@ contract LithiumPricing is ILithiumPricing, Roles {
     uint256 finalAnswerIndex;//Final answer index  of a question
     uint256 finalAnswerValue;//Final answer vaule of question 
     uint256 startTime; //startTime for answering question
+    uint16 minimumRequiredAnswers; //minimum required answer for question
     StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
+
   }
 
   struct QuestionGroup {
     uint256 id;
     uint256[] questionIds;
+    uint16 minimumRequiredAnswers;
   }
 
   struct Answer {
@@ -75,8 +78,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
 
   uint256 public minimumStake;
 
-  constructor () {
+  uint16 public defaultMinimumRequiredAnswers;
+
+  mapping (uint256=>uint256) public questionIdToQuestionGroup;
+
+  constructor (uint16 _defaultMinimumRequiredAnswers) {
     _addCategory("preIPO");
+    defaultMinimumRequiredAnswers = _defaultMinimumRequiredAnswers;
   }
 
     /**
@@ -307,6 +315,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
   ) internal {
     require(_questionId < questions.length, "Invalid question id");
     Question storage question = questions[_questionId];
+    question.minimumRequiredAnswers = question.minimumRequiredAnswers + 1;
     require(question.startTime <= block.timestamp, "Answering question is not started yet");
     require(question.endTime > block.timestamp, "Question is not longer active");
     require(_answerIndex <= question.answerSet.length, "Invalid answer index");
@@ -405,7 +414,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(questionId < questions.length, "Invalid question id");
     require(answerStatus[i] != StatusCalculated.NotCalculated, "Not allowed to updated status  Notcalculated");
     Question storage question = questions[questionId];
-
+    uint256 questionGroupId = questionIdToQuestionGroup[question.id];
+    uint16 minimumRequiredAnswers = questionGroups[questionGroupId].minimumRequiredAnswers;
+    require(question.minimumRequiredAnswers >= minimumRequiredAnswers ,"question haven't enough answers");
     require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
     question.finalAnswerIndex = finalAnswerIndex[i];
@@ -446,8 +457,22 @@ contract LithiumPricing is ILithiumPricing, Roles {
   */
   function updateMinimumStake(uint256 _minimumStake)external override {
     require(isAdmin(msg.sender), "Must be admin");
-    minimumStake=_minimumStake;
-    emit MinimumStakeUpdated(_minimumStake);
+    minimumStake =_minimumStake;
+    emit MinimumStakeUpdated(minimumStake);
+  }
+
+    /**
+  * @dev Allow Lithium Coordinator to update the default 
+  * Emits a { DefaultMinimumRequiredAnswersUpdated} event.
+  *
+  * Requirements
+  *
+  * - the caller must be admin of this contract
+  */
+  function updateMinimumDefaultRequiredAnswers(uint16 _defaultMinimumRequiredAnswers)external override {
+    require(isAdmin(msg.sender), "Must be admin");
+    defaultMinimumRequiredAnswers =_defaultMinimumRequiredAnswers;
+    emit DefaultMinimumRequiredAnswersUpdated(defaultMinimumRequiredAnswers);
   }
 
 /**
@@ -530,7 +555,8 @@ contract LithiumPricing is ILithiumPricing, Roles {
     QuestionType[] memory questionTypes,
     string[] memory descriptions,
     uint256[][] memory answerSets,
-    uint256[] memory startTimes
+    uint256[] memory startTimes,
+    uint16 minimumRequiredAnswers
   ) external override {
     require(
       categoryIds.length == bounties.length
@@ -541,6 +567,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
       && categoryIds.length == answerSets.length
       && categoryIds.length == startTimes.length,
       "Array mismatch");
+    require(minimumRequiredAnswers >= defaultMinimumRequiredAnswers,"minimum required answer must be greater/equal to default");
 
     // get the pending id for the initial question in the set
     uint256 initialQuestionId = questions.length;
@@ -558,14 +585,17 @@ contract LithiumPricing is ILithiumPricing, Roles {
         startTimes[i]
       );
       questionIds[i] = initialQuestionId + i;
+      questionIdToQuestionGroup[questionIds[i]] = questionGroups.length;
     }
 
     QuestionGroup memory questionGroup;
     questionGroup.id = questionGroups.length;
     questionGroup.questionIds = questionIds;
+    uint16 minRequiredAnswer = minimumRequiredAnswers > defaultMinimumRequiredAnswers ? minimumRequiredAnswers : defaultMinimumRequiredAnswers ;
+    questionGroup.minimumRequiredAnswers = minRequiredAnswer;
     questionGroups.push(questionGroup);
 
-    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionGroup.questionIds);
+    emit QuestionGroupCreated(questionGroup.id, msg.sender, questionGroup.questionIds, questionGroup.minimumRequiredAnswers);
   }
 
   function answerQuestions (
