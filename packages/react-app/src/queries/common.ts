@@ -22,6 +22,7 @@ export const QUESTION_FIELDS = gql`
     bounty
     totalStaked
     endTime
+    startTime
     pricingTime
     answerCount
     created
@@ -36,6 +37,7 @@ export const QUESTION_GROUP_FIELDS = gql`
       label
     }
     endTime
+    startTime
   }
 `
 
