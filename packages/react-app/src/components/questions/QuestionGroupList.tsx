@@ -19,7 +19,7 @@ const QuestionList = ({questionGroups}: {questionGroups: QuestionGroupView[]}) =
 
   return (
     <div>
-      <Typography variant="h2">Latest Question Groups:</Typography>
+      <Typography variant="h3">Latest Question Groups:</Typography>
       <div className={classes.questionGroupItems}>
         {questionGroups.length ?
           questionGroups.map((question => <QuestionGroupItem questionGroup={question} key={question.id} />))

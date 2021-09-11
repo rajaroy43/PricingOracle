@@ -24,7 +24,6 @@ class App extends Component {
             <Route exact path='/wisdom-node/account/:address' component={Account} />
             <Route exact path='/wisdom-node/question/:id' component={Question} />
             <Route exact path='/wisdom-node/available-questions' component={AvailableQuestions} />
-
           </Switch>
           </HashRouter>
         </WalletProvider>

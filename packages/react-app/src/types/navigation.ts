@@ -4,20 +4,27 @@ export interface PageParams {
   walletAddress: string | null
 }
 
-export interface NavMenuParams extends PageParams {
+export interface NavMenuParams {
+  pageParams: PageParams
   getNavItems: GetNavItemParams[]
+  setDrawerOpen: SetDrawerOpen
+  isDrawerOpen: boolean
+}
+
+export interface SetDrawerOpen {
+  (isDrawerOpen: boolean) : void
 }
 
 export interface GetUrl {
-  (props: NavMenuParams): string
+  (props: PageParams): string
 }
 
 export interface GetShouldRender {
-  (props: NavMenuParams): boolean
+  (props: PageParams): boolean
 }
 
 export interface GetIsActive {
-  (menuProps: NavMenuParams, itemProps: GetNavItemParams): boolean
+  (menuProps: PageParams, itemProps: GetNavItemParams): boolean
 }
 
 export interface GetNavItemParams {
