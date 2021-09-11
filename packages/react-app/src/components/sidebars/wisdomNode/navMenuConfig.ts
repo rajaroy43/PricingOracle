@@ -23,7 +23,6 @@ const getNavItems: GetNavItemParams[] = [
         getShouldRender: (params) => {
         return params.isWalletConnected
         },
-
     },
     {
         ...baseMenuItem,
