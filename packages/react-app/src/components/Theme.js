@@ -28,17 +28,16 @@ export default createTheme({
     h1: {
         color: "white",
         fontFamily: "Rajdhani",
-        fontSize: "32px",
-        fontWeight: 400 + '!important',    
-        lineHeight: "57px",
-        marginTop: "16px"
+        fontSize: "2.5rem",
+        fontWeight: 400,    
+        lineHeight: 1.5
     },
     h2: {
         color: "white",
         fontFamily: "Rajdhani",
-        fontSize: "24px",
-        fontWeight: 500,    
-        lineHeight: "43px"
+        fontSize: "2.5rem",
+        fontWeight: 400,    
+        lineHeight: 1.5
     },
     h3: {
         color: "white",
@@ -118,12 +117,7 @@ export default createTheme({
                     color: 'white',
                 },
             },    
-        }, 
-        MuiIconButton: {
-          root: {
-            color: 'white'
-          }
-        }  
+        },   
     },
     /*
     subtitle1: {
