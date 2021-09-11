@@ -6,7 +6,6 @@ import NavMenuItem from './NavMenuItem'
 import { SwipeableDrawer, useMediaQuery, useTheme } from '@material-ui/core';
 import NavMenuItemMobile from './NavMenuItemMobile';
 
-
 const useStyles = makeStyles(theme => ({
   navMenus: {
     margin: 0,
@@ -66,8 +65,6 @@ const NavMenu = (props: NavMenuParams) => {
   )
 
   const displayMenu = isMobile ? mobileMenu : fullMenu;
-
-  console.log('displayMenu', displayMenu);
 
   return displayMenu;
 }
