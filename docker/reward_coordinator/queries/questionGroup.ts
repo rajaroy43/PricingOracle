@@ -28,5 +28,6 @@ export const getEndedQuestionGroups = () => {
     variables: {now}
   }).then((resp) => {
     console.log(`resonse is `, resp, now)
-  })
+  }).catch((err) => console.log(`query err `, err))
+  
 }
