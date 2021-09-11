@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import Typography from "@material-ui/core/Typography"
 import { subgraphClient } from '../../client'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
@@ -10,7 +9,7 @@ import { useGetActiveQuestionGroups } from '../../queries/questionGroup'
 const AvailableQuestions = () => {
   const connectedWallet = useContext(WalletContext)
   const {loading, questionGroups} = useGetActiveQuestionGroups(subgraphClient)
-  console.log('got question group', questionGroups);
+  console.log(`got question group ${questionGroups}`)
   const sideBarProps = {
     activePage: 'availableQuestions',
     // @ts-ignore
@@ -21,7 +20,7 @@ const AvailableQuestions = () => {
 
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
-        <Typography variant="h1">Available Questions</Typography>
+        <h1>Lithium Finance</h1>
      {loading  ?
         <LoadingCircle />
         :
