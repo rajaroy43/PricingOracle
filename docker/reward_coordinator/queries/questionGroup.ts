@@ -21,13 +21,13 @@ interface GetQuestionGroupsResponse {
   }
 }
 
-export const getEndedQuestionGroups = () => {
-  const now = Math.floor(new Date().getTime()).toString();
-  subgraphClient.query({
+export const getEndedQuestionGroups = async () => {
+  const now = Math.floor(new Date().getTime() / 1000).toString();
+  const response = await subgraphClient.query({
     query: GET_ENDED_QUESTION_GROUPS,
     variables: {now}
-  }).then((resp) => {
-    console.log(`resonse is `, resp, now)
-  }).catch((err) => console.log(`query err `, err))
+  })
+
+  return response
   
 }
