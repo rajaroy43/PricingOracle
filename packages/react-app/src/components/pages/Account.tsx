@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import Typography from "@material-ui/core/Typography"
 import { subgraphClient } from '../../client'
 import { useGetUser } from '../../queries/user'
 import LoadingCircle from '../atoms/Loading'
@@ -12,7 +11,7 @@ const Account = ({match}: any) => {
   const connectedWallet = useContext(WalletContext);
   const {loading, user} = useGetUser(subgraphClient, urlAddress);
   //@ts-ignore
-  const userWallet = connectedWallet?.address != null && urlAddress === connectedWallet?.address ?
+  const userWallet = connectedWallet!.address != null && urlAddress === connectedWallet.address ?
     connectedWallet : null
 
   const sideBarProps = {
@@ -25,7 +24,7 @@ const Account = ({match}: any) => {
 
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
-      <Typography variant="h1">Lithium Profile for {urlAddress}</Typography>
+      <h1>Lithium Profile for {urlAddress}</h1>
       {loading ?
           <LoadingCircle />
           :
