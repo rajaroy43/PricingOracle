@@ -4,9 +4,21 @@ import { makeStyles } from '@material-ui/core/styles';
 import Box from '../atoms/Box'
 import NavMenuItem from './NavMenuItem'
 
-const  prepareNavItem = (
-  menuProps: NavMenuParams, itemProps: GetNavItemParams
-): NavItemParams => {
+const useStyles = makeStyles(theme => ({
+  navMenus: {
+    margin: 0,
+    padding: '16px 0 0 0'
+  },
+  navMenuMobile: {
+    backgroundColor: '#222222',
+    padding: '16px'
+  },
+  spacer: {
+    marginTop: '64px'
+  }
+})); 
+
+const  prepareNavItem = (menuProps: PageParams, itemProps: GetNavItemParams): NavItemParams => {
   return {
     id: itemProps.id,
     icon: itemProps.icon,
@@ -16,13 +28,6 @@ const  prepareNavItem = (
     isActive: itemProps.getIsActive(menuProps, itemProps),
   }
 }
-
-const useStyles = makeStyles(theme => ({
-  navMenus: {
-    margin: 0,
-    padding: '16px 0 0 0'
-  },
-}));  
 
 const NavMenu = (props: NavMenuParams) => {  
   const classes = useStyles();
@@ -35,6 +40,27 @@ const NavMenu = (props: NavMenuParams) => {
       ))}
     </Box>
   )
+
+  const mobileMenu = (
+    <SwipeableDrawer
+      anchor="right"
+      disableBackdropTransition={!iOS}
+      disableDiscovery={iOS}
+      open={props.isDrawerOpen}
+      onClose={() => props.setDrawerOpen(false)}
+      onOpen={() => props.setDrawerOpen(true)}
+      classes={{ paper: classes.navMenuMobile}}
+    >
+      <div className={classes.spacer}></div>
+      {preppedItems.map(navItem => (
+        <NavMenuItemMobile key={navItem.id} {...navItem} />
+      ))}
+    </SwipeableDrawer>
+  )
+
+  const displayMenu = isMobile ? mobileMenu : fullMenu;
+
+  return displayMenu;
 }
 
 export default NavMenu

@@ -40,11 +40,10 @@ export default createTheme({
         lineHeight: 1.5
     },
     h3: {
-        color: "white",
-        fontFamily: "Rajdhani",
-        fontSize: "2.5rem",
-        fontWeight: 400,    
-        lineHeight: 1.5
+      color: "white",
+      fontFamily: "Rajdhani",
+      fontSize: "24px",
+      fontWeight: 500,
     },
     h4: {
         color: "white",
