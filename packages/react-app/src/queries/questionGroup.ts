@@ -1,10 +1,13 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { QuestionGroup } from 'lithium-subgraph'
-import { QueryResponse, QUESTION_FIELDS } from './common'
-import { QuestionView } from '../types/question';
+import { QueryResponse, QUESTION_FIELDS, QUESTION_GROUP_FIELDS } from './common'
 import { selectQuestionGroup } from '../selectors/questionGroup';
 import { QuestionGroupView } from '../types/questionGroup';
+
+interface QuestionGroupQueryVars {
+  id: string
+}
 
 interface ActiveQuestionGroupsQueryVars {
   now: string
@@ -15,16 +18,32 @@ interface GetQuestionGroupData {
 }
 
 interface GetQuestionGroupsData {
-  questionGroups: QuestionGroup[] 
+  questionGroups: QuestionGroupView[] 
 }
 
+export const GET_QUESTION  = gql`
+  ${QUESTION_GROUP_FIELDS}
+  ${QUESTION_FIELDS}
+  query questionGroup($id: ID!) {
+    questionGroup(id: $id) {
+      ...QuestionGroupFields
+      questions {
+        ...QuestionFields
+      }
+    }
+}
+`;
+
+interface GetQuestionGroupResponse extends QueryResponse {
+  questionGroup: QuestionGroupView | null
+}
 
 export const GET_QUESTION_GROUPS  = gql`
+  ${QUESTION_GROUP_FIELDS}
   ${QUESTION_FIELDS}
   query questionGroups {
     questionGroups {
-      id
-      endTime
+      ...QuestionGroupFields
       questions {
         ...QuestionFields
       }
@@ -48,6 +67,21 @@ export const GET_ACTIVE_QUESTION_GROUPS  = gql`
 
 interface GetQuestionGroupsResponse extends QueryResponse {
   questionGroups: QuestionGroupView [] | null
+}
+
+export const useGetQuestionGroup = (client: any, id: string): GetQuestionGroupResponse => {
+  const {loading, error, data} = useQuery<GetQuestionGroupData, QuestionGroupQueryVars>(
+    GET_QUESTION,
+    {
+      client,
+      variables: { id },
+      fetchPolicy: 'no-cache'
+    });
+  return {
+    loading,
+    error,
+    questionGroup: data != null ? selectQuestionGroup(data.questionGroup) : null
+  } 
 }
 
 export const useGetQuestionGroups = (client: any): GetQuestionGroupsResponse => {
