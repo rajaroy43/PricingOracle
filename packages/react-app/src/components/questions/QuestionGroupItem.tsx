@@ -2,7 +2,6 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from "@material-ui/core/Typography"
 import { QuestionGroupView } from '../../types/questionGroup'
-import Flex from '../atoms/Flex'
 
 const useStyles = makeStyles(theme => ({
   questionGroupItem: {

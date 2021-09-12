@@ -116,7 +116,12 @@ export default createTheme({
                     color: 'white',
                 },
             },    
-        },   
+        }, 
+        MuiIconButton: {
+          root: {
+            color: 'white'
+          }
+        }  
     },
     /*
     subtitle1: {
