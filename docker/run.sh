@@ -8,5 +8,5 @@ if ! which docker 2>&1 > /dev/null; then
 fi
 
 # Create and launch all containers, including graph-node
-docker-compose -f docker-compose.yml -f graph-node/docker-compose.yml up --build --force-recreate
+docker compose -f docker-compose.yml -f graph-node/docker-compose.yml up --build --force-recreate
 
