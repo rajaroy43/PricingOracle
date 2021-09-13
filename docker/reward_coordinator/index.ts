@@ -3,15 +3,25 @@ import express from "express"
 import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getQuestion } from "./queries/question"
+import getRewards from "./getRewards"
 
 require('dotenv').config()
 
 const calculateQuestionGroup = async (group: any) => {
-  const questionsAndAnswers = await Promise.all(
+  const questions = await Promise.all(
     group.questions.map((question: any) => {
       return getQuestion(question.id)
     })
-  )
+  ) 
+
+  const groupData = {
+    ...group,
+    questions
+  }
+
+  const reward =  getRewards(groupData)
+  console.log(`got rewards`, rewards)
+
 }
 
 const fetchQuestionsToCalculate = async () => {

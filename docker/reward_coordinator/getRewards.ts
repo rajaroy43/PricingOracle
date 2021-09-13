@@ -1,6 +1,6 @@
 import http from "http"
 
-const getReward = (groupData: string) => {
+const getRewards = (groupData: string) => {
   const postData = JSON.stringify({
     'msg': groupData
   });
@@ -9,7 +9,7 @@ const getReward = (groupData: string) => {
     hostname: process.env.REWARD_CALCULATOR_URI,
     port: process.env.REWARD_CALCULATOR_PORT,
     method: "POST",
-    data: groupData,
+    data: postData,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(postData)
@@ -37,4 +37,4 @@ const getReward = (groupData: string) => {
   req.end();
 }
 
-export default getReward
+export default getRewards
