@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import Typography from "@material-ui/core/Typography"
 import { subgraphClient } from '../../client'
 import { useGetQuestions } from '../../queries/question'
 import LoadingCircle from '../atoms/Loading'
@@ -20,7 +21,7 @@ const Home = () => {
 
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
-        <h1>Lithium Finance</h1>
+      <Typography variant="h1">Node Dashboard</Typography>
      {loading  ?
         <LoadingCircle />
         :

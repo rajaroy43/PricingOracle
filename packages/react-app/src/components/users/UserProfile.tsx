@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { UserView } from '../../types/user'
+// TODO: Create type for UserProfile to replace UserView
+//  { UserView } from '../../types/user'
 import { subgraphClient } from '../../client'
 import { useGetUser } from '../../queries/user'
 import Badge from './Badge'
@@ -25,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 const UserProfile = ({ walletAddress }: {walletAddress: any}) => {
   // @ts-ignore
-  const { address, setWallet } = useContext(WalletContext);
+  const { setWallet } = useContext(WalletContext);
   // @ts-ignore
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
   const classes = useStyles();
