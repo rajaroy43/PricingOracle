@@ -19,7 +19,7 @@ const calculateQuestionGroup = async (group: any) => {
     questions
   }
 
-  const reward =  getRewards(groupData)
+  const rewards =  getRewards(groupData)
   console.log(`got rewards`, rewards)
 
 }
