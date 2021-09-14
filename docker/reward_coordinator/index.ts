@@ -25,14 +25,14 @@ const calculateQuestionGroup = async (group: any) => {
 }
 
 const fetchQuestionsToCalculate = async () => {
-  const questionGroups = await getEndedQuestionGroups()
-  console.log('questions are ', questionGroups)
+  const response = await getEndedQuestionGroups()
+  console.log('questions are ', response)
 
-  if (questionGroups.error) {
-    console.log(`Error fetching question groups: ${questionGroups.error}`)
+  if (response.error) {
+    console.log(`Error fetching question groups: ${response.error}`)
   }
 
-  questionGroups.data.filter(
+  response.data.questionGroups.filter(
     (group: any) => CURRENTLY_CALCULATING.isCalculationRequired(group.id)
   ).forEach(calculateQuestionGroup)
     
