@@ -30,6 +30,7 @@ const fetchQuestionsToCalculate = async () => {
 
   if (response.error) {
     console.log(`Error fetching question groups: ${response.error}`)
+    return 
   }
 
   response.data.questionGroups.filter(
