@@ -56,12 +56,12 @@ const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
     <div style={{width: "22em", padding: '1em'}}>
       <Form>
         <CardSelect name='walletType' options={walletOptions} />
-        <Flex justifyContent="flex-end" mt='2em'>
+        <Flex justifyContent="center" mt='2em'>
           <Button
             onClick={() => {
               close();
             }}
-            style={{marginRight: '2em'}}
+            style={{marginRight: '3em'}}
             variant='outlined'
             label="Cancel" />
           <Button

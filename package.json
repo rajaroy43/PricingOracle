@@ -11,6 +11,7 @@
   "private": true,
   "scripts": {
     "react-app:build": "yarn workspace @scaffold-eth/react-app build --max-old-space-size=12288",
+    "react-app:build-testnet": "yarn workspace @scaffold-eth/react-app build-testnet --max-old-space-size=12288",
     "react-app:eject": "yarn workspace @scaffold-eth/react-app eject",
     "react-app:start": "yarn workspace @scaffold-eth/react-app start",
     "react-app:start-rinkeby": "yarn workspace @scaffold-eth/react-app start-rinkeby",
@@ -22,10 +23,13 @@
     "test": "yarn workspace @scaffold-eth/hardhat test",
     "start": "yarn workspace @scaffold-eth/react-app start",
     "compile": "yarn workspace @scaffold-eth/hardhat compile",
+    "coverage": "yarn workspace @scaffold-eth/hardhat coverage",
     "deploy": "yarn workspace @scaffold-eth/hardhat deploy",
+    "deploy-rinkeby": "yarn workspace @scaffold-eth/hardhat deploy-rinkeby",
     "watch": "yarn workspace @scaffold-eth/hardhat watch",
     "accounts": "yarn workspace @scaffold-eth/hardhat accounts",
     "balance": "yarn workspace @scaffold-eth/hardhat balance",
+    "coordinator": "yarn workspace off-chain  start-coordinator",
     "send": "yarn workspace @scaffold-eth/hardhat send",
     "ipfs": "yarn workspace @scaffold-eth/react-app ipfs",
     "surge": "yarn workspace @scaffold-eth/react-app surge",
@@ -50,7 +54,8 @@
     "deploy-and-graph": "yarn deploy && yarn graph-ship-local",
     "theme": "yarn workspace @scaffold-eth/react-app theme",
     "watch-theme": "yarn workspace @scaffold-eth/react-app watch",
-    "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml"
+    "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml",
+    "start-reward-coordinator": "cd docker && docker-compose up"
   },
   "workspaces": {
     "packages": [
@@ -66,5 +71,8 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^1.21.6",
     "@graphql-codegen/typescript-operations": "^1.18.3"
+  },
+  "dependencies": {
+    "typescript": "^4.3.5"
   }
 }

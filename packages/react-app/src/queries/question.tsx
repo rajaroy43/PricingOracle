@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { Question } from 'lithium-subgraph'
-import { QueryResponse } from './common'
+import { QueryResponse, QUESTION_FIELDS } from './common'
 import { QuestionView } from '../types/question';
 import { selectQuestion } from '../selectors/question';
 
@@ -21,48 +21,20 @@ interface GetUsersData {
   questions: Question[] 
 }
 
-export const QUESTION_FIELDS = gql`
-    fragment QuestionFields on Fields {
-      id
-      owner {
-        id
-      }
-      categoryId
-      description
-      answerSet
-      answerSetTotalStaked
-      bounty
-      totalStaked
-      endTime
-      answerCount
-      created
-    }
-    `
-
 export const GET_QUESTIONS  = gql`
+  ${QUESTION_FIELDS}
   query questions {
     questions {
-      id
-      owner {
-        id
-      }
-      categoryId
-      description
-      answerSet
-      answerSetTotalStaked
-      bounty
-      totalStaked
-      endTime
-      answerCount
-      created
+      ...QuestionFields
     }
 }
 `;
 
 export const GET_ACTIVE_QUESTIONS  = gql`
+  ${QUESTION_FIELDS}
   query questions($now: String!) {
     questions(where: {created_gt: $now}) {
-      ...QUESTION_FIELDS
+      ...QuestionFields
     }
 }
 `;
@@ -82,7 +54,7 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
   return {
     loading,
     error,
-    questions: data != null ? data.questions.map(selectQuestion) : null
+    questions: data != null ? data.questions.map(selectQuestion) : []
   } 
 }
 
@@ -104,21 +76,10 @@ export const useGetActiveQuestions = (client: any): GetQuestionsResponse => {
 
 
 export const GET_QUESTION  = gql`
+  ${QUESTION_FIELDS}
   query question($id: ID!) {
     question(id: $id) {
-      id
-      owner {
-        id
-      }
-      categoryId
-      description
-      answerSet
-      answerSetTotalStaked
-      bounty
-      totalStaked
-      endTime
-      answerCount
-      created
+      ...QuestionFields
     }
 }
 `;

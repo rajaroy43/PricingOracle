@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    node:
+        container_name: reward_coordinator
+        build: ./reward_coordinator
+        ports:
+            - "9000:9000"
+        stdin_open: true
+        tty: true
+        depends_on:
+          - graph-node
+        env_file:
+          - local.env
+
+    python:
+        container_name: reward_calculator
+        build: ./reward_calculator
+        ports:
+            - "9001:9001"
+        stdin_open: true
+        tty: true
+

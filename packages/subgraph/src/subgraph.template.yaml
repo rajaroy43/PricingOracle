@@ -14,19 +14,40 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - User
-        - Question
         - Answer
+        - AnswerGroup
+        - PricingContractMeta
+        - Question
+        - QuestionGroup
+        - QuestionCategory
+        - User
+        - UserCategoryReputation
       abis:
         - name: LithiumPricing
           file: ./abis/LithiumPricing.json
       eventHandlers:
-        - event: QuestionCreated(uint256,uint256,uint256,uint16,address,string,uint256[])
+        - event: QuestionCreated(uint256,uint256,uint256,uint256,uint16,address,string,uint256[],uint8,uint256)
           handler: handleQuestionCreated
+        - event: QuestionGroupCreated(uint256,address,uint256[],uint16)
+          handler: handleQuestionGroupCreated
         - event: QuestionAnswered(uint256,address,uint256,uint16)
           handler: handleQuestionAnswered
         - event: RewardClaimed(uint256,address,uint256)
           handler: handleRewardClaimed
+        - event: CategoryAdded(uint256,string)
+          handler: handleCategoryAdded
+        - event: SetLithiumRewardAddress(address)
+          handler: handleSetLithiumRewardAddress
+        - event: SetLithiumTokenAddress(address)
+          handler: handleSetLithiumTokenAddress
+        - event: AnswerGroupSetSubmitted(address,uint256)
+          handler: handleAnswerGroupSetSubmitted
+        - event: FinalAnswerCalculatedStatus(uint256[],uint256[],uint256[],uint8[])
+          handler: handleFinalAnswerCalculatedStatus
+        - event: GroupRewardUpdated(address[],uint256[],uint256[])
+          handler: handleGroupRewardUpdated
+        - event: ReputationUpdated(address[],uint256[],uint256[])
+          handler: handleReputationUpdated
       file: ./src/mapping.ts
 
   - kind: ethereum/contract

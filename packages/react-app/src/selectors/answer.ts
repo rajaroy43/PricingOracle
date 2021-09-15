@@ -9,7 +9,6 @@ export const selectAnswer = (answer: Answer): AnswerView => {
     ...answer,
     answerValue,
     stakeAmountDisplay: formatUnits(answer.stakeAmount),
-    rewardClaimedDisplay: formatUnits(answer.rewardClaimed),
     createdLocal: formatDate(answer.created)
   }
 }

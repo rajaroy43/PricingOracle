@@ -7,19 +7,77 @@ export interface QueryResponse {
 }
 
 export const QUESTION_FIELDS = gql`
-    fragment QuestionFields on Fields {
+  fragment QuestionFields on Question {
+    id
+    owner {
       id
-      owner {
-        id
-      }
-      categoryId
-      description
+    }
+    category {
+      id
+      label
+    }
+    description
+    answerSet
+    answerSetTotalStaked
+    bounty
+    totalStaked
+    endTime
+    startTime
+    pricingTime
+    answerCount
+    created
+  }
+`
+
+export const QUESTION_GROUP_FIELDS = gql`
+  fragment QuestionGroupFields on QuestionGroup {
+    id
+    category {
+      id
+      label
+    }
+    endTime
+    startTime
+  }
+`
+
+export const ANSWER_FIELDS = gql`
+  fragment AnswerFields on Answer {
+    id
+    answerer {
+      id
+    }
+    question {
+      id
       answerSet
-      answerSetTotalStaked
-      bounty
-      totalStaked
-      endTime
+    }
+    answerIndex
+    stakeAmount
+    created
+  }
+`
+
+export const ANSWER_GROUP_FIELDS = gql`
+  fragment AnswerGroupFields on AnswerGroup {
+    id
+    owner {
+      id
+    }
+    rewardAmount
+    status
+    isRewardCalculated
+  }
+`
+
+export const USER_FIELDS = gql`
+    fragment UserFields on User {
+      id
+      questionCount
+      totalBounty
       answerCount
-      created
+      totalRewardsClaimed
+      totalStaked
+      tokenBalance
+      tokenApprovalBalance
     }
   `

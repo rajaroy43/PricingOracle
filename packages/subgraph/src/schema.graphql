@@ -1,37 +1,91 @@
 # typings for graphql-code-generator, uncomment to generate Typscript types
 # scalar BigInt
+# scalar Bytes
+
+enum AnswerStatus {
+  Unclaimed
+  Claimed
+}
+
+enum StatusCalculated {
+  NotCalculated
+  Calculated
+  Invalid
+}
+
+enum QuestionType {
+  Pricing
+  GroundTruth
+}
+
+type PricingContractMeta @entity {
+  id: ID!
+  address: Bytes!
+  tokenAddress: Bytes
+  rewardAddress: Bytes
+}
 
 type User @entity {
   id: ID! # address
   questions: [Question!] @derivedFrom(field: "owner")
   answers: [Answer!] @derivedFrom(field: "answerer")
+  answerGroups: [AnswerGroup!] @derivedFrom(field: "owner")
   questionCount: BigInt!
   totalBounty: BigInt!
   answerCount: BigInt!
+  answerGroupCount: BigInt!
   totalRewardsClaimed: BigInt!
   totalStaked: BigInt!
   tokenBalance: BigInt!
   tokenApprovalBalance: BigInt!
+  categoryReputations: [UserCategoryReputation!] @derivedFrom(field: "user")
+}
+
+type QuestionCategory @entity {
+  id: ID!
+  label: String!
+  questionCount: BigInt!
+  totalBounty: BigInt!
+  totalStaked: BigInt!
+  rewardedQuestionCount: BigInt!
+  questions: [Question!] @derivedFrom(field: "category")
+}
+
+type UserCategoryReputation @entity {
+  id: ID!
+  user: User!
+  category: QuestionCategory!
+  score: BigInt!
 }
 
 type Question @entity {
   id: ID!
+  questionType: QuestionType!
   owner: User!
-  categoryId: Int!
+  category: QuestionCategory!
   description: String!
   answerSet: [BigInt!]!
   answerSetTotalStaked: [BigInt!]!
   bounty: BigInt!
   totalStaked: BigInt!
   endTime: BigInt!
+  startTime: BigInt!
+  pricingTime: BigInt!
+  isAnswerCalculated: StatusCalculated!
   answerCount: BigInt!
   answers: [Answer!] @derivedFrom(field: "question")
   created: BigInt!
+  finalAnswerIndex: Int!
+  finalAnswerValue: BigInt!
 }
 
-enum AnswerStatus {
-  UNCLAIMED
-  CLAIMED
+type QuestionGroup @entity {
+  id: ID!
+  category: QuestionCategory!
+  questions: [Question!]!
+  endTime: BigInt!
+  startTime: BigInt!
+  minimumRequiredAnswers: Int!
 }
 
 type Answer @entity {
@@ -40,7 +94,16 @@ type Answer @entity {
   question: Question! 
   answerIndex: Int!
   stakeAmount: BigInt!
-  rewardClaimed: BigInt!
-  status: AnswerStatus!
   created: BigInt!
+  group: AnswerGroup @derivedFrom(field: "answers")
+}
+
+type AnswerGroup @entity {
+  id: ID!
+  questionGroup: QuestionGroup!
+  answers: [Answer!]!
+  owner: User!
+  rewardAmount: BigInt!
+  status: AnswerStatus!
+  isRewardCalculated: StatusCalculated!
 }
