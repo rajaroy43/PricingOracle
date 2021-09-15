@@ -1,52 +1,59 @@
 import http from "http"
+const axios = require('axios')
+
 
 //questionGroupId, questionId, wisdomNodeAddess, answerSet, answerValue, stakeAmount, wisdomNodeReputation
-const preparePayloadRow = (groupId: string, questionId: string, answer: any) => {
+const prepareAnswerRow = (groupId: string, questionId: string, answerSet: string[], answer: any) => {
+  const reputationScore = answer.answerer.categoryReputations.length ? answer.answerer.categoryReputations[0] : "0"
+  return [
+    groupId,
+    questionId,
+    answer.answerer.id,
+    answerSet,
+    answerSet[answer.answerIndex],
+    answer.stakeAmount,
+    reputationScore
+  ] 
+}
 
+const prepareQuestion = (groupId: string, question: any) => {
+
+  return question.answers.map((answer: any) => prepareAnswerRow(groupId, question.id, question.answerSet, answer))
 }
 
 const preparePayload = (groupData: any) => {
-  return {
 
-  }
+  return groupData.questions
+    .map((question: any) => prepareQuestion(groupData.id, question.question))
+    .reduce((acc: any, answers: any) => acc.concat(answers), [])
 }
 
 const getRewards = (groupData: any) => {
   const msg = preparePayload(groupData)
-  const postData = JSON.stringify({
-    msg
-  });
+  console.log(`reqesting reward data for\n ${JSON.stringify(msg)}`)
+  axios
+    .post(`${process.env.REWARD_CALCULATOR_URI}/calculate-reward`, {
+      msg
+    })
+    .then((res:any) => {
+      console.log(`calculate-reward statusCode: ${res.status}\nresponse: ${JSON.stringify(res.data)}`)
+    })
+    .catch((error: any) => {
+      console.error(`error getting rewards`, error)
+    })
 
-  const options = {
-    hostname: process.env.REWARD_CALCULATOR_URI,
-    port: process.env.REWARD_CALCULATOR_PORT,
-    method: "POST",
-    data: postData,
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(postData)
-    }
-  }
+    axios
+    .get(`${process.env.REWARD_CALCULATOR_URI}/ping-me`, {
+      msg
+    })
+    .then((res:any) => {
+      console.log(`ping-me statusCode: ${res.status}\nresponse: ${JSON.stringify(res.data)}`)
+    })
+    .catch((error: any) => {
+      console.error(`error getting rewards`, error)
+    })
 
-  const req = http.request(options, (res) => {
-    console.log(`STATUS: ${res.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
-      console.log(`BODY: ${chunk}`);
-    });
-    res.on('end', () => {
-      console.log('No more data in response.');
-    });
-  });
-  
-  req.on('error', (e) => {
-    console.error(`problem with request: ${e.message}`);
-  });
-  
-  // Write data to request body
-  req.write(postData);
-  req.end();
+
 }
 
 export default getRewards

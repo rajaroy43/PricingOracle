@@ -8,7 +8,6 @@ require('dotenv').config()
 const calculateQuestionGroup = async (group: any) => {
   const questions = await Promise.all(
     group.questions.map((question: any) => {
-      console.log(`getting question `, question, group)
       return getQuestion(question.id, group.category.id)
     })
   ) 
@@ -18,7 +17,6 @@ const calculateQuestionGroup = async (group: any) => {
     questions
   }
 
-  console.log(`qs and as `, JSON.stringify(questions))
 
   const rewards =  getRewards(groupData)
   console.log(`got rewards`, rewards)
@@ -38,4 +36,4 @@ const fetchQuestionsToCalculate = async () => {
     
 }
 
-setInterval(fetchQuestionsToCalculate, 5000)
+setInterval(fetchQuestionsToCalculate, 10000)

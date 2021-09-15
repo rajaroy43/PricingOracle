@@ -16,6 +16,7 @@ export const GET_QUESTION  = gql`
       description
       answerSet
       answerSetTotalStaked
+      answerCount
       answers {
         id
         answerer {
@@ -42,6 +43,6 @@ export const getQuestion = async (id: string, categoryId: string) => {
     variables: {id, categoryId}
   })
 
-  return response
+  return response.data
   
 }
