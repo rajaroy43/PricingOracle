@@ -6,6 +6,9 @@ export const GET_ENDED_QUESTION_GROUPS  = gql`
     questionGroups(where: {endTime_lt: $now}) {
       id
       minimumRequiredAnswers
+      category {
+        id
+      }
       questions (where: {isAnswerCalculated: NotCalculated}) {
         id
       }
@@ -17,6 +20,7 @@ interface GetQuestionGroupsResponse {
   questionGroups: {
     id: string
     minimumRequiredAnswers: string
+    category: {id: string}
     questions: {id: string}[]
   }
 }

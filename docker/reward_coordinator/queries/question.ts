@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { subgraphClient } from '../client';
 
 export const GET_QUESTION  = gql`
-  query question($id: String!) {
+  query question($id: String!,  $categoryId: String!) {
     question(id: $id) {
       id
       questionType
@@ -20,6 +20,10 @@ export const GET_QUESTION  = gql`
         id
         answerer {
           id
+          categoryReputations(where: {category: $categoryId}) {
+            id
+            score
+          }
         }
         answerIndex
         stakeAmount
@@ -32,10 +36,10 @@ export const GET_QUESTION  = gql`
 }
 `;
 
-export const getQuestion = async (id: string) => {
+export const getQuestion = async (id: string, categoryId: string) => {
   const response = await subgraphClient.query({
     query: GET_QUESTION,
-    variables: {id}
+    variables: {id, categoryId}
   })
 
   return response

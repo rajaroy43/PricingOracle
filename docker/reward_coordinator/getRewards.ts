@@ -1,8 +1,20 @@
 import http from "http"
 
-const getRewards = (groupData: string) => {
+//questionGroupId, questionId, wisdomNodeAddess, answerSet, answerValue, stakeAmount, wisdomNodeReputation
+const preparePayloadRow = (groupId: string, questionId: string, answer: any) => {
+
+}
+
+const preparePayload = (groupData: any) => {
+  return {
+
+  }
+}
+
+const getRewards = (groupData: any) => {
+  const msg = preparePayload(groupData)
   const postData = JSON.stringify({
-    'msg': groupData
+    msg
   });
 
   const options = {
