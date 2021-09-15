@@ -18,14 +18,12 @@ const calculateQuestionGroup = async (group: any) => {
   }
 
 
-  const rewards =  getRewards(groupData)
-  console.log(`got rewards`, rewards)
+  getRewards(groupData)
 
 }
 
 const fetchQuestionsToCalculate = async () => {
   const response = await getEndedQuestionGroups()
-  console.log('questions are xx', JSON.stringify(response.data.questionGroups))
 
   if (response.error) {
     console.log(`Error fetching question groups: ${response.error}`)
@@ -36,4 +34,4 @@ const fetchQuestionsToCalculate = async () => {
     
 }
 
-setInterval(fetchQuestionsToCalculate, 10000)
+setInterval(fetchQuestionsToCalculate, process.env.FETCH_INTERVAL)

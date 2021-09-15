@@ -1,14 +1,13 @@
-import http from "http"
 const axios = require('axios')
 
 
-//questionGroupId, questionId, wisdomNodeAddess, answerSet, answerValue, stakeAmount, wisdomNodeReputation
+//questionGroupId, wisdomNodeAddess, questionId, answerSet, answerValue, stakeAmount, wisdomNodeReputation
 const prepareAnswerRow = (groupId: string, questionId: string, answerSet: string[], answer: any) => {
   const reputationScore = answer.answerer.categoryReputations.length ? answer.answerer.categoryReputations[0] : "0"
   return [
     groupId,
-    questionId,
     answer.answerer.id,
+    questionId,
     answerSet,
     answerSet[answer.answerIndex],
     answer.stakeAmount,
@@ -30,7 +29,6 @@ const preparePayload = (groupData: any) => {
 
 const getRewards = (groupData: any) => {
   const msg = preparePayload(groupData)
-  console.log(`reqesting reward data for\n ${JSON.stringify(msg)}`)
   axios
     .post(`${process.env.REWARD_CALCULATOR_URI}/calculate-reward`, {
       msg
