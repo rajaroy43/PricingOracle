@@ -10,15 +10,22 @@ const calculateQuestionGroup = async (group: any) => {
     group.questions.map((question: any) => {
       return getQuestion(question.id, group.category.id)
     })
-  ) 
+  )
+  
+  //@ts-ignore
+  if (parseInt(group.minimumRequiredAnswers, 10) > parseInt(questions[0].question.answerCount, 10)) {
+    console.log(`QuestionGroup ${group.id} INVALID`)
 
-  const groupData = {
-    ...group,
-    questions
+
+  } else {
+    console.log(`QuestionGroup ${group.id} VALID, getting rewards`)
+    const groupData = {
+      ...group,
+      questions
+    }
+   
+    getRewards(groupData)
   }
-
-
-  getRewards(groupData)
 
 }
 
@@ -33,5 +40,5 @@ const fetchQuestionsToCalculate = async () => {
   response.data.questionGroups.forEach(calculateQuestionGroup)
     
 }
-
-setInterval(fetchQuestionsToCalculate, process.env.FETCH_INTERVAL)
+console.log(`fetch interval ${process.env.FETCH_INTERVAL}`)
+setInterval(fetchQuestionsToCalculate, 10000)
