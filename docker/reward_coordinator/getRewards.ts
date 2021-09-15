@@ -3,7 +3,7 @@ const axios = require('axios')
 
 //questionGroupId, wisdomNodeAddess, questionId, answerSet, answerValue, stakeAmount, wisdomNodeReputation
 const prepareAnswerRow = (groupId: string, questionId: string, answerSet: string[], answer: any) => {
-  const reputationScore = answer.answerer.categoryReputations.length ? answer.answerer.categoryReputations[0] : "0"
+  const reputationScore = answer.answerer.categoryReputations.length ? answer.answerer.categoryReputations[0].score : "0"
   return [
     groupId,
     answer.answerer.id,
