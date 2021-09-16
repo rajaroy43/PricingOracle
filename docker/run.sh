@@ -10,10 +10,12 @@ fi
 if [ "$1" = "prod" ]; then
 	echo "deploying to prod"
 
-  AWS_ACCOUNT=INSERT AWS ACCOUNT HERE
-  HOST=${AWS_ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com
+  AWS_ACCOUNT=376538560806
+  AWS_PROFILE=lith
+  AWS_REGION=us-west-2
+  HOST="${AWS_ACCOUNT}".dkr.ecr."${AWS_REGION}".amazonaws.com
 
-  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${HOST}
+  aws ecr --profile "${AWS_PROFILE}" --region "${AWS_REGION}" get-login-password | docker login --username AWS --password-stdin ${HOST}
 
   docker context use default
 
@@ -22,7 +24,7 @@ if [ "$1" = "prod" ]; then
 	containers=(reward_coordinator reward_calculator)
 	for container in "${containers[@]}"; do
 	  # create aws ecr repo if not exists
-    aws ecr create-repository --repository-name "${container}" || true
+    aws ecr --profile "${AWS_PROFILE}" --region "${AWS_REGION}" create-repository --repository-name "${container}" || true
     cd "${container}"
     docker build -t "${container}" .
     docker tag "${container}":latest ${HOST}/"${container}":latest
@@ -30,7 +32,7 @@ if [ "$1" = "prod" ]; then
     cd ..
 	done
 
-  docker context use lithium
+  docker context use lith
 
   docker compose --file docker-compose-aws.yml up
 
