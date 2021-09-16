@@ -8,7 +8,6 @@ import Home from './components/pages/Home'
 import Question from './components/pages/Question'
 import AvailableQuestions from './components/pages/AvailableQuestions'
 import Admin from './components/pages/Admin'
-import "./index.css";
 import theme from './components/Theme';
 import WalletProvider from "./components/providers/WalletProvider";
 import "./index.css";
