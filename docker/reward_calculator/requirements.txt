@@ -1,3 +1,6 @@
 Flask
 gunicorn
 requests
+numpy
+pytest
+schema

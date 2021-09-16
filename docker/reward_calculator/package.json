@@ -1,0 +1,13 @@
+{
+  "name": "reward_calculator",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start":"python3 ./app.py",
+    "install": "pip3 install -r requirements.txt",
+    "test": "python3 -m pytest ./tests/test_DMI.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
