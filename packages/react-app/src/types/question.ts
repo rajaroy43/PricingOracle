@@ -10,4 +10,5 @@ export interface QuestionView extends Question {
   topAnswerDisplay: string
   isFinished: boolean
   createdLocal: string
+  pricingTimeDisplay: string
 }

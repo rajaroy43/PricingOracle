@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from "@material-ui/core/Typography"
 import { QuestionGroupView } from '../../types/questionGroup'
@@ -87,12 +88,12 @@ const QuestionGroupItem = ({questionGroup}: {questionGroup: QuestionGroupView}) 
   const classes = useStyles();
 
   return (
-    <div className={classes.questionGroupItem}>
+    <div className={classes.questionGroupItem}> 
       <div className={classes.questionGroupColumn}>
         <Typography variant="h3">Group #{questionGroup.id}</Typography>
         <div className={classes.questionGroupWrapper}>
           <div className={classes.questionGroupCategory}>#{questionGroup.questionViews[0].category.label}</div>
-          <div className={classes.questionGroupLength}>{questionGroup.questions.length} Questions</div>
+          <div className={classes.questionGroupLength}><RouterLink to={`/wisdom-node/answering/${questionGroup.id}`}>{questionGroup.questions.length} Questions</RouterLink></div>
         </div>
       </div>
 

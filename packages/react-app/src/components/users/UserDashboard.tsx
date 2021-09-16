@@ -5,7 +5,8 @@ import Flex from '../atoms/Flex'
 import QuestionList from '../questions/QuestionList'
 import UserInputRow from './UserInputRow'
 
-const UserProfile = ({user, connectedWallet}: {user: UserView, connectedWallet?: any}) => {
+const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet?: any}) => {
+
   return (
     <div>
       { connectedWallet && <UserInputRow connectedWallet={connectedWallet} pricingIsApproved={user.pricingIsApproved} /> }
@@ -17,4 +18,4 @@ const UserProfile = ({user, connectedWallet}: {user: UserView, connectedWallet?:
   )
 }
 
-export default UserProfile
+export default UserDashboard

@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const QuestionList = ({questionGroups}: {questionGroups: QuestionGroupView[]}) => {
+const QuestionGroupList = ({questionGroups}: {questionGroups: QuestionGroupView[]}) => {
   const classes = useStyles();
 
   return (
@@ -22,7 +22,7 @@ const QuestionList = ({questionGroups}: {questionGroups: QuestionGroupView[]}) =
       <Typography variant="h3">Latest Question Groups:</Typography>
       <div className={classes.questionGroupItems}>
         {questionGroups.length ?
-          questionGroups.map((question => <QuestionGroupItem questionGroup={question} key={question.id} />))
+          questionGroups.map((questionGroup => <QuestionGroupItem questionGroup={questionGroup} key={questionGroup.id} />))
           :
           <div>No Question Groups</div>
         }
@@ -31,4 +31,4 @@ const QuestionList = ({questionGroups}: {questionGroups: QuestionGroupView[]}) =
   )
 }
 
-export default QuestionList
+export default QuestionGroupList

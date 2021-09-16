@@ -19,6 +19,7 @@ export const selectQuestion = (question: Question): QuestionView => {
     endTimeLocal: formatDate(question.endTime),
     isFinished,
     createdLocal:  formatDate(question.created),
+    pricingTimeDisplay: formatDate(question.pricingTime),
     topAnswerIndex: topAnswer.index,
     topAnswerValue: topAnswer.value.toString(),
     topAnswerDisplay: answerSetOptions[topAnswer.index].label
