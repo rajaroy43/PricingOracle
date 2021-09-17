@@ -51,11 +51,14 @@
     "graph-remove-local": "yarn workspace @scaffold-eth/subgraph graph remove --node http://localhost:8020/ scaffold-eth/your-contract",
     "graph-deploy-local": "yarn workspace @scaffold-eth/subgraph graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 scaffold-eth/your-contract",
     "graph-ship-local": "yarn graph-prepare && yarn graph-codegen && yarn graph-deploy-local",
+    "graph-init-local": "yarn graph-prepare && yarn graph-codegen && yarn graph-build && yarn graph-create-local && yarn graph-deploy-local",
     "deploy-and-graph": "yarn deploy && yarn graph-ship-local",
     "theme": "yarn workspace @scaffold-eth/react-app theme",
     "watch-theme": "yarn workspace @scaffold-eth/react-app watch",
     "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml",
-    "start-reward-coordinator": "cd docker && docker-compose up"
+    "start-reward-coordinator": "cd docker && docker-compose up",
+    "docker-clean":" cd docker/ && docker-compose down && docker rm -f $(docker ps -a -q) && docker volume rm $(docker volume ls -q)",
+    "docker-run-local": "cd docker/ && ./run.sh"
   },
   "workspaces": {
     "packages": [

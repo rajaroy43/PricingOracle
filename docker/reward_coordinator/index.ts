@@ -1,5 +1,3 @@
-import express from "express"
-
 import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getQuestion } from "./queries/question"
@@ -10,7 +8,7 @@ require('dotenv').config()
 const calculateQuestionGroup = async (group: any) => {
   const questions = await Promise.all(
     group.questions.map((question: any) => {
-      return getQuestion(question.id)
+      return getQuestion(question.id, group.category.id)
     })
   ) 
 
@@ -19,24 +17,21 @@ const calculateQuestionGroup = async (group: any) => {
     questions
   }
 
-  const rewards =  getRewards(groupData)
-  console.log(`got rewards`, rewards)
+
+  getRewards(groupData)
 
 }
 
 const fetchQuestionsToCalculate = async () => {
   const response = await getEndedQuestionGroups()
-  console.log('questions are ', response)
 
   if (response.error) {
     console.log(`Error fetching question groups: ${response.error}`)
     return 
   }
 
-  response.data.questionGroups.filter(
-    (group: any) => CURRENTLY_CALCULATING.isCalculationRequired(group.id)
-  ).forEach(calculateQuestionGroup)
+  response.data.questionGroups.forEach(calculateQuestionGroup)
     
 }
 
-setInterval(fetchQuestionsToCalculate, 5000)
+setInterval(fetchQuestionsToCalculate, process.env.FETCH_INTERVAL)
