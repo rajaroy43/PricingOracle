@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Form } from 'formik'
 import { WalletContext } from '../providers/WalletProvider'
-import { answerQuestionSchema } from '../../schemas/answer'
+import { answerQuestionGroupSchema } from '../../schemas/answer'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Typography from "@material-ui/core/Typography"
 import Button from '../atoms/inputs/buttons/Button'
@@ -109,19 +109,21 @@ const getForm = (questions: QuestionView[]) => (submit: any, isValid: boolean) =
   )
 } 
 
-const getMethodArgs = (questionId: string) => (values: any) => {
+const getMethodArgs = (questionGroupId: string) => (values: any) => {
   console.log(`cQG: values =- ${JSON.stringify(values)}`)
-  const parsedStake = parseUnits(values.stakeAmount)
+  const stakes = values.map((v: any) => parseUnits(v.stakeAmount))
+  const answerIndexes = values.map((v: any) => v.answerIndex)
 
-  return [questionId, [parsedStake], [values.answerIndex]]
+  return [questionGroupId, stakes, answerIndexes]
 }
 
 const AnswerQuestionGroupForm = ({ questionGroup, onSuccess }: {questionGroup: QuestionGroupView, onSuccess: any}) => {
   const connectedWallet = useContext(WalletContext);
+  const defaultValues = questionGroup.questions.map(() => {return {...answerQuestionGroupSchema.defaultValue}})
 
   const formProps = {
-    defaultValues: answerQuestionSchema.defaultValues,
-    schema: answerQuestionSchema.schema,
+    defaultValues,
+    schema: answerQuestionGroupSchema.schema,
     getForm: getForm(questionGroup.questionViews),
     // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,

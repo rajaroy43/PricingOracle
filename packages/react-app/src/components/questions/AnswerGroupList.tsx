@@ -7,6 +7,8 @@ import Grid from '@material-ui/core/Grid'
 import Typography from "@material-ui/core/Typography"
 import { Link as RouterLink } from 'react-router-dom'
 import AnswerQuestionForm from '../forms/AnswerQuestion'
+import AnswerQuestionGroupForm from '../forms/AnswerQuestionGroupForm'
+import { QuestionGroupView } from '../../types/questionGroup'
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
     margin: 0,
@@ -174,7 +176,7 @@ const inputLabelProps = {
     style: {marginRight: '8px'}
 }
 
-const AnswerGroupList = ({questionGroup}: any) => {
+const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) => {
   const classes = useStyles();
   return (
     <>
@@ -226,6 +228,9 @@ const AnswerGroupList = ({questionGroup}: any) => {
                 <div className={classes.balance}>
                     Balance: 00000.00 $LITH <span>(Max)</span>
                 </div>
+            </Grid>
+            <Grid>
+              <AnswerQuestionGroupForm questionGroup={questionGroup} onSuccess={() => {console.log('success')}} />
             </Grid>
         </Grid>
     </>

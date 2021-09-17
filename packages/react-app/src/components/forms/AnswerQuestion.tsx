@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Form } from 'formik'
 import { WalletContext } from '../providers/WalletProvider'
-import { answerQuestionSchema } from '../../schemas/answer'
+import { answerQuestionGroupSchema } from '../../schemas/answer'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Typography from "@material-ui/core/Typography"
 import Text from '../atoms/inputs/Text'
@@ -151,8 +151,8 @@ const AnswerQuestionForm = ({ question, onSuccess }: any) => {
   console.log(`contract methods ${Object.keys(connectedWallet.pricingInstance.methods)}`)
 
   const formProps = {
-    defaultValues: answerQuestionSchema.defaultValues,
-    schema: answerQuestionSchema.schema,
+    defaultValues: {},
+    schema: {},
     getForm: getForm(question.description, question.pricingTimeDisplay, question.answerSet[1]),
     // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,

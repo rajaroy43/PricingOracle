@@ -79,10 +79,10 @@ const inputLabelProps = {
   style: {marginRight: '8px'}
 }
 
-const AnswerQuestionInput = (
-  question: any,
-  idx: number
-) => {
+const AnswerQuestionInput = ({
+  question,
+  idx
+}: any) => {
   const classes = useStyles();
   return (
     <div className={classes.answerItem}>
