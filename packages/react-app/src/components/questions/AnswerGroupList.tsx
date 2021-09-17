@@ -198,7 +198,7 @@ const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) =>
 
         <div className={classes.answerGroupItems}>
             {questionGroup.questionViews.length ?
-            questionGroup.questionViews.map(((question: any) => <AnswerQuestionForm question={question} key={question.id} />))
+            <AnswerQuestionGroupForm questionGroup={questionGroup} onSuccess={() => {console.log('success')}} />
             :
             <div>No Question Groups</div>
             }
@@ -228,9 +228,6 @@ const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) =>
                 <div className={classes.balance}>
                     Balance: 00000.00 $LITH <span>(Max)</span>
                 </div>
-            </Grid>
-            <Grid>
-              <AnswerQuestionGroupForm questionGroup={questionGroup} onSuccess={() => {console.log('success')}} />
             </Grid>
         </Grid>
     </>
