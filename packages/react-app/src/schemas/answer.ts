@@ -1,14 +1,16 @@
 import * as Yup from 'yup';
 
-export const answerQuestionSchema = {
-  defaultValues: {
+export const answerQuestionGroupSchema = {
+  defaultValue: {
     answerIndex: 0,
     stakeAmount: '0'
   },
-  schema: Yup.object({
-    answerIndex: Yup.number()
-      .required('Required'),
-    stakeAmount: Yup.string()
-      .required('Required')
-  })
+  schema: Yup.array().of(
+    Yup.object().shape({
+      answerIndex: Yup.number().required("Answer required"),
+      stakeAmount: Yup.string()
+        .required("Stake required")
+    })
+  )
 }
+
