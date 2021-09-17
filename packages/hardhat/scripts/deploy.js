@@ -4,12 +4,29 @@ const chalk = require("chalk");
 const { config, ethers, tenderly, run, network } = require("hardhat");
 const { utils } = require("ethers");
 const R = require("ramda");
-const mockQuestionData = require("./utils/mockQuestionData");
+const { createQuestionGroup, answerQuestionGroups } = require("./utils/lithiumPricing");
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const prepareAccount = async (lithToken, lithiumPricing, account, approveAmount, transferAmount) => {
+  await lithToken
+    .connect(account)
+    .approve(lithiumPricing.address, approveAmount);
+
+  await lithToken
+    .transfer(account.address, transferAmount);
+
+}
+
 const main = async () => {
   const accounts = await ethers.getSigners();
+  const userAccounts = [...accounts.slice(1, 7)];
   account0 = accounts[0];
   account1 = accounts[1];
   account2 = accounts[2];
+  account3 = accounts[3];
   console.log(`Deploying to network ${network.name}`);
   console.log("\n\n 📡 Deploying Pricing...\n");
   const lithiumPricing = await deploy("LithiumPricing");
@@ -23,32 +40,26 @@ const main = async () => {
 
   await lithiumPricing.setLithiumRewardAddress(lithiumReward.address);
 
-  await lithiumPricing.addCategory("Pre Coin Offering");
-  await lithiumPricing.addCategory("Art Collection");
 
-  const transferBalance = ethers.utils.parseUnits("1000.0", 18);
   if (network.name === "localhost") {
+    await lithiumPricing.addCategory("Pre Coin Offering");
+    await lithiumPricing.addCategory("Art Collection");
+  
+    const transferBalance = ethers.utils.parseUnits("100000.0", 18);
     const approveAmount = ethers.utils.parseUnits("10000000000000.0", 18);
     await lithToken.approve(lithiumPricing.address, approveAmount);
-    await lithToken
-      .connect(account1)
-      .approve(lithiumPricing.address, approveAmount);
-    await lithToken
-      .connect(account2)
-      .approve(lithiumPricing.address, approveAmount);
-    await lithToken.transfer(account1.address, transferBalance);
-    await lithToken.transfer(account2.address, transferBalance);
-    //Creating mock QuestionsGroup
-    await createQuestiongroup(lithiumPricing);
-    console.log(chalk.magenta("QuestionGroups created ", "\n"));
-  }
+    await Promise.all(
+      userAccounts.map((account) => prepareAccount(lithToken, lithiumPricing, account, approveAmount, transferBalance))
+    )
 
-  async function createQuestiongroup(lithiumPricing) {
-    const args = await mockQuestionData();
-    console.log("\n\n 📡 Creating mock question groups \n");
-    for (var i = 0; i < args.length; i++) {
-      await lithiumPricing.createQuestionGroup(...args[i]);
-    }
+    //Creating mock QuestionsGroup
+    const questionGroups = await createQuestionGroup(lithiumPricing);
+    console.log(chalk.magenta("QuestionGroups created ", "\n"));
+    wait(4000)
+    await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
+    console.log(chalk.magenta("QuestionGroups answered ", "\n"));
+
+
   }
 
   //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!
