@@ -59,6 +59,9 @@ const main = async () => {
     await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
     console.log(chalk.magenta("QuestionGroups answered ", "\n"));
 
+    //Creating mock QuestionsGroup
+    await createQuestionGroup(lithiumPricing, 5000);
+
 
   }
 
