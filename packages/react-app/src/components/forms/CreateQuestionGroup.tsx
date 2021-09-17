@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 // @ts-ignore
 import styled from 'styled-components'
 import { Form } from 'formik'
-import DateTime from './atoms/inputs/DateTime'
+import DateTime from '../atoms/inputs/DateTime'
 import CreateQuestionForm from './CreateQuestionForm'
-import createQuestionGroupSchema from '../schemas/questionGroup'
-import Web3Form from './formikTLDR/forms/Web3Form'
+import createQuestionGroupSchema from '../../schemas/questionGroup'
+import Web3Form from '../formikTLDR/forms/Web3Form'
 
 const Row = styled.div`
     display: flex;
@@ -153,7 +153,6 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
     if ( !connectedAddress || !pricingInstance) {
         return <p style={{ color: 'white' }}>Please Connect to Metamask</p>
     }
-
     const formProps = {
         defaultValues: createQuestionGroupSchema.defaultValues,
         schema: createQuestionGroupSchema.schema,

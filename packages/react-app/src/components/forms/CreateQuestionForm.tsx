@@ -1,5 +1,5 @@
 import React from 'react'
-import Text from './atoms/inputs/Text'
+import Text from '../atoms/inputs/Text'
 
 interface CreateQuestionFormProps {
     index: number
