@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { Form } from 'formik'
 import { WalletContext } from '../providers/WalletProvider'
-import { answerQuestionGroupSchema } from '../../schemas/answer'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Typography from "@material-ui/core/Typography"
 import Text from '../atoms/inputs/Text'
@@ -115,7 +114,7 @@ const getForm = (questionDescription: string, questionPricingTimeDisplay: string
             type="float"
             InputLabelProps={inputLabelProps}
             errorCss={classes.error}
-            followText="%"
+            followText="LITH"
           />
         </div>
 
