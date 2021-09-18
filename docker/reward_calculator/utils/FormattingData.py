@@ -1,4 +1,6 @@
 from schema import  Schema
+import numpy as np
+
 schema = Schema([str,int,str,list,int,int,int])  
 
 def prepareDataPayload(data):
@@ -15,6 +17,6 @@ def prepareDataPayload(data):
   
   #Converting dict data to 2-d array
   for wisdomNodeAddress,answerValues in wisdomNodeAddress_AnswersValues.items():
-    formattedData.append([wisdomNodeAddress,answerValues])
+    formattedData.append([wisdomNodeAddress,np.array(answerValues)])
 
   return formattedData
