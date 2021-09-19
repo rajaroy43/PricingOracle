@@ -1,5 +1,5 @@
 from numpy.core.fromnumeric import transpose
-from utils import FormattingData
+from utils.FormattingData import prepareDataPayload
 import numpy as np
 from utils.DMI import DMI
 from scipy.stats import norm
@@ -54,11 +54,13 @@ def do_calc_np(dmi_data, n_choices, num_answers):
 
 def calculate_rewards(data, n_choices, num_answers):
     print("\033[1;32m Calculating rewards....")
-    passedData=FormattingData.prepareDataPayload(data)
+    passedData=prepareDataPayload(data)
     #define method as do_calc_np
     #Passed data should be like : 
-    #[[wisdomNodeAddress1,answerValue1,answerValue2,answerValue3,....],
-    #  wisdomNodeAddress2,answerValue1,answerValue2,answerValue3,.....] ]
+    #[
+    #   [wisdomNodeAddress1,[answerValue1,answerValue2,answerValue3,....]],
+    #   [wisdomNodeAddress2,[answerValue1,answerValue2,answerValue3,.....]] 
+    # ]
 
     # Convert list to 2 numpy arrays one with wisdomNodeAddress and one with array of answerValues
     wna = []
@@ -77,5 +79,5 @@ def calculate_rewards(data, n_choices, num_answers):
     rewards, answers = do_calc_np(dmi_data, n_choices, num_answers)
     return rewards
     
-    print("\033[1;34m")
-    #print(passedData)
+    
+    
