@@ -4,12 +4,13 @@ import { subgraphClient } from '../../client'
 import { useGetQuestionGroup } from '../../queries/questionGroup'
 import LoadingCircle from '../atoms/Loading'
 import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
-import AnswerGroupList from '../questions/AnswerGroupList'
+import AnsweringGroup from '../questions/AnsweringGroup'
 
 const Answering = ({ match}: any)=> {
     const urlQuestionGroupId = match.params.questionGroupId;
     const connectedWallet = useContext(WalletContext)
     const {loading, questionGroup} = useGetQuestionGroup(subgraphClient, urlQuestionGroupId)
+
 
     const sideBarProps = {
         activePage: 'availableQuestions',
@@ -24,7 +25,7 @@ const Answering = ({ match}: any)=> {
                 <LoadingCircle />
                 :
                 // @ts-ignore
-                questionGroup ? connectedWallet.wallet && <AnswerGroupList questionGroup={questionGroup} /> : null
+                questionGroup ? connectedWallet.wallet && <AnsweringGroup questionGroup={questionGroup} connectedWallet={connectedWallet} /> : null
             }
         </WisdomNodeTemplate>
     )

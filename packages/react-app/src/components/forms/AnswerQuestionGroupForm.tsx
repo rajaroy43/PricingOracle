@@ -1,6 +1,5 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Form } from 'formik'
-import { WalletContext } from '../providers/WalletProvider'
 import { answerQuestionGroupSchema } from '../../schemas/answer'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Typography from "@material-ui/core/Typography"
@@ -71,34 +70,12 @@ const Success = () => (
   </div>
 )
 
-const radioOptions = [
-  {
-    label: "Yes",
-    value: "yes"
-  },
-  {
-    label: "No",
-    value: "no"
-  }
-]
-
-const radioStyle = {
-  flexDirection: 'row',
-  justifyContent: 'start',
-}
-
-const inputLabelProps = {
-  disableAnimation: true, 
-  shrink: false,
-  style: {marginRight: '8px'}
-}
-
-const getForm = (questions: QuestionView[]) => (submit: any, isValid: boolean) => {
-  const classes = useStyles();
+const getForm = (questions: QuestionView[], updateStake: any, classes: any) => (submit: any, isValid: boolean) => {
+ 
   return (
     <div className={classes.answerItem}>
       <Form>
-        {questions.map((question, idx) => <AnswerQuestionInput key={idx} idx={idx} question={question} />)}
+        {questions.map((question, idx) => <AnswerQuestionInput key={idx} idx={idx} question={question} updateStake={updateStake(idx)} />)}
         <Button
           label="Submit Answer"
           onClick={submit}
@@ -110,21 +87,21 @@ const getForm = (questions: QuestionView[]) => (submit: any, isValid: boolean) =
 } 
 
 const getMethodArgs = (questionGroupId: string) => (values: any) => {
-  console.log(`cQG: values =- ${JSON.stringify(values)}`)
-  const stakes = values.map((v: any) => parseUnits(v.stakeAmount))
-  const answerIndexes = values.map((v: any) => v.answerIndex)
+  const stakes = values.answers.map((v: any) => parseUnits(v.stakeAmount))
+  const answerIndexes = values.answers.map((v: any) => parseInt(v.answerIndex, 10))
 
   return [questionGroupId, stakes, answerIndexes]
 }
 
-const AnswerQuestionGroupForm = ({ questionGroup, onSuccess }: {questionGroup: QuestionGroupView, onSuccess: any}) => {
-  const connectedWallet = useContext(WalletContext);
-  const defaultValues = questionGroup.questions.map(() => {return {...answerQuestionGroupSchema.defaultValue}})
+const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet, updateStake }: {questionGroup: QuestionGroupView, connectedWallet: any, updateStake: any}) => {
+  const classes = useStyles();
+  const defaultQuestionValues = questionGroup.questions.map(() => {return {...answerQuestionGroupSchema.defaultValue}})
+
 
   const formProps = {
-    defaultValues,
+    defaultValues: {answers: defaultQuestionValues },
     schema: answerQuestionGroupSchema.schema,
-    getForm: getForm(questionGroup.questionViews),
+    getForm: getForm(questionGroup.questionViews, updateStake, classes),
     // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,
     // @ts-ignore
@@ -134,7 +111,7 @@ const AnswerQuestionGroupForm = ({ questionGroup, onSuccess }: {questionGroup: Q
       successEl: Success
     },
     formOnSuccess: false,
-    onSuccess
+    onSuccess: null
   }
   
   return (

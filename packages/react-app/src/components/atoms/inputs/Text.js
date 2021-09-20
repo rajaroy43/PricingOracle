@@ -14,17 +14,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Text = (props) => {
-  const { wrapperClass, errorCss, followText, ...rest} = props;
+  const { wrapperClass, errorCss, followText, onChange, ...rest} = props;
   const [field, meta] = useField(rest);
   const isError = meta.touched && !!meta.error
   const classes = useStyles();
+
+  const updatedRestProps = {
+    ...rest,
+    onChange: (e) => { onChange(e.target.value); field.onChange(e)}
+  }
 
   return (
     <>
       <div className={wrapperClass || ''}>
         <TextField
           {...field}
-          {...rest}
+          {...updatedRestProps}
           error={isError} />
           <span>{followText}</span>
       </div>

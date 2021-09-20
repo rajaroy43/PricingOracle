@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 // TODO: Make AnswerGroupView
 // import { QuestionGroupView } from '../../types/questionGroup'
@@ -9,6 +9,9 @@ import { Link as RouterLink } from 'react-router-dom'
 import AnswerQuestionForm from '../forms/AnswerQuestion'
 import AnswerQuestionGroupForm from '../forms/AnswerQuestionGroupForm'
 import { QuestionGroupView } from '../../types/questionGroup'
+import { useGetUser } from '../../queries/user'
+import { subgraphClient } from '../../client'
+
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
     margin: 0,
@@ -176,8 +179,31 @@ const inputLabelProps = {
     style: {marginRight: '8px'}
 }
 
-const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) => {
+const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: QuestionGroupView, connectedWallet: any}) => {
   const classes = useStyles();
+  const {loading, user} = useGetUser(subgraphClient, connectedWallet.address)
+
+  const lithBalance = user ? user.tokenBalanceDisplay : '-'
+
+  const initialStakeState = {
+    totalStake: "0",
+    stakes: questionGroup.questions.map(() => 0)
+  }
+
+  const [stakeState, setTotalStake] = useState(initialStakeState)
+  const updateStake =  (idx: number) => (stake: number) => {
+    //@ts-ignore
+    console.log(` updating stakes with - ${stake}`)
+    const stakes = [...stakeState.stakes]
+    stakes[idx] = stake
+    //@ts-ignore
+    const totalStake = stakes.reduce((acc: number, stake: number) => acc + parseInt(stake, 10), 0).toString()
+    setTotalStake({
+      totalStake,
+      stakes
+    })
+
+  }
   return (
     <>
         <div className={classes.titleRow}>
@@ -198,7 +224,7 @@ const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) =>
 
         <div className={classes.answerGroupItems}>
             {questionGroup.questionViews.length ?
-            <AnswerQuestionGroupForm questionGroup={questionGroup} onSuccess={() => {console.log('success')}} />
+            <AnswerQuestionGroupForm questionGroup={questionGroup} connectedWallet={connectedWallet} updateStake={updateStake} />
             :
             <div>No Question Groups</div>
             }
@@ -209,13 +235,13 @@ const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) =>
                 <div className={classes.totalTimeLeft}>Time left: <span>00:00:00</span></div> 
                 <div className={classes.totalPool}>Total Pool: 
                     <div>
-                        <div className={classes.totalPoolLith}>1000 $LITH</div>
+                        <div className={classes.totalPoolLith}>{questionGroup.totalBountyDisplay} $LITH</div>
                         <div className={classes.totalPoolUsd}>~997.55 USD</div>
                     </div>
                 </div>
                 <div className={classes.totalPool}>Total Stake: 
                     <div>
-                        <div className={classes.totalPoolLith}>42 $LITH</div>
+                        <div className={classes.totalPoolLith}>{stakeState.totalStake} $LITH</div>
                         <div className={classes.totalPoolUsd}>~41.55 USD</div>
                     </div>
                 </div>                    
@@ -226,7 +252,7 @@ const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) =>
                     <img src={require(`../../assets/icon-lithium.svg`)} alt="Lithium" /> 
                 </div>
                 <div className={classes.balance}>
-                    Balance: 00000.00 $LITH <span>(Max)</span>
+                    Balance: {lithBalance} $LITH <span>(Max)</span>
                 </div>
             </Grid>
         </Grid>
@@ -234,4 +260,4 @@ const AnswerGroupList = ({questionGroup}: {questionGroup: QuestionGroupView}) =>
   )
 }
 
-export default AnswerGroupList
+export default AnsweringGroup

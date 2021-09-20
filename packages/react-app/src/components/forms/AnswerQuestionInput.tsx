@@ -59,12 +59,12 @@ const useStyles = makeStyles(theme => ({
 
 const radioOptions = [
   {
-    label: "Yes",
-    value: "yes"
+    label: "No",
+    value: "0"
   },
   {
-    label: "No",
-    value: "no"
+    label: "Yes",
+    value: "1"
   }
 ]
 
@@ -81,7 +81,8 @@ const inputLabelProps = {
 
 const AnswerQuestionInput = ({
   question,
-  idx
+  idx,
+  updateStake
 }: any) => {
   const classes = useStyles();
   return (
@@ -90,17 +91,17 @@ const AnswerQuestionInput = ({
 
       <div className={classes.answerItemInput}>
         <RadioUI
-          defaultValue="no"
-          name={`update${idx}`}
+          name={`[answers[${idx}].answerIndex]`}
           options={radioOptions}
           style={radioStyle}
         />
 
         <Text
+          onChange={(value:any) => { updateStake(value)}}
           wrapperClass={classes.stakeAmountWrapper}
           className={classes.stakeAmount}
           label="Stake Amount:"
-          name={`stakeAmount${idx}`}
+          name={`[answers[${idx}].stakeAmount]`}
           type="float"
           InputLabelProps={inputLabelProps}
           errorCss={classes.error}
