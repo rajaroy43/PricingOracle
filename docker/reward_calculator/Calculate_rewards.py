@@ -55,7 +55,7 @@ def do_calc_np(dmi_data, n_choices, num_answers):
 def calculate_rewards(data, n_choices, num_answers):
     print("\033[1;32m Calculating rewards....")
     passedData=prepareDataPayload(data)
-    #define method as do_calc_np
+    
     #Passed data should be like : 
     #[
     #   [wisdomNodeAddress1,[answerValue1,answerValue2,answerValue3,....]],

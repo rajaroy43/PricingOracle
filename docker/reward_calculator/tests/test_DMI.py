@@ -10,6 +10,8 @@ def test_Should_Have_Proper_Wisdom_NodeAddress():
   rewards=calculate_rewards(data, n_choices,num_answers)
   numberOfWisdomNode=0
   for row in prepareDataPayload(data):
+    #rewards output is in type of numpy.str
+    assert(float(rewards[numberOfWisdomNode][1]))
     numberOfWisdomNode += 1
   assert(len(rewards) == numberOfWisdomNode)
   
