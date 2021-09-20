@@ -9,6 +9,8 @@ def prepareDataPayload(data):
   for question in data:
     #Schema get validated here 
     schema.validate(question)
+    if len(question) == 0:
+      raise ValueError('Empty questions/answers')
     key=question[2]
     if key not in wisdomNodeAddress_AnswersValues:
       wisdomNodeAddress_AnswersValues[key]=[question[4]]
