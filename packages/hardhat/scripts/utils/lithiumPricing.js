@@ -1,7 +1,7 @@
 const { generateMockQuestionData } = require("./mockQuestionData");
 
-const createQuestionGroup = async (lithiumPricing, minimumRequiredAnswer = 1) => {
-  const args = await generateMockQuestionData(minimumRequiredAnswer);
+const createQuestionGroup = async (lithiumPricing, endTimeFutureSeconds = 60, minimumRequiredAnswer = 1) => {
+  const args = await generateMockQuestionData(endTimeFutureSeconds, minimumRequiredAnswer);
   console.log("\n\n 📡 Creating mock question groups \n");
   for (var i = 0; i < args.length; i++) {
     await lithiumPricing.createQuestionGroup(...args[i]);

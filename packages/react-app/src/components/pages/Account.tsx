@@ -7,7 +7,7 @@ import { WalletContext } from '../providers/WalletProvider'
 import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import UserDashboard from '../users/UserDashboard'
 
-const Account = ({match}: any) => {
+const Account = ({ match }: any) => {
   const urlAddress = match.params.address;
   const connectedWallet = useContext(WalletContext);
   const {loading, user} = useGetUser(subgraphClient, urlAddress);
@@ -23,7 +23,7 @@ const Account = ({match}: any) => {
     walletAddress: connectedWallet.address
   }
 
-  const main = (
+  return (
     <WisdomNodeTemplate pageProps={sideBarProps}>
       <Typography variant="h1">Lithium Profile for {urlAddress}</Typography>
       {loading ?
@@ -36,7 +36,6 @@ const Account = ({match}: any) => {
       }
     </WisdomNodeTemplate>
   )
-  return main;
 }
 
 export default Account

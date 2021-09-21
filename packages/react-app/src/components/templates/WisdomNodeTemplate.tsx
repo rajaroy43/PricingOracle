@@ -9,7 +9,10 @@ import NotConnectedSideBar from '../sidebars/wisdomNode/NotConnectedSideBar'
 const useStyles = makeStyles(theme => ({
     mainContent: {
       margin: 0,
-      padding: '24px'
+      padding: '24px',
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: 0
+      },
     }
   })); 
 

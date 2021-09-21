@@ -1,9 +1,10 @@
 import React from 'react'
 
-const ErrorMessage = ({isError, errorMsg}) => {
+const ErrorMessage = (props) => {
+  const errorCss = props.className ? props.className : 'error';
 
-  return isError ? (
-    <div className="error">{errorMsg}</div>
+  return props.isError ? (
+    <div className={errorCss || ''}>{props.errorMsg}</div>
   ) : null
 }
 

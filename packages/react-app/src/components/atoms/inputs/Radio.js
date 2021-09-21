@@ -1,7 +1,6 @@
 import React from 'react'
 import { useField } from 'formik'
 import { withStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -33,11 +32,12 @@ const RadioUI = (props) => {
   )
 }
 
-  const styles = theme => ({
+const styles = theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
   },
+  /*
   formControl: {
     margin: theme.spacing.unit,
     minWidth: 120,
@@ -52,7 +52,8 @@ const RadioUI = (props) => {
   },
   noLabel: {
     marginTop: theme.spacing.unit * 3,
-  },
+  }
+  */
 });
 
 export default withStyles(styles)(RadioUI)
