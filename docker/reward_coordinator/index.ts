@@ -1,20 +1,41 @@
+
+require('dotenv').config()
 import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getQuestion } from "./queries/question"
 import getRewards from "./getRewards"
+import { publishInvalidAnswers } from "./publishReward"
 
-require('dotenv').config()
 
 const calculateQuestionGroup = async (group: any) => {
+  console.log(`calculating group : \n${JSON.stringify(group)}`)
   const questions = await Promise.all(
     group.questions.map((question: any) => {
       return getQuestion(question.id, group.category.id)
     })
   )
-  
+
   //@ts-ignore
-  if (parseInt(group.minimumRequiredAnswers, 10) > parseInt(questions[0].question.answerCount, 10)) {
-    console.log(`QuestionGroup ${group.id} INVALID`)
+  const answerCount = parseInt(questions[0].question.answerCount, 10)
+  if (parseInt(group.minimumRequiredAnswers, 10) > answerCount) {
+    console.log(`QuestionGroup ${group.id} INVALID: ${JSON.stringify(questions)}`)
+    const questionIds = group.questions.map((question: any) => question.id)
+    console.log(`question ids ${questionIds}`)
+    const groupIds = Array(answerCount).fill(group.id)
+    const allAddresses = questions.map(
+        (question: any) => { 
+          console.log(`inside question ${JSON.stringify(question)}`);
+          return question.question.answers.map((answer: any) => [answer.answerer.id, answer.stakeAmount])
+        })
+    console.log(`got all addresses ${allAddresses}`)
+     const addresses =  allAddresses.reduce((acc: string[], addrs: string[]) => acc.concat(addrs), [])
+    const rewardAmounts = Array(answerCount).fill(group.id)
+    await publishInvalidAnswers(
+      questionIds,
+      groupIds,
+      addresses,
+      rewardAmounts
+    )
 
 
   } else {

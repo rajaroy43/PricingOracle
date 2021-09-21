@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const bre = require("hardhat");
 const publishDir = "../react-app/src/contracts";
 const graphDir = "../subgraph"
-const offChainDir="../off-chain"
+const offChainDir="../../docker/reward_coordinator"
 function publishContract(contractName) {
   console.log(
     " 💽 Publishing",

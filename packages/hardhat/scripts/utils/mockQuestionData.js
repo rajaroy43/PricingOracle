@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-const generateMockQuestionData = async () => {
+const generateMockQuestionData = async (minimumRequiredAnswer) => {
   const block = await ethers.provider.getBlock();
   const pricingTime = block.timestamp + 100;
   const endTime = block.timestamp + 60;
@@ -8,7 +8,6 @@ const generateMockQuestionData = async () => {
   const answerSet = [0, 50];
   const categoryId = 0;
 
-  const minimumRequiredAnswer = 1;
 
   const startTime = block.timestamp + 2;
   const description1 = `What is the price of an TATA NANO share  `;

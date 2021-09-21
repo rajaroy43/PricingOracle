@@ -54,10 +54,19 @@ const main = async () => {
 
     //Creating mock QuestionsGroup
     const questionGroups = await createQuestionGroup(lithiumPricing);
-    console.log(chalk.magenta("QuestionGroups created ", "\n"));
+    console.log(chalk.magenta("<>QuestionGroups created ", "\n"));
     wait(4000)
     await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
-    console.log(chalk.magenta("QuestionGroups answered ", "\n"));
+    console.log(chalk.magenta("<>QuestionGroups answered ", "\n"));
+
+    const questionGroups1 = await createQuestionGroup(lithiumPricing, 3);
+    console.log(chalk.magenta("<><>QuestionGroups created 3 minimum answers", "\n"));
+    wait(4000)
+    await answerQuestionGroups(lithiumPricing, questionGroups1, userAccounts.slice(2,4), 2)
+    console.log(chalk.magenta("<><>QuestionGroups 2 answer invalid 2", "\n"));
+
+    await createQuestionGroup(lithiumPricing, 1);
+    console.log(chalk.magenta("<><><>QuestionGroups created no answers invalid", "\n"));
 
 
   }
