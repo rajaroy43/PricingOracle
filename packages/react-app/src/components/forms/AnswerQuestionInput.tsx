@@ -13,9 +13,12 @@ const useStyles = makeStyles(theme => ({
       fontWeight: '500',
       marginTop: 0
     },
+    display: 'flex',
+    flexDirection: 'column',
     marginBottom: '8px',
     padding: '24px',
     [theme.breakpoints.down('xs')]: {
+      marginBottom: '16px',
       padding: '16px'
     },
   },
@@ -23,6 +26,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'nowrap',
     justifyContent: 'start',
     [theme.breakpoints.down('xs')]: {
       alignItems: 'start',
@@ -35,18 +39,22 @@ const useStyles = makeStyles(theme => ({
   },
   stakeAmountWrapper: {
     alignItems: 'center',
+    display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'nowrap',
     justifyContent: 'space-between',
     marginLeft: '48px',
-    marginRight: '4px',
-    noWrap: 'true',
+    whiteSpace: 'nowrap',
     [theme.breakpoints.down('xs')]: {
       alignItems: 'end',
+      marginLeft: '16px',
       marginTop: '16px',
-    }
+    },
   },
   stakeAmount: {
     color: '#ffffff !important',
+    flexWrap: 'nowrap',
+    marginRight: '4px',
     textAlign: 'right',
   },
   error: {

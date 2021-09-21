@@ -10,6 +10,11 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     bottom: '10px',
     color: '#ff0000'
+  },
+  followText: {
+    alignSelf: 'center',
+    flexShrink: 0,
+    fontWeight: 500,
   }
 }));
 
@@ -31,7 +36,7 @@ const Text = (props) => {
           {...field}
           {...updatedRestProps}
           error={isError} />
-          <span>{followText}</span>
+          <div className={classes.followText}>{followText}</div>
       </div>
       <ErrorMessage
         className={errorCss || classes.textFieldError}

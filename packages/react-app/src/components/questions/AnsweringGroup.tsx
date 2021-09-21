@@ -3,23 +3,15 @@ import { makeStyles } from '@material-ui/core/styles'
 // TODO: Make AnswerGroupView
 // import { QuestionGroupView } from '../../types/questionGroup'
 import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
 import Typography from "@material-ui/core/Typography"
+import Grid from '@material-ui/core/Grid'
 import { Link as RouterLink } from 'react-router-dom'
-import AnswerQuestionForm from '../forms/AnswerQuestion'
 import AnswerQuestionGroupForm from '../forms/AnswerQuestionGroupForm'
 import { QuestionGroupView } from '../../types/questionGroup'
 import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
 
 const useStyles = makeStyles(theme => ({
-  answerGroupItems: {
-    margin: 0,
-    padding: '16px 0 16px 24px',
-    [theme.breakpoints.down('sm')]: {
-      padding: '16px 0'
-    },
-  },
   buttonBack: {
     backgroundColor: 'white',
     fontFamily: 'Rajdhani',
@@ -34,11 +26,27 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     marginBottom: '24px'
   },
+  timeRowMobile: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: '16px',
+    justifyContent: 'center',
+    [theme.breakpoints.up('sm')]: {
+        display: 'none',
+    },
+  },
   titleRowButton: {
     alignSelf: 'end',
     marginRight: '8px',
     whitespace: 'nowrap',
     width: 'fit-content',
+  },
+  answerGroupItems: {
+    margin: 0,
+    padding: '16px 0 16px 24px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '16px 0'
+    },
   },
   questionGroupTitle: {
     fontFamily: 'Rajdhani',
@@ -59,15 +67,6 @@ const useStyles = makeStyles(theme => ({
         display: 'none',
     },
   },
-  timeRowMobile: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginBottom: '16px',
-    justifyContent: 'center',
-    [theme.breakpoints.up('sm')]: {
-        display: 'none',
-    },
-  },
   questionGroupTime: {
     alignSelf: 'flex-end',
     border: '2px solid #E95F36',
@@ -85,10 +84,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'nowrap',
+    padding: '16px !important',
     [theme.breakpoints.down('xs')]: {
+        marginLeft: 0,
         padding: 0,
     },
-    
   },
   totalTimeLeft: {
     border: '2px solid #E95F36',
@@ -122,14 +122,17 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700,
   },
   stakeColumn: {
+    alignItems: 'end',
     backgroundColor: '#111111',
     borderRadius: '4px',
     display: 'flex',
+    flexBasis: '49%',
     flexDirection: 'column',
-    alignItems: 'end',
-    padding: '16px',
+    flexWrap: 'nowrap',
+    padding: '16px !important',
     [theme.breakpoints.down('xs')]: {
         alignItems: 'center',
+        flexBasis: '100%',
         marginBottom: '16px',
         marginTop: '16px',
     },
@@ -154,12 +157,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: '48px',
     marginRight: '4px',
     textAlign: 'right'
-  },
-  errorTotalStakeAmount: {
-    color: '#ff0000',
-    position: 'relative',
-    top: '32px',
-    left: '-64px'
   },
   balance: {
     fontFamily: 'Rajdhani',

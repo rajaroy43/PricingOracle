@@ -1,4 +1,6 @@
 import { createTheme } from "@material-ui/core/styles";
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+const breakpoints = createBreakpoints({});
 
 const lithOrange = "#E96036";
 const black = "#000000";
@@ -173,7 +175,11 @@ export default createTheme({
               fontWeight: '700 !important',
               marginLeft: '4px'
             },
-            marginLeft: '24px'          
+            marginLeft: '24px',
+            [breakpoints.down('xs')]: {
+              marginLeft: 0,
+              marginRight: '24px',
+            },       
           }
         },
         MuiTextField: {
