@@ -41,4 +41,4 @@ const fetchQuestionsToCalculate = async () => {
     
 }
 console.log(`fetch interval ${process.env.FETCH_INTERVAL}`)
-setInterval(fetchQuestionsToCalculate, 10000)
+setInterval(fetchQuestionsToCalculate, 30000)
