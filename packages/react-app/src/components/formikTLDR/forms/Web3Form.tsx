@@ -106,7 +106,6 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
 
   const handleTxHash = (txHash: string) => setState({...state, txHash})
   const handleReceipt = (receipt: any) => {
-    console.log(`success tx receipt on broadcast ${JSON.stringify(receipt, null, 2)}`)
     setState({...state, receipt})
   }
   const handleError = (error: any) => setState({...state, error})
@@ -115,7 +114,6 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
   const args = getMethodArgs ? getMethodArgs(values) : staticArgsProps.concat(methodArgs.map((arg: string) => values[arg]))
   const method = getContractMethod ? getContractMethod(values) : contractMethod
   
-  console.log(`web3 form method ${method}`)
   const submit = () => isValid ?
     callMethod({
       contractMethod: method,

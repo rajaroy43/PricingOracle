@@ -1,4 +1,6 @@
 import { createTheme } from "@material-ui/core/styles";
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+const breakpoints = createBreakpoints({});
 
 const lithOrange = "#E96036";
 const black = "#000000";
@@ -116,12 +118,99 @@ export default createTheme({
                     color: 'white',
                 },
             },    
-        }, 
+        },
+        MuiFormHelperText: {
+          root: {
+            marginTop: 0,
+            height: 0,
+            position: 'absolute',
+            bottom: '1em'
+          },
+        },
         MuiIconButton: {
           root: {
             color: 'white'
           }
-        }  
+        },
+        MuiInputBase: {
+          root: {
+            backgroundColor: '#333',            
+            borderColor: 'transparent',
+            borderRadius: '4px',
+            borderStyle: 'solid',
+            color: 'white',
+            fontFamily: 'Rajdhani',
+            fontSize: '16px',
+            fontWeight: 700,
+            height: '36px',
+            margin: '0 !important',
+            padding: '4px',
+            textAlign: 'right',
+            width: '44px'
+          }
+        },
+        MuiInputLabel: {
+          root: {
+            color: '#ffffff !important',
+            fontSize: '16px',
+            fontWeight: 500,
+            position: 'relative !important',
+            '& Mui-error': {
+              display: 'flex !important',
+              color: '#ff0000'    
+            }
+          },
+          formControl: {
+            transform: 'none'
+          }
+        },
+        MuiFormControlLabel: {
+          root: {
+            fontFamily: 'Rajdhani',
+            fontSize: '16px',
+            fontWeight: 700,
+            '& span': {
+              fontFamily: 'Rajdhani',
+              fontSize: '16px',
+              fontWeight: '700 !important',
+              marginLeft: '4px'
+            },
+            marginLeft: '24px',
+            [breakpoints.down('xs')]: {
+              marginLeft: 0,
+              marginRight: '24px',
+            },       
+          }
+        },
+        MuiTextField: {
+          root: {
+            alignItems: 'center !important',
+            flexDirection: 'row !important',
+            justifyContent: 'space-around !important',
+          }
+        },
+        MuiRadio: {
+          root: {
+            backgroundColor: '#222222',
+            color: '#222222',          
+            height: '32px',
+            width: '32px',
+            fontWeight: 700
+          },
+          colorSecondary: {
+            color: "#222222",
+            '&$checked': {
+              color: '#E96036'
+            }
+          }
+        },
+        MuiFormGroup: {
+          root: {
+            alignItems: 'center',
+            display: 'flex',
+            marginLeft: '8px'
+          }
+        }
     },
     /*
     subtitle1: {
@@ -154,28 +243,4 @@ export default createTheme({
       fontWeight: "bold"
     }
     */
-  /*
-  overrides: {
-    MuiInputLabel: {
-      root: {
-        color: arcBlue,
-        fontSize: "1rem"
-      }
-    },
-    MuiInput: {
-      root: {
-        color: arcGrey,
-        fontWeight: 300
-      },
-      underline: {
-        "&:before": {
-          borderBottom: `2px solid ${arcBlue}`
-        },
-        "&:hover:not($disabled):not($focused):not($error):before": {
-          borderBottom: `2px solid ${arcBlue}`
-        }
-      }
-    }
-  }
-  */
 });

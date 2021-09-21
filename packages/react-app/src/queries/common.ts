@@ -81,3 +81,13 @@ export const USER_FIELDS = gql`
       tokenApprovalBalance
     }
   `
+
+  export const REPUTATION_FIELDS = gql`
+    fragment CategoryReputationFields on UserCategoryReputation {
+      category {
+        id
+        label
+      }
+      score
+    }
+  `

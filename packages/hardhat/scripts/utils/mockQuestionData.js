@@ -1,8 +1,8 @@
 const { ethers } = require("hardhat");
-const generateMockQuestionData = async () => {
+const generateMockQuestionData = async (endTimeFutureSeconds) => {
   const block = await ethers.provider.getBlock();
-  const pricingTime = block.timestamp + 100;
-  const endTime = block.timestamp + 60;
+  const endTime = block.timestamp + endTimeFutureSeconds;
+  const pricingTime = endTime + 50000;
   const description = `What is the price of an MRF share `;
   const bounty = ethers.utils.parseUnits("80.0", 18);
   const answerSet = [0, 50];
