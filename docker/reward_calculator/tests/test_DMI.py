@@ -11,7 +11,7 @@ def test_Should_Have_Proper_Wisdom_NodeAddress():
   numberOfWisdomNode=0
   for row in prepareDataPayload(data):
     #rewards output is in type of numpy.str
-    assert(float(rewards[numberOfWisdomNode][1]))
+    assert(type(float(rewards[numberOfWisdomNode][1])) == float)
     numberOfWisdomNode += 1
   assert(len(rewards) == numberOfWisdomNode)
   
