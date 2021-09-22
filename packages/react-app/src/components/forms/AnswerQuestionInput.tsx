@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     color: '#ff0000',
     position: 'relative',
     top: '32px',
-    left: '-64px'
+    left: '-80px'
   }
 }));
 

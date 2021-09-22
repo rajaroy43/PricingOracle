@@ -72,7 +72,7 @@ const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
               }
             }}
             disabled={!isValid}
-            label="Sign In" />
+            label="Connect Wallet" />
         </Flex>
       </Form>
     </div>
@@ -117,7 +117,7 @@ const SelectWalletForm = ({setWallet}: any) => {
 
 return (
   <Modal 
-    triggerText='Sign In'
+    triggerText='Connect Wallet'
     title='Connect Your Wallet'
     contentText=''
     getForm={(cancel: any) => <BasicForm
