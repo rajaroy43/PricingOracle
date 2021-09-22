@@ -1,5 +1,5 @@
 from numpy.core.fromnumeric import transpose
-from utils.FormattingData import prepareDataPayload
+from utils.FormattingData import prepareDataPayload, returnFormattedData
 import numpy as np
 from utils.DMI import DMI
 from scipy.stats import norm
@@ -43,8 +43,7 @@ def do_calc_np(dmi_data, n_choices, num_answers):
     answers = calc_numerical_answers(np_to_calc_dmi, n_choices, num_answers)
     answers=answers[:,np.newaxis]
 
-    answers = np.concatenate((workerids,answers), axis=1)
-    #print(answers)
+    print(answers)  # this is an array of length num_answers
 
     # At this point, npnp is shuffled and payments vector matches.
     # Combine the payments to match workerIDs
@@ -73,11 +72,9 @@ def calculate_rewards(data, n_choices, num_answers):
     wnanp = np.vstack(wna)
     dmi_data = np.concatenate((wnanp, dmi_data), axis=1)
 
-    #print(dmi_data)
-
     # dmi_data format is now an np array with np array elements.
     rewards, answers = do_calc_np(dmi_data, n_choices, num_answers)
-    return rewards
+    return returnFormattedData(rewards, answers)
     
     
     
