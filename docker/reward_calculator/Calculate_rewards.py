@@ -74,7 +74,8 @@ def calculate_rewards(data, n_choices, num_answers):
 
     # dmi_data format is now an np array with np array elements.
     rewards, answers = do_calc_np(dmi_data, n_choices, num_answers)
-    return returnFormattedData(rewards, answers)
+    return rewards
+    #return returnFormattedData(rewards, answers)
     
     
     
