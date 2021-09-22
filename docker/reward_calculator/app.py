@@ -24,10 +24,10 @@ def calculate_group_reward():
     logging.info("Data Coming form cordinator")
     data = request.get_json()
     print(data['msg'])
-    rewards=calculate_rewards(data['msg'],2,2)
-    print(rewards)
+    rewards=calculate_rewards(data['msg'],2,4)
+
     response = dict(time=datetime.now(), message="you've request reward data")
-    return jsonify(response)
+    return jsonify(rewards.tolist())
 
 
 
