@@ -1,16 +1,26 @@
-from schema import  Schema
 import numpy as np
+from utils.ParseSchema import prepareDataSchema,returnDataSchema
 
-schema = Schema([str,int,str,list,int,int,int])  
+def prepareValidationData(question):
+  validationData={}
+  validationData['questionId']=question[0]
+  validationData['questionGroupId']=question[1]
+  validationData['worker-id']=question[2]
+  validationData['answerSet']=question[3]
+  validationData['answerValue']=question[4]
+  validationData['stakeAmount']=question[5]
+  validationData['wisdomNodeReputation']=question[6]
+  return validationData
+
 
 def prepareDataPayload(data):
   formattedData=[]
   wisdomNodeAddress_AnswersValues={}
   for question in data:
-    #Schema get validated here 
-    schema.validate(question)
     if len(question) == 0:
       raise ValueError('Empty questions/answers')
+    #Schema get validated here 
+    prepareDataSchema.validate(prepareValidationData(question))
     key=question[2]
     if key not in wisdomNodeAddress_AnswersValues:
       wisdomNodeAddress_AnswersValues[key]=[question[4]]
@@ -40,7 +50,6 @@ def prepareDataPayload(data):
 
 def returnFormattedData(rewards, answers):
   #  Need to add schema validate here on the returned data
-  
+  #returnDataSchema.validate(returnedData)
   returnData = [0, 12345, "QuestionIDs", [0, 0, 0, 0], answers, rewards ]
-
   return returnData
