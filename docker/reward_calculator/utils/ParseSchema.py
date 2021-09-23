@@ -36,6 +36,6 @@ returnDataSchema = Schema({
                   "questionGroupId": str,
                   "questionIds": And(list,lambda ids: check_types(ids,str)),
                   "finalAnswerIndex": And(list,lambda finalAnswerIndex: check_types(finalAnswerIndex,int)),
-                  "finalAnswerValue": And(list,lambda finalAnswerValue: check_types(finalAnswerValue,int)),
+                  "finalAnswerValue": And(list,lambda finalAnswerValue: check_types(finalAnswerValue,float)),
                   "wisdomNodeUpdates":And(list,lambda wisdomNodeUpdates: checkWisdomNodeData(wisdomNodeUpdates,list))
                     })
