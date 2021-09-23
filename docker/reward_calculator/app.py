@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
 import requests
-
+from Calculate_rewards import calculate_rewards
 app = Flask(__name__)
 import logging
 LOGGER = logging.getLogger()
@@ -21,10 +21,12 @@ def ping_me():
 
 @app.route("/calculate-reward", methods=['POST'])
 def calculate_group_reward():
-    logging.info("someone's calling me with data")
-    data = request.form
-    logging.info(data)
-    response = dict(time=datetime.now(), message="you've request reward data")
+    logging.info("Data Coming form cordinator")
+    data = request.get_json()
+    print(data['msg'])
+    #Default n_choices= 2, num_answers =4
+    rewards=calculate_rewards(data['msg'],2,4)
+    response = dict(rewards=rewards)
     return jsonify(response)
 
 
