@@ -1,5 +1,6 @@
 
 require('dotenv').config()
+import { BigNumber } from "ethers"
 import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getQuestion } from "./queries/question"
@@ -22,19 +23,31 @@ const calculateQuestionGroup = async (group: any) => {
     const questionIds = group.questions.map((question: any) => question.id)
     console.log(`question ids ${questionIds}`)
     const groupIds = Array(answerCount).fill(group.id)
-    const allAddresses = questions.map(
-        (question: any) => { 
-          console.log(`inside question ${JSON.stringify(question)}`);
-          return question.question.answers.map((answer: any) => [answer.answerer.id, answer.stakeAmount])
-        })
-    console.log(`got all addresses ${allAddresses}`)
-     const addresses =  allAddresses.reduce((acc: string[], addrs: string[]) => acc.concat(addrs), [])
-    const rewardAmounts = Array(answerCount).fill(group.id)
-    await publishInvalidAnswers(
+
+    const answerStakes = questions
+      .map(({question}: any) => question.answers)
+      .reduce((acc:any, answers:any) => acc.concat(answers), [])
+      .reduce((acc: any, answer: any) => {
+        const answererId = answer.answerer.id
+        console.log(`inside red ${JSON.stringify(acc)}`)
+        if (acc.hasOwnProperty(answererId)) {
+          acc[answererId] = acc[answererId].add(BigNumber.from(answer.stakeAmount))
+        } else {
+          acc[answererId] = BigNumber.from(answer.stakeAmount)
+        } 
+        return acc
+      }, {})
+
+    const addresses = Object.keys(answerStakes)
+    const rewardAmounts = addresses.map((addr: string) => answerStakes[addr].toString())
+    console.log(`publishing invalid questions: ${questionIds}\nstake refunds groupIds\n${groupIds}\n${addresses}\n${JSON.stringify(rewardAmounts)}`)
+    return publishInvalidAnswers(
       questionIds,
-      groupIds,
-      addresses,
-      rewardAmounts
+      {
+        groupIds,
+        addresses,
+        rewardAmounts
+      }
     )
 
 
@@ -45,7 +58,7 @@ const calculateQuestionGroup = async (group: any) => {
       questions
     }
    
-    getRewards(groupData)
+    return getRewards(groupData)
   }
 
 }
@@ -58,8 +71,8 @@ const fetchQuestionsToCalculate = async () => {
     return 
   }
 
-  response.data.questionGroups.forEach(calculateQuestionGroup)
+  await Promise.all(response.data.questionGroups.map(calculateQuestionGroup))
     
 }
 console.log(`fetch interval ${process.env.FETCH_INTERVAL}`)
-setInterval(fetchQuestionsToCalculate, 30000)
+setInterval(fetchQuestionsToCalculate, 50000)

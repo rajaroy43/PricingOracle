@@ -40,7 +40,8 @@ export const GET_QUESTION  = gql`
 export const getQuestion = async (id: string, categoryId: string) => {
   const response = await subgraphClient.query({
     query: GET_QUESTION,
-    variables: {id, categoryId}
+    variables: {id, categoryId},
+    fetchPolicy: "network-only"
   })
 
   return response.data

@@ -471,7 +471,7 @@ contract LithiumPricing is ILithiumPricing, Roles {
       uint256[] memory questionIds = questionGroups[groupIds[i]].questionIds;
       for(uint256 j=0 ; j<questionIds.length ; j++){
          Question storage question = questions[questionIds[j]];
-         require(question.isAnswerCalculated == StatusCalculated.Calculated,"Answer is not yet calculated");
+         require(question.isAnswerCalculated != StatusCalculated.NotCalculated,"Answer is not yet calculated");
       }
       AnswerGroup  storage answerGroup = answerGroups[groupIds[i]][addressesToUpdate[i]];
       require(answerGroup.answerer == addressesToUpdate[i] ,"Not valid answerer");

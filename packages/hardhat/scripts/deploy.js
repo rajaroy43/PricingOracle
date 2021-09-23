@@ -27,6 +27,7 @@ const main = async () => {
   account1 = accounts[1];
   account2 = accounts[2];
   account3 = accounts[3];
+  const coordinatorAddress = '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'
   console.log(`Deploying to network ${network.name}`);
   console.log("\n\n 📡 Deploying Pricing...\n");
   const lithiumPricing = await deploy("LithiumPricing");
@@ -40,8 +41,10 @@ const main = async () => {
 
   await lithiumPricing.setLithiumRewardAddress(lithiumReward.address);
 
+  
 
   if (network.name === "localhost") {
+    await lithiumPricing.grantAdminRole(coordinatorAddress)
     await lithiumPricing.addCategory("Pre Coin Offering");
     await lithiumPricing.addCategory("Art Collection");
   
@@ -52,24 +55,27 @@ const main = async () => {
       userAccounts.map((account) => prepareAccount(lithToken, lithiumPricing, account, approveAmount, transferBalance))
     )
 
-    //Creating mock QuestionsGroup
-    const questionGroups = await createQuestionGroup(lithiumPricing);
+    //Creating mock QuestionsGroup valid answers ends 1 minute
+    const questionGroups = await createQuestionGroup(lithiumPricing, 60, 3);
     console.log(chalk.magenta("<>QuestionGroups created ", "\n"));
     wait(4000)
     await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
     console.log(chalk.magenta("<>QuestionGroups answered ", "\n"));
 
-    const questionGroups1 = await createQuestionGroup(lithiumPricing);
+    //Creating mock QuestionsGroup invalid answers ends 1 minute
+    const questionGroups1 = await createQuestionGroup(lithiumPricing, 60, 3);
     console.log(chalk.magenta("<><>QuestionGroups created 3 minimum answers", "\n"));
     wait(4000)
     await answerQuestionGroups(lithiumPricing, questionGroups1, userAccounts.slice(2,4), 2)
     console.log(chalk.magenta("<><>QuestionGroups 2 answer invalid 2", "\n"));
 
-    await createQuestionGroup(lithiumPricing, 10000, 1);
+    //Creating mock QuestionsGroup no answers ends 1 minute
+    await createQuestionGroup(lithiumPricing, 60, 1);
     console.log(chalk.magenta("<><><>QuestionGroups created no answers invalid", "\n"));
 
-    //Creating mock QuestionsGroup
-    await createQuestionGroup(lithiumPricing, 10000);
+    //Creating mock QuestionsGroup no answers ends 100 minute
+    await createQuestionGroup(lithiumPricing, 6000, 1);
+    console.log(chalk.magenta("<><><><>QuestionGroups created no answers ongoing", "\n"));
 
 
   }

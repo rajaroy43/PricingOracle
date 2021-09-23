@@ -17,19 +17,30 @@ export const publishAnswersRewards = (
 
 export const publishInvalidAnswers = async (
   questionIds: string[],
-  groupIds: string[],
-  addresses: string[],
-  rewardAmounts: string[]
+  rewardUpdates: RewardUpdateFields
 ) => {
-  const INVALID_STATUS = "2"
+  const INVALID_STATUS = 2
   const answerValues = questionIds.map(() => "0")
   const answerIndexes = questionIds.map(() => "0")
   const statuses = questionIds.map(() => INVALID_STATUS)
-  await  updateQuestionStatus({
+  const statusTx = await updateQuestionStatus({
     questionIds,
     answerIndexes,
     answerValues,
     statuses
   })
+
+  await statusTx.wait()
+
+  console.log((`got statusTx ${statusTx}`))
+
+  const rewardsTx = await updateRewards(
+    rewardUpdates
+  )
+
+  await rewardsTx.wait()
+
+  console.log((`got rewardsTx ${rewardsTx}`))
+
 
 }

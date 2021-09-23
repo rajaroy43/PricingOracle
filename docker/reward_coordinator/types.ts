@@ -2,7 +2,7 @@ export interface QuestionUpdateFields {
   questionIds: string[],
   answerIndexes: string[],
   answerValues: string[],
-  statuses: string[]
+  statuses: number[]
 }
 
 export interface RewardUpdateFields {

@@ -1,4 +1,4 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt, log } from "@graphprotocol/graph-ts"
 import {
   AnswerGroupSetSubmitted,
   CategoryAdded,
@@ -41,6 +41,7 @@ QUESTION_TYPES[1] = "GroundTruth"
 let STATUS_CALCULATED = new Array<string>(2)
 STATUS_CALCULATED[0] = "NotCalculated"
 STATUS_CALCULATED[1] = "Calculated"
+STATUS_CALCULATED[2] = "Invalid"
 
 let ANSWER_STATUS = new Array<string>(2)
 ANSWER_STATUS[0] = "Unclaimed"
@@ -177,13 +178,20 @@ export function handleQuestionCreated(event: QuestionCreated): void {
 
 function updateFinalAnswer(questionId: string, answerIndex: string, answerValue: string, status: string ): void {
   let question = Question.load(questionId)
+  log.info('handling answer update 3', [])
   question.finalAnswerIndex =  BigInt.fromString(answerIndex).toI32()
   question.finalAnswerValue = BigInt.fromString(answerValue)
   question.isAnswerCalculated = status
+  log.info('handling answer update 3', [])
   question.save()
+
+  let questionGroup = QuestionGroup.load(question.questionGroup)
+  questionGroup.isAnswerCalculated = status
+  questionGroup.save()
 }
 
 export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedStatus): void {
+  log.info('handling finance answer updates {} questions', [BigInt.fromI32(event.params.questionIds.length).toString()])
   let questionIds: Array<BigInt> = event.params.questionIds
   let answerIndexes: Array<BigInt> = event.params.answerIndexes
   let answerValues: Array<BigInt> = event.params.answerValues
@@ -193,7 +201,8 @@ export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedSt
     let answerIndex = answerIndexes[i]
     let answerValue = answerValues[i]
     let status = statuses[i]
-    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString(), STATUS_CALCULATED[status])
+    let statusEnum = STATUS_CALCULATED[status]
+    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString(), statusEnum)
   }
 }
 
@@ -219,11 +228,17 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
     categoryId = question.category
   }
   questionGroup.category = categoryId
-  questionGroup.questions = questionIdStrings
   questionGroup.endTime = endTime
   questionGroup.startTime = startTime
   questionGroup.minimumRequiredAnswers = event.params.minimumRequiredAnswers
+  questionGroup.isAnswerCalculated = STATUS_CALCULATED[0]
   questionGroup.save()
+  for(let i = 0; i < questionIds.length; i++) {
+    let questionId = questionIds[i]
+    let question = Question.load(questionId.toString())
+    question.questionGroup = questionGroup.id
+    question.save()
+  }
 }
 
 export function handleQuestionAnswered(event: QuestionAnswered): void {
@@ -264,7 +279,7 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
   let questionGroupId = event.params.questionSetId.toString()
   let answerGroupId = getAnswerGroupId(owner.id, questionGroupId)
   let questionGroup = QuestionGroup.load(questionGroupId)
-  let answerIds = new Array<String>(questionGroup.questions.length)
+  let answerIds = new Array<string>(questionGroup.questions.length)
 
   let questions = questionGroup.questions as string[]
   
@@ -288,6 +303,7 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
 }
 
 function updateGroupReward(answerGroupId: string, amount: BigInt): void {
+  log.info('+++++++++++++++updating group {} reward {}', [answerGroupId, amount.toString()])
   let answerGroup = AnswerGroup.load(answerGroupId)
   answerGroup.rewardAmount = amount
   answerGroup.isRewardCalculated = STATUS_CALCULATED[1]
@@ -295,15 +311,21 @@ function updateGroupReward(answerGroupId: string, amount: BigInt): void {
 }
 
 export function handleGroupRewardUpdated(event: GroupRewardUpdated): void {
+  log.info('<>handling groups reward update', [])
   let groupIds: Array<BigInt> = event.params.groupIds
   let addresses: Array<Address> = event.params.addressesToUpdate
   let rewardAmounts: Array<BigInt> = event.params.rewardAmounts
+  log.info('<>handling groups count{}', [BigInt.fromI32(groupIds.length).toString()])
+
   for (let i = 0; i < groupIds.length; i++) {
+    log.info('<><>handling group reward update', [])
+
     let questionGroupId = groupIds[i]
     let address = addresses[i]
     let answerGroupId = getAnswerGroupId(address.toHexString(), questionGroupId.toString())
     let amount = rewardAmounts[i]
-    updateGroupReward(answerGroupId, amount)
+    log.info('<><><>updating answer group {}', [answerGroupId.toString()])
+    updateGroupReward(answerGroupId.toString(), amount)
   }
 }
 

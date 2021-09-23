@@ -16,7 +16,7 @@ const lithiumPricing = (() => new Contract(addresses.LithiumPricingAddress, pric
 export const updateQuestionStatus = (
   updates: QuestionUpdateFields
 ) => { 
-  lithiumPricing.updateFinalAnswerStatus(
+  return lithiumPricing.updateFinalAnswerStatus(
     updates.questionIds,
     updates.answerIndexes,
     updates.answerValues,
@@ -26,8 +26,9 @@ export const updateQuestionStatus = (
 
 export const updateRewards = (
   updates: RewardUpdateFields
-) => { 
-  lithiumPricing.updateGroupRewardAmounts(
+) => {
+  console.log(`broadcastin reward update addresses:\b${updates.addresses}\ngroups:\n${updates.groupIds}\nrewards\n${updates.rewardAmounts}`) 
+  return lithiumPricing.updateGroupRewardAmounts(
     updates.addresses,
     updates.groupIds,
     updates.rewardAmounts

@@ -3,13 +3,13 @@ import { subgraphClient } from '../client';
 
 export const GET_ENDED_QUESTION_GROUPS  = gql`
   query questionGroups($now: String!) {
-    questionGroups(where: {endTime_lt: $now}) {
+    questionGroups(where: {endTime_lt: $now, isAnswerCalculated: NotCalculated}) {
       id
       minimumRequiredAnswers
       category {
         id
       }
-      questions (where: {isAnswerCalculated: NotCalculated}) {
+      questions {
         id
         answerCount
       }
@@ -30,7 +30,8 @@ export const getEndedQuestionGroups = async () => {
   const now = Math.floor(new Date().getTime() / 1000).toString();
   const response = await subgraphClient.query({
     query: GET_ENDED_QUESTION_GROUPS,
-    variables: {now}
+    variables: {now},
+    fetchPolicy: "network-only"
   })
 
   return response
