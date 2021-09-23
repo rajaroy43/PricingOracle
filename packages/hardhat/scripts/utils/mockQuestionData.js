@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-const generateMockQuestionData = async (endTimeFutureSeconds) => {
+const generateMockQuestionData = async (endTimeFutureSeconds, minimumRequiredAnswers) => {
   const block = await ethers.provider.getBlock();
   const endTime = block.timestamp + endTimeFutureSeconds;
   const pricingTime = endTime + 50000;
@@ -8,7 +8,6 @@ const generateMockQuestionData = async (endTimeFutureSeconds) => {
   const answerSet = [0, 50];
   const categoryId = 0;
 
-  const minimumRequiredAnswer = 1;
 
   const startTime = block.timestamp + 2;
   const description1 = `What is the price of an TATA NANO share  `;
@@ -37,7 +36,7 @@ const generateMockQuestionData = async (endTimeFutureSeconds) => {
     [description, description1, description2, description3],
     [answerSet, answerSet1, answerSet2, answerSet3],
     [startTime, startTime, startTime, startTime],
-    minimumRequiredAnswer,
+    minimumRequiredAnswers,
   ];
 
   const args2 = [
@@ -49,7 +48,7 @@ const generateMockQuestionData = async (endTimeFutureSeconds) => {
     [description, description1, description2, description3],
     [answerSet, answerSet1, answerSet2, answerSet3],
     [startTime, startTime, startTime, startTime],
-    minimumRequiredAnswer,
+    minimumRequiredAnswers,
   ];
   const args = [args1, args2];
   return args;

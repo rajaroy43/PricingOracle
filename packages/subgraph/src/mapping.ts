@@ -41,6 +41,7 @@ QUESTION_TYPES[1] = "GroundTruth"
 let STATUS_CALCULATED = new Array<string>(2)
 STATUS_CALCULATED[0] = "NotCalculated"
 STATUS_CALCULATED[1] = "Calculated"
+STATUS_CALCULATED[2] = "Invalid"
 
 let ANSWER_STATUS = new Array<string>(2)
 ANSWER_STATUS[0] = "Unclaimed"
@@ -181,6 +182,10 @@ function updateFinalAnswer(questionId: string, answerIndex: string, answerValue:
   question.finalAnswerValue = BigInt.fromString(answerValue)
   question.isAnswerCalculated = status
   question.save()
+
+  let questionGroup = QuestionGroup.load(question.questionGroup)
+  questionGroup.isAnswerCalculated = status
+  questionGroup.save()
 }
 
 export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedStatus): void {
@@ -193,7 +198,8 @@ export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedSt
     let answerIndex = answerIndexes[i]
     let answerValue = answerValues[i]
     let status = statuses[i]
-    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString(), STATUS_CALCULATED[status])
+    let statusEnum = STATUS_CALCULATED[status]
+    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString(), statusEnum)
   }
 }
 
@@ -219,11 +225,17 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
     categoryId = question.category
   }
   questionGroup.category = categoryId
-  questionGroup.questions = questionIdStrings
   questionGroup.endTime = endTime
   questionGroup.startTime = startTime
   questionGroup.minimumRequiredAnswers = event.params.minimumRequiredAnswers
+  questionGroup.isAnswerCalculated = STATUS_CALCULATED[0]
   questionGroup.save()
+  for(let i = 0; i < questionIds.length; i++) {
+    let questionId = questionIds[i]
+    let question = Question.load(questionId.toString())
+    question.questionGroup = questionGroup.id
+    question.save()
+  }
 }
 
 export function handleQuestionAnswered(event: QuestionAnswered): void {
@@ -264,7 +276,7 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
   let questionGroupId = event.params.questionSetId.toString()
   let answerGroupId = getAnswerGroupId(owner.id, questionGroupId)
   let questionGroup = QuestionGroup.load(questionGroupId)
-  let answerIds = new Array<String>(questionGroup.questions.length)
+  let answerIds = new Array<string>(questionGroup.questions.length)
 
   let questions = questionGroup.questions as string[]
   
@@ -298,12 +310,13 @@ export function handleGroupRewardUpdated(event: GroupRewardUpdated): void {
   let groupIds: Array<BigInt> = event.params.groupIds
   let addresses: Array<Address> = event.params.addressesToUpdate
   let rewardAmounts: Array<BigInt> = event.params.rewardAmounts
+
   for (let i = 0; i < groupIds.length; i++) {
     let questionGroupId = groupIds[i]
     let address = addresses[i]
     let answerGroupId = getAnswerGroupId(address.toHexString(), questionGroupId.toString())
     let amount = rewardAmounts[i]
-    updateGroupReward(answerGroupId, amount)
+    updateGroupReward(answerGroupId.toString(), amount)
   }
 }
 
