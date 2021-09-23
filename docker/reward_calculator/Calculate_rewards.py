@@ -53,7 +53,7 @@ def do_calc_np(dmi_data, n_choices, num_answers):
 
 def calculate_rewards(data, n_choices, num_answers):
     print("\033[1;32m Calculating rewards....")
-    passedData=prepareDataPayload(data)
+    passedData ,questionGroupId = prepareDataPayload(data)
     
     #Passed data should be like : 
     #[
@@ -64,9 +64,15 @@ def calculate_rewards(data, n_choices, num_answers):
     # Convert list to 2 numpy arrays one with wisdomNodeAddress and one with array of answerValues
     wna = []
     arra = []
-    for row in passedData:
-        wna.append(row[0])
-        arra.append(row[1])
+    i=0
+    for i in range (len(passedData)-1):
+        questionIds=passedData[i][2]
+        if(questionIds != passedData[i+1][2]):
+            raise ValueError("Invalid QuestionIDs")
+        wna.append(passedData[i][0])
+        arra.append(passedData[i][1])
+    wna.append(passedData[i][0])
+    arra.append(passedData[i][1])
 
     dmi_data = np.vstack(arra)
     wnanp = np.vstack(wna)
@@ -74,8 +80,8 @@ def calculate_rewards(data, n_choices, num_answers):
 
     # dmi_data format is now an np array with np array elements.
     rewards, answers = do_calc_np(dmi_data, n_choices, num_answers)
-    return rewards
-    #return returnFormattedData(rewards, answers)
+    #return rewards
+    return returnFormattedData(questionGroupId,questionIds,rewards, answers)
     
     
     
