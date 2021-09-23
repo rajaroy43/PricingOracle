@@ -26,8 +26,8 @@ def calculate_group_reward():
     print(data['msg'])
     rewards=calculate_rewards(data['msg'],2,4)
 
-    response = dict(time=datetime.now(), message="you've request reward data")
-    return jsonify(rewards.tolist())
+    response = dict(rewards=rewards.tolist())
+    return jsonify(response)
 
 
 
