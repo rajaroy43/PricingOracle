@@ -19,9 +19,8 @@ const calculateQuestionGroup = async (group: any) => {
   //@ts-ignore
   const answerCount = parseInt(questions[0].question.answerCount, 10)
   if (parseInt(group.minimumRequiredAnswers, 10) > answerCount) {
-    console.log(`QuestionGroup ${group.id} INVALID: ${JSON.stringify(questions)}`)
+    console.log(`QuestionGroup ${group.id} INVALID`)
     const questionIds = group.questions.map((question: any) => question.id)
-    console.log(`question ids ${questionIds}`)
     const groupIds = Array(answerCount).fill(group.id)
 
     const answerStakes = questions

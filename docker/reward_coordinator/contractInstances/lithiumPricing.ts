@@ -27,7 +27,6 @@ export const updateQuestionStatus = (
 export const updateRewards = (
   updates: RewardUpdateFields
 ) => {
-  console.log(`broadcastin reward update addresses:\b${updates.addresses}\ngroups:\n${updates.groupIds}\nrewards\n${updates.rewardAmounts}`) 
   return lithiumPricing.updateGroupRewardAmounts(
     updates.addresses,
     updates.groupIds,
