@@ -22,7 +22,7 @@ def checkWisdomNodeData(wisdomNodeUpdates,data_type):
 
 #Incomming data from cordinator schema validation
 prepareDataSchema = Schema({'questionId': str,
-                 'questionGroupId':int, 
+                 'questionGroupId':str, 
                  'worker-id':str,
                  'answerSet':And(list,lambda answerSets:check_types(answerSets,int)),
                  'answerValue':int,

@@ -3,13 +3,13 @@ from utils.ParseSchema import prepareDataSchema,returnDataSchema
 
 def prepareValidationData(question):
   validationData={}
-  validationData['questionId']=question[0]
-  validationData['questionGroupId']=question[1]
-  validationData['worker-id']=question[2]
-  validationData['answerSet']=question[3]
-  validationData['answerValue']=question[4]
-  validationData['stakeAmount']=question[5]
-  validationData['wisdomNodeReputation']=question[6]
+  validationData['questionGroupId']=question[0]
+  validationData['worker-id']=question[1]
+  validationData['questionId']=question[2]
+  validationData['answerSet']=[int(i) for i in question[3]]
+  validationData['answerValue']=int(question[4])
+  validationData['stakeAmount']=int(question[5])
+  validationData['wisdomNodeReputation']=int(question[6])
   return validationData
 
 
@@ -40,8 +40,8 @@ def prepareDataPayload(data):
       raise ValueError('Empty questions/answers')
     #Schema get validated here 
     prepareDataSchema.validate(prepareValidationData(question))
-    key=question[2]
-    questionGroupIds.append(question[1])
+    key=question[1]
+    questionGroupIds.append(question[0])
     if key not in wisdomNodeAddress_AnswersValues:
       wisdomNodeAddress_AnswersValues[key]=[[question[0],question[4]]]
     else:
