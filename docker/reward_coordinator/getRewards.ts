@@ -10,6 +10,7 @@ const prepareAnswerRow = (groupId: string, questionId: string, answerSet: string
     questionId,
     answerSet,
     answerSet[answer.answerIndex],
+    answer.answerIndex,
     answer.stakeAmount,
     reputationScore
   ] 
