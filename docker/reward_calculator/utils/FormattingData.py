@@ -8,8 +8,9 @@ def prepareValidationData(question):
   validationData['questionId']=question[2]
   validationData['answerSet']=[int(i) for i in question[3]]
   validationData['answerValue']=int(question[4])
-  validationData['stakeAmount']=int(question[5])
-  validationData['wisdomNodeReputation']=int(question[6])
+  validationData['answerIndex']=int(question[5])
+  validationData['stakeAmount']=int(question[6])
+  validationData['wisdomNodeReputation']=int(question[7])
   return validationData
 
 
@@ -42,9 +43,9 @@ def prepareDataPayload(data):
     key=question[1]
     questionGroupIds.append(question[0])
     if key not in wisdomNodeAddress_AnswersValues:
-      wisdomNodeAddress_AnswersValues[key]=[ [question[4]], [question[2]] ]
+      wisdomNodeAddress_AnswersValues[key]=[ [question[5]], [question[2]] ]
     else:
-      wisdomNodeAddress_AnswersValues[key][0].append(question[4])
+      wisdomNodeAddress_AnswersValues[key][0].append(question[5])
       wisdomNodeAddress_AnswersValues[key][1].append(question[2])
   #print(wisdomNodeAddress_AnswersValues)
 

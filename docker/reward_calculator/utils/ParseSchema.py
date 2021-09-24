@@ -26,9 +26,10 @@ prepareDataSchema = Schema({'questionId': str,
                  'worker-id':str,
                  'answerSet':And(list,lambda answerSets:check_types(answerSets,int)),
                  'answerValue':int,
+                 'answerIndex':int,
                  'stakeAmount':int,
                  'wisdomNodeReputation':int
-                 }) 
+                 })
 
 #return data to cordinator schema validation 
 returnDataSchema = Schema({

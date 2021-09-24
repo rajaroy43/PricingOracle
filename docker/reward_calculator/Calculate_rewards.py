@@ -57,8 +57,8 @@ def calculate_rewards(data, n_choices, num_answers):
     
     #Passed data should be like : 
     #[
-    #   [wisdomNodeAddress1,[answerValue1,answerValue2,answerValue3,....],[questionId1,questionId2,questionId3,...]],
-    #   [wisdomNodeAddress2,[answerValue1,answerValue2,answerValue3,.....],[questionId1,questionId2,questionId3,...]] 
+    #   [wisdomNodeAddress1,[answerIndex1,answerIndex2,answerIndex3,....],[questionId1,questionId2,questionId3,...]],
+    #   [wisdomNodeAddress2,[answerIndex1,answerIndex2,answerIndex3,.....],[questionId1,questionId2,questionId3,...]] 
     # ]
 
     # Convert list to 2 numpy arrays one with wisdomNodeAddress and one with array of answerValues
