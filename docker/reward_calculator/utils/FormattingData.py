@@ -4,7 +4,7 @@ from utils.ParseSchema import prepareDataSchema,returnDataSchema
 def prepareValidationData(question):
   validationData={}
   validationData['questionGroupId']=question[0]
-  validationData['worker-id']=question[1]
+  validationData['wisdomNodeAddress']=question[1]
   validationData['questionId']=question[2]
   validationData['answerSet']=[int(i) for i in question[3]]
   validationData['answerValue']=int(question[4])

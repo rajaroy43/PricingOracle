@@ -30,15 +30,15 @@ def do_calc_np(dmi_data, n_choices, num_answers):
     # and arrays of answers in the second column
     np.random.shuffle(dmi_data) #function operates in-place
 
-    # Need to remove first column as it's the worker-id
+    # Need to remove first column as it's the wisdomNodeAddress
     np_to_calc_dmi = dmi_data[:,1:].astype(np.int64)
-    workerids = dmi_data[:,0, None]
+    wisdomNodeAddresses = dmi_data[:,0, None]
 
     # do the DMI payment calculation
     payments, nf = DMI(np_to_calc_dmi,n_choices, False, False)
 
     # Return the numerical answers to the questions.
-    # Function accepts the raw array (no worker id or question id)
+    # Function accepts the raw array (no wisdomNodeAddress or question id)
     # and calculates one number per question (column), which returns a vector of length (number of questions)
     answers = calc_numerical_answers(np_to_calc_dmi, n_choices, num_answers)
     answers=answers[:,np.newaxis]
@@ -46,8 +46,8 @@ def do_calc_np(dmi_data, n_choices, num_answers):
     print(answers)  # this is an array of length num_answers
 
     # At this point, npnp is shuffled and payments vector matches.
-    # Combine the payments to match workerIDs
-    npnp = np.concatenate((workerids,np.array(payments)), axis=1)
+    # Combine the payments to match wisdomNodeAddress
+    npnp = np.concatenate((wisdomNodeAddresses,np.array(payments)), axis=1)
     return npnp, answers
 
 

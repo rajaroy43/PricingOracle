@@ -67,7 +67,7 @@ def DMI(answers, choice_n, use_norm = True, shuffle = False):
 
     # T tasks are arbitrarily divided into two disjoint parts T_1 , T_2
     answers = np.transpose(answers)
-    if shuffle: np.random.shuffle(answers)  # making this optional so we can assign worker ids if they aren't included.
+    if shuffle: np.random.shuffle(answers)  # making this optional so we can assign wisdomNodeAddresses  if they aren't included.
     half = task_n // 2
     T1 = np.transpose(answers[ : half])
     T2 = np.transpose(answers[half : ])
