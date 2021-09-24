@@ -11,7 +11,10 @@ import { QuestionGroupView } from '../../types/questionGroup'
 const useStyles = makeStyles(theme => ({
   buttonBack: {
     backgroundColor: 'white',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '16px',
     fontWeight: 700,
     '&:hover': {
@@ -46,12 +49,18 @@ const useStyles = makeStyles(theme => ({
     },
   },
   questionGroupTitle: {
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '16px',
     fontWeight: 400
   },
   questionGroupId: {
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '32px',
     fontWeight: 400
   },
@@ -67,7 +76,10 @@ const useStyles = makeStyles(theme => ({
   questionGroupTime: {
     alignSelf: 'flex-end',
     border: '2px solid #E95F36',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '20px',
     fontWeight: 700,
     marginRight: '2px',

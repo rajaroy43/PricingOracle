@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'nowrap',
     padding: '16px !important',
     [theme.breakpoints.down('xs')]: {
+        flexBasis: '100%',
         marginLeft: 0,
         padding: 0,
     },
@@ -36,19 +37,29 @@ const useStyles = makeStyles(theme => ({
     border: '2px solid #E95F36',
     display: 'flex',
     flexDirection: 'row',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '20px',
     fontWeight: 700,
     marginLeft: '8px',
     marginRight: '8px',
     justifyContent: 'space-between',
     padding: '8px',
-    width: '100%'
+    width: '100%',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      marginRight: 0
+    }
   },
   totalPool: {
     display: 'flex',
     flexDirection: 'row',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '20px',
     fontWeight: 400,
     justifyContent: 'space-between',
@@ -57,7 +68,11 @@ const useStyles = makeStyles(theme => ({
     marginTop: '16px',
     padding: '0 10px',
     textAlign: 'right',
-    width: '100%'
+    width: '100%',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      marginRight: 0
+    }
   },
   totalPoolLith: {
     fontWeight: 700
@@ -84,7 +99,10 @@ const useStyles = makeStyles(theme => ({
     },
   },
   stakeLithTitle: {
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '24px',
     fontWeight: 500,
     textAlign: 'right',
@@ -108,7 +126,10 @@ const useStyles = makeStyles(theme => ({
     marginTop: '21px'
   },
   balance: {
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '16px',
     fontWeight: 500,
     marginTop: '8px',
