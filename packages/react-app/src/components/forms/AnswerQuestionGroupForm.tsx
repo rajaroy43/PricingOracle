@@ -152,18 +152,9 @@ const Success = () => (
   </div>
 )
 
-const getForm = (questionGroup: QuestionGroupView, connectedWallet: any) => (submit: any, isValid: boolean) => {
-  const classes = useStyles();
-  const {user} = useGetUser(subgraphClient, connectedWallet.address)
-
+const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stakeState: any, setTotalStake: any) => (submit: any, isValid: boolean) => {
   const lithBalance = user ? user.tokenBalanceDisplay : '-'
 
-  const initialStakeState = {
-    totalStake: "0",
-    stakes: questionGroup.questions.map(() => 0)
-  }
-
-  const [stakeState, setTotalStake] = useState(initialStakeState)
   const updateStake =  (idx: number) => (stake: number) => {
     //@ts-ignore
     console.log(` updating stakes with - ${stake}`)
@@ -227,11 +218,18 @@ const getMethodArgs = (questionGroupId: string) => (values: any) => {
 }
 
 const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGroup: QuestionGroupView, connectedWallet: any}) => {
+  const classes = useStyles();
   const defaultQuestionValues = questionGroup.questions.map(() => {return {...answerQuestionGroupSchema.defaultValue}})
+  const { user } = useGetUser(subgraphClient, connectedWallet.address);
+  const initialStakeState = {
+    totalStake: "0",
+    stakes: questionGroup.questions.map(() => 0)
+  }
+  const [stakeState, setTotalStake] = useState(initialStakeState)
   const formProps = {
     defaultValues: {answers: defaultQuestionValues },
     schema: answerQuestionGroupSchema.schema,
-    getForm: getForm(questionGroup, connectedWallet),
+    getForm: getForm(questionGroup, classes, user, stakeState, setTotalStake),
     // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,
     // @ts-ignore
