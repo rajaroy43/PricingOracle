@@ -32,7 +32,6 @@ def prepareOutgoingValidationData(questionGroupId,questionIds,rewards, answers):
   return validationData
 
 def prepareDataPayload(data):
-  formattedData=[]
   wisdomNodeAddress_AnswersValues={}
   questionGroupIds=[]
   for question in data:
@@ -43,9 +42,10 @@ def prepareDataPayload(data):
     key=question[1]
     questionGroupIds.append(question[0])
     if key not in wisdomNodeAddress_AnswersValues:
-      wisdomNodeAddress_AnswersValues[key]=[[question[0],question[4]]]
+      wisdomNodeAddress_AnswersValues[key]=[ [question[4]], [question[2]] ]
     else:
-      wisdomNodeAddress_AnswersValues[key].append([question[0],question[4]])
+      wisdomNodeAddress_AnswersValues[key][0].append(question[4])
+      wisdomNodeAddress_AnswersValues[key][1].append(question[2])
   #print(wisdomNodeAddress_AnswersValues)
 
   #validating questionGroup
@@ -56,13 +56,7 @@ def prepareDataPayload(data):
 
   #Converting dict data to 2-d array
 
-  for wisdomNodeAddress,answerValues in wisdomNodeAddress_AnswersValues.items():
-    answers=[]
-    questionIds=[]
-    for answerValue in answerValues:
-      questionIds.append(answerValue[0])
-      answers.append(answerValue[1])
-    formattedData.append([wisdomNodeAddress,answers,questionIds])
+  formattedData = [[address, values[0], values[1]] for address, values in wisdomNodeAddress_AnswersValues.items()]
   return formattedData,questionGroup
 
 
