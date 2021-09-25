@@ -1,33 +1,59 @@
 const { generateMockQuestionData } = require("./mockQuestionData");
 
-const createQuestionGroup = async (lithiumPricing, endTimeFutureSeconds = 10000, minimumRequiredAnswer = 1) => {
-  const args = await generateMockQuestionData(endTimeFutureSeconds, minimumRequiredAnswer);
+const createQuestionGroup = async (
+  lithiumPricing,
+  endTimeFutureSeconds = 10000,
+  minimumRequiredAnswer = 1
+) => {
+  const args = await generateMockQuestionData(
+    endTimeFutureSeconds,
+    minimumRequiredAnswer
+  );
   console.log("\n\n 📡 Creating mock question groups \n");
   for (var i = 0; i < args.length; i++) {
     await lithiumPricing.createQuestionGroup(...args[i]);
   }
-  return args
-}
+  return args;
+};
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-const answerQuestionGroup = async (lithiumPricing, groupId, questions, account) => {
-  const stakeAmounts = questions[0].map(() => getRandomInt(101))
-  const answerIndexes = questions[0].map(() => getRandomInt(2))
-  const answer = await lithiumPricing.connect(account).answerQuestions(groupId, stakeAmounts, answerIndexes)
-}
+const answerQuestionGroup = async (
+  lithiumPricing,
+  groupId,
+  questions,
+  account
+) => {
+  const stakeAmounts = questions[0].map(() => getRandomInt(101));
+  const answerIndexes = questions[0].map(() => getRandomInt(2));
+  const answer = await lithiumPricing
+    .connect(account)
+    .answerQuestions(groupId, stakeAmounts, answerIndexes);
+};
 
-const answerQuestionGroups = async (lithiumPricing, questions, accounts, idxStart = 0) => {
+const answerQuestionGroups = async (
+  lithiumPricing,
+  questions,
+  accounts,
+  idxStart = 0
+) => {
   for (let i = 0; i < questions.length; i++) {
+    console.log(`Answering group ${i + idxStart}`);
     for (let t = 0; t < accounts.length; t++) {
-      await answerQuestionGroup(lithiumPricing, i + idxStart, questions[i], accounts[t])
+      console.log(`Answering by wisdom node ${t + 1}`);
+      await answerQuestionGroup(
+        lithiumPricing,
+        i + idxStart,
+        questions[i],
+        accounts[t]
+      );
     }
   }
-}
+};
 
 module.exports = {
   createQuestionGroup,
-  answerQuestionGroups
-}
+  answerQuestionGroups,
+};
