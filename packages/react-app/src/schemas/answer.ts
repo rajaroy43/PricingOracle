@@ -9,7 +9,10 @@ export const answerQuestionGroupSchema = {
     answers: Yup.array().of(
       Yup.object().shape({
         answerIndex: Yup.string().required("Answer required"),
-        stakeAmount: Yup.string().required("Stake required")
+        stakeAmount: Yup.number()
+                      .typeError("Stake Amount must be a number")
+                      .min(0, "Stake Amount must be a positive number")
+                      .required("Stake Amount is required")
       })
     )
   })

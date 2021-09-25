@@ -14,7 +14,10 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: '#111111',
     borderRadius: '4px',
     '& p': {
-      fontFamily: 'Rajdhani',
+      fontFamily: [
+        'Rajdhani',
+        'sans-serif'
+      ].join(', '),
       fontSize: '18px',
       fontWeight: '500',
       marginTop: 0
