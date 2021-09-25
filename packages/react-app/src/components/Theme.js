@@ -29,41 +29,59 @@ export default createTheme({
     lineHeight: '1px',
     h1: {
         color: "white",
-        fontFamily: "Rajdhani",
+        fontFamily: [
+          'Rajdhani',
+          'sans-serif'
+        ].join(', '),
         fontSize: "2.5rem",
         fontWeight: 400,    
-        lineHeight: 1.5
+        lineHeight: 1
     },
     h2: {
         color: "white",
-        fontFamily: "Rajdhani",
+        fontFamily: [
+          'Rajdhani',
+          'sans-serif'
+        ].join(', '),
         fontSize: "2.5rem",
         fontWeight: 400,    
         lineHeight: 1.5
     },
     h3: {
       color: "white",
-      fontFamily: "Rajdhani",
+      fontFamily: [
+        'Rajdhani',
+        'sans-serif'
+      ].join(', '),
       fontSize: "24px",
       fontWeight: 500,
     },
     h4: {
         color: "white",
-        fontFamily: "Rajdhani",
+        fontFamily: [
+          'Rajdhani',
+          'sans-serif'
+        ].join(', '),
         fontSize: "2.5rem",
         fontWeight: 400,    
         lineHeight: 1.5
     },
     h5: {
         color: "white",
-        fontFamily: "Rajdhani",
+        fontFamily: [
+          'Rajdhani',
+          'sans-serif'
+        ].join(', '),
         fontSize: "2.5rem",
         fontWeight: 400,    
         lineHeight: 1.5
     },
     h6: {
         color: "white",
-        fontFamily: "Rajdhani",
+        fontFamily: [
+          'Rajdhani',
+          'sans-serif'
+        ].join(', '),
         fontSize: "2.5rem",
         fontWeight: 400,    
         lineHeight: 1.5
@@ -139,7 +157,10 @@ export default createTheme({
             borderRadius: '4px',
             borderStyle: 'solid',
             color: 'white',
-            fontFamily: 'Rajdhani',
+            fontFamily: [
+              'Rajdhani',
+              'sans-serif'
+            ].join(', '),
             fontSize: '16px',
             fontWeight: 700,
             height: '36px',
@@ -166,11 +187,17 @@ export default createTheme({
         },
         MuiFormControlLabel: {
           root: {
-            fontFamily: 'Rajdhani',
+            fontFamily: [
+              'Rajdhani',
+              'sans-serif'
+            ].join(', '),
             fontSize: '16px',
             fontWeight: 700,
             '& span': {
-              fontFamily: 'Rajdhani',
+              fontFamily: [
+                'Rajdhani',
+                'sans-serif'
+              ].join(', '),
               fontSize: '16px',
               fontWeight: '700 !important',
               marginLeft: '4px'
