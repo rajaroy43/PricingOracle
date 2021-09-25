@@ -48,10 +48,10 @@ module.exports = {
     },
     hardhat: {
       chainId: 1337,
-      /*
-        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-      */
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+        count: 101,
+      },
     },
     rinkeby: {
       url: process.env.RINKEBY_PROVIDER_ENDPOINT, //<---- YOUR INFURA ID! (or it won't work)
