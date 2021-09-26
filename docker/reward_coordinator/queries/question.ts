@@ -17,6 +17,8 @@ export const GET_QUESTION  = gql`
       answerSet
       answerSetTotalStaked
       answerCount
+      bounty
+      totalStaked
       answers {
         id
         answerer {

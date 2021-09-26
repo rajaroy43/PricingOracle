@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 
-//questionGroupId, wisdomNodeAddess, questionId, answerSet, answerValue, stakeAmount, wisdomNodeReputation
+//[questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]
 const prepareAnswerRow = (
   groupId: string,
   questionCount: number,
@@ -20,7 +20,9 @@ const prepareAnswerRow = (
     question.answerSet[answer.answerIndex],
     answer.answerIndex,
     answer.stakeAmount,
-    reputationScore
+    reputationScore,
+    question.bounty,
+    question.totalStaked
   ] 
 }
 
