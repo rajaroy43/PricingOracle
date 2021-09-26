@@ -52,17 +52,19 @@ def update_reputation(rewards, reputation_staking, totalBounty, totalStaked):
     # and returns updated rewards
 
     # Function also updates and calculates the final rewards to send to all wisdomNodeAddresses
-    reputation = np.array(0) # initialize array
-    new_rewards = np.array(0)
+    reputation = np.empty((0,2)) # initialize array
+    new_rewards = np.empty((0,2))
 
     for row in rewards:
-        wisdomNodeAddress = row[0] # first element is string wisdomNodeAddress
-        reward = row[1]
+        wisdomNodeAddress = str(row[0]) # first element is string wisdomNodeAddress
+        reward = float(row[1])
         # Find the same wisdomNodeAddress in reputation_staking
         reputation_row = reputation_staking[np.where((reputation_staking == wisdomNodeAddress))[0]]
-        stakeAmount = reputation_row[1]
-        reputationScore = reputation_row[2]
-        questionGroupCategory = reputation_row[3]
+        reputation_row = reputation_row[0] # defaults to return an array, we only want the row
+
+        stakeAmount = float(reputation_row[1])
+        reputationScore = float(reputation_row[2])
+        questionGroupCategory = int(reputation_row[3])
         
         # we have wisdomNodeAddress, stakeAmount reputationScore and reward
         # build the returning array while calculating the results
@@ -86,10 +88,10 @@ def update_reputation(rewards, reputation_staking, totalBounty, totalStaked):
         new_rewards = np.vstack((new_rewards, [wisdomNodeAddress, reward_payout ]))
 
 
-
     return reputation, new_rewards
 
 def calculate_rewards(data):
+#def calculate_rewards(metadata, dmi_data, num_answers, reputation_staking):
     print("\033[1;32m Calculating rewards....")
     metadata, dmi_data, num_answers, reputation_staking = prepareDataPayload(data)
 
@@ -106,14 +108,23 @@ def calculate_rewards(data):
 
     reputation, rewards = update_reputation(rewards, reputation_staking, metadata.totalBounty, metadata.totalStaked)
 
-    print("rewards: \n")
-    print(rewards)
-    print("answers: \n")
-    print(answers)
-
     return returnFormattedData(metadata,rewards, answers, reputation)
+    #return metadata, rewards, answers, reputation
     
 
 if __name__ == "__main__":
-    metadata = Metadata("foo",1,2,3,4,5)
-    calculate_rewards([0])
+    #### TEST DATA ######
+    metadata = Metadata("bogusgroupID",2,4,3,500,50)
+    dmi_data = np.array([['foo',1, 0, 1, 0],['goo', 1, 0, 1, 0],['doo',0, 1, 0, 1],['zoo',0, 1, 0, 1],['hoo',0, 1, 0, 1],['coo',0, 1, 0, 1]])
+    num_answers = np.array([[1,0,1,0],[1,0,1,0],[1,0,1,0],[0, 1, 0, 1],[0, 1, 0, 1],[0, 1, 0, 1]])
+    reputation_staking = np.array([['foo',1, 1, 1],['goo', 1, 1, 1],['doo', 1, 1, 1],['zoo', 1, 1, 1],['hoo',1, 1, 1],['coo',1, 1, 1]])
+
+    metadata_return, rewards, answers, reputation = calculate_rewards(metadata, dmi_data, num_answers, reputation_staking)
+
+    print("calculate_rewards for : ", metadata_return.questionGroupId)
+    print("\nDONE: rewards: ")
+    print(rewards)
+    print("\nDONE: answers:")
+    print(answers)
+    print("\nDONE: reputation:")
+    print(reputation)
