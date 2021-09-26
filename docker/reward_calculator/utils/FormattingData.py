@@ -2,16 +2,24 @@ import numpy as np
 from utils.ParseSchema import prepareDataSchema,returnDataSchema
 from utils.LithClass import Metadata
 
-def prepareValidationData(question):
+# [questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]
+
+def prepareValidationData(answer):
   validationData={}
-  validationData['questionGroupId']=question[0]
-  validationData['wisdomNodeAddress']=question[1]
-  validationData['questionId']=question[2]
-  validationData['answerSet']=[int(i) for i in question[3]]
-  validationData['answerValue']=int(question[4])
-  validationData['answerIndex']=int(question[5])
-  validationData['stakeAmount']=int(question[6])
-  validationData['wisdomNodeReputation']=int(question[7])
+  validationData['questionGroupId']=answer[0]
+  validationData['numberQuestionChoices']=int(answer[1])
+  validationData['numberQuestions']=int(answer[2])
+  validationData['questionGroupCategory']=int(answer[3])
+  validationData['wisdomNodeAddress']=answer[4]
+  validationData['questionId']=int(answer[5])
+  validationData['answerSet']=[int(i) for i in answer[6]]
+  validationData['answerValue']=int(answer[7])
+  validationData['answerIndex']=int(answer[8])
+  validationData['stakeAmount']=int(answer[9])
+  validationData['wisdomNodeReputation']=int(answer[10])
+  validationData['totalBounty']=int(answer[11])
+  validationData['totalStake']=int(answer[12])
+
   return validationData
 
 
@@ -33,33 +41,57 @@ def prepareOutgoingValidationData(questionGroupId,questionIds,rewards, answers):
   validationData["wisdomNodeUpdates"]=wisdomNodeUpdates
   return validationData
 
+# [questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]
 def prepareDataPayload(data):
-  wisdomNodeAddress_AnswersValues={}
-  questionGroupIds=[]
-  for question in data:
-    if len(question) == 0:
-      raise ValueError('Empty questions/answers')
-    #Schema get validated here 
-    prepareDataSchema.validate(prepareValidationData(question))
-    key=question[1]
-    questionGroupIds.append(question[0])
-    if key not in wisdomNodeAddress_AnswersValues:
-      wisdomNodeAddress_AnswersValues[key]=[ [question[5]], [question[2]] ]
+  metadata
+  dmi_data
+  num_answers
+  reputation_staking
+
+  prepped_data = [prepareValidationData(a) for a in data]
+
+  wisdom_node_answers = {}
+  user_total_stake = {}
+  question_totals = {}
+  user_reputation = {}
+  group_totals = {
+    stake: 0,
+    bounty: 0
+  }
+  categoryId = prepped_data[0]['questionGroupCategory']
+
+  sorted_data = sorted(prepped_data, key= lambda r: r['questionId'])
+
+
+  for answer in sorted_data:
+    node_address = answer['wisdomNodeAddress']
+    if node_address not in wisdom_node_answers:
+      wisdom_node_answers[node_address]=[ [answer['answerIndex']], answer['answerValue']], [answer['questionId']] ]
+      user_total_stake[node_address] = answer['stakeAmount']
+      user_reputation[node_address] = answer['wisdomNodeReputation']
     else:
-      wisdomNodeAddress_AnswersValues[key][0].append(question[5])
-      wisdomNodeAddress_AnswersValues[key][1].append(question[2])
-  #print(wisdomNodeAddress_AnswersValues)
+      wisdom_node_answers[node_address][0].append(answer['answerIndex'])
+      wisdom_node_answers[node_address][1].append(answer['answerValue'])
+      wisdom_node_answers[node_address][2].append(answer['questionId'])
+      user_total_stake[node_address] = user_total_stake[node_address] + answer['stakeAmount'] 
 
-  #validating questionGroup
-  finalQuestionGroup=set(questionGroupIds)
-  if(len(finalQuestionGroup) !=1 ):
-    raise ValueError("More than 1 questionGroupId")
-  questionGroup=list(finalQuestionGroup)[0]
+    if answer['questionId'] not in question_totals:
+      question_totals[answer['questionId']] = [data[11], data[12]]
 
-  #Converting dict data to 2-d array
+  for total in question_totals.values():
+    group_totals.bounty = group_totals.bounty + total[0] 
+    group_totals.stake = group_totals.stake + total[1]
 
-  formattedData = [[address, values[0], values[1]] for address, values in wisdomNodeAddress_AnswersValues.items()]
-  return formattedData,questionGroup
+  group_meta_data = Metadata(
+    answer_row[0], answer_row[1], answer_row[2], answer_row[3], group_totals.bounty, group_totals.staked
+  )
+
+  answer_items = wisdom_node_answers.items()
+  dmi_data = [[k, v[0], v[2]] for k,v in answer_items]
+  num_answers = [[k, v[1], v[2]] for k,v in answer_items]
+  reputation_staking = [[address, user_total_stake[address], user_reputation[address], categoryId] for address in user_total_stake.keys()]
+
+  return group_meta_data, dmi_data, num_answers, reputation_staking
 
 
 

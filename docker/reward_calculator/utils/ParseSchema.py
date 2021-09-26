@@ -19,16 +19,23 @@ def checkWisdomNodeData(wisdomNodeUpdates,data_type):
       return True
   else:
     return False
+msg: [[questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]]
 
 #Incomming data from cordinator schema validation
-prepareDataSchema = Schema({'questionId': str,
+prepareDataSchema = Schema({
+                 'questionId': int,
                  'questionGroupId':str, 
                  'wisdomNodeAddress':str,
+                 'numberQuestionChoices': int,
+                 'numberQuestions': int,
+                 'questionGroupCategory': int,
                  'answerSet':And(list,lambda answerSets:check_types(answerSets,int)),
                  'answerValue':int,
                  'answerIndex':int,
                  'stakeAmount':int,
                  'wisdomNodeReputation':int
+                 'totalBounty': int
+                 'totalStake': int
                  })
 
 #return data to cordinator schema validation 
