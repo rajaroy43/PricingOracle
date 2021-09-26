@@ -19,7 +19,7 @@ def checkWisdomNodeData(wisdomNodeUpdates,data_type):
       return True
   else:
     return False
-msg: [[questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]]
+#msg: [[questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]]
 
 #Incomming data from cordinator schema validation
 prepareDataSchema = Schema({
@@ -33,8 +33,8 @@ prepareDataSchema = Schema({
                  'answerValue':int,
                  'answerIndex':int,
                  'stakeAmount':int,
-                 'wisdomNodeReputation':int
-                 'totalBounty': int
+                 'wisdomNodeReputation':int,
+                 'totalBounty': int,
                  'totalStake': int
                  })
 
@@ -43,6 +43,9 @@ returnDataSchema = Schema({
                   "answerStatus":And(int,lambda answerStatus:answerStatus ==0 or answerStatus ==1),
                   "questionGroupId": str,
                   "questionIds": And(list,lambda ids: check_types(ids,str)),
+                  'numberQuestionChoices': int,
+                  'numberQuestions': int,
+                  'questionGroupCategory': int,
                   "finalAnswerIndex": And(list,lambda finalAnswerIndex: check_types(finalAnswerIndex,int)),
                   "finalAnswerValue": And(list,lambda finalAnswerValue: check_types(finalAnswerValue,float)),
                   "wisdomNodeUpdates":And(list,lambda wisdomNodeUpdates: checkWisdomNodeData(wisdomNodeUpdates,list))

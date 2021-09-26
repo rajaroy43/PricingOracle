@@ -23,16 +23,19 @@ def prepareValidationData(answer):
   return validationData
 
 
-def prepareOutgoingValidationData(questionGroupId,questionIds,rewards, answers):
+def prepareOutgoingValidationData(metadata, rewards, answers, reputation):
   validationData={}
-  validationData['questionGroupId']=str(questionGroupId)
-  validationData['questionIds']=questionIds
+  validationData['questionGroupId']=metadata.questionGroupId
+  validationData['numberQuestionChoices']=int(metadata.numberQuestionChoices)
+  validationData['numberQuestions']=int(metadata.numberQuestions)
+  validationData['questionGroupCategory']=int(metadata.questionGroupCategory)
+  validationData['questionIds']= answers[:,0].tolist() #the first column of answers
   validationData['answerStatus']=0
   finalAnswerValues=[]
   finalAnswerIndexes=[]
   for answer in answers:
     finalAnswerValues.append(float(answer[0]))
-    finalAnswerIndexes.append(0)
+    finalAnswerIndexes.append(0) #unused atm
   validationData["finalAnswerIndex"]=finalAnswerIndexes
   validationData["finalAnswerValue"]=finalAnswerValues
   wisdomNodeUpdates= []
@@ -43,30 +46,28 @@ def prepareOutgoingValidationData(questionGroupId,questionIds,rewards, answers):
 
 # [questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]
 def prepareDataPayload(data):
-  metadata
-  dmi_data
-  num_answers
-  reputation_staking
 
   prepped_data = [prepareValidationData(a) for a in data]
 
   wisdom_node_answers = {}
   user_total_stake = {}
   question_totals = {}
+  all_question_ids = []
   user_reputation = {}
-  group_totals = {
-    stake: 0,
-    bounty: 0
-  }
+  group_totals = dict(
+    stake = 0,
+    bounty = 0
+  )
   categoryId = prepped_data[0]['questionGroupCategory']
 
   sorted_data = sorted(prepped_data, key= lambda r: r['questionId'])
 
 
+
   for answer in sorted_data:
     node_address = answer['wisdomNodeAddress']
     if node_address not in wisdom_node_answers:
-      wisdom_node_answers[node_address]=[ [answer['answerIndex']], answer['answerValue']], [answer['questionId']] ]
+      wisdom_node_answers[node_address]=[ [answer['answerIndex']], [answer['answerValue']], [answer['questionId']] ]
       user_total_stake[node_address] = answer['stakeAmount']
       user_reputation[node_address] = answer['wisdomNodeReputation']
     else:
@@ -76,43 +77,38 @@ def prepareDataPayload(data):
       user_total_stake[node_address] = user_total_stake[node_address] + answer['stakeAmount'] 
 
     if answer['questionId'] not in question_totals:
-      question_totals[answer['questionId']] = [data[11], data[12]]
+      question_totals[answer['questionId']] = [answer['totalBounty'], answer['totalStake']]
+
+    all_question_ids.append(answer['questionId'])   # NOTE this grabs all and then gets the unique ones with "set" function below
+
+  all_question_ids = list(set(all_question_ids))
+
 
   for total in question_totals.values():
-    group_totals.bounty = group_totals.bounty + total[0] 
-    group_totals.stake = group_totals.stake + total[1]
+    group_totals['bounty'] = group_totals['bounty'] + int(total[0])
+    group_totals['stake'] = group_totals['stake'] + int(total[1])
 
   group_meta_data = Metadata(
-    answer_row[0], answer_row[1], answer_row[2], answer_row[3], group_totals.bounty, group_totals.staked
+    answer['questionGroupId'], answer['numberQuestionChoices'], answer['numberQuestions'], answer['questionGroupCategory'], group_totals['bounty'], group_totals['stake']
   )
 
   answer_items = wisdom_node_answers.items()
   dmi_data = [[k, v[0], v[2]] for k,v in answer_items]
+  print("\ndmi_data:", dmi_data)
   num_answers = [[k, v[1], v[2]] for k,v in answer_items]
+  print("\nnum_answers: ", num_answers)
   reputation_staking = [[address, user_total_stake[address], user_reputation[address], categoryId] for address in user_total_stake.keys()]
+  print("\nreputation_staking: ", reputation_staking)
 
-  return group_meta_data, dmi_data, num_answers, reputation_staking
+  return group_meta_data, dmi_data, num_answers, reputation_staking, all_question_ids
 
 
 
-    #below is the full deal.  in this python we only have rewards and answers. 
 
-    # Raja -- can you convert this into a schema like above?
-
-#    return shape of the calculate_reward endpoint {
-#    answerStatus: 0 | 1 #0 = success, 1 = failure
-#    questionGroupId: string,
-#    questionIds: string[],
-#    finalAnswerIndex: int[],
-#    finalAnswerValue: int[],
-#    wisdomNodeUpdates: [wisdomNodeAddress, updatedReward, updatedReputationScore][]
-#    }
-
-def returnFormattedData(questionGroupId,questionIds,rewards, answers):
+def returnFormattedData(metadata,rewards, answers, reputation):
   #  Need to add schema validate here on the returned data
-  #returnDataSchema.validate(returnedData)
-  #returnData = [0, 12345, "QuestionIDs", [0, 0, 0, 0], answers, rewards ]
-  returnData=prepareOutgoingValidationData(questionGroupId,questionIds,rewards, answers)
-  print("returnFormattedData",returnData)
+
+  returnData=prepareOutgoingValidationData(metadata,rewards, answers, reputation)
+  #print("returnFormattedData",returnData)
   returnDataSchema.validate(returnData)
   return returnData

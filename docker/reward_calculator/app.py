@@ -24,8 +24,7 @@ def calculate_group_reward():
     logging.info("Data Coming form cordinator")
     data = request.get_json()
     print(data['msg'])
-    #Default n_choices= 2, num_answers =4
-    rewards=calculate_rewards(data['msg'],2,4)
+    rewards=calculate_rewards(data['msg'])
     response = dict(rewards=rewards)
     return jsonify(response)
 
