@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { updateQuestionStatus, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
-import { CalculatedRewardsResponse, QuestionUpdateFields, RewardUpdateFields } from "./types"
+import { QuestionUpdateFields, RewardsResponseData, RewardUpdateFields } from "./types"
 
 export const publishAnswersRewards = (
   questionUpdate: QuestionUpdateFields,
@@ -77,7 +77,7 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
   )
 }
 
-export const updateQuestionStatusAndReward = async (response: CalculatedRewardsResponse) => {
+export const updateQuestionStatusAndReward = async (response: RewardsResponseData) => {
   const statuses = new Array(response.questionIds.length).fill(response.answerStatus)
   const statusTx = await updateQuestionStatus({
     questionIds: response.questionIds ,

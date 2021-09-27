@@ -28,7 +28,7 @@ def prepareOutgoingValidationData(metadata, rewards, answers, reputation):
   validationData['questionGroupId']=metadata.questionGroupId
   validationData['numberQuestionChoices']=int(metadata.numberQuestionChoices)
   validationData['numberQuestions']=int(metadata.numberQuestions)
-  validationData['questionGroupCategory']=int(metadata.questionGroupCategory)
+  validationData['questionGroupCategory']=str(metadata.questionGroupCategory)
   validationData['questionIds']= answers[:,0].tolist() #the first column of answers
   validationData['answerStatus']=0
   finalAnswerValues=[]

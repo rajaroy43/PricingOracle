@@ -1,4 +1,4 @@
-import { RewardsResponseData } from "./types"
+import { CalculatorResponse, RewardsResponseData } from "./types"
 
 const axios = require('axios')
 
@@ -40,10 +40,6 @@ const preparePayload = (groupData: any) => {
     .reduce((acc: any, answers: any) => acc.concat(answers), [])
 }
 
-interface CalculatorResponse {
-  data: RewardsResponseData,
-  error: any
-}
 const getRewards = (groupData: any): Promise<CalculatorResponse> => {
   const msg = preparePayload(groupData)
   return axios

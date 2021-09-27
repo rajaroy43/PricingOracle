@@ -31,3 +31,8 @@ export interface RewardsResponseData {
   finalAnswerValue: string[],
   wisdomNodeUpdates: [string, string, string][]
 }
+
+export interface CalculatorResponse {
+  data: RewardsResponseData,
+  error: any
+}
