@@ -1,3 +1,5 @@
+import { RewardsResponseData } from "./types"
+
 const axios = require('axios')
 
 
@@ -38,31 +40,16 @@ const preparePayload = (groupData: any) => {
     .reduce((acc: any, answers: any) => acc.concat(answers), [])
 }
 
-const getRewards = (groupData: any) => {
+interface CalculatorResponse {
+  data: RewardsResponseData,
+  error: any
+}
+const getRewards = (groupData: any): Promise<CalculatorResponse> => {
   const msg = preparePayload(groupData)
-  axios
+  return axios
     .post(`${process.env.REWARD_CALCULATOR_URI}/calculate-reward`, {
       msg
     })
-    .then((res:any) => {
-      console.log(`calculate-reward statusCode: ${res.status}\nresponse: ${JSON.stringify(res.data)}`)
-    })
-    .catch((error: any) => {
-      console.error(`error getting rewards`, error)
-    })
-
-    axios
-    .get(`${process.env.REWARD_CALCULATOR_URI}/ping-me`, {
-      msg
-    })
-    .then((res:any) => {
-      console.log(`ping-me statusCode: ${res.status}\nresponse: ${JSON.stringify(res.data)}`)
-    })
-    .catch((error: any) => {
-      console.error(`error getting rewards`, error)
-    })
-
-
 }
 
 export default getRewards

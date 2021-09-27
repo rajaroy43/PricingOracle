@@ -5,7 +5,8 @@ import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getQuestion } from "./queries/question"
 import getRewards from "./getRewards"
-import { publishInvalidAnswers } from "./publishReward"
+import { updateInvalidAndRefund, updateValidAndReward } from "./publishReward"
+import { AnswerStatus } from './types'
 
 
 const calculateQuestionGroup = async (group: any) => {
@@ -19,37 +20,7 @@ const calculateQuestionGroup = async (group: any) => {
   //@ts-ignore
   const answerCount = parseInt(questions[0].question.answerCount, 10)
   if (parseInt(group.minimumRequiredAnswers, 10) > answerCount) {
-    console.log(`QuestionGroup ${group.id} INVALID`)
-    const questionIds = group.questions.map((question: any) => question.id)
-    const groupIds = Array(answerCount).fill(group.id)
-
-    const answerStakes = questions
-      .map(({question}: any) => question.answers)
-      .reduce((acc:any, answers:any) => acc.concat(answers), [])
-      .reduce((acc: any, answer: any) => {
-        const answererId = answer.answerer.id
-        console.log(`inside red ${JSON.stringify(acc)}`)
-        if (acc.hasOwnProperty(answererId)) {
-          acc[answererId] = acc[answererId].add(BigNumber.from(answer.stakeAmount))
-        } else {
-          acc[answererId] = BigNumber.from(answer.stakeAmount)
-        } 
-        return acc
-      }, {})
-
-    const addresses = Object.keys(answerStakes)
-    const rewardAmounts = addresses.map((addr: string) => answerStakes[addr].toString())
-    console.log(`publishing invalid questions: ${questionIds}\nstake refunds groupIds\n${groupIds}\n${addresses}\n${JSON.stringify(rewardAmounts)}`)
-    return publishInvalidAnswers(
-      questionIds,
-      {
-        groupIds,
-        addresses,
-        rewardAmounts
-      }
-    )
-
-
+    updateInvalidAndRefund(group, questions)
   } else {
     console.log(`QuestionGroup ${group.id} VALID, getting rewards`)
     const groupData = {
@@ -57,7 +28,20 @@ const calculateQuestionGroup = async (group: any) => {
       questions
     }
    
-    return getRewards(groupData)
+    const rewardsResponse = await getRewards(groupData)
+    if (rewardsResponse.error) {
+      console.log(`Error calculating rewards for group ${group.id}\nError Message: ${rewardsResponse.error}`)
+    } else {
+      console.log(`Go rrewards response ${rewardsResponse.data}`)
+      //const rewards = JSON.parse(rewardsResponse.data)
+      if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
+        console.log('Valid answer calculation')
+        updateValidAndReward(rewardsResponse.data)
+      } else {
+        console.log('Invalid answer calculation')
+        updateInvalidAndRefund(group, questions)
+      }
+    }
   }
 
 }
