@@ -5,6 +5,8 @@ Tesnet alpha version for internal reviews
 
 ## README -- how to run app locally (dev)
 
+### This is for MacOS and Linux / Ubuntu (differences noted below)
+
 setup:  you have already  cloned the latest and are on the correct branch `dev`
 You will need 3 terminal windows to operate and a browser with metamask
 
@@ -25,6 +27,16 @@ remove the multidim arrays by deleting this section from file:
         "type": "uint256[][]"
       },
 ```
+
+> UBUNTU or Linux ONLY
+>  ``` 
+>  cd docker/graph-node  && ./setup.sh
+>  ```
+>   confirm that the Host IP returned by ./setup.sh is the ethereum environment variable in ./docker/graph-node/docker-compose.yml |
+>  ```
+>  ethereum: 'localhost:http://{HOST_IP}:8545'
+>  ```
+
 
 10) `yarn graph-init-local`
 11) asks for input, use `v0.0.1`
