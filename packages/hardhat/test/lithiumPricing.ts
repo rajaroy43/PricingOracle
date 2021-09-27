@@ -1171,7 +1171,7 @@ describe("Lithium Pricing", async function () {
           lithiumPricing
             .connect(account1)
             .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
-        ).to.be.revertedWith("user had already answered this question");
+        ).to.be.revertedWith("User has already answered this question");
       });
 
       it("Should not  able to answer if approve amount is less than stake amount", async function () {
