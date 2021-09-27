@@ -1,8 +1,73 @@
-# 🏗 scaffold-eth
+# Lithium Finance MVP v0.0.1
 
-> is everything you need to get started building decentralized applications on Ethereum! 🚀
-
+Tesnet alpha version for internal reviews
 ---
+
+## README -- how to run app locally (dev)
+
+setup:  you have already  cloned the latest and are on the correct branch `dev`
+You will need 3 terminal windows to operate and a browser with metamask
+
+1) `git pull`
+2) `yarn install`
+3) `yarn chain`
+4) In a new terminal window:
+5) `cd docker && ./run.sh`
+6) In a new terminal window:
+7) `cd {project root}`
+8) `yarn deploy`
+9) after it finishes go into `packages/subgraph/abis/LithiumPricing.json`
+remove the multidim arrays by deleting this section from file:
+```
+      {
+        "internalType": "uint256[][]",
+        "name": "answerSets",
+        "type": "uint256[][]"
+      },
+```
+
+10) `yarn graph-init-local`
+11) asks for input, use `v0.0.1`
+runs to completion
+12) (optional) can look at graph node operating -- see screen commands
+
+To Run React app:
+13) `yarn react-app:start`
+
+go to browswer, add private key from `yarn chain` terminal window above to ensure LITH tokens.
+
+Make sure metamask is on network "Localhost 8545"
+
+14) connect wallet
+
+15) play!
+
+
+## Oh shit commands
+
+Something went wrong and you want to clean things up and restart.
+
+how to just redeploy again?
+1) bring down from docker:  inside terminal where docker ./run.sh was started, use ctrl-c to kill the process.
+2) then 
+`cd docker`
+Remove all extraneous docker data (potentially corrupt or trouble-making)
+`sudo rm -rf data`
+
+back to root of project dir
+`yarn docker-clean`
+
+cd docker
+./run.sh
+
+pick from step 6) above
+
+but you won't need to re-edit the file to fix the mulit-dim array (step 7)
+
+## Enjoy!
+
+
+# Original README includes more details on above
 
 #### Smart contract tests
 
@@ -161,9 +226,12 @@ then from project root run
 ```
 yarn deploy-rinkeby
 ```
-yarn cordinator
-
 ```
+yarn cordinator
+```
+
+
+# ORIGINAL SCAFFOLD-ETH CONTENT
 
 #### [ 🏃‍♀️ Quick Start ](https://github.com/austintgriffith/scaffold-eth#%EF%B8%8F-quick-start)
 
