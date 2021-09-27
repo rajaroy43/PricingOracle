@@ -26,21 +26,19 @@ def prepareValidationData(answer):
 def prepareOutgoingValidationData(metadata, rewards, answers, reputation):
   validationData={}
   validationData['questionGroupId']=metadata.questionGroupId
-  validationData['numberQuestionChoices']=int(metadata.numberQuestionChoices)
-  validationData['numberQuestions']=int(metadata.numberQuestions)
   validationData['questionGroupCategory']=str(metadata.questionGroupCategory)
   validationData['questionIds']= answers[:,0].tolist() #the first column of answers
   validationData['answerStatus']=0
   finalAnswerValues=[]
   finalAnswerIndexes=[]
   for answer in answers:
-    finalAnswerValues.append(float(answer[0]))
+    finalAnswerValues.append(str(answer[0]))
     finalAnswerIndexes.append(0) #unused atm
   validationData["finalAnswerIndex"]=finalAnswerIndexes
   validationData["finalAnswerValue"]=finalAnswerValues
   wisdomNodeUpdates= []
   for reward in rewards:
-    wisdomNodeUpdates.append([str(reward[0]),float(reward[1]),0.0])
+    wisdomNodeUpdates.append([str(reward[0]),str(reward[1]),'0.0'])
   validationData["wisdomNodeUpdates"]=wisdomNodeUpdates
   return validationData
 

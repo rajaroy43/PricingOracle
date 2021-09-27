@@ -13,7 +13,7 @@ def checkWisdomNodeData(wisdomNodeUpdates,data_type):
     for wisdomNode in wisdomNodeUpdates:
       if len(wisdomNode) != 3:
         return False
-      if type(wisdomNode[0]) !=str or type(wisdomNode[1]) != float or type(wisdomNode[2]) != float:
+      if type(wisdomNode[0]) !=str or type(wisdomNode[1]) != str or type(wisdomNode[2]) != str:
         return False
     else:
       return True
