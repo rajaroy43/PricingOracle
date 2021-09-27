@@ -42,11 +42,9 @@ prepareDataSchema = Schema({
 returnDataSchema = Schema({
                   "answerStatus":And(int,lambda answerStatus:answerStatus ==0 or answerStatus ==1),
                   "questionGroupId": str,
+                  'questionGroupCategory': str,
                   "questionIds": And(list,lambda ids: check_types(ids,str)),
-                  'numberQuestionChoices': int,
-                  'numberQuestions': int,
-                  'questionGroupCategory': int,
                   "finalAnswerIndex": And(list,lambda finalAnswerIndex: check_types(finalAnswerIndex,int)),
-                  "finalAnswerValue": And(list,lambda finalAnswerValue: check_types(finalAnswerValue,float)),
+                  "finalAnswerValue": And(list,lambda finalAnswerValue: check_types(finalAnswerValue,str)),
                   "wisdomNodeUpdates":And(list,lambda wisdomNodeUpdates: checkWisdomNodeData(wisdomNodeUpdates,list))
                     })
