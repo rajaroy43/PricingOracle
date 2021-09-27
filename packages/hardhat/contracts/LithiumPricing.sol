@@ -72,9 +72,13 @@ contract LithiumPricing is ILithiumPricing, Roles {
   mapping(uint256=> mapping(address => AnswerGroup)) public answerGroups;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
+  
   // minimumStake put by wisdom nodes when answering question
-
   uint256 public minimumStake;
+
+  // user  answer an already answered question 
+
+  mapping (uint256 => mapping(address=>bool) ) public isQuestionAnswered;
 
   constructor () {
     _addCategory("preIPO");
@@ -313,8 +317,9 @@ contract LithiumPricing is ILithiumPricing, Roles {
     require(_answerIndex <= question.answerSet.length, "Invalid answer index");
     require(_stakeAmount >= minimumStake, "Stake amount must be greater than minimumStake");
     require(LithiumToken.balanceOf(msg.sender) >= _stakeAmount, "Insufficient balance");
-    
+    require(isQuestionAnswered[_questionId][msg.sender] == false, "user had already answered this question");
     LithiumToken.transferFrom(msg.sender, address(this), _stakeAmount);
+    isQuestionAnswered[_questionId][msg.sender] = true;
     Answer memory answer;
     answer.answerer = msg.sender;
     answer.questionId = _questionId;

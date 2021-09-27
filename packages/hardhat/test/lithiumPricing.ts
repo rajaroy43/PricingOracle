@@ -1144,6 +1144,36 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith("Insufficient balance");
       });
 
+      it("Should not  able to answer a question again", async function () {
+        const senderBalance = await lithToken.balanceOf(account1.address);
+        const stakeAmounts = [stakeAmount, stakeAmount];
+        const answerIndexes = [1, 0];
+        const questionGroupId = 0;
+        await expect(
+          lithiumPricing
+            .connect(account1)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
+        )
+          .emit(lithiumPricing, "QuestionAnswered")
+          .withArgs(0, account1.address, stakeAmounts[0], answerIndexes[0])
+          .withArgs(1, account1.address, stakeAmounts[1], answerIndexes[1])
+          .emit(lithiumPricing, "AnswerGroupSetSubmitted")
+          .withArgs(account1.address, questionGroupId);
+        const senderBalanceAfter = await lithToken.balanceOf(account1.address);
+
+        expect(
+          stakeAmounts[0].add(stakeAmounts[1]).add(senderBalanceAfter)
+        ).to.equal(senderBalance);
+
+        //answering question again
+
+        await expect(
+          lithiumPricing
+            .connect(account1)
+            .answerQuestions(questionGroupId, stakeAmounts, answerIndexes)
+        ).to.be.revertedWith("user had already answered this question");
+      });
+
       it("Should not  able to answer if approve amount is less than stake amount", async function () {
         const stakeAmounts = [stakeAmount, stakeAmount];
         const answerIndexes = [1, 0];
@@ -1405,42 +1435,44 @@ describe("Lithium Pricing", async function () {
           ).to.be.reverted;
         });
 
-        it("Should not  update reward amounts if answer can't be calculated ", async () => {
-          const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
-          //Answer can't be calulated for question id 0
-          //so we mark as invalid
-          //and not able to update group rewards
-          const answersStatuses = [2, 1];
+        //It will allow to update groupRewards by admin for invalid answers
+        //so that user can get their stake back
+        // it("Should not  update reward amounts if answer can't be calculated ", async () => {
+        //   const questionIds = [0, 1];
+        //   const finalAnswerIndexes = [1, 1];
+        //   const finalAnswerValues = [50, 100];
+        //   //Answer can't be calulated for question id 0
+        //   //so we mark as invalid
+        //   //and not able to update group rewards
+        //   const answersStatuses = [2, 1];
 
-          await expect(
-            lithiumPricing.updateFinalAnswerStatus(
-              questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
-              answersStatuses
-            )
-          )
-            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(
-              questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
-              answersStatuses
-            );
-          const addressesToUpdate = [account1.address];
-          const groupIds = [0];
-          const rewardAmounts = [2];
+        //   await expect(
+        //     lithiumPricing.updateFinalAnswerStatus(
+        //       questionIds,
+        //       finalAnswerIndexes,
+        //       finalAnswerValues,
+        //       answersStatuses
+        //     )
+        //   )
+        //     .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+        //     .withArgs(
+        //       questionIds,
+        //       finalAnswerIndexes,
+        //       finalAnswerValues,
+        //       answersStatuses
+        //     );
+        //   const addressesToUpdate = [account1.address];
+        //   const groupIds = [0];
+        //   const rewardAmounts = [2];
 
-          await expect(
-            lithiumPricing.updateGroupRewardAmounts(
-              addressesToUpdate,
-              groupIds,
-              rewardAmounts
-            )
-          ).to.be.revertedWith("Answer is not yet calculated");
-        });
+        //   await expect(
+        //     lithiumPricing.updateGroupRewardAmounts(
+        //       addressesToUpdate,
+        //       groupIds,
+        //       rewardAmounts
+        //     )
+        //   ).to.be.revertedWith("Answer is not yet calculated");
+        // });
 
         describe("Update Group Reward Amounts", async () => {
           beforeEach(async () => {
