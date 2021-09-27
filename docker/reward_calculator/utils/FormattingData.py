@@ -52,17 +52,14 @@ def prepareDataPayload(data):
   wisdom_node_answers = {}
   user_total_stake = {}
   question_totals = {}
-  all_question_ids = []
   user_reputation = {}
   group_totals = dict(
     stake = 0,
     bounty = 0
   )
   categoryId = prepped_data[0]['questionGroupCategory']
-
+  # sort the answers by ascending questionId to ensure all values will be in the same order
   sorted_data = sorted(prepped_data, key= lambda r: r['questionId'])
-
-
 
   for answer in sorted_data:
     node_address = answer['wisdomNodeAddress']
@@ -79,10 +76,7 @@ def prepareDataPayload(data):
     if answer['questionId'] not in question_totals:
       question_totals[answer['questionId']] = [answer['totalBounty'], answer['totalStake']]
 
-    all_question_ids.append(answer['questionId'])   # NOTE this grabs all and then gets the unique ones with "set" function below
-
-  all_question_ids = list(set(all_question_ids))
-
+  ordered_question_ids = sorted(question_totals.keys())
 
   for total in question_totals.values():
     group_totals['bounty'] = group_totals['bounty'] + int(total[0])
@@ -93,16 +87,14 @@ def prepareDataPayload(data):
   )
 
   answer_items = wisdom_node_answers.items()
-  dmi_data = [[k, v[0], v[2]] for k,v in answer_items]
+  dmi_data = [[k, v[0]] for k,v in answer_items]
   print("\ndmi_data:", dmi_data)
-  num_answers = [[k, v[1], v[2]] for k,v in answer_items]
+  num_answers = [[k, v[1]] for k,v in answer_items]
   print("\nnum_answers: ", num_answers)
   reputation_staking = [[address, user_total_stake[address], user_reputation[address], categoryId] for address in user_total_stake.keys()]
   print("\nreputation_staking: ", reputation_staking)
 
-  return group_meta_data, dmi_data, num_answers, reputation_staking, all_question_ids
-
-
+  return group_meta_data, dmi_data, num_answers, reputation_staking, ordered_question_ids
 
 
 def returnFormattedData(metadata,rewards, answers, reputation):
