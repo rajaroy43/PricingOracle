@@ -33,7 +33,7 @@ def prepareOutgoingValidationData(metadata, rewards, answers, reputation):
   finalAnswerIndexes=[]
   for answer in answers:
     finalAnswerValues.append(str(answer[0]))
-    finalAnswerIndexes.append(0) #unused atm
+    finalAnswerIndexes.append(int(float(answer[1]))) 
   validationData["finalAnswerIndex"]=finalAnswerIndexes
   validationData["finalAnswerValue"]=finalAnswerValues
   wisdomNodeUpdates= []
