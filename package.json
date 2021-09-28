@@ -57,7 +57,7 @@
     "watch-theme": "yarn workspace @scaffold-eth/react-app watch",
     "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml",
     "start-reward-coordinator": "cd docker && docker-compose up",
-    "docker-clean":" cd docker/ && docker-compose down && docker rm -f $(docker ps -a -q) && docker volume rm $(docker volume ls -q)",
+    "docker-clean":" cd docker/ && docker compose -f docker-compose.local.yml down && docker rm -f $(docker ps -a -q) && docker volume rm $(docker volume ls -q)",
     "docker-run-local": "cd docker/ && ./run.sh"
   },
   "workspaces": {

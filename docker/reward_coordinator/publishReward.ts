@@ -55,7 +55,6 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
     .reduce((acc:any, answers:any) => acc.concat(answers), [])
     .reduce((acc: any, answer: any) => {
       const answererId = answer.answerer.id
-      console.log(`inside red ${JSON.stringify(acc)}`)
       if (acc.hasOwnProperty(answererId)) {
         acc[answererId] = acc[answererId].add(BigNumber.from(answer.stakeAmount))
       } else {

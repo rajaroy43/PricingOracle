@@ -12,7 +12,7 @@ if [ "$1" = "prod" ]; then
 
   AWS_ACCOUNT=376538560806
   AWS_PROFILE=lith
-  AWS_REGION=us-west-2
+  AWS_REGION=us-west-1
   HOST="${AWS_ACCOUNT}".dkr.ecr."${AWS_REGION}".amazonaws.com
 
   aws ecr --profile "${AWS_PROFILE}" --region "${AWS_REGION}" get-login-password | docker login --username AWS --password-stdin ${HOST}
@@ -34,12 +34,12 @@ if [ "$1" = "prod" ]; then
 
   docker context use lith
 
-  docker compose --file docker-compose-aws.yml up
+  docker compose --file docker-compose-aws-rinkeby-dev.yml up
 
 else
 	# Create and launch all containers, including graph-node
 	echo "deploying locally"
-	docker compose -f docker-compose.yml -f graph-node/docker-compose.yml up --build 
+	docker compose -f docker-compose.local.yml -f graph-node/docker-compose.yml up --build 
 fi
 
 
