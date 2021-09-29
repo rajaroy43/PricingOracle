@@ -32,7 +32,7 @@ const calculateQuestionGroup = async (group: any) => {
     if (rewardsResponse.error) {
       console.log(`Error calculating rewards for group ${group.id}\nError Message: ${rewardsResponse.error}`)
     } else {
-      console.log(`Go rrewards response ${rewardsResponse.data}`)
+      console.log(`Got rewards response ${rewardsResponse.data}`)
       //const rewards = JSON.parse(rewardsResponse.data)
       if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
         console.log('Valid answer calculation')
@@ -58,4 +58,5 @@ const fetchQuestionsToCalculate = async () => {
     
 }
 console.log(`fetch interval ${process.env.FETCH_INTERVAL}`)
-setInterval(fetchQuestionsToCalculate, 50000)
+//@ts-ignore
+setInterval(fetchQuestionsToCalculate, process.env.FETCH_INTERVAL)

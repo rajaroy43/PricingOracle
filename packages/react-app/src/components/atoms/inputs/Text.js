@@ -26,7 +26,10 @@ const Text = (props) => {
 
   const updatedRestProps = {
     ...rest,
-    onChange: (e) => { onChange(e.target.value); field.onChange(e)}
+    onChange: (e) => {
+      onChange && onChange(e.target.value)
+      field.onChange(e)
+    }
   }
 
   return (

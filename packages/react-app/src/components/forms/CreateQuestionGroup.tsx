@@ -44,11 +44,10 @@ const Col = styled.div`
 `
 
 const categories = [
-    'crypto company',
-    'digital collectible',
+    'preIPO',
+    'crypto',
     'real estate',
-    'private companies',
-    'crypto asset'
+    'NFT'
 ]
 
 const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any) => (submit: any, isValid: boolean) => (

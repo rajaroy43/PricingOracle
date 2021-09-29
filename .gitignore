@@ -12,6 +12,7 @@ packages/hardhat/deployments
 packages/hardhat/cache
 packages/hardhat/typechain
 docker/**/data
+**/docker-compose-aws*.yml
 
 packages/subgraph/config/config.json
 tenderly.yaml

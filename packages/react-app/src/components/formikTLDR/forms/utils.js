@@ -1,6 +1,10 @@
+import config from "../../../config"
+
 export const callMethod = (props) => {
-  console.log(`calling methods ${JSON.stringify(props)}`)
-  props.contractMethod.call(null, ...props.args).send({from: props.connectedAddress, value: '0'})
+  const txType = config.CHAIN_ID === 1337 ? '0x0' : '0x2'
+  console.log(`calling tx type ${txType}\n${JSON.stringify(props)}`)
+
+  props.contractMethod.call(null, ...props.args).send({from: props.connectedAddress, value: '0', type: txType})
     .on('transactionHash', props.handleTxHash)
     .on('receipt', (receipt) => {
       props.handleReceipt(receipt)
