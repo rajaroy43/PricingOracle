@@ -237,6 +237,32 @@ export default createTheme({
             display: 'flex',
             marginLeft: '8px'
           }
+        },
+        MuiDialog: {
+          paperWidthSm: {
+            margin: '16px',
+            width: '320px'
+          }
+        },
+        MuiDialogTitle: {
+          root: {
+            '& h2': {
+              color: 'black',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              textAlign: 'center'
+            }
+          }
+        },
+        MuiDialogContent: {
+          root: {
+            paddingTop: '0'
+          }
+        },
+        MuiCard: {
+          root: {
+            width: ''
+          }
         }
     },
     /*

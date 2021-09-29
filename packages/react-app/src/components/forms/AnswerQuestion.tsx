@@ -59,7 +59,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   error: {
-    color: '#ff0000',
+    color: '#800000',
+    fontWeight: 700,
     position: 'relative',
     top: '32px',
     left: '-64px'

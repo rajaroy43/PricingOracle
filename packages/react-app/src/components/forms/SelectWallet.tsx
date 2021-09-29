@@ -10,6 +10,22 @@ import Flex from '../atoms/Flex'
 import Modal from '../atoms/Modal'
 import config from '../../config'
 import { getLithiumPricingInstance, getLithiumTokenInstance } from '../../helpers/contractInstances'
+import { makeStyles } from '@material-ui/core'
+
+const useStyles = makeStyles(theme => ({
+  selectWalletError: {
+   color: '#800000',
+   fontSize: '1.25rem',
+   fontWeight: 700,
+   height: '48px',
+   justifyContent: 'center',
+   lineHeight: '1.25rem',
+   marginTop: 0,
+   position: 'relative',
+   textAlign: 'center',
+   width: '264px'
+  }
+}));
 
 const walletOptions = [
   // {
@@ -35,28 +51,23 @@ const isValidProviderNetwork = (provider: any): boolean => {
   return true
 }
 
-const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
-  if (errors.providerNetwork) {
-    return (
-      <div>
-        <div>
-          {errors.providerNetwork} Please connect your wallet to the {config.networkName} network and reload the page.
-        </div>
-        <Button
-            onClick={() => {
-              close();
-            }}
-            style={{marginRight: '2em'}}
-            variant='outlined'
-            label="Cancel" />
-      </div>
-    )
-  }
+export const SelectWalletError = ({errors}: any) => {
+  const classes = useStyles();
+  let displayErrors = errors && errors.wallet ? errors.wallet : '';
+  displayErrors = errors && errors.providerNetwork ? `${errors.providerNetwork} Please connect your wallet to ${errors.networkName} network and Reload.` : displayErrors;
+
   return (
-    <div style={{width: "22em", padding: '1em'}}>
-      <Form>
+    <p className={classes.selectWalletError}>{displayErrors}</p>
+  )
+}
+
+const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
+  return (
+    <div style={{'display': 'flex', 'justifyContent': 'center', 'padding': '0 0 16px 0'}}>
+      <Form style={{'display': 'flex', 'flexDirection': 'column'}}>
+        <SelectWalletError errors={errors} />
         <CardSelect name='walletType' options={walletOptions} />
-        <Flex justifyContent="center" mt='2em'>
+        <Flex justifyContent="center">
           <Button
             onClick={() => {
               close();
@@ -80,17 +91,23 @@ const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
 }
 
 const getSubmitArgs = async (values: any, setErrors: any) => {
+  if (values?.walletType === '') {
+    setErrors({wallet: 'Please select a wallet'})
+    return
+  }
+
   // @ts-ignore
   const [wallet, provider] = await wallets[values.walletType].connectWallet()
 
   const isValidNetwork = isValidProviderNetwork( provider )
 
   if (!isValidNetwork) {
-    setErrors({providerNetwork: 'Network Mismatch'})
+    setErrors({providerNetwork: 'Network Mismatch.', networkName: config.NETWORK_NAME})
     return
   }
+
   // @ts-ignore
-  const address = await wallets[values.walletType].getAddress(wallet)
+  const address = await wallets[values?.walletType].getAddress(wallet)
   const tokenInstance = getLithiumTokenInstance(wallet)
   const pricingInstance = getLithiumPricingInstance(wallet)
   const args = {
@@ -99,7 +116,7 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
     address,
     provider,
     tokenInstance,
-    pricingInstance
+    pricingInstance,
   }
 
   return args
@@ -115,17 +132,17 @@ const SelectWalletForm = ({setWallet}: any) => {
     stateEls: {}
   }
 
-return (
-  <Modal 
-    triggerText='Connect Wallet'
-    title='Connect Your Wallet'
-    contentText=''
-    getForm={(cancel: any) => <BasicForm
-      {...formProps}
-      cancel={cancel}
-    /> }
-    />
-  )
+  return (
+    <Modal 
+      triggerText='Connect Wallet'
+      title='Connect Your Wallet'
+      contentText=''
+      getForm={(cancel: any) => <BasicForm
+        {...formProps}
+        cancel={cancel}
+      /> }
+      />
+    )
 }
 
 export default SelectWalletForm 

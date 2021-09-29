@@ -14,10 +14,15 @@ const useStyles = (isSelected:boolean) => makeStyles({
     opacity: `${isSelected ? '100%' : '50%'}`,
     '&:hover': {
       background: "#3f51b5",
+      color: 'white'
    },
   },
   media: {
     height: 140,
+  },
+  title: {
+    color: "black",
+    fontSize: "2rem"
   }
 });
 
@@ -29,7 +34,7 @@ export default function MediaCard({icon, title, description, isSelected, onClick
       <CardActionArea>
         {icon}
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom variant="h5" component="h2" className={classes.title}>
             {title}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
