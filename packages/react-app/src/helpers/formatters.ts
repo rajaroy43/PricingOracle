@@ -25,6 +25,10 @@ export const formatDate = (date: string) => new Date(date).toLocaleString()
 
 export const convertToChecksum = (address: string) => utils.getAddress(address)
 
+export const msToSec = (value:  number) => Math.floor(value/1000)
+
+export const secToMs = (value: number) => value * 1000
+
 const pad = (int: string, digits: number) =>
     int.length >= digits
         ? int

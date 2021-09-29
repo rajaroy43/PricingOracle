@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Form } from 'formik'
 import DateTime from '../atoms/inputs/DateTime'
+import Select from '../atoms/inputs/Select'
 import CreateQuestionForm from './CreateQuestionForm'
 import createQuestionGroupSchema from '../../schemas/questionGroup'
 import Web3Form from '../formikTLDR/forms/Web3Form'
+import { parseUnits } from '../../helpers/formatters'
 
 const Row = styled.div`
     display: flex;
@@ -34,9 +36,7 @@ const FormContainer = styled.div`
     width: 50em;
     color: black;
 `
-const Select = styled.select`
-    width: 9em;
-`
+
 const Col = styled.div`
     display: flex;
     flex-direction: column;
@@ -48,9 +48,11 @@ const categories = [
     'crypto',
     'real estate',
     'NFT'
-]
+].map((label, idx) => {
+  return {label, value:idx.toString()}
+})
 
-const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any) => (submit: any, isValid: boolean) => (
+const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
         <Form>
             <FormContainer>
                 <div>
@@ -60,19 +62,9 @@ const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any)
                     <FormRow>
                         <Select
                             name='category'
-                            value={selectedCategory}
-                            onChange={(e: any) => {
-                                setSelectedCategory(e.target.value)
-                            }}
-                        >
-                            {categories.map((category, i) => (
-                                <option
-                                    value={String(i)}
-                                    label={category}
-                                    key={i}
-                                >{category}</option>
-                            ))}
-                        </Select>
+                            options={categories}
+
+                        />
                     </FormRow>
                     <FormRow style={{ marginTop: '2.5em' }}>
                         <Col style={{ marginRight: '2.25em' }}>
@@ -106,7 +98,7 @@ const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any)
                             return (
                                 <Col>
                                     <p>{`Question ${ i + 1 }`}</p>
-                                    <CreateQuestionForm index={i} />
+                                    <CreateQuestionForm key={i} index={i} />
                                 </Col>
                             )
                         })}
@@ -123,13 +115,13 @@ const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any)
         </Form>
     )
 
-const getMethodArgs = (categoryId: string, selectedCategory: string) => (values: any) => {
+const getMethodArgs = () => (values: any) => {
     console.log(`inside create Q vals ${JSON.stringify(values)}`)
-    const category = categories.indexOf(selectedCategory)
+
     return (
         [
-            [category, category, category, category],
-            [values.bounty0, values.bounty1, values.bounty2, values.bounty3],
+            [values.category, values.category, values.category, values.category],
+            [parseUnits(values.bounty0), parseUnits(values.bounty1), parseUnits(values.bounty2), parseUnits(values.bounty3)],
             [values.pricingTime, values.pricingTime, values.pricingTime, values.pricingTime],
             [values.endTime, values.endTime, values.endTime, values.endTime],
             [0, 0, 0, 0],
@@ -155,10 +147,10 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
     const formProps = {
         defaultValues: createQuestionGroupSchema.defaultValues,
         schema: createQuestionGroupSchema.schema,
-        getForm: CreateQuestionGroup(selectedCategory, setSelectedCategory),
+        getForm: CreateQuestionGroup(),
         contractMethod: pricingInstance.methods.createQuestionGroup,
         connectedAddress,
-        getMethodArgs: getMethodArgs(categoryId, selectedCategory),
+        getMethodArgs: getMethodArgs(),
         stateEls: {
             successEl: Success
         },
