@@ -19,6 +19,10 @@ export default createTheme({
     secondary: {
       main: "#FFFFFF"
     },
+    action: {
+      disabledBackground: '#666',
+      disabled: '#ccc'
+    }
   },
   typography: {
     color: "white",
@@ -87,7 +91,7 @@ export default createTheme({
         lineHeight: 1.5
     },
     link: {
-        color: "white"
+        color: lithOrange
     }
   },
     overrides: {
