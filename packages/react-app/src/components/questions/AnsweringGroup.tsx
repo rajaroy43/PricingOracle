@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '16px',
-    fontWeight: 400
+    fontWeight: 500
   },
   questionGroupId: {
     fontFamily: [
