@@ -1,8 +1,17 @@
 import { Question } from "lithium-subgraph"
-import { generateAnswerSetOptions } from "../components/forms/AnswerQuestion"
 import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
 import { QuestionView } from "../types/question"
 import { getTopAnswer } from "./common"
+
+export const generateAnswerSetOptions = (answerSet: string[]) => {
+  return answerSet.map((answer: string, index: number) => {
+    if (index === answerSet.length - 1) {
+      return {label: `Greater Than or Equal to ${answer}`, value: index}
+    } else {
+      return {label: `Greater Than or Equal to ${answer} or  Less Than ${answerSet[index+1]}`, value: index}
+    }
+  })
+}
 
 export const selectQuestion = (question: Question): QuestionView => {
   //TODO query a node to get the latest block time
