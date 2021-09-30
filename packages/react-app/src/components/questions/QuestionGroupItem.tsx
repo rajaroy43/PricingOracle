@@ -110,7 +110,7 @@ const QuestionGroupItem = ({questionGroup}: {questionGroup: QuestionGroupView}) 
       </div>
 
       <div className={classes.questionGroupColumn}>
-        <div className={classes.questionGroupTime}>Time left: 00:00:00</div>
+        { false && <div className={classes.questionGroupTime}>Time left: 00:00:00</div>}
         <div className={classes.questionGroupPool}>Total Pool: <span className={classes.questionPoolValue}>{questionGroup.totalBountyDisplay} $LITH</span></div>
       </div>
     </div>

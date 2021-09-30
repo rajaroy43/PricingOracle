@@ -1,5 +1,5 @@
 import { Answer } from "lithium-subgraph"
-import { formatUnits, formatDate } from "../helpers/formatters"
+import { formatUnits, msToLocaleDate } from "../helpers/formatters"
 import { AnswerView } from "../types/answer"
 
 export const selectAnswer = (answer: Answer): AnswerView => {
@@ -9,6 +9,6 @@ export const selectAnswer = (answer: Answer): AnswerView => {
     ...answer,
     answerValue,
     stakeAmountDisplay: formatUnits(answer.stakeAmount),
-    createdLocal: formatDate(answer.created)
+    createdLocal: msToLocaleDate(answer.created)
   }
 }
