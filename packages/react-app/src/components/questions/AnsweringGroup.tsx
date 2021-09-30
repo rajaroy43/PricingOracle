@@ -109,11 +109,11 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
                 <Typography variant="h3" className={classes.questionGroupId}>#{questionGroup.id}</Typography>
             </div>
             <div className={classes.timeCol}>
-                <div className={classes.questionGroupTime}>Time left: {mockData.timeLeft}</div> 
+                {false && <div className={classes.questionGroupTime}>Time left: {mockData.timeLeft}</div>} 
             </div>    
         </div>  
         <div className={classes.timeRowMobile}>
-            <div className={classes.questionGroupTime}>Time left: {mockData.timeLeft}</div> 
+            {false && <div className={classes.questionGroupTime}>Time left: {mockData.timeLeft}</div>} 
         </div>
 
         {questionGroup.questionViews.length ?

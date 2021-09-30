@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Form } from 'formik'
 import DateTime from '../atoms/inputs/DateTime'
+import Select from '../atoms/inputs/Select'
 import CreateQuestionForm from './CreateQuestionForm'
 import createQuestionGroupSchema from '../../schemas/questionGroup'
 import Web3Form from '../formikTLDR/forms/Web3Form'
+import { msToSec, parseUnits } from '../../helpers/formatters'
 
 const Row = styled.div`
     display: flex;
@@ -34,9 +36,7 @@ const FormContainer = styled.div`
     width: 50em;
     color: black;
 `
-const Select = styled.select`
-    width: 9em;
-`
+
 const Col = styled.div`
     display: flex;
     flex-direction: column;
@@ -48,9 +48,11 @@ const categories = [
     'crypto',
     'real estate',
     'NFT'
-]
+].map((label, idx) => {
+  return {label, value:idx.toString()}
+})
 
-const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any) => (submit: any, isValid: boolean) => (
+const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
         <Form>
             <FormContainer>
                 <div>
@@ -60,19 +62,9 @@ const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any)
                     <FormRow>
                         <Select
                             name='category'
-                            value={selectedCategory}
-                            onChange={(e: any) => {
-                                setSelectedCategory(e.target.value)
-                            }}
-                        >
-                            {categories.map((category, i) => (
-                                <option
-                                    value={String(i)}
-                                    label={category}
-                                    key={i}
-                                >{category}</option>
-                            ))}
-                        </Select>
+                            options={categories}
+
+                        />
                     </FormRow>
                     <FormRow style={{ marginTop: '2.5em' }}>
                         <Col style={{ marginRight: '2.25em' }}>
@@ -106,7 +98,7 @@ const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any)
                             return (
                                 <Col>
                                     <p>{`Question ${ i + 1 }`}</p>
-                                    <CreateQuestionForm index={i} />
+                                    <CreateQuestionForm key={i} index={i} />
                                 </Col>
                             )
                         })}
@@ -123,20 +115,30 @@ const CreateQuestionGroup = (selectedCategory: string, setSelectedCategory: any)
         </Form>
     )
 
-const getMethodArgs = (categoryId: string, selectedCategory: string) => (values: any) => {
+const getMethodArgs = () => (values: any) => {
     console.log(`inside create Q vals ${JSON.stringify(values)}`)
-    const category = categories.indexOf(selectedCategory)
+    const questionCount = 4
+    const categories = new Array(questionCount).fill(values.category)
+    const PRICING_TYPE = 0
+    const questionTypes = new Array(questionCount).fill(PRICING_TYPE)
+    const bounties = [values.bounty0, values.bounty1, values.bounty2, values.bounty3].map(parseUnits)
+    const pricingTimes = [values.pricingTime, values.pricingTime, values.pricingTime, values.pricingTime].map(msToSec)
+    const endTimes= [values.endTime, values.endTime, values.endTime, values.endTime].map(msToSec)
+    const startTimes = [values.startTime, values.startTime, values.startTime, values.startTime].map(msToSec)
+    const answerSets = [values.answerSet0, values.answerSet1, values.answerSet2, values.answerSet3].map((as) => [0,as])
+    const descriptions = [values.description0, values.description1, values.description2, values.description3]
+    const minimumRequiredAnswers = 1
     return (
         [
-            [category, category, category, category],
-            [values.bounty0, values.bounty1, values.bounty2, values.bounty3],
-            [values.pricingTime, values.pricingTime, values.pricingTime, values.pricingTime],
-            [values.endTime, values.endTime, values.endTime, values.endTime],
-            [0, 0, 0, 0],
-            [values.description0, values.description1, values.description2, values.description3],
-            [[0, values.answerSet0], [0, values.answerSet1], [0, values.answerSet2], [0, values.answerSet3]],
-            [values.startTime, values.startTime, values.startTime, values.startTime],
-            1
+            categories,
+            bounties,
+            pricingTimes,
+            endTimes,
+            questionTypes,
+            descriptions,
+            answerSets,
+            startTimes,
+            minimumRequiredAnswers
         ]
     )
 }
@@ -155,10 +157,10 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
     const formProps = {
         defaultValues: createQuestionGroupSchema.defaultValues,
         schema: createQuestionGroupSchema.schema,
-        getForm: CreateQuestionGroup(selectedCategory, setSelectedCategory),
+        getForm: CreateQuestionGroup(),
         contractMethod: pricingInstance.methods.createQuestionGroup,
         connectedAddress,
-        getMethodArgs: getMethodArgs(categoryId, selectedCategory),
+        getMethodArgs: getMethodArgs(),
         stateEls: {
             successEl: Success
         },

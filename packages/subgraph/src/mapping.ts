@@ -215,12 +215,16 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
     let questionId = questionIds[i]
     let id = questionId.toString()
     let question = Question.load(id)
+
+    //TODO fix this to do a greater then comparison, only works because all endTimes in a group are the same
     if (endTime < question.endTime) {
       endTime = question.endTime
     }
+
     if (startTime < question.startTime) {
-      startTime = startTime
+      startTime = question.startTime
     }
+
     questionIdStrings.push(id)
     categoryId = question.category
   }
