@@ -122,7 +122,7 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
   return args
 }
 
-const SelectWalletForm = ({setWallet}: any) => {
+const SelectWallet = ({setWallet}: any) => {
   const formProps = {
     defaultValues: selectWalletSchema.defaultValues,
     schema: selectWalletSchema.schema,
@@ -145,4 +145,4 @@ const SelectWalletForm = ({setWallet}: any) => {
     )
 }
 
-export default SelectWalletForm 
+export default SelectWallet 
