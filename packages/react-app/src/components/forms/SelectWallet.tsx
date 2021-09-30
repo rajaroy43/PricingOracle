@@ -107,7 +107,7 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
   }
 
   // @ts-ignore
-  const address = await wallets[values?.walletType].getAddress(wallet)
+  const address = await wallets[values.walletType].getAddress(wallet)
   const tokenInstance = getLithiumTokenInstance(wallet)
   const pricingInstance = getLithiumPricingInstance(wallet)
   const args = {
@@ -116,7 +116,7 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
     address,
     provider,
     tokenInstance,
-    pricingInstance,
+    pricingInstance
   }
 
   return args
