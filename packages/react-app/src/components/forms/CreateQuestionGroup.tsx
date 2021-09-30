@@ -7,7 +7,7 @@ import Select from '../atoms/inputs/Select'
 import CreateQuestionForm from './CreateQuestionForm'
 import createQuestionGroupSchema from '../../schemas/questionGroup'
 import Web3Form from '../formikTLDR/forms/Web3Form'
-import { parseUnits } from '../../helpers/formatters'
+import { msToSec, parseUnits } from '../../helpers/formatters'
 
 const Row = styled.div`
     display: flex;
@@ -117,18 +117,28 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
 
 const getMethodArgs = () => (values: any) => {
     console.log(`inside create Q vals ${JSON.stringify(values)}`)
-
+    const questionCount = 4
+    const categories = new Array(questionCount).fill(values.category)
+    const PRICING_TYPE = 0
+    const questionTypes = new Array(questionCount).fill(PRICING_TYPE)
+    const bounties = [values.bounty0, values.bounty1, values.bounty2, values.bounty3].map(parseUnits)
+    const pricingTimes = [values.pricingTime, values.pricingTime, values.pricingTime, values.pricingTime].map(msToSec)
+    const endTimes= [values.endTime, values.endTime, values.endTime, values.endTime].map(msToSec)
+    const startTimes = [values.startTime, values.startTime, values.startTime, values.startTime].map(msToSec)
+    const answerSets = [values.answerSet0, values.answerSet1, values.answerSet2, values.answerSet3].map((as) => [0,as])
+    const descriptions = [values.description0, values.description1, values.description2, values.description3]
+    const minimumRequiredAnswers = 1
     return (
         [
-            [values.category, values.category, values.category, values.category],
-            [parseUnits(values.bounty0), parseUnits(values.bounty1), parseUnits(values.bounty2), parseUnits(values.bounty3)],
-            [values.pricingTime, values.pricingTime, values.pricingTime, values.pricingTime],
-            [values.endTime, values.endTime, values.endTime, values.endTime],
-            [0, 0, 0, 0],
-            [values.description0, values.description1, values.description2, values.description3],
-            [[0, values.answerSet0], [0, values.answerSet1], [0, values.answerSet2], [0, values.answerSet3]],
-            [values.startTime, values.startTime, values.startTime, values.startTime],
-            1
+            categories,
+            bounties,
+            pricingTimes,
+            endTimes,
+            questionTypes,
+            descriptions,
+            answerSets,
+            startTimes,
+            minimumRequiredAnswers
         ]
     )
 }
