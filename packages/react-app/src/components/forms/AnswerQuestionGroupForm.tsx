@@ -176,7 +176,7 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
 
       <Grid container>
         <Grid item md={6} sm={6} xs={12} className={classes.totalsColumn}>
-            <div className={classes.totalTimeLeft}>Time left: <span>{mockData.timeLeft}</span></div> 
+            {false && <div className={classes.totalTimeLeft}>Time left: <span>{mockData.timeLeft}</span></div>}
             <div className={classes.totalPool}>Total Pool: 
                 <div>
                     <div className={classes.totalPoolLith}>{questionGroup.totalBountyDisplay} $LITH</div>
