@@ -1,4 +1,8 @@
 import { utils } from 'ethers'
+import numeral from 'numeral'
+
+//transform number to better readablity
+export const formatNumber = (number: number) => number ? `${numeral(number).format("0.0a").toUpperCase()}` : "0"
 
 // transform display units to native units
 export const parseUnits = (value: string, decimals = 18): string  => {
