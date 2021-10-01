@@ -7,15 +7,19 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = (isSelected:boolean) => makeStyles({
   root: {
-    maxWidth: 345,
+    background: `${isSelected ? '#3f51b5' : 'white'}`,
     cursor: 'pointer',
-    textAlign:'center',
     margin: '0.5em',
-    opacity: `${isSelected ? '100%' : '50%'}`,
+    maxWidth: 345,
+    opacity: '100%',
+    textAlign:'center',
     '&:hover': {
       background: "#3f51b5",
       color: 'white'
-   },
+    },
+    '& h2': {
+      color: 'white'
+    },
   },
   media: {
     height: 140,

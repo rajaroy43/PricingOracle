@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form } from 'formik'
+import { makeStyles } from '@material-ui/core'
 import { selectWalletSchema, SUPPORTED_WALLETS } from '../../schemas/wallet'
 import wallets from '../../wallets'
 import Button from '../atoms/inputs/buttons/Button'
@@ -10,7 +11,6 @@ import Flex from '../atoms/Flex'
 import Modal from '../atoms/Modal'
 import config from '../../config'
 import { getLithiumPricingInstance, getLithiumTokenInstance } from '../../helpers/contractInstances'
-import { makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   selectWalletError: {
