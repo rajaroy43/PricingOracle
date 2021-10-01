@@ -10,7 +10,7 @@ import Flex from '../atoms/Flex'
 import LoadingCircle from '../atoms/Loading'
 import UserBalances from './UserBalances'
 import { WalletContext } from '../providers/WalletProvider';
-import SelectWalletForm from '../forms/SelectWallet';
+import SelectWallet from '../forms/SelectWallet';
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -47,7 +47,7 @@ const UserProfile = ({ walletAddress }: {walletAddress: any}) => {
     )
   }
 
-  return <SelectWalletForm setWallet={setWallet} />
+  return <SelectWallet setWallet={setWallet} />
 }
 
 export default UserProfile
