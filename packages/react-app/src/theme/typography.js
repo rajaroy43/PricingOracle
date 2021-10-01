@@ -51,7 +51,7 @@ export default {
   },
   subtitle2: {
     color: palette.text.secondary,
-    fontWeight: 400,
+    fontWeight: 500,
     fontSize: '14px',
     letterSpacing: '-0.05px',
     lineHeight: '21px'

@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '32px',
-    fontWeight: 400
+    fontWeight: 500
   },
   timeCol: {
     alignSelf: 'end',

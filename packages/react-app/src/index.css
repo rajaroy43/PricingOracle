@@ -2,15 +2,6 @@
   font-display: block;
   font-family: 'Rajdhani';
   font-style: normal;
-  font-weight: 400;
-  src: local('Rajdhani'),
-    url(../src/assets/fonts/Rajdhani-Light.ttf)
-}
-
-@font-face {
-  font-display: block;
-  font-family: 'Rajdhani';
-  font-style: normal;
   font-weight: 500;
   src: local('Rajdhani'),
     url(../src/assets/fonts/Rajdhani-Regular.ttf)

@@ -34,7 +34,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1
     },
     h2: {
@@ -44,7 +44,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h3: {
@@ -63,7 +63,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h5: {
@@ -73,7 +73,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h6: {
@@ -83,7 +83,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     link: {
