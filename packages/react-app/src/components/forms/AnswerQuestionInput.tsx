@@ -2,6 +2,7 @@ import React from 'react'
 import Text from '../atoms/inputs/Text'
 import RadioUI from '../atoms/inputs/Radio'
 import { makeStyles } from '@material-ui/core'
+import { formatNumber } from '../../helpers/formatters'
 
 const useStyles = makeStyles(theme => ({
   answerItem: {
@@ -102,7 +103,7 @@ const AnswerQuestionInput = ({
   const classes = useStyles();
   return (
     <div className={classes.answerItem}>
-      <p>{question.description} equal to or above <span style={{fontWeight: 700}}>{question.answerSet[1]}</span> on {question.pricingTimeDisplay}?</p>
+      <p>{question.description} equal to or above $<span style={{fontWeight: 700}}>{formatNumber(question.answerSet[1])}</span> on {question.pricingTimeDisplay}?</p>
 
       <div className={classes.answerItemInput}>
         <RadioUI
