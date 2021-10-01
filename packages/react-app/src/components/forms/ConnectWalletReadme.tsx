@@ -1,3 +1,7 @@
+export default {}
+
+
+/*
 const initialState = {
     connected: false,
     error: {},
@@ -59,3 +63,4 @@ if (state.connected && !state.error && state.hasLith && state.hasApprovedLith) {
 }
 
 // Note: A WalletRequired component has been created to add ConnectWallet functionality to pages requiring wallet connection.
+*/
