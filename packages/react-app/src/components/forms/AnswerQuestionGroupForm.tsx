@@ -74,6 +74,25 @@ const useStyles = makeStyles(theme => ({
       marginRight: 0
     }
   },
+  totalStake: {
+    display: 'flex',
+    flexDirection: 'row',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
+    fontSize: '20px',
+    fontWeight: 400,
+    justifyContent: 'end',
+    marginLeft: '8px',
+    marginTop: '16px',
+    textAlign: 'right',
+    width: '100%',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      marginRight: 0
+    }
+  },
   totalPoolLith: {
     fontWeight: 700
   },
@@ -109,9 +128,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
         fontSize: '20px',
     },
-  },
-  stakeLithTotalForm: {
-    marginTop: '24px'
   },
   totalStakeAmount: {
     alignItems: 'center',
@@ -153,7 +169,7 @@ const Success = () => (
 )
 
 const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stakeState: any, setTotalStake: any) => (submit: any, isValid: boolean) => {
-  const lithBalance = user ? user.tokenBalanceDisplay : '-'
+  const lithBalance = user ? user.tokenBalanceDisplay : '0'
 
   const updateStake =  (idx: number) => (stake: number) => {
     //@ts-ignore
@@ -161,7 +177,8 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
     //@ts-ignore
-    const totalStake = stakes.reduce((acc: number, stake: number) => acc + parseInt(stake, 10), 0).toString()
+    let totalStake = stakes.reduce((acc: number, stake: number) => acc + parseInt(stake, 10), 0).toString()
+    totalStake = !isNaN(totalStake) ? totalStake : 0; 
     setTotalStake({
       totalStake,
       stakes
@@ -180,23 +197,20 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
             <div className={classes.totalPool}>Total Pool: 
                 <div>
                     <div className={classes.totalPoolLith}>{questionGroup.totalBountyDisplay} $LITH</div>
-                    <div className={classes.totalPoolUsd}>~{mockData.totalBountyDisplayUSD}</div>
+                    { /* <div className={classes.totalPoolUsd}>~{mockData.totalBountyDisplayUSD}</div> */}
                 </div>
-            </div>
-            <div className={classes.totalPool}>Total Stake: 
-                <div>
-                    <div className={classes.totalPoolLith}>{stakeState.totalStake} $LITH</div>
-                    <div className={classes.totalPoolUsd}>~{mockData.totalStakeDisplayUSD}USD</div>
-                </div>
-            </div>                    
+            </div>                   
         </Grid>
         <Grid item md={6} sm={6} xs={12} className={classes.stakeColumn}>
-            <Typography variant="h3" className={classes.stakeLithTitle} noWrap={true}>Stake $LITH on your answers:</Typography>
-            <div className={classes.stakeLithTotalForm}>
-                <img src={require(`../../assets/icon-lithium.svg`)} alt="Lithium" /> 
-            </div>
+            <Typography variant="h3" className={classes.stakeLithTitle} noWrap={true}>Stake $LITH on your answers</Typography>
+            <div className={classes.totalStake}>Total Stake:&nbsp; 
+                <div className={classes.total}>
+                    <div className={classes.totalPoolLith}>{stakeState.totalStake} $LITH</div>
+                    { /* <div className={classes.totalPoolUsd}>~{mockData.totalStakeDisplayUSD}USD</div> */}
+                </div>
+            </div> 
             <div className={classes.balance}>
-                Balance: {lithBalance} $LITH <span>(Max)</span>
+                Balance: {lithBalance} $LITH
             </div>
             <Button
               label="Stake &amp; Submit"

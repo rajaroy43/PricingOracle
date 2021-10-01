@@ -4,7 +4,7 @@
   font-style: normal;
   font-weight: 400;
   src: local('Rajdhani'),
-    url(../src/assets/fonts/Rajdhani-Light.ttf)
+    url(../src/assets/fonts/Rajdhani-Regular.ttf)
 }
 
 @font-face {

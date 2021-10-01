@@ -63,6 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
   error: {
     color: '#ff0000',
+    fontWeight: 700,
     position: 'relative',
     top: '32px',
     left: '-92px',
