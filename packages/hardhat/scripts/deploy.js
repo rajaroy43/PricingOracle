@@ -29,13 +29,17 @@ const main = async () => {
   account3 = accounts[3];
   const coordinatorAddress = '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'
   console.log(`Deploying to network ${network.name}`);
+
   console.log("\n\n 📡 Deploying Pricing...\n");
+
   const lithiumPricing = await deploy("LithiumPricing");
   console.log("\n\n 📡 Deploying Token...\n");
 
-  const lithToken = await deploy("LithiumToken", [account0.address]); // <-- add in constructor args like line 19 vvvv
+  const lithTokenArgs = [account0.address]
+  const lithToken = await deploy("LithiumToken", lithTokenArgs); // <-- add in constructor args like line 19 vvvv
 
-  const lithiumReward = await deploy("LithiumReward", [lithiumPricing.address]);
+  const lithiumRewardArgs = [lithiumPricing.address]
+  const lithiumReward = await deploy("LithiumReward", lithiumRewardArgs);
 
   await lithiumPricing.setLithiumTokenAddress(lithToken.address);
 
@@ -80,6 +84,29 @@ const main = async () => {
 
   }
 
+  wait(100000)
+  if (network.name !== "localhost") {
+    console.log(chalk.blue('verifying on LithiumToken etherscan'))
+    await run("verify:verify", {
+      address: lithToken.address,
+      contract: "contracts/LithiumToken.sol:LithiumToken", // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
+      constructorArguments: lithTokenArgs // If your contract has constructor arguments, you can pass them as an array
+    })
+
+    console.log(chalk.blue('verifying on LithiumReward etherscan'))
+    await run("verify:verify", {
+      address: lithiumReward.address,
+      contract: "contracts/LithiumReward.sol:LithiumReward", // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
+      constructorArguments: lithiumRewardArgs // If your contract has constructor arguments, you can pass them as an array
+    })
+
+    console.log(chalk.blue('verifying on LithiumReward etherscan'))
+    await run("verify:verify", {
+      address: lithiumPricing.address,
+      contract: "contracts/LithiumPricing.sol:LithiumPricing" // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
+    })
+  }
+
   //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!
   //const secondContract = await deploy("SecondContract")
 
@@ -116,16 +143,6 @@ const main = async () => {
   await tenderlyVerify(
     {contractName: "YourContract",
      contractAddress: yourContract.address
-  })
-  */
-
-  // If you want to verify your contract on etherscan
-  /*
-  console.log(chalk.blue('verifying on etherscan'))
-  await run("verify:verify", {
-    address: yourContract.address,
-    // contract: "contracts/Example.sol:ExampleContract" // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
-    // constructorArguments: args // If your contract has constructor arguments, you can pass them as an array
   })
   */
 

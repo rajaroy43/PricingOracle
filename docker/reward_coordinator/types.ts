@@ -1,6 +1,6 @@
 export interface QuestionUpdateFields {
   questionIds: string[],
-  answerIndexes: string[],
+  answerIndexes: number[],
   answerValues: string[],
   statuses: number[]
 }
@@ -15,4 +15,24 @@ export interface ReputationUpdateFields {
   addresses: string[],
   categoryIds: string[],
   scores: string[]
+}
+
+export enum AnswerStatus {
+  Success,
+  Failure,
+}
+
+export interface RewardsResponseData {
+  answerStatus: AnswerStatus
+  questionGroupId: string,
+  questionGroupCategory: string,
+  questionIds: string[],
+  finalAnswerIndex: number[],
+  finalAnswerValue: string[],
+  wisdomNodeUpdates: [string, string, string][]
+}
+
+export interface CalculatorResponse {
+  data: RewardsResponseData,
+  error: any
 }

@@ -23,7 +23,7 @@ const Question = ({match}) => {
       {loading ?
           <LoadingCircle />
           :
-          <QuestionDetail question={question} connectedWallet={connectedWallet} />
+          <QuestionDetail question={question} />
       }
     </WisdomNodeTemplate>
   )

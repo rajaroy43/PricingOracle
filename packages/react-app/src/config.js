@@ -18,9 +18,9 @@ const config = {
   },
   TESTNET: {
     CHAIN_ID: 4,
-    LITHIUM_TOKEN_ADDRESS: "0x2601EE7d4392d3F5fe41e91de9035c6c07241d78",
-    LITHIUM_PRICING_ADDRESS: "0xDBCB890BFcB55Bdb12C8B244cFF16072B29976C4",
-    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.5"
+    LITHIUM_TOKEN_ADDRESS: "0xD54e04F657Cd8b59959b4B8dd157595eAf163A4a",
+    LITHIUM_PRICING_ADDRESS: "0x31f6b8FbCF4C3182A8ac117ef9a2cB988d91B6e2",
+    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.7"
   }
 }
 

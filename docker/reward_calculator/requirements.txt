@@ -4,3 +4,4 @@ requests
 numpy
 pytest
 schema
+scipy

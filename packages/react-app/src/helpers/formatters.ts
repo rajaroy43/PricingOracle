@@ -1,4 +1,8 @@
 import { utils } from 'ethers'
+import numeral from 'numeral'
+
+//transform number to better readablity
+export const formatNumber = (number: number) => number ? `${numeral(number).format("0.0a").toUpperCase()}` : "0"
 
 // transform display units to native units
 export const parseUnits = (value: string, decimals = 18): string  => {
@@ -20,10 +24,15 @@ export const formatUnits = (value: string, decimals = 18):string => {
   }
 }
 
-
-export const formatDate = (date: string) => new Date(date).toLocaleString()
-
 export const convertToChecksum = (address: string) => utils.getAddress(address)
+
+export const msToSec = (value:  number) => Math.floor(value/1000)
+
+export const secToMs = (value: number) => value * 1000
+
+export const msToLocaleDate = (date: number) => new Date(date).toLocaleString()
+
+export const secToLocaleDate = (date: number) => msToLocaleDate(secToMs(date))
 
 const pad = (int: string, digits: number) =>
     int.length >= digits

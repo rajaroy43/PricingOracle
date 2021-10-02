@@ -1,12 +1,21 @@
 import { Question } from "lithium-subgraph"
-import { generateAnswerSetOptions } from "../components/forms/AnswerQuestion"
-import { formatUnits, formatDate } from "../helpers/formatters"
+import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
 import { QuestionView } from "../types/question"
 import { getTopAnswer } from "./common"
 
+export const generateAnswerSetOptions = (answerSet: string[]) => {
+  return answerSet.map((answer: string, index: number) => {
+    if (index === answerSet.length - 1) {
+      return {label: `Greater Than or Equal to ${answer}`, value: index}
+    } else {
+      return {label: `Greater Than or Equal to ${answer} or  Less Than ${answerSet[index+1]}`, value: index}
+    }
+  })
+}
+
 export const selectQuestion = (question: Question): QuestionView => {
   //TODO query a node to get the latest block time
-  const now = new Date().getTime() / 1000
+  const now = msToSec(new Date().getTime())
   const isFinished = question.endTime < now
   const topAnswer = getTopAnswer(question.answerSetTotalStaked)
   const answerSetOptions = generateAnswerSetOptions(question.answerSet)
@@ -16,10 +25,10 @@ export const selectQuestion = (question: Question): QuestionView => {
     answerSetTotalStakedDisplay: question.answerSetTotalStaked.map(formatUnits),
     bountyDisplay: formatUnits(question.bounty),
     totalStakedDisplay: formatUnits(question.totalStaked),
-    endTimeLocal: formatDate(question.endTime),
+    endTimeLocal: secToLocaleDate(question.endTime),
     isFinished,
-    createdLocal:  formatDate(question.created),
-    pricingTimeDisplay: formatDate(question.pricingTime),
+    createdLocal:  msToLocaleDate(question.created),
+    pricingTimeDisplay: secToLocaleDate(question.pricingTime),
     topAnswerIndex: topAnswer.index,
     topAnswerValue: topAnswer.value.toString(),
     topAnswerDisplay: answerSetOptions[topAnswer.index].label

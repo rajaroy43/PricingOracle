@@ -30,7 +30,10 @@ const useStyles = makeStyles(theme => ({
     backgroundColor:'#333333',
     borderRadius: '4px',
     color: 'white',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '16px',
     fontWeight: 600,
     padding: '8px',
@@ -41,7 +44,10 @@ const useStyles = makeStyles(theme => ({
   },
   questionGroupLength: {
     color: 'white',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '16px',
     fontWeight: 600,
     marginLeft: '8px',
@@ -54,7 +60,10 @@ const useStyles = makeStyles(theme => ({
   questionGroupTime: {
     alignSelf: 'flex-end',
     border: '2px solid #E95F36',
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '16px',
     fontWeight: 700,
     marginTop: '4px',
@@ -64,7 +73,10 @@ const useStyles = makeStyles(theme => ({
     width: 'fit-content'
   },
   questionGroupPool: {
-    fontFamily: 'Rajdhani',
+    fontFamily: [
+      'Rajdhani',
+      'sans-serif'
+    ].join(', '),
     fontSize: '24px',
     fontWeight: 500,
     marginTop: '16px',
@@ -98,7 +110,7 @@ const QuestionGroupItem = ({questionGroup}: {questionGroup: QuestionGroupView}) 
       </div>
 
       <div className={classes.questionGroupColumn}>
-        <div className={classes.questionGroupTime}>Time left: 00:00:00</div>
+        { false && <div className={classes.questionGroupTime}>Time left: 00:00:00</div>}
         <div className={classes.questionGroupPool}>Total Pool: <span className={classes.questionPoolValue}>{questionGroup.totalBountyDisplay} $LITH</span></div>
       </div>
     </div>

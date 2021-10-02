@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 
 const createQuestionGroupSchema = {
   defaultValues: {
-    category: 'crypto company',
+    category: '1',
     startTime: '0',
     endTime: '0',
     pricingTime: '0',

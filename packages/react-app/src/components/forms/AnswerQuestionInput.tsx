@@ -2,13 +2,17 @@ import React from 'react'
 import Text from '../atoms/inputs/Text'
 import RadioUI from '../atoms/inputs/Radio'
 import { makeStyles } from '@material-ui/core'
+import { formatNumber } from '../../helpers/formatters'
 
 const useStyles = makeStyles(theme => ({
   answerItem: {
     backgroundColor: '#111111',
     borderRadius: '4px',
     '& p': {
-      fontFamily: 'Rajdhani',
+      fontFamily: [
+        'Rajdhani',
+        'sans-serif'
+      ].join(', '),
       fontSize: '18px',
       fontWeight: '500',
       marginTop: 0
@@ -59,9 +63,14 @@ const useStyles = makeStyles(theme => ({
   },
   error: {
     color: '#ff0000',
+    fontWeight: 700,
     position: 'relative',
     top: '32px',
-    left: '-64px'
+    left: '-92px',
+    [theme.breakpoints.down('xs')]: {
+      top: '16px',
+      left: '18px'
+    }
   }
 }));
 
@@ -95,7 +104,7 @@ const AnswerQuestionInput = ({
   const classes = useStyles();
   return (
     <div className={classes.answerItem}>
-      <p>{question.description} equal to or above <span style={{fontWeight: 700}}>{question.answerSet[1]}</span> on {question.pricingTimeDisplay}?</p>
+      <p>{question.description} equal to or above $<span style={{fontWeight: 700}}>{formatNumber(question.answerSet[1])}</span> on {question.pricingTimeDisplay}?</p>
 
       <div className={classes.answerItemInput}>
         <RadioUI

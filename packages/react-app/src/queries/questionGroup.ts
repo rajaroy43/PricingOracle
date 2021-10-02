@@ -4,6 +4,7 @@ import { QuestionGroup } from 'lithium-subgraph'
 import { QueryResponse, QUESTION_FIELDS, QUESTION_GROUP_FIELDS } from './common'
 import { selectQuestionGroup } from '../selectors/questionGroup';
 import { QuestionGroupView } from '../types/questionGroup';
+import { msToSec } from '../helpers/formatters';
 
 interface QuestionGroupQueryVars {
   id: string
@@ -55,7 +56,7 @@ export const GET_QUESTION_GROUPS  = gql`
 export const GET_ACTIVE_QUESTION_GROUPS  = gql`
   ${QUESTION_FIELDS}
   query questionGroups($now: String!) {
-    questionGroups(where: {endTime_gt: $now}) {
+    questionGroups(where: {endTime_gt: $now, startTime_lt: $now}) {
       id
       endTime
       questions {
@@ -100,7 +101,7 @@ export const useGetQuestionGroups = (client: any): GetQuestionGroupsResponse => 
 }
 
 export const useGetActiveQuestionGroups = (client: any): GetQuestionGroupsResponse => {
-  const now = Math.floor(new Date().getTime() / 1000).toString()
+  const now = msToSec(new Date().getTime()).toString()
   const {loading, error, data} = useQuery<GetQuestionGroupsData, ActiveQuestionGroupsQueryVars>(
     GET_ACTIVE_QUESTION_GROUPS,
     {

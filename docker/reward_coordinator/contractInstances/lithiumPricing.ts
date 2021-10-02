@@ -38,7 +38,7 @@ export const updateRewards = (
 export const updateReputations = (
   updates: ReputationUpdateFields
 ) => { 
-  lithiumPricing.updateRepuation(
+  return lithiumPricing.updateRepuation(
     updates.addresses,
     updates.categoryIds,
     updates.scores
