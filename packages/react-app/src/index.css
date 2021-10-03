@@ -49,3 +49,8 @@ a {
 a:hover {
   text-decoration: none;
 }
+
+/* Overrride styling used in DateTime.js */
+.hDBaGn {
+  color: #ffffff !important
+}
