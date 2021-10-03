@@ -90,6 +90,10 @@ const radioStyle = {
   justifyContent: 'start',
 }
 
+const inputProps = {
+  width: '44px'
+}
+
 const inputLabelProps = {
   disableAnimation: true, 
   shrink: false,
@@ -120,6 +124,7 @@ const AnswerQuestionInput = ({
           label="Stake Amount:"
           name={`[answers[${idx}].stakeAmount]`}
           type="float"
+          InputProps={inputProps}
           InputLabelProps={inputLabelProps}
           errorCss={classes.error}
           followText="$LITH"
