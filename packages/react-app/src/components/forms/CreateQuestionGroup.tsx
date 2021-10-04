@@ -32,7 +32,7 @@ const FormContainer = styled.div`
     border-radius: 5px;
     padding: 1em;
     display: flex;
-    background-color: #EEEEEE;
+    background-color: #111;
     width: 50em;
     color: black;
 `
@@ -52,68 +52,69 @@ const categories = [
   return {label, value:idx.toString()}
 })
 
-const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
-        <Form>
-            <FormContainer>
-                <div>
-                    <FormRow>
-                        <label htmlFor="amount">Category</label>
-                    </FormRow>
-                    <FormRow>
-                        <Select
-                            name='category'
-                            options={categories}
-
+const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (  
+    <Form>
+        <FormContainer>
+            <div>
+                <FormRow>
+                    <label htmlFor="category">Category</label>
+                </FormRow>
+                <FormRow>
+                    <Select
+                        name='category'
+                        options={categories}
+                    />
+                </FormRow>
+                <FormRow style={{ marginTop: '2.5em' }}>
+                    <Col style={{ marginRight: '2.25em' }}>
+                        <label htmlFor="amount">Start Time</label>
+                        <DateTime
+                            label="Start Time"
+                            name="startTime"
                         />
-                    </FormRow>
-                    <FormRow style={{ marginTop: '2.5em' }}>
-                        <Col style={{ marginRight: '2.25em' }}>
-                            <label htmlFor="amount">Start Time</label>
-                            <DateTime
-                                label="Start Time"
-                                name="startTime"
-                            />
-                        </Col>
-                        <Col style={{ marginRight: '2.25em' }}>
-                            <label>End Time</label>
-                            <DateTime
-                                label="End Time"
-                                name="endTime"
-                            />
-                        </Col>
-                        <Col>
-                            <label htmlFor="weeksLocked">Pricing Time</label>
-                            <DateTime
-                                label="Pricing Time"
-                                name="pricingTime"
-                            />
-                        </Col>
-                    </FormRow>
-                    <hr style={{ width: '45em' }} />
-                    <FormRow>
-                        <label htmlFor="weeksLocked">List of Questions</label>
-                    </FormRow>
-                    <FormRow>
-                        {[...Array(4)].map((el, i) => {
-                            return (
-                                <Col>
-                                    <p>{`Question ${ i + 1 }`}</p>
-                                    <CreateQuestionForm key={i} index={i} />
-                                </Col>
-                            )
-                        })}
-                    </FormRow>
-                    <FormRow style={{ width: '100%'}} >
-                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <Button style={{ width: '10em', height: '3em', cursor: 'pointer' }} type="submit" onClick={submit}>
-                                Submit
-                            </Button>
+                    </Col>
+                    <Col style={{ marginRight: '2.25em' }}>
+                        <label>End Time</label>
+                        <DateTime
+                            label="End Time"
+                            name="endTime"
+                        />
+                    </Col>
+                    <Col>
+                        <label htmlFor="weeksLocked">Pricing Time</label>
+                        <DateTime
+                            label="Pricing Time"
+                            name="pricingTime"
+                        />
+                    </Col>
+                </FormRow>
+                <hr style={{ width: '45em' }} />
+                <FormRow>
+                    <label htmlFor="weeksLocked">List of Questions</label>
+                </FormRow>
+
+                {[...Array(4)].map((el, i) => {
+                    return (
+                        <div key={i}>
+                            <p>{`Question ${ i + 1 }`}</p>
+                            <Row>
+                                <CreateQuestionForm key={i} index={i} />
+                            </Row>
                         </div>
-                    </FormRow>
-                </div>
-            </FormContainer>
-        </Form>
-    )
+                    )
+                })}
+
+                <FormRow style={{ width: '100%'}} >
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Button style={{ width: '10em', height: '3em', cursor: 'pointer' }} type="submit" onClick={submit}>
+                            Submit
+                        </Button>
+                    </div>
+                </FormRow>
+            </div>
+        </FormContainer>
+    </Form>
+)
 
 const getMethodArgs = () => (values: any) => {
     console.log(`inside create Q vals ${JSON.stringify(values)}`)
