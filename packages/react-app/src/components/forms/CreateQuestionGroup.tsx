@@ -16,6 +16,10 @@ const Row = styled.div`
 const FormRow = styled(Row)`
     margin: 1em;
     width: 9em;
+    > label {
+        font-weight: 700;
+        color: white;
+    }
 `
 const Button = styled.button`
     padding: 5px;
@@ -41,6 +45,10 @@ const Col = styled.div`
     display: flex;
     flex-direction: column;
     margin-right: 2em;
+    > label {
+        font-weight: 700;
+        color: white;
+    }
 `
 
 const categories = [
@@ -89,14 +97,14 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
                     </Col>
                 </FormRow>
                 <hr style={{ width: '45em' }} />
-                <FormRow>
+                <FormRow style={{ margin: '16px 0' }}>
                     <label htmlFor="weeksLocked">List of Questions</label>
                 </FormRow>
 
                 {[...Array(4)].map((el, i) => {
                     return (
                         <div key={i}>
-                            <p>{`Question ${ i + 1 }`}</p>
+                            <p style={{ color: 'white', fontWeight: 700 }}>{`Question ${ i + 1 }`}</p>
                             <Row>
                                 <CreateQuestionForm key={i} index={i} />
                             </Row>
