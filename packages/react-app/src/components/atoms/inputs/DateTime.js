@@ -4,6 +4,7 @@ import DateTimePicker from 'react-datetime'
 import ErrorMessage from './ErrorMessage';
 import { zeroPad } from '../../../helpers/formatters'
 import styled from 'styled-components'
+import '../../../assets/css/react-datetime.css'
 
 const Td = styled.td`
   &:hover {
