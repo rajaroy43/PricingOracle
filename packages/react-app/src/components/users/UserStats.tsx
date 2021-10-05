@@ -1,0 +1,67 @@
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Typography from "@material-ui/core/Typography"
+import UserReputationScoreItem from './UserReputationScoreItem'
+
+const useStyles = makeStyles(theme => ({
+  userStats: {
+    justifyContent: 'space-between',
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '16px'
+  },
+  userReputation: {
+    marginBottom: '40px',
+    marginTop: '16px',
+    marginLeft: '24px',
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: '16px',
+      marginLeft: '0',
+      padding: '8px 0'
+    },
+  },
+  noScore: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'start'
+  },
+  infoIcon: {
+    marginLeft: '-8px',
+    marginRight: '8px'
+  }
+}));
+
+// mock data
+const reputationScores = [
+  { category: 'Crypto', score: 92, numAnswers: 6 },
+  { category: 'Real Estate', score: 71, numAnswers: 2 },
+  { category: 'Pre-IPO', score: 82, numAnswers: 4 }
+];
+
+// @ts-ignore
+// const reputationScores = [];
+
+const UserStats = () => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.userStats}>
+      <Typography variant="h3">My Stats:</Typography>
+      <div className={classes.userReputation}>
+        {reputationScores.length ?
+          // @ts-ignore
+          reputationScores.map((scoreItem => <UserReputationScoreItem scoreItem={scoreItem} key={scoreItem.category} />))
+          :
+          <div className={classes.noScore}>
+            <img className={classes.infoIcon} src={require(`../../assets/icon-info.svg`)} alt='Info' />
+            <p>My Stats measures the accuracy<br />
+             of your scores in each category.<br />
+             Answer 10 questions to reach Level 1.</p>
+          </div>
+        }
+      </div>
+    </div>
+  )
+}
+
+export default UserStats

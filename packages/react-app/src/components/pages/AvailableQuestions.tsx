@@ -4,13 +4,13 @@ import { subgraphClient } from '../../client'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
 import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
+import UserStats from '../users/UserStats'
 import QuestionGroupList from '../questions/QuestionGroupList'
 import { useGetActiveQuestionGroups } from '../../queries/questionGroup'
 
 const AvailableQuestions = () => {
   const connectedWallet = useContext(WalletContext)
   const {loading, questionGroups} = useGetActiveQuestionGroups(subgraphClient)
-  console.log('got question group', questionGroups);
   const sideBarProps = {
     activePage: 'availableQuestions',
     // @ts-ignore
@@ -21,15 +21,17 @@ const AvailableQuestions = () => {
 
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
-        <Typography variant="h1">Available Questions</Typography>
-     {loading  ?
+      <Typography variant="h1">Available Questions</Typography>
+      <UserStats />
+      
+      {loading  ?
         <LoadingCircle />
         :
         questionGroups != null ?
           <QuestionGroupList questionGroups={questionGroups} />
           :
           'Error Loading Question Groups'
-     }
+      }
     </WisdomNodeTemplate>
   )
   return  main;

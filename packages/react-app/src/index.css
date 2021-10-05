@@ -2,15 +2,6 @@
   font-display: block;
   font-family: 'Rajdhani';
   font-style: normal;
-  font-weight: 400;
-  src: local('Rajdhani'),
-    url(../src/assets/fonts/Rajdhani-Regular.ttf)
-}
-
-@font-face {
-  font-display: block;
-  font-family: 'Rajdhani';
-  font-style: normal;
   font-weight: 500;
   src: local('Rajdhani'),
     url(../src/assets/fonts/Rajdhani-Regular.ttf)
@@ -35,12 +26,25 @@
 }
 
 body {
+  font-weight: 500;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-y:scroll;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  overflow-y: scroll;
 } 
+
+p {
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
 
 a {
   color: #fff;
