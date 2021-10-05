@@ -1,7 +1,7 @@
-const { ethers, network } = require("hardhat");
+const hre = require("hardhat")
 const fs = require("fs");
+const ethers=hre.ethers
 const {
-  createQuestionGroup,
   answerQuestionGroups,
 } = require("./utils/lithiumPricing");
 const prepareAccount = async (
@@ -11,14 +11,22 @@ const prepareAccount = async (
   approveAmount,
   transferAmount
 ) => {
+  const userBalance=await lithToken.balanceOf(account.address);
+  const userApprovalBalance=await lithToken.allowance(account.address,lithiumPricing.address);
+  if(userApprovalBalance < approveAmount)
   await lithToken
     .connect(account)
     .approve(lithiumPricing.address, approveAmount);
 
+  if(userBalance < approveAmount)
+
   await lithToken.transfer(account.address, transferAmount);
+  
 };
 const answers100 = async () => {
-  if (network.name === "localhost") {
+  if (hre.network.name === "localhost") {
+    const questionGroupId = parseInt(process.argv[2])
+    if(! questionGroupId) throw Error("Provide Question GroupId as yarn answer-100 questiongroupId")
     const LithiumPricingAddress = fs.readFileSync(
       `artifacts/LithiumPricing.address`
     );
@@ -40,7 +48,7 @@ const answers100 = async () => {
     const userAccounts = [...accounts.slice(1, 101)];
     const transferBalance = ethers.utils.parseUnits("100000.0", 18);
     const approveAmount = ethers.utils.parseUnits("10000000000000.0", 18);
-    console.log(`Preparing ${userAccounts.length} wisdom-node`);
+    console.log(`Preparing ${userAccounts.length} wisdom-node for questionGroupId ${questionGroupId}`);
     await Promise.all(
       userAccounts.map((account) =>
         prepareAccount(
@@ -53,12 +61,11 @@ const answers100 = async () => {
       )
     );
     console.log("Account Prepared");
+    
+    //Assuming 4 questions in a QuestionGroup
+    const questionGroups = [[[1,2,3,4]]]
 
-    //Creating mock QuestionsGroup valid answers ends 1 minute
-
-    const questionGroups = await createQuestionGroup(lithiumPricing);
-
-    await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts, 8);
+    await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts, questionGroupId);
 
     console.log(`question group answered `);
   }
@@ -70,3 +77,4 @@ answers100()
     console.error(error);
     process.exit(1);
   });
+

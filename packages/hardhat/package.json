@@ -48,7 +48,7 @@
     "compile": "hardhat compile",
     "coverage": "hardhat coverage --network hardhat",
     "deploy": "hardhat run scripts/deploy.js",
-    "answer-100":"hardhat run scripts/100wisdomNodeAnswering.js",
+    "answer-100": "node ./scripts/100wisdomNodeAnswering.js",
     "deploy-rinkeby": "hardhat run scripts/deploy.js --network rinkeby",
     "postdeploy": "hardhat run scripts/publish.js",
     "watch": "node scripts/watch.js",

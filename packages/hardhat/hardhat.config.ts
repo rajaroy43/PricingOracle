@@ -1,10 +1,10 @@
-import fs from "fs";
-import "hardhat-typechain";
+const fs=require("fs")
+require("hardhat-typechain");
 
-import "@nomiclabs/hardhat-waffle";
-import "solidity-coverage";
-import "@tenderly/hardhat-tenderly";
-import "@nomiclabs/hardhat-etherscan";
+require("@nomiclabs/hardhat-waffle");
+require("solidity-coverage");
+require("@tenderly/hardhat-tenderly");
+require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
 
 /*
