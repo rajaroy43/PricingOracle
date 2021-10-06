@@ -5,16 +5,21 @@ import UserReputationScoreItem from './UserReputationScoreItem'
 
 const useStyles = makeStyles(theme => ({
   userStats: {
-    justifyContent: 'space-between',
     display: 'flex',
     flexDirection: 'column',
-    marginTop: '16px'
+    justifyContent: 'space-between',
+    marginTop: '16px',
+    maxWidth: '320px',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '8px',
+    }
   },
   userReputation: {
     marginBottom: '40px',
     marginTop: '16px',
     marginLeft: '24px',
     [theme.breakpoints.down('sm')]: {
+      marginTop: '0',
       marginBottom: '16px',
       marginLeft: '0',
       padding: '8px 0'

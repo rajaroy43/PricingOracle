@@ -10,7 +10,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: '8px',
     textAlign: 'right',
     whitespace: 'noWrap',
-    width: '220px'
   },
   score: {
     paddingLeft: '8px'
