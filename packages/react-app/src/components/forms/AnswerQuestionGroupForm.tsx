@@ -179,13 +179,11 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
     stakes[idx] = stake
     //@ts-ignore
     const totalStakeReducer = (acc, stake) => {
-      if (!isNaN(stake) && stake > 0) {
-        const bigStake = BigNumber.from(parseUnits(stake).toString());
-        const bigTotal = acc ? bigStake.add(acc) : bigStake;
-        return bigTotal.toString();
-      } else {
-        return acc;
-      }
+      if (!isNaN(stake) && stake > 0) { 
+        acc = acc.add(BigNumber.from(parseUnits(stake).toString()));
+      } 
+      
+      return acc
     }
 
     //@ts-ignore
