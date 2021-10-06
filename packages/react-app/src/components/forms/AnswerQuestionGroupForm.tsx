@@ -189,7 +189,7 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
     }
 
     //@ts-ignore
-    const zeroVal = BigNumber.from(parseUnits('0').toString());
+    const zeroVal = BigNumber.from(0);
     const totalStake = stakes.reduce(totalStakeReducer, zeroVal);
     setTotalStake({
       totalStake,
