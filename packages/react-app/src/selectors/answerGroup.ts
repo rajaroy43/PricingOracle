@@ -16,19 +16,21 @@ export const selectAnswerGroups = (answerGroups: AnswerGroup[]): AnswerGroupsVie
   const groupsAcc = {
     pendingAnswerGroups: [],
     unclaimedAnswerGroups: [],
-    unclaimedRewards: BigNumber.from(0)
+    unclaimedRewards: BigNumber.from("0")
   }
   const filteredGroups = answerGroups.reduce((acc: any, answerGroup: AnswerGroup) => {
     if (answerGroup.isRewardCalculated === 'NotCalculated') {
       acc.pendingAnswerGroups.push(answerGroup)
     } else {
       acc.unclaimedAnswerGroups.push(answerGroup)
-      acc.unclaimedRewards.add(BigNumber.from(answerGroup.rewardAmount))
+      acc.unclaimedRewards = acc.unclaimedRewards.add(answerGroup.rewardAmount)
     }
     return acc
   }, groupsAcc)
+  console.log(`filtered groups ${JSON.stringify(filteredGroups)} -- ${filteredGroups.unclaimedRewards.toString()}`)
   return {
     ...filteredGroups,
+    unclaimedRewards: filteredGroups.unclaimedRewards.toString(),
     unclaimedRewardsDisplay: formatUnits(filteredGroups.unclaimedRewards.toString()),
     answerGroupViews: answerGroups.map(selectAnswerGroup)
   }

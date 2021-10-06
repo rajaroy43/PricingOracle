@@ -1,6 +1,6 @@
 import React from 'react'
 import { UserView } from '../../types/user'
-import AnswerList from '../answers/AnswerList'
+// import AnswerList from '../answers/AnswerList'
 import Flex from '../atoms/Flex'
 import QuestionList from '../questions/QuestionList'
 import UserInputRow from './UserInputRow'
@@ -12,7 +12,7 @@ const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet
       { connectedWallet && <UserInputRow connectedWallet={connectedWallet} pricingIsApproved={user.pricingIsApproved} /> }
       <Flex justifyContent='space-around' mt='3em'>
         <QuestionList questions={user.questionViews} />
-        <AnswerList answers={user.answerViews} />
+        {/*<AnswerList answers={user.answerViews} />*/}
       </Flex>
     </div>
   )
