@@ -5,3 +5,11 @@ export interface AnswerGroupView extends AnswerGroup {
   rewardAmountDisplay: string
   answerViews: AnswerView[]
 }
+
+export interface AnswerGroupsView {
+  pendingAnswerGroups: number
+  unclaimedAnswerGroups: number
+  unclaimedRewards: string
+  unclaimedRewardsDisplay: string
+  answerGroupViews: AnswerGroupView[]
+}
