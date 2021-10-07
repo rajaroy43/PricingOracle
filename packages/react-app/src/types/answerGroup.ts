@@ -11,5 +11,7 @@ export interface AnswerGroupsView {
   unclaimedAnswerGroups: number
   unclaimedRewards: string
   unclaimedRewardsDisplay: string
+  claimableIds: string[]
+  hasUnclaimedRewards: boolean
   answerGroupViews: AnswerGroupView[]
 }

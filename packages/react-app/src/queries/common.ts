@@ -64,6 +64,9 @@ export const ANSWER_GROUP_FIELDS = gql`
     owner {
       id
     }
+    questionGroup {
+      id
+    }
     answers {
       ...AnswerFields
     }

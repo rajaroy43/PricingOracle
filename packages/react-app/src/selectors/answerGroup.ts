@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers"
-import { AnswerGroup, AnswerStatus } from "lithium-subgraph"
+import { AnswerGroup } from "lithium-subgraph"
 import { formatUnits } from "../helpers/formatters"
 import { AnswerGroupView, AnswerGroupsView } from "../types/answerGroup"
 import { selectAnswer } from "./answer"
@@ -16,10 +16,11 @@ export const selectAnswerGroups = (answerGroups: AnswerGroup[]): AnswerGroupsVie
   const groupsAcc = {
     pendingAnswerGroups: [],
     unclaimedAnswerGroups: [],
-    unclaimedRewards: BigNumber.from("0")
+    unclaimedRewards: BigNumber.from(0)
   }
+
   const filteredGroups = answerGroups.reduce((acc: any, answerGroup: AnswerGroup) => {
-    if (answerGroup.isRewardCalculated === 'NotCalculated') {
+    if (answerGroup.isRewardCalculated === 'NotCalculated'){//StatusCalculated.NotCalculated) {
       acc.pendingAnswerGroups.push(answerGroup)
     } else {
       acc.unclaimedAnswerGroups.push(answerGroup)
@@ -27,11 +28,13 @@ export const selectAnswerGroups = (answerGroups: AnswerGroup[]): AnswerGroupsVie
     }
     return acc
   }, groupsAcc)
-  console.log(`filtered groups ${JSON.stringify(filteredGroups)} -- ${filteredGroups.unclaimedRewards.toString()}`)
+
   return {
     ...filteredGroups,
     unclaimedRewards: filteredGroups.unclaimedRewards.toString(),
     unclaimedRewardsDisplay: formatUnits(filteredGroups.unclaimedRewards.toString()),
+    hasUnclaimedRewards: filteredGroups.unclaimedRewards.gt(0),
+    claimableIds: filteredGroups.unclaimedAnswerGroups.map((group: AnswerGroup) => group.questionGroup.id),
     answerGroupViews: answerGroups.map(selectAnswerGroup)
   }
 }
