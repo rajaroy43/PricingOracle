@@ -70,6 +70,7 @@ export type Question = {
   created: Scalars['BigInt'];
   finalAnswerIndex: Scalars['Int'];
   finalAnswerValue: Scalars['BigInt'];
+  questionGroup?: Maybe<QuestionGroup>;
 };
 
 export type QuestionCategory = {
@@ -86,8 +87,9 @@ export type QuestionCategory = {
 export type QuestionGroup = {
   __typename?: 'QuestionGroup';
   id: Scalars['ID'];
+  isAnswerCalculated: StatusCalculated;
   category: QuestionCategory;
-  questions: Array<Question>;
+  questions?: Maybe<Array<Question>>;
   endTime: Scalars['BigInt'];
   startTime: Scalars['BigInt'];
   minimumRequiredAnswers: Scalars['Int'];

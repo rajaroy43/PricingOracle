@@ -58,10 +58,17 @@ export const ANSWER_FIELDS = gql`
 `
 
 export const ANSWER_GROUP_FIELDS = gql`
+  ${ANSWER_FIELDS}
   fragment AnswerGroupFields on AnswerGroup {
     id
     owner {
       id
+    }
+    questionGroup {
+      id
+    }
+    answers {
+      ...AnswerFields
     }
     rewardAmount
     status

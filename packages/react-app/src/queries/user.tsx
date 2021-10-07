@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { User } from 'lithium-subgraph'
-import { QueryResponse, QUESTION_FIELDS, ANSWER_FIELDS, USER_FIELDS, REPUTATION_FIELDS } from './common'
+import { QueryResponse, QUESTION_FIELDS, ANSWER_GROUP_FIELDS, USER_FIELDS, REPUTATION_FIELDS } from './common'
 import { UserView } from '../types/user';
 import { selectUser } from '../selectors/user';
 
@@ -48,13 +48,13 @@ export const useGetUsers = (client: any): GetUsersResponse => {
 export const GET_USER  = gql`
   ${USER_FIELDS}
   ${QUESTION_FIELDS}
-  ${ANSWER_FIELDS}
+  ${ANSWER_GROUP_FIELDS}
   ${REPUTATION_FIELDS}
   query user($id: ID!) {
     user(id: $id) {
       ...UserFields
-      answers {
-        ...AnswerFields
+      answerGroups(where: {status: Unclaimed}) {
+        ...AnswerGroupFields
       }
       questions {
         ...QuestionFields
