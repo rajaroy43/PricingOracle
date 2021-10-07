@@ -1,4 +1,4 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt, log } from "@graphprotocol/graph-ts"
 import {
   AnswerGroupSetSubmitted,
   CategoryAdded,
@@ -10,7 +10,8 @@ import {
   ReputationUpdated,
   RewardClaimed,
   SetLithiumRewardAddress,
-  SetLithiumTokenAddress
+  SetLithiumTokenAddress,
+  CreateQuestionGroupCall__Outputs
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
@@ -182,8 +183,9 @@ function updateFinalAnswer(questionId: string, answerIndex: string, answerValue:
   question.finalAnswerValue = BigInt.fromString(answerValue)
   question.isAnswerCalculated = status
   question.save()
+  let questionGroupId =  question.questionGroup.toString()
 
-  let questionGroup = QuestionGroup.load(question.questionGroup)
+  let questionGroup = QuestionGroup.load(questionGroupId)
   questionGroup.isAnswerCalculated = status
   questionGroup.save()
 }
@@ -207,7 +209,7 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   let id = event.params.id.toString()
   let questionGroup = new QuestionGroup(id)
   let questionIds: Array<BigInt> = event.params.questionIds
-  let questionIdStrings: Array<string>
+  let questionIdsStrings: Array<String>
   let endTime = ZERO
   let startTime = ZERO
   let categoryId = ''
@@ -215,6 +217,8 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
     let questionId = questionIds[i]
     let id = questionId.toString()
     let question = Question.load(id)
+    question.questionGroup = questionGroup.id
+    question.save()
 
     //TODO fix this to do a greater then comparison, only works because all endTimes in a group are the same
     if (endTime < question.endTime) {
@@ -224,8 +228,7 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
     if (startTime < question.startTime) {
       startTime = question.startTime
     }
-
-    questionIdStrings.push(id)
+    questionIdsStrings.push(id)
     categoryId = question.category
   }
   questionGroup.category = categoryId
@@ -233,13 +236,9 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   questionGroup.startTime = startTime
   questionGroup.minimumRequiredAnswers = event.params.minimumRequiredAnswers
   questionGroup.isAnswerCalculated = STATUS_CALCULATED[0]
+  questionGroup.questions = questionIdsStrings
   questionGroup.save()
-  for(let i = 0; i < questionIds.length; i++) {
-    let questionId = questionIds[i]
-    let question = Question.load(questionId.toString())
-    question.questionGroup = questionGroup.id
-    question.save()
-  }
+
 }
 
 export function handleQuestionAnswered(event: QuestionAnswered): void {
@@ -280,23 +279,22 @@ export function handleAnswerGroupSetSubmitted(event: AnswerGroupSetSubmitted): v
   let questionGroupId = event.params.questionSetId.toString()
   let answerGroupId = getAnswerGroupId(owner.id, questionGroupId)
   let questionGroup = QuestionGroup.load(questionGroupId)
-  let answerIds = new Array<string>(questionGroup.questions.length)
-
+  let answerGroupIds: Array<string>
   let questions = questionGroup.questions as string[]
-  
+
   for(let i = 0; i < questions.length;i++) {
     let questionId = questions[i]
     let answerId = getAnswerId(owner.id, questionId)
-    answerIds.push(answerId)
+    answerGroupIds.push(answerId)
   }
 
   let answerGroup = new AnswerGroup(answerGroupId)
   answerGroup.owner = owner.id
   answerGroup.questionGroup = questionGroupId
-  answerGroup.answers = answerIds
   answerGroup.isRewardCalculated = STATUS_CALCULATED[0]
   answerGroup.rewardAmount = ZERO
   answerGroup.status = ANSWER_STATUS[0]
+  answerGroup.answers = answerGroupIds
   answerGroup.save()
 
   owner.answerGroupCount = owner.answerGroupCount.plus(ONE)
