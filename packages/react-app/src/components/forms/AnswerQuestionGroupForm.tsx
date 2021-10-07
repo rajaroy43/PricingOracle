@@ -189,8 +189,10 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
     //@ts-ignore
     const zeroVal = BigNumber.from(0);
     const totalStake = stakes.reduce(totalStakeReducer, zeroVal);
+    const totalStakeDisplay = formatUnits(totalStake);
     setTotalStake({
       totalStake,
+      totalStakeDisplay,
       stakes
     });
   }
@@ -215,7 +217,7 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
             <Typography variant="h3" className={classes.stakeLithTitle} noWrap={true}>Stake $LITH on your answers</Typography>
             <div className={classes.totalStake}>Total Stake:&nbsp; 
                 <div className={classes.total}>
-                    <div className={classes.totalPoolLith}>{formatUnits(stakeState.totalStake)} $LITH</div>
+                    <div className={classes.totalPoolLith}>{stakeState.totalStakeDisplay} $LITH</div>
                     { /* <div className={classes.totalPoolUsd}>~{mockData.totalStakeDisplayUSD}USD</div> */}
                 </div>
             </div> 
@@ -247,7 +249,8 @@ const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGr
   const { user } = useGetUser(subgraphClient, connectedWallet.address);
   const initialStakeState = {
     totalStake: "0",
-    stakes: questionGroup.questions.map(() => 0)
+    totalStakeDisplay: "0.0",
+    stakes: questionGroup.questions.map(() => 0) 
   }
   const [stakeState, setTotalStake] = useState(initialStakeState)
   const formProps = {
