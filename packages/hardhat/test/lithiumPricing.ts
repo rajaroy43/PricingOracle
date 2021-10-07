@@ -1495,7 +1495,7 @@ describe("Lithium Pricing", async function () {
           it("Should not able to claim reward , if Answer Group Reward not calculated yet", async function () {
             const questionGroupId = 0;
             await expect(
-              lithiumPricing.connect(account1).claimRewards(questionGroupId)
+              lithiumPricing.connect(account1).claimRewards([questionGroupId])
             ).to.be.revertedWith("Reward not calculated yet");
           });
 
@@ -1523,7 +1523,7 @@ describe("Lithium Pricing", async function () {
                 18
               );
               await expect(
-                lithiumPricing.connect(account1).claimRewards(questionGroupId)
+                lithiumPricing.connect(account1).claimRewards([questionGroupId])
               ).emit(lithiumPricing, "RewardClaimed");
               const senderBalanceAfter = await lithToken.balanceOf(
                 account1.address
@@ -1543,7 +1543,7 @@ describe("Lithium Pricing", async function () {
                 18
               );
               await expect(
-                lithiumPricing.connect(account1).claimRewards(questionGroupId)
+                lithiumPricing.connect(account1).claimRewards([questionGroupId])
               ).emit(lithiumPricing, "RewardClaimed");
 
               const senderBalanceAfter = await lithToken.balanceOf(
@@ -1555,13 +1555,13 @@ describe("Lithium Pricing", async function () {
               );
 
               await expect(
-                lithiumPricing.connect(account1).claimRewards(questionGroupId)
-              ).to.be.revertedWith("Group Rewards has already been claimed");
+                lithiumPricing.connect(account1).claimRewards([questionGroupId])
+              ).to.be.revertedWith("Group Rewards have already been claimed");
             });
 
             it("Should not be able to claim reward with invalid question Group Id ", async function () {
               const ids = [1];
-              await expect(lithiumPricing.claimRewards(ids)).to.be.revertedWith(
+              await expect(lithiumPricing.claimRewards([ids])).to.be.revertedWith(
                 "Invalid question group id"
               );
             });
