@@ -1500,10 +1500,15 @@ describe("Lithium Pricing", async function () {
           });
 
           describe("Claim rewards for a answers group", function () {
+            let addressesToUpdate: string[];
+            let groupIds: number[];
+            let rewardAmounts: number[];
+            let questionGroupId: number;
             beforeEach(async () => {
-              const addressesToUpdate = [account1.address];
-              const groupIds = [0];
-              const rewardAmounts = [2];
+              addressesToUpdate = [account1.address];
+              groupIds = [0];
+              rewardAmounts = [2];
+              questionGroupId = 0;
               await lithiumPricing.updateGroupRewardAmounts(
                 addressesToUpdate,
                 groupIds,
@@ -1512,16 +1517,8 @@ describe("Lithium Pricing", async function () {
             });
 
             it("Should be able to claim reward", async function () {
-              const senderBalance = await lithToken.balanceOf(account1.address);
-              const questionGroupId = 0;
+              const senderBalance = await lithToken.balanceOf(addressesToUpdate[0]);
 
-              //account1 stake 25(for question id 1)+25 (for question id 2)
-              //total stake = 50
-              //now total rewards: 50*rewardsAmounts[0]=50*2 = 100LITH tokens
-              const totalClaimedrewardAmount = ethers.utils.parseUnits(
-                "100.0",
-                18
-              );
               await expect(
                 lithiumPricing.connect(account1).claimRewards([questionGroupId])
               ).emit(lithiumPricing, "RewardClaimed");
@@ -1529,19 +1526,15 @@ describe("Lithium Pricing", async function () {
                 account1.address
               );
 
-              expect(totalClaimedrewardAmount.add(senderBalance)).to.equal(
+              expect(senderBalance.add(rewardAmounts[0])).to.equal(
                 senderBalanceAfter
               );
             });
 
             it("Should not be able to claim reward again ", async function () {
-              const senderBalance = await lithToken.balanceOf(account1.address);
-              const questionGroupId = 0;
+              const senderBalance = await lithToken.balanceOf(addressesToUpdate[0]);
 
-              const totalClaimedrewardAmount = ethers.utils.parseUnits(
-                "100.0",
-                18
-              );
+        
               await expect(
                 lithiumPricing.connect(account1).claimRewards([questionGroupId])
               ).emit(lithiumPricing, "RewardClaimed");
@@ -1550,7 +1543,7 @@ describe("Lithium Pricing", async function () {
                 account1.address
               );
 
-              expect(totalClaimedrewardAmount.add(senderBalance)).to.equal(
+              expect(senderBalance.add(rewardAmounts[0])).to.equal(
                 senderBalanceAfter
               );
 

@@ -80,8 +80,6 @@ const main = async () => {
     //Creating mock QuestionsGroup no answers ends 100 minute
     await createQuestionGroup(lithiumPricing, 6000, 1);
     console.log(chalk.magenta("<><><><>QuestionGroups created no answers ongoing", "\n"));
-
-
   }
 
   wait(100000)
