@@ -246,14 +246,13 @@ const getMethodArgs = (questionGroupId: string) => (values: any) => {
 const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGroup: QuestionGroupView, connectedWallet: any}) => {
   const classes = useStyles();
   const defaultQuestionValues = questionGroup.questions!.map(() => {
-    //@ts-ignore
     return {...answerQuestionGroupSchema.defaultValue}
   })
   const { user } = useGetUser(subgraphClient, connectedWallet.address);
   const initialStakeState = {
     totalStake: "0",
     totalStakeDisplay: "0.0",
-    stakes: questionGroup.questions.map(() => 0) 
+    stakes: questionGroup.questions!.map(() => 0) 
   }
   const [stakeState, setTotalStake] = useState(initialStakeState)
   const formProps = {
