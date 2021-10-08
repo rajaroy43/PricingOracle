@@ -11,7 +11,6 @@ import {
   RewardClaimed,
   SetLithiumRewardAddress,
   SetLithiumTokenAddress,
-  CreateQuestionGroupCall__Outputs
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
@@ -209,7 +208,7 @@ export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
   let id = event.params.id.toString()
   let questionGroup = new QuestionGroup(id)
   let questionIds: Array<BigInt> = event.params.questionIds
-  let questionIdsStrings: Array<String>
+  let questionIdsStrings: Array<string>
   let endTime = ZERO
   let startTime = ZERO
   let categoryId = ''
@@ -338,7 +337,7 @@ export function handleTransfer(event: Transfer): void {
   let senderAddress = event.params.from.toHexString()
 
   let sender = getOrCreateUser(senderAddress)
-  
+  log.info('Handleing Transfer From sender {}', [sender.id])
   sender.tokenBalance = sender.tokenBalance.minus(event.params.value)
   sender.save()
 
@@ -346,7 +345,8 @@ export function handleTransfer(event: Transfer): void {
   let receiverAddress = event.params.to.toHexString()
 
   let receiver = getOrCreateUser(receiverAddress)
-  
+  log.info('Handleing Transfer To receiver {}', [receiverAddress])
+
   receiver.tokenBalance = receiver.tokenBalance.plus(event.params.value)
   receiver.save()
 }
@@ -357,8 +357,10 @@ export function handleApproval(event: Approval): void {
   let approver = getOrCreateUser(appoverAddress)
   
   let pricingMeta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
-  if (pricingMeta.address == event.params.spender) {
-    approver.tokenApprovalBalance = approver.tokenApprovalBalance.plus(event.params.value)
-    approver.save()
+  if (pricingMeta) {
+    if (pricingMeta.address == event.params.spender) {
+      approver.tokenApprovalBalance = approver.tokenApprovalBalance.plus(event.params.value)
+      approver.save()
+    }
   }
 }

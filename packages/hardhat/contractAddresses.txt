@@ -1,4 +1,4 @@
 Rinkeby
- 📄 LithiumPricing deployed to: 0x31f6b8FbCF4C3182A8ac117ef9a2cB988d91B6e2
+ 📄 LithiumPricing deployed to: 0x8c1793d174D45766012eC4e34153a7292F910D2e
  📄 LithiumToken deployed to: 0xD54e04F657Cd8b59959b4B8dd157595eAf163A4a
- 📄 LithiumReward deployed to: 0x8B772A87fAf0FCB481FBaC3B452AeF5873340843
+ 📄 LithiumReward deployed to: 0x3c520f05339B11BE82Aac1A9A957e4861422677B
