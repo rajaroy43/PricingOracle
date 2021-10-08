@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'nowrap',
     marginRight: '4px',
     textAlign: 'right',
+    width: '160px'
   },
   error: {
     color: '#ff0000',

@@ -20,7 +20,8 @@ const UserBalances = ({user}: {user: UserView}) => {
     <Flex justifyContent='space-around' flexDirection="column" className={classes.userBalances}>
       <UserBalanceRow title='Wallet' value={user.tokenBalanceDisplay} />
       <UserBalanceRow title='Staked' value={user.totalStakedDisplay} />
-      <UserBalanceRow title='Earnings' value={user.totalRewardsClaimedDisplay} />    
+      <UserBalanceRow title='Earnings' value={user.totalRewardsClaimedDisplay} />
+      <UserBalanceRow title='Unclaimed Earnings' value={user.answerGroupsView.unclaimedRewardsDisplay} />    
     </Flex>
   );
 }

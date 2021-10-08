@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid } from '@material-ui/core'
 import { UserView } from '../../types/user'
-import AnswerList from '../answers/AnswerList'
+// import AnswerList from '../answers/AnswerList'
 import Flex from '../atoms/Flex'
 import QuestionList from '../questions/QuestionList'
 import UserEarnings from '../users/UserEarnings'
@@ -29,7 +29,7 @@ const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet
       
       <Flex justifyContent='space-around' mt='3em'>
         <QuestionList questions={user.questionViews} />
-        <AnswerList answers={user.answerViews} />
+        {/*<AnswerList answers={user.answerViews} />*/}
       </Flex>
 }
     </div>

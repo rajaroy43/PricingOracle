@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Form } from 'formik'
+import { BigNumber } from 'ethers';
 import { answerQuestionGroupSchema } from '../../schemas/answer'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Typography from "@material-ui/core/Typography"
 import Button from '../atoms/inputs/buttons/Button'
-import { parseUnits } from '../../helpers/formatters'
+import { formatUnits, parseUnits } from '../../helpers/formatters'
 import AnswerQuestionInput from './AnswerQuestionInput'
 import { QuestionView } from '../../types/question'
 import { QuestionGroupView } from '../../types/questionGroup'
@@ -169,7 +170,7 @@ const Success = () => (
 )
 
 const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stakeState: any, setTotalStake: any) => (submit: any, isValid: boolean) => {
-  const lithBalance = user ? user.tokenBalanceDisplay : '0'
+  const lithBalance = user ? user.tokenBalanceDisplay : '0';
 
   const updateStake =  (idx: number) => (stake: number) => {
     //@ts-ignore
@@ -177,12 +178,23 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
     //@ts-ignore
-    let totalStake = stakes.reduce((acc: number, stake: number) => acc + parseInt(stake, 10), 0).toString()
-    totalStake = !isNaN(totalStake) ? totalStake : 0; 
+    const totalStakeReducer = (acc, stake) => {
+      if (stake && !isNaN(stake)) { 
+        acc = acc.add(parseUnits(stake));
+      } 
+      
+      return acc
+    }
+
+    //@ts-ignore
+    const zeroVal = BigNumber.from(0);
+    const totalStake = stakes.reduce(totalStakeReducer, zeroVal);
+    const totalStakeDisplay = formatUnits(totalStake);
     setTotalStake({
       totalStake,
+      totalStakeDisplay,
       stakes
-    })
+    });
   }
 
   return (
@@ -205,7 +217,7 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
             <Typography variant="h3" className={classes.stakeLithTitle} noWrap={true}>Stake $LITH on your answers</Typography>
             <div className={classes.totalStake}>Total Stake:&nbsp; 
                 <div className={classes.total}>
-                    <div className={classes.totalPoolLith}>{stakeState.totalStake} $LITH</div>
+                    <div className={classes.totalPoolLith}>{stakeState.totalStakeDisplay} $LITH</div>
                     { /* <div className={classes.totalPoolUsd}>~{mockData.totalStakeDisplayUSD}USD</div> */}
                 </div>
             </div> 
@@ -237,7 +249,8 @@ const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGr
   const { user } = useGetUser(subgraphClient, connectedWallet.address);
   const initialStakeState = {
     totalStake: "0",
-    stakes: questionGroup.questions.map(() => 0)
+    totalStakeDisplay: "0.0",
+    stakes: questionGroup.questions.map(() => 0) 
   }
   const [stakeState, setTotalStake] = useState(initialStakeState)
   const formProps = {
