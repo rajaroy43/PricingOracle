@@ -245,7 +245,7 @@ const getMethodArgs = (questionGroupId: string) => (values: any) => {
 
 const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGroup: QuestionGroupView, connectedWallet: any}) => {
   const classes = useStyles();
-  const defaultQuestionValues = questionGroup.questions.map(() => {
+  const defaultQuestionValues = questionGroup!.questions.map(() => {
     //@ts-ignore
     return {...answerQuestionGroupSchema.defaultValue}
   })
