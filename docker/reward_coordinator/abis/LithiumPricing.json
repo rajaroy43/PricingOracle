@@ -563,9 +563,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "questionGroupId",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "questionGroupIds",
+        "type": "uint256[]"
       }
     ],
     "name": "claimRewards",

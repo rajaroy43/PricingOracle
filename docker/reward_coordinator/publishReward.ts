@@ -86,7 +86,7 @@ export const updateQuestionStatusAndReward = async (response: RewardsResponseDat
   })
 
 
-  console.log((`got statusTx ${statusTx}`))
+  console.log((`got statusTx ${JSON.stringify(statusTx, null, 2)}`))
 
   const groupIds = new Array(response.wisdomNodeUpdates.length).fill(response.questionGroupId)
   const addressRewards = response.wisdomNodeUpdates.reduce(
@@ -96,6 +96,7 @@ export const updateQuestionStatusAndReward = async (response: RewardsResponseDat
       acc[2].push(update[2])
       return acc
      },[[],[],[]])
+  console.log(`Updating rewards ${addressRewards}`)
   const rewardsTx = await updateRewards({
     addresses: addressRewards[0],
     groupIds,
@@ -103,7 +104,7 @@ export const updateQuestionStatusAndReward = async (response: RewardsResponseDat
   })
   await rewardsTx.wait()
 
-  console.log((`got rewardsTx ${rewardsTx}`))
+  console.log((`got rewardsTx ${JSON.stringify(rewardsTx, null, 2)}`))
 
   const categoryIds = new Array(addressRewards[0].length).fill(response.questionGroupCategory)
 
