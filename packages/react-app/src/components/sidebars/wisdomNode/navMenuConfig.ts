@@ -67,6 +67,7 @@ const getNavItems: GetNavItemParams[] = [
         return true
         },
     },
+    /*
     {
         ...baseMenuItem,
         id: 'stats',
@@ -96,7 +97,8 @@ const getNavItems: GetNavItemParams[] = [
         getShouldRender: (_) => {
         return true
         },
-    }    
+    }  
+    */  
 ]
 
 export default getNavItems;
