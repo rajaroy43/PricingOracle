@@ -48,25 +48,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const UserEarnings = () => {
+const UserEarnings = ({ user } : { user: any }) => {
   const classes = useStyles();
-
-  // mock data
-  // TODO: Change this to wei and format
-  const earnings = {
-    claimedEarnings: '1,000,000.00 LITH',
-    unclaimedEarnings: '400 LITH'
-  };
 
   return (
     <div className={classes.userEarnings}>
         <Typography variant="h3">My Earnings:</Typography>
         <div className={classes.earningsTable}>
             <div className={classes.earningsItem}> 
-                Claimed earnings: <div className={classes.itemValue}>{earnings.claimedEarnings}</div>
+                Claimed earnings: <div className={classes.itemValue}>{user.totalRewardsClaimedDisplay} LITH</div>
             </div>
             <div className={classes.earningsItem}> 
-                Unclaimed: <div className={classes.itemValue}>{earnings.unclaimedEarnings}</div>
+                Unclaimed: <div className={classes.itemValue}>{user.answerGroupsView.unclaimedRewardsDisplay} LITH</div>
             </div>
         </div>
         <Flex justifyContent="flex-end" mt="1rem">
