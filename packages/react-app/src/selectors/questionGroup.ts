@@ -9,6 +9,7 @@ export const selectQuestionGroup = (questionGroup: QuestionGroup): QuestionGroup
   //TODO query a node to get the latest block time
   const now = msToSec(new Date().getTime())
   const isFinished = questionGroup.endTime < now
+  //@ts-ignore
   const totalBounty = questionGroup.questions.reduce((acc, value) => {
     return acc.add(value.bounty)
   }, BigNumber.from(0));
@@ -19,6 +20,7 @@ export const selectQuestionGroup = (questionGroup: QuestionGroup): QuestionGroup
     endTimeLocal,
     startTimeLocal,
     isFinished,
+    //@ts-ignore
     questionViews: questionGroup.questions.map(selectQuestion),
     totalBounty: totalBounty.toString(),
     totalBountyDisplay: formatUnits(totalBounty)
