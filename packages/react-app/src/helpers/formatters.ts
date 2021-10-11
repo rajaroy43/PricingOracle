@@ -15,9 +15,9 @@ export const parseUnits = (value: string, decimals = 18): string  => {
 }
 
 // transform native units to display
-export const formatUnits = (value: string, decimals = 4):string => {
+export const formatUnits = (value: string, decimals = 18):string => {
   try {
-    const formatted = utils.formatUnits( value, decimals).toString()
+    const formatted = utils.formatUnits( value, decimals)
     return formatted
   } catch {
     return value

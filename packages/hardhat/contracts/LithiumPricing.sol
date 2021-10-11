@@ -333,14 +333,19 @@ contract LithiumPricing is ILithiumPricing, Roles {
   * Emits a { RewardClaimed } event.
   */
 
-  function claimReward (
+  function _claimReward (
     uint256 _questionGroupId
   ) internal returns(uint256 reward ){
+    require(_questionGroupId < questionGroups.length, "Invalid question group id");
+    AnswerGroup  storage answerGroup = answerGroups[_questionGroupId][msg.sender];
+    require(answerGroup.status == AnswerStatus.Unclaimed, "Group Rewards have already been claimed");
+    require(answerGroup.isRewardCalculated == StatusCalculated.Calculated,"Reward not calculated yet");
     reward = lithiumReward.getReward(_questionGroupId,msg.sender);
     if (reward > 0) {
       LithiumToken.transfer(msg.sender, reward);
-      emit RewardClaimed(_questionGroupId, msg.sender, reward);
     }
+    answerGroup.status = AnswerStatus.Claimed;
+    emit RewardClaimed(_questionGroupId, msg.sender, reward);
   }
 
 
@@ -593,20 +598,17 @@ contract LithiumPricing is ILithiumPricing, Roles {
  
   /**
   * @dev Allow users to claim rewards for answered questions
-  * the `questionIds` is the ids of the questions to claim the rewards for
+  * the `questionGroupIds` is the ids of the question groupss to claim the rewards for
   *
   * Requirements
   *
   * - the caller must have answered the questions
   */
   function claimRewards (
-    uint256 questionGroupId
+    uint256[] memory questionGroupIds
   ) external override {
-    require(questionGroupId < questionGroups.length, "Invalid question group id");
-    AnswerGroup  storage answerGroup = answerGroups[questionGroupId][msg.sender];
-    require(answerGroup.status == AnswerStatus.Unclaimed, "Group Rewards has already been claimed");
-    require(answerGroup.isRewardCalculated == StatusCalculated.Calculated,"Reward not calculated yet");
-    claimReward(questionGroupId);
-    answerGroup.status = AnswerStatus.Claimed;
+    for (uint256 i = 0; i < questionGroupIds.length; i++) {
+      _claimReward(questionGroupIds[i]);
+    }
   }
 }

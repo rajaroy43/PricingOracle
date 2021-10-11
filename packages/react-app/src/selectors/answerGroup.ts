@@ -29,10 +29,11 @@ export const selectAnswerGroups = (answerGroups: AnswerGroup[]): AnswerGroupsVie
     return acc
   }, groupsAcc)
 
+  const unclaimedRewardsDisplay = formatUnits(filteredGroups.unclaimedRewards.toString())
   return {
     ...filteredGroups,
     unclaimedRewards: filteredGroups.unclaimedRewards.toString(),
-    unclaimedRewardsDisplay: formatUnits(filteredGroups.unclaimedRewards.toString()),
+    unclaimedRewardsDisplay,
     hasUnclaimedRewards: filteredGroups.unclaimedRewards.gt(0),
     claimableIds: filteredGroups.unclaimedAnswerGroups.map((group: AnswerGroup) => group.questionGroup.id),
     answerGroupViews: answerGroups.map(selectAnswerGroup)
