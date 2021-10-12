@@ -2,16 +2,12 @@ import React from 'react'
 import { Grid } from '@material-ui/core'
 import Typography from "@material-ui/core/Typography"
 import { UserView } from '../../types/user'
-// import AnswerList from '../answers/AnswerList'
-import Flex from '../atoms/Flex'
-import QuestionList from '../questions/QuestionList'
 import UserEarnings from '../users/UserEarnings'
 import UserStats from '../users/UserStats'
 import UserInputRow from './UserInputRow'
 
 const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet?: any}) => {
   if (user && connectedWallet) {
-
     return (
       <div>
         <Typography variant="h1">User Dashboard</Typography>
@@ -24,12 +20,6 @@ const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet
             <UserEarnings user={user} />
           </Grid>
         </Grid>
-        {
-        
-        <Flex justifyContent='start'>
-          <QuestionList questions={user.questionViews} />
-        </Flex>
-        }
       </div>
     )
   } else {
