@@ -1,4 +1,4 @@
-import fs from "fs";
+import { readFileSync }from "fs";
 import "hardhat-typechain";
 
 import "@nomiclabs/hardhat-waffle";
@@ -23,7 +23,7 @@ const defaultNetwork = "localhost";
 
 function mnemonic() {
   try {
-    return fs.readFileSync("./mnemonic.txt").toString().trim();
+    return readFileSync("./mnemonic.txt").toString().trim();
   } catch (e) {
     if (defaultNetwork !== "localhost") {
       console.log(
