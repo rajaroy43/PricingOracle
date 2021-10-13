@@ -11,10 +11,10 @@ import { selectAnswer } from "../answer"
       }
       const createdTime= msToLocaleDate(answer.created)
       //@ts-ignore
-      const questionData=selectAnswer(answer)
-      expect(questionData.answerValue).toBe(answer.question.answerSet[answer.answerIndex])
-      expect(questionData.stakeAmountDisplay).toBe("0.001")
-      expect(questionData.createdLocal).toBe(createdTime)
+      const answerView=selectAnswer(answer)
+      expect(answerView.answerValue).toBe(answer.question.answerSet[answer.answerIndex])
+      expect(answerView.stakeAmountDisplay).toBe("0.001")
+      expect(answerView.createdLocal).toBe(createdTime)
     });
 
     it("Should not get data if answer argument is null ", () => {

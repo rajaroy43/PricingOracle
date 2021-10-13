@@ -23,26 +23,26 @@ import { selectUser } from "../user"
 
       }
       //@ts-ignore
-      const userData=selectUser(user)
-      expect(userData.totalBountyDisplay).toBe((user.totalBounty/10000).toString())
-      expect(userData.totalRewardsClaimedDisplay).toBe((user.totalRewardsClaimed/10000).toString())
-      expect(userData.totalStakedDisplay).toBe((user.totalStaked/10000).toString())
-      expect(userData.tokenBalanceDisplay).toBe((user.tokenBalance/10000).toString())
-      expect(userData.tokenApprovalBalanceDisplay).toBe((user.tokenApprovalBalance/10000).toFixed(1).toString())
-      expect(userData.pricingIsApproved).toBeTruthy()
-      expect(userData.questionViews).toBeNull()
+      const userView=selectUser(user)
+      expect(userView.totalBountyDisplay).toBe((user.totalBounty/10000).toString())
+      expect(userView.totalRewardsClaimedDisplay).toBe((user.totalRewardsClaimed/10000).toString())
+      expect(userView.totalStakedDisplay).toBe((user.totalStaked/10000).toString())
+      expect(userView.tokenBalanceDisplay).toBe((user.tokenBalance/10000).toString())
+      expect(userView.tokenApprovalBalanceDisplay).toBe((user.tokenApprovalBalance/10000).toFixed(1).toString())
+      expect(userView.pricingIsApproved).toBeTruthy()
+      expect(userView.questionViews).toBeNull()
     });
 
     it("Should get all user states as undefined/null/false ", () => {
         const user={}
         //@ts-ignore
-        const userData=selectUser(user)
-        expect(userData.totalBountyDisplay).toBeUndefined()
-        expect(userData.totalRewardsClaimedDisplay).toBeUndefined()
-        expect(userData.totalStakedDisplay).toBeUndefined()
-        expect(userData.totalBountyDisplay).toBeUndefined()
-        expect(userData.tokenApprovalBalanceDisplay).toBeUndefined()
-        expect(userData.pricingIsApproved).toBeFalsy()
-        expect(userData.questionViews).toBeNull()
+        const userView=selectUser(user)
+        expect(userView.totalBountyDisplay).toBeUndefined()
+        expect(userView.totalRewardsClaimedDisplay).toBeUndefined()
+        expect(userView.totalStakedDisplay).toBeUndefined()
+        expect(userView.totalBountyDisplay).toBeUndefined()
+        expect(userView.tokenApprovalBalanceDisplay).toBeUndefined()
+        expect(userView.pricingIsApproved).toBeFalsy()
+        expect(userView.questionViews).toBeNull()
       });
 });

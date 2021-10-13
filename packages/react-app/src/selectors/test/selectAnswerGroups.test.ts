@@ -14,24 +14,24 @@ import { selectAnswerGroups} from "../answerGroup"
         }]
       }]
       //@ts-ignore
-      const answerGroupData=selectAnswerGroups(answerGroup)
-      expect(answerGroupData.unclaimedAnswerGroups).toStrictEqual([])
-      expect(answerGroupData.unclaimedRewards).toBe("0")
-      expect(answerGroupData.answerGroupViews[0]['rewardAmount']).toBe(100)
-      expect(answerGroupData.unclaimedRewardsDisplay).toBe("0.0")
-      expect(answerGroupData.hasUnclaimedRewards).toBeFalsy()
+      const answerGroupsView=selectAnswerGroups(answerGroup)
+      expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual([])
+      expect(answerGroupsView.unclaimedRewards).toBe("0")
+      expect(answerGroupsView.answerGroupViews[0]['rewardAmount']).toBe(100)
+      expect(answerGroupsView.unclaimedRewardsDisplay).toBe("0.0")
+      expect(answerGroupsView.hasUnclaimedRewards).toBeFalsy()
     });
 
     it("Should  get unclaimedRewards and answergroups  as 0 and [] if empty[] passed", () => {
       const answerGroup: any[]=[]
       //@ts-ignore
-      const answerGroupData=selectAnswerGroups(answerGroup)
-      expect(answerGroupData.unclaimedAnswerGroups).toStrictEqual([])
-      expect(answerGroupData.unclaimedRewards).toBe("0")
-      expect(answerGroupData.claimableIds).toStrictEqual([])
-      expect(answerGroupData.answerGroupViews).toStrictEqual([])
-      expect(answerGroupData.unclaimedRewardsDisplay).toBe("0.0")
-      expect(answerGroupData.hasUnclaimedRewards).toBeFalsy()
+      const answerGroupsView=selectAnswerGroups(answerGroup)
+      expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual([])
+      expect(answerGroupsView.unclaimedRewards).toBe("0")
+      expect(answerGroupsView.claimableIds).toStrictEqual([])
+      expect(answerGroupsView.answerGroupViews).toStrictEqual([])
+      expect(answerGroupsView.unclaimedRewardsDisplay).toBe("0.0")
+      expect(answerGroupsView.hasUnclaimedRewards).toBeFalsy()
     });
   });
   
