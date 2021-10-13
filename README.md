@@ -14,12 +14,7 @@ You will need 3 terminal windows to operate and a browser with metamask
 2) `yarn install`
 3) `yarn chain`
 4) In a new terminal window:
-5) `cd docker && ./run.sh`
-6) In a new terminal window:
-7) `cd {project root}`
-8) `yarn deploy`
-
-> UBUNTU or Linux ONLY
+> Linux ONLY
 >  ``` 
 >  cd docker/graph-node  && ./setup.sh
 >  ```
@@ -31,23 +26,25 @@ You will need 3 terminal windows to operate and a browser with metamask
 >  ```
 >   ETH_NODE: 'http://172.19.0.1:8545'
 >  ```
-
-
-10) `yarn graph-init-local`
-11) asks for input, use `v0.0.1`
+5) `cd docker && ./run.sh`
+6) In a new terminal window:
+7) `cd {project root}`
+8) `yarn deploy`
+9) `yarn graph-init-local`
+10) asks for input, use `v0.0.1`
 runs to completion
-12) (optional) can look at graph node operating -- see screen commands
+11) (optional) can look at graph node operating -- see screen commands
 
 To Run React app:
-13) `yarn react-app:start`
+12) `yarn react-app:start`
 
 go to browswer, add private key from `yarn chain` terminal window above to ensure LITH tokens.
 
 Make sure metamask is on network "Localhost 8545"
 
-14) connect wallet
+13) connect wallet
 
-15) play!
+14) play!
 
 
 ## Oh shit commands
