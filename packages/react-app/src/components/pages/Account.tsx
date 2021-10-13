@@ -25,7 +25,6 @@ const Account = ({ match }: any) => {
 
   return (
     <WisdomNodeTemplate pageProps={sideBarProps}>
-      <Typography variant="h1">Lithium Profile for {urlAddress}</Typography>
       {loading ?
           <LoadingCircle />
           :

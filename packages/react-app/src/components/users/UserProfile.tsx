@@ -30,6 +30,7 @@ const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
   const { setWallet, wallet, pricingInstance } = useContext(WalletContext);
   // @ts-ignore
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
+  console.log('user', user);
   const classes = useStyles();
 
   if (loading) {
