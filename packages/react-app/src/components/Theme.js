@@ -253,11 +253,6 @@ export default createTheme({
       fontWeight: 300,
       fontSize: "1.25rem"
     },
-    body1: {
-      fontSize: "1.25rem",
-      color: arcGrey,
-      fontWeight: 300
-    },
     caption: {
       fontSize: "1rem",
       fontWeight: 300,
