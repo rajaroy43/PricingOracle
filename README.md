@@ -18,15 +18,6 @@ You will need 3 terminal windows to operate and a browser with metamask
 6) In a new terminal window:
 7) `cd {project root}`
 8) `yarn deploy`
-9) after it finishes go into `packages/subgraph/abis/LithiumPricing.json`
-remove the multidim arrays by deleting this section from file:
-```
-      {
-        "internalType": "uint256[][]",
-        "name": "answerSets",
-        "type": "uint256[][]"
-      },
-```
 
 > UBUNTU or Linux ONLY
 >  ``` 
@@ -35,6 +26,10 @@ remove the multidim arrays by deleting this section from file:
 >   confirm that the Host IP returned by ./setup.sh is the ethereum environment variable in ./docker/graph-node/docker-compose.yml |
 >  ```
 >  ethereum: 'localhost:http://{HOST_IP}:8545'
+>  ```
+>   and in ./docker/docker-compose.local.yml |
+>  ```
+>   ETH_NODE: 'http://172.19.0.1:8545'
 >  ```
 
 
