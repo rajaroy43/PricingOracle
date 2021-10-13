@@ -14,7 +14,7 @@ module.exports = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_questionId",
+        "name": "_groupId",
         "type": "uint256"
       },
       {
