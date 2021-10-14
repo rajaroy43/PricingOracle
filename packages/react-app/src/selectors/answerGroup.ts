@@ -3,12 +3,22 @@ import { AnswerGroup } from "lithium-subgraph"
 import { formatUnits } from "../helpers/formatters"
 import { AnswerGroupView, AnswerGroupsView } from "../types/answerGroup"
 import { selectAnswer } from "./answer"
+import { selectQuestionGroup } from "./questionGroup"
 
 export const selectAnswerGroup = (answerGroup: AnswerGroup): AnswerGroupView => {
+  const totalStake = answerGroup.answers.reduce((acc, answer) => {
+    return acc.add(answer.stakeAmount)
+  }, BigNumber.from(0))
+  const earnings = BigNumber.from(answerGroup.rewardAmount).sub(totalStake)
   return {
     ...answerGroup,
     rewardAmountDisplay: formatUnits(answerGroup.rewardAmount),
-    answerViews: answerGroup.answers.map(selectAnswer)
+    answerViews: answerGroup.answers.map(selectAnswer),
+    totalStake: totalStake.toString(),
+    totalStakeDisplay: formatUnits(totalStake.toString()),
+    earnings: earnings.toString(),
+    earningsDisplay: formatUnits(earnings.toString()),
+    questionGroupView: selectQuestionGroup(answerGroup.questionGroup)
   }
 }
 
