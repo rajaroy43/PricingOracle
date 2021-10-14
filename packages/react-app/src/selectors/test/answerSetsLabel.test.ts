@@ -2,19 +2,18 @@ import { generateAnswerSetOptions } from "../question"
 
 describe("Answer set labels description", () => {
     it("Should generate answer set labels", () => {
-      const answerSet=[1,2,3]
-      //@ts-ignore
+      const answerSet=['1','2','3']
       const answerSetLabels=generateAnswerSetOptions(answerSet)
-      expect(answerSetLabels[0]['label']).toBe("Greater Than or Equal to 1 or  Less Than 2")
-      expect(answerSetLabels[1]['label']).toBe("Greater Than or Equal to 2 or  Less Than 3")
-      expect(answerSetLabels[2]['label']).toBe("Greater Than or Equal to 3")
+      expect(answerSetLabels[0]['label']).toBe(`Greater Than or Equal to ${answerSet[0]} or  Less Than ${answerSet[1]}`)
+      expect(answerSetLabels[1]['label']).toBe(`Greater Than or Equal to ${answerSet[1]} or  Less Than ${answerSet[2]}`)
+      expect(answerSetLabels[2]['label']).toBe(`Greater Than or Equal to ${answerSet[2]}`)
     });
 
     it("Should generate empty answer set labels for empty answer sets", () => {
-        const answerSet: number[]=[]
-        //@ts-ignore
+        const answerSet: string[]=[]
+        const expectedAnswerSetLabels: any[]=[]
         const answerSetLabels=generateAnswerSetOptions(answerSet)
-        expect(answerSetLabels).toStrictEqual([])
+        expect(answerSetLabels).toStrictEqual(expectedAnswerSetLabels)
       });
   });
   
