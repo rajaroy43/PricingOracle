@@ -170,8 +170,7 @@ export default createTheme({
             height: '36px',
             margin: '0 !important',
             padding: '4px',
-            textAlign: 'right',
-            width: '44px'
+            textAlign: 'right'
           }
         },
         MuiInputLabel: {
@@ -253,11 +252,6 @@ export default createTheme({
       color: "white",
       fontWeight: 300,
       fontSize: "1.25rem"
-    },
-    body1: {
-      fontSize: "1.25rem",
-      color: arcGrey,
-      fontWeight: 300
     },
     caption: {
       fontSize: "1rem",

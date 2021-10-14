@@ -1,7 +1,7 @@
 import { User } from "lithium-subgraph"
 import { formatUnits } from "../helpers/formatters"
 import { UserView } from "../types/user"
-import { selectAnswer } from "./answer"
+import { selectAnswerGroups } from "./answerGroup"
 import { selectQuestion } from "./question"
 
 export const selectUser = (user: User): UserView => {
@@ -17,6 +17,6 @@ export const selectUser = (user: User): UserView => {
     // @ts-ignore
     questionViews: user.questions ? user.questions.map(selectQuestion) : null,
     // @ts-ignore
-    answerViews: user.answers ? user.answers.map(selectAnswer) : null
+    answerGroupsView: user.answerGroups ? selectAnswerGroups(user.answerGroups) : null
   }
 }

@@ -3,7 +3,6 @@ import { Form } from 'formik'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Button from '../atoms/inputs/buttons/Button'
 import Modal from '../atoms/Modal'
-import { parseUnits } from '../../helpers/formatters'
 import { approveSchema } from '../../schemas/approve'
 
 const Success = () => (
@@ -12,29 +11,30 @@ const Success = () => (
   </div>
 )
 
-const getForm = () => (submit: any, isValid: boolean) => (
+const getForm = (isDisabled: boolean) => (submit: any, isValid: boolean) => (
   <Form>
      
     <Button
-      label="ClaimReward"
+      label="Claim Reward"
       onClick={submit}
-      disabled={!isValid}
+      disabled={isDisabled}
     />
   </Form>
 )
 
-const getMethodArgs = (questionId: string) => (_: any) => {
-  return [[questionId]]
+const getMethodArgs = (answerGroupIds: string[]) => (_: any) => {
+  // TODO update contract method to accept an array of ids
+  return [answerGroupIds]
 }
 
-const ClaimRewardForm = ({ connectedAddress, pricingInstance, questionId }: any) => {
+const ClaimRewardForm = ({ connectedAddress, pricingInstance, answerGroupIds, isDisabled }: any) => {
   const formProps = {
     defaultValues: approveSchema.defaultValues,
     schema: approveSchema.schema,
-    getForm: getForm(),
+    getForm: getForm(isDisabled),
     contractMethod: pricingInstance.methods.claimRewards,
     connectedAddress,
-    getMethodArgs: getMethodArgs(questionId),
+    getMethodArgs: getMethodArgs(answerGroupIds),
     stateEls: {
       successEl: Success
     },
@@ -42,17 +42,8 @@ const ClaimRewardForm = ({ connectedAddress, pricingInstance, questionId }: any)
     onSuccess: null
   }
   return (
-    <Modal
-      triggerText='Claim Reward'
-      title=''
-      contentText=''
-      getForm={(cancelForm: any) => {
-        return (
-          <Web3Form
-            formProps={{...formProps, cancelForm}}
-          />
-        )
-      }}
+    <Web3Form
+      formProps={{...formProps}}
     />
   )
 }

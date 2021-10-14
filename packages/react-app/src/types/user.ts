@@ -1,5 +1,5 @@
 import { User } from 'lithium-subgraph'
-import { AnswerView } from './answer';
+import { AnswerGroupsView } from './answerGroup';
 import { QuestionView } from './question';
 
 export interface UserView extends User {
@@ -10,5 +10,5 @@ export interface UserView extends User {
   tokenApprovalBalanceDisplay: string
   pricingIsApproved: boolean
   questionViews: QuestionView[]
-  answerViews: AnswerView[]
+  answerGroupsView: AnswerGroupsView
 }

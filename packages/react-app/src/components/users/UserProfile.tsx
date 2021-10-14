@@ -11,6 +11,7 @@ import LoadingCircle from '../atoms/Loading'
 import UserBalances from './UserBalances'
 import { WalletContext } from '../providers/WalletProvider';
 import SelectWalletForm from '../forms/SelectWallet';
+import ClaimRewardForm from '../forms/ClaimReward';
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -24,24 +25,30 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UserProfile = ({ walletAddress }: {walletAddress: any}) => {
+const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
   // @ts-ignore
-  const { setWallet } = useContext(WalletContext);
+  const { setWallet, wallet, pricingInstance } = useContext(WalletContext);
   // @ts-ignore
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
+  console.log('user', user);
   const classes = useStyles();
 
   if (loading) {
     return <LoadingCircle />
   } 
 
-  if (walletAddress && user) {
+  if (walletAddress && user && pricingInstance) {
     return (
       <div className={classes.userProfile}>
         <Badge address={user.id} />
         <UserBalances user={user}/>
         <Flex justifyContent="flex-end" mt="1rem">
-          <Button onClick={() => {}}label="Claim all" />
+          <ClaimRewardForm
+            connectedAddress={walletAddress}
+            pricingInstance={pricingInstance}
+            answerGroupIds={user.answerGroupsView.claimableIds}
+            isDisabled={!user.answerGroupsView.hasUnclaimedRewards}
+          />
         </Flex>
       </div>
     )

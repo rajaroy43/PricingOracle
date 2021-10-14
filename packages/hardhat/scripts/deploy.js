@@ -2,7 +2,7 @@
 const fs = require("fs");
 const chalk = require("chalk");
 const { config, ethers, tenderly, run, network } = require("hardhat");
-const { utils } = require("ethers");
+const { utils, BigNumber } = require("ethers");
 const R = require("ramda");
 const { createQuestionGroup, answerQuestionGroups } = require("./utils/lithiumPricing");
 
@@ -27,7 +27,7 @@ const main = async () => {
   account1 = accounts[1];
   account2 = accounts[2];
   account3 = accounts[3];
-  const coordinatorAddress = '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'
+  const localCoordinatorAddress = '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'
   console.log(`Deploying to network ${network.name}`);
 
   console.log("\n\n 📡 Deploying Pricing...\n");
@@ -36,62 +36,80 @@ const main = async () => {
   console.log("\n\n 📡 Deploying Token...\n");
 
   const lithTokenArgs = [account0.address]
-  const lithToken = await deploy("LithiumToken", lithTokenArgs); // <-- add in constructor args like line 19 vvvv
+  console.log(`Token Address env var : ${process.env.TOKEN_ADDRESS}`)
+  // if a TOKEN_ADDRESS is provided in the env vars do not deploy
+  // else deploy a new token contract
+  const lithToken = process.env.TOKEN_ADDRESS !== '' ?
+    {address: process.env.TOKEN_ADDRESS} : await deploy("LithiumToken", lithTokenArgs); // <-- add in constructor args like line 19 vvvv
+
+  await lithiumPricing.setLithiumTokenAddress(lithToken.address);
+
 
   const lithiumRewardArgs = [lithiumPricing.address]
   const lithiumReward = await deploy("LithiumReward", lithiumRewardArgs);
 
-  await lithiumPricing.setLithiumTokenAddress(lithToken.address);
-
   await lithiumPricing.setLithiumRewardAddress(lithiumReward.address);
 
-  
 
   if (network.name === "localhost") {
-    await lithiumPricing.grantAdminRole(coordinatorAddress)
+    await lithiumPricing.grantAdminRole(localCoordinatorAddress)
     await lithiumPricing.addCategory("Pre Coin Offering");
     await lithiumPricing.addCategory("Art Collection");
   
-    const transferBalance = ethers.utils.parseUnits("100000.0", 18);
-    const approveAmount = ethers.utils.parseUnits("10000000000000.0", 18);
-    await lithToken.approve(lithiumPricing.address, approveAmount);
-    await Promise.all(
-      userAccounts.map((account) => prepareAccount(lithToken, lithiumPricing, account, approveAmount, transferBalance))
-    )
+    if (lithToken.approve) {
+      const transferBalance = ethers.utils.parseUnits("10000.0", 18);
+      const approveAmount = BigNumber.from(2).pow(255).toString()
+      console.log(`Approve amount is ${approveAmount}`)
+      await lithToken.approve(lithiumPricing.address, approveAmount);
 
-    //Creating mock QuestionsGroup valid answers ends 1 minute
-    const questionGroups = await createQuestionGroup(lithiumPricing, 60, 3);
-    console.log(chalk.magenta("<>QuestionGroups created ", "\n"));
-    wait(4000)
-    await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
-    console.log(chalk.magenta("<>QuestionGroups answered ", "\n"));
+      await Promise.all(
+        userAccounts.map((account) => prepareAccount(lithToken, lithiumPricing, account, approveAmount, transferBalance))
+      )
+    
 
-    //Creating mock QuestionsGroup invalid answers ends 1 minute
-    const questionGroups1 = await createQuestionGroup(lithiumPricing, 60, 3);
-    console.log(chalk.magenta("<><>QuestionGroups created 3 minimum answers", "\n"));
-    wait(4000)
-    await answerQuestionGroups(lithiumPricing, questionGroups1, userAccounts.slice(2,4), 2)
-    console.log(chalk.magenta("<><>QuestionGroups 2 answer invalid 2", "\n"));
+      //Creating mock QuestionsGroup valid answers ends 1 minute
+      const questionGroups = await createQuestionGroup(lithiumPricing, 60, 3);
+      console.log(chalk.magenta("<>QuestionGroups created ", "\n"));
+      wait(4000)
+      await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
+      console.log(chalk.magenta("<>QuestionGroups answered ", "\n"));
 
-    //Creating mock QuestionsGroup no answers ends 1 minute
-    await createQuestionGroup(lithiumPricing, 60, 1);
-    console.log(chalk.magenta("<><><>QuestionGroups created no answers invalid", "\n"));
+      //Creating mock QuestionsGroup invalid answers ends 1 minute
+      const questionGroups1 = await createQuestionGroup(lithiumPricing, 60, 3);
+      console.log(chalk.magenta("<><>QuestionGroups created 3 minimum answers", "\n"));
+      wait(4000)
+      await answerQuestionGroups(lithiumPricing, questionGroups1, userAccounts.slice(2,4), 2)
+      console.log(chalk.magenta("<><>QuestionGroups 2 answer invalid 2", "\n"));
 
-    //Creating mock QuestionsGroup no answers ends 100 minute
-    await createQuestionGroup(lithiumPricing, 6000, 1);
-    console.log(chalk.magenta("<><><><>QuestionGroups created no answers ongoing", "\n"));
+      //Creating mock QuestionsGroup no answers ends 1 minute
+      await createQuestionGroup(lithiumPricing, 60, 1);
+      console.log(chalk.magenta("<><><>QuestionGroups created no answers invalid", "\n"));
 
-
+      //Creating mock QuestionsGroup no answers ends 100 minute
+      await createQuestionGroup(lithiumPricing, 6000, 1);
+      console.log(chalk.magenta("<><><><>QuestionGroups created no answers ongoing", "\n"));
+    } 
   }
 
-  wait(100000)
   if (network.name !== "localhost") {
-    console.log(chalk.blue('verifying on LithiumToken etherscan'))
+    // wait for the contracts to deploy so they can be verfied
+    await wait(100000)
+    console.log(chalk.blue('verifying on LithiumPricing etherscan'))
     await run("verify:verify", {
-      address: lithToken.address,
-      contract: "contracts/LithiumToken.sol:LithiumToken", // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
-      constructorArguments: lithTokenArgs // If your contract has constructor arguments, you can pass them as an array
+      address: lithiumPricing.address,
+      contract: "contracts/LithiumPricing.sol:LithiumPricing" // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
     })
+
+    if (!process.env.TOKEN_ADDRESS) {
+      console.log(chalk.blue('verifying on LithiumToken etherscan'))
+      await run("verify:verify", {
+        address: lithToken.address,
+        contract: "contracts/LithiumToken.sol:LithiumToken", // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
+        constructorArguments: lithTokenArgs // If your contract has constructor arguments, you can pass them as an array
+      })
+    } else {
+      console.log(chalk.blue(`skipping verification of LithiumToken etherscan\nusing existing deployment at ${process.env.TOKEN_ADDRESS}`))
+    }
 
     console.log(chalk.blue('verifying on LithiumReward etherscan'))
     await run("verify:verify", {
@@ -100,11 +118,6 @@ const main = async () => {
       constructorArguments: lithiumRewardArgs // If your contract has constructor arguments, you can pass them as an array
     })
 
-    console.log(chalk.blue('verifying on LithiumReward etherscan'))
-    await run("verify:verify", {
-      address: lithiumPricing.address,
-      contract: "contracts/LithiumPricing.sol:LithiumPricing" // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
-    })
   }
 
   //const yourContract = await ethers.getContractAt('YourContract', "0xaAC799eC2d00C013f1F11c37E654e59B0429DF6A") //<-- if you want to instantiate a version of a contract at a specific address!

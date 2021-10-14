@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Typography from "@material-ui/core/Typography"
 import { QuestionGroupView } from '../../types/questionGroup'
 import QuestionGroupItem from './QuestionGroupItem'
 
@@ -19,7 +18,6 @@ const QuestionGroupList = ({questionGroups}: {questionGroups: QuestionGroupView[
 
   return (
     <div>
-      <Typography variant="h3">Latest Question Groups:</Typography>
       <div className={classes.questionGroupItems}>
         {questionGroups.length ?
           questionGroups.map((questionGroup => <QuestionGroupItem questionGroup={questionGroup} key={questionGroup.id} />))

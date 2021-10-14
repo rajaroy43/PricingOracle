@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'nowrap',
     marginRight: '4px',
     textAlign: 'right',
+    width: '160px'
   },
   error: {
     color: '#ff0000',
@@ -88,6 +89,10 @@ const radioOptions = [
 const radioStyle = {
   flexDirection: 'row',
   justifyContent: 'start',
+}
+
+const inputProps = {
+  width: '44px'
 }
 
 const inputLabelProps = {
@@ -120,6 +125,7 @@ const AnswerQuestionInput = ({
           label="Stake Amount:"
           name={`[answers[${idx}].stakeAmount]`}
           type="float"
+          InputProps={inputProps}
           InputLabelProps={inputLabelProps}
           errorCss={classes.error}
           followText="$LITH"
