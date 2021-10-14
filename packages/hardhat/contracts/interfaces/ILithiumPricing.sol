@@ -183,7 +183,7 @@ interface ILithiumPricing {
   ) external;
 
   function claimRewards (
-    uint256 questionGroupId
+    uint256[] memory questionGroupIds
   ) external ;
 
 

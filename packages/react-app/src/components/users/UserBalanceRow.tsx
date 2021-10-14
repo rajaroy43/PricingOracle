@@ -22,7 +22,7 @@ const UserBalanceRow = ({title, value} : { title:any, value:any}) => {
     const classes = useStyles();
     return (
         <Flex className={classes.userBalanceRow} justifyContent="space-between">
-            <span className={classes.rowTitle}>{title}:</span> <span className={classes.rowValue}>{value} $LITH</span>
+            <span className={classes.rowTitle}>{title}:</span>&nbsp;<span className={classes.rowValue}>{value} $LITH</span>
         </Flex>
     );
 }

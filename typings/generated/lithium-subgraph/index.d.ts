@@ -89,7 +89,7 @@ export type QuestionGroup = {
   id: Scalars['ID'];
   isAnswerCalculated: StatusCalculated;
   category: QuestionCategory;
-  questions?: Maybe<Array<Question>>;
+  questions: Array<Question>;
   endTime: Scalars['BigInt'];
   startTime: Scalars['BigInt'];
   minimumRequiredAnswers: Scalars['Int'];

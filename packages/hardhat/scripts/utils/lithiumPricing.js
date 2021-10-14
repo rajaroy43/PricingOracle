@@ -1,3 +1,4 @@
+const { utils } = require("ethers");
 const { generateMockQuestionData } = require("./mockQuestionData");
 
 const createQuestionGroup = async (lithiumPricing, endTimeFutureSeconds = 10000, minimumRequiredAnswer = 1) => {
@@ -13,8 +14,13 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+function getRandomTokenAmount(max) {
+  const amount = getRandomInt(max).toString()
+  return utils.parseUnits(amount, 18)
+}
+
 const answerQuestionGroup = async (lithiumPricing, groupId, questions, account) => {
-  const stakeAmounts = questions[0].map(() => getRandomInt(101))
+  const stakeAmounts = questions[0].map(() => getRandomTokenAmount(101))
   const answerIndexes = questions[0].map(() => getRandomInt(2))
   const answer = await lithiumPricing.connect(account).answerQuestions(groupId, stakeAmounts, answerIndexes)
 }

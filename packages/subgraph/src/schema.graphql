@@ -84,7 +84,7 @@ type QuestionGroup @entity {
   id: ID!
   isAnswerCalculated: StatusCalculated!
   category: QuestionCategory! 
-  questions: [Question!] @derivedFrom(field: "questionGroup")
+  questions: [Question!]!
   endTime: BigInt!
   startTime: BigInt!
   minimumRequiredAnswers: Int!
