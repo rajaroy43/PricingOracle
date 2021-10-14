@@ -20,7 +20,7 @@ const History = () => {
 
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
-      <Typography variant="h1">My Answers</Typography>
+      <Typography variant="h1">History / My Answers</Typography>
      {address !== '' ?
         <AnswerGroupList address={address} />
         :
