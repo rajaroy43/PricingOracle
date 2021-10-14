@@ -58,13 +58,16 @@ const getNavItems: GetNavItemParams[] = [
         icon: 'nav-icon-history',
         label: 'History / My Answers',
         getUrl: (params) => {
-        return params.isWalletConnected ?
-            `/history/${params.walletAddress}`
+          return params.isWalletConnected ?
+            `/wisdom-node/history`
             :
             '/'
         },
-        getShouldRender: (_) => {
-        return true
+        getShouldRender: (params) => {
+          return params.isWalletConnected ?
+           true
+            :
+            false
         },
     },
     /*

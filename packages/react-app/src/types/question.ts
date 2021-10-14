@@ -12,3 +12,10 @@ export interface QuestionView extends Question {
   createdLocal: string
   pricingTimeDisplay: string
 }
+
+export enum CategoryLabelDisplay {
+  preIPO,
+  Crypto,
+  RealEstate,
+  NFT
+}
