@@ -1,5 +1,5 @@
+import { formatUnits } from "../../helpers/formatters"
 import { selectUser } from "../user"
-
   describe("User Selectors", () => {
 
     it("Should get users states ", () => {
@@ -14,20 +14,20 @@ import { selectUser } from "../user"
         }]
       }]
       const user={
-        totalBounty:10,
-        totalRewardsClaimed:5,
-        totalStaked:12,
-        tokenBalance:55,
-        tokenApprovalBalance:1000000,
+        totalBounty:'10',
+        totalRewardsClaimed:'5',
+        totalStaked:'12',
+        tokenBalance:'55',
+        tokenApprovalBalance:'1000000',
         answerGroups:answerGroup
 
       }
 
-      const expectedTotalBounty = (user.totalBounty/10000).toString()
-      const expectedTotalRewardsClaimed = (user.totalRewardsClaimed/10000).toString()
-      const expectedTotalStaked =(user.totalStaked/10000).toString()
-      const expectedTotalBalance = (user.tokenBalance/10000).toString()
-      const expectedTokenApprovalBalance = (user.tokenApprovalBalance/10000).toFixed(1).toString()
+      const expectedTotalBounty = formatUnits(user.totalBounty)
+      const expectedTotalRewardsClaimed = formatUnits(user.totalRewardsClaimed)
+      const expectedTotalStaked =formatUnits(user.totalStaked)
+      const expectedTotalBalance = formatUnits(user.tokenBalance)
+      const expectedTokenApprovalBalance = formatUnits(user.tokenApprovalBalance)
 
       //@ts-ignore
       const userView=selectUser(user)

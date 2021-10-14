@@ -1,5 +1,6 @@
 import { secToLocaleDate } from "../../helpers/formatters"
 import { selectQuestionGroup } from "../questionGroup"
+import { formatUnits } from "@ethersproject/units"
 describe("Question Selection ", () => {
     it("Should generate question derived data ", () => {
       const questionGroup={
@@ -14,7 +15,7 @@ describe("Question Selection ", () => {
       }
       const pricingTimeDisplay =secToLocaleDate(questionGroup.questions[0].pricingTime)
       const endTimeDisplay =secToLocaleDate(questionGroup.questions[0].endTime)
-      const expectedTotaLBounty = questionGroup.questions[0].bounty/1e18
+      const expectedTotalBounty = formatUnits(questionGroup.questions[0].bounty)
 
       //@ts-ignore
       const questionGroupView= selectQuestionGroup(questionGroup)
@@ -23,7 +24,7 @@ describe("Question Selection ", () => {
       expect(questionGroupView.isFinished).toBeFalsy()
       expect(questionGroupView.questionViews[0].pricingTimeDisplay).toBe(pricingTimeDisplay)
       expect(questionGroupView.questionViews[0].endTimeLocal).toBe(endTimeDisplay)
-      expect(questionGroupView.totalBountyDisplay).toBe(expectedTotaLBounty.toFixed(17))
+      expect(questionGroupView.totalBountyDisplay).toBe(expectedTotalBounty)
     });
 
     it("Should not generate question derived data if empty data provide ", () => {
