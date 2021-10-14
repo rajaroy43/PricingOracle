@@ -22,18 +22,26 @@ import { selectUser } from "../user"
         answerGroups:answerGroup
 
       }
+
+      const expectedTotalBounty = (user.totalBounty/10000).toString()
+      const expectedTotalRewardsClaimed = (user.totalRewardsClaimed/10000).toString()
+      const expectedTotalStaked =(user.totalStaked/10000).toString()
+      const expectedTotalBalance = (user.tokenBalance/10000).toString()
+      const expectedTokenApprovalBalance = (user.tokenApprovalBalance/10000).toFixed(1).toString()
+
       //@ts-ignore
       const userView=selectUser(user)
-      expect(userView.totalBountyDisplay).toBe((user.totalBounty/10000).toString())
-      expect(userView.totalRewardsClaimedDisplay).toBe((user.totalRewardsClaimed/10000).toString())
-      expect(userView.totalStakedDisplay).toBe((user.totalStaked/10000).toString())
-      expect(userView.tokenBalanceDisplay).toBe((user.tokenBalance/10000).toString())
-      expect(userView.tokenApprovalBalanceDisplay).toBe((user.tokenApprovalBalance/10000).toFixed(1).toString())
+      
+      expect(userView.totalBountyDisplay).toBe(expectedTotalBounty)
+      expect(userView.totalRewardsClaimedDisplay).toBe(expectedTotalRewardsClaimed)
+      expect(userView.totalStakedDisplay).toBe(expectedTotalStaked)
+      expect(userView.tokenBalanceDisplay).toBe(expectedTotalBalance)
+      expect(userView.tokenApprovalBalanceDisplay).toBe(expectedTokenApprovalBalance)
       expect(userView.pricingIsApproved).toBeTruthy()
       expect(userView.questionViews).toBeNull()
     });
 
-    it("Should get all user states as undefined/null/false ", () => {
+    it("Should get all user states as undefined/null/false if providing user as empty", () => {
         const user={}
         //@ts-ignore
         const userView=selectUser(user)

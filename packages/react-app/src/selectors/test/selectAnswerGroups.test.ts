@@ -1,5 +1,6 @@
 import { selectAnswerGroups} from "../answerGroup"
-
+import { AnswerGroupView } from "../../types/answerGroup"
+import { AnswerGroup } from "lithium-subgraph"
   describe("Selecting answer Groups", () => {
     
     it("Should get unclaimedRewards and answergroups ", () => {
@@ -13,24 +14,35 @@ import { selectAnswerGroups} from "../answerGroup"
             created: 1633697838,
         }]
       }]
+      const expectedUnclaimedRewards=0
+      const expectedUnclaimedRewardsDisplay=0
+      const expectUnclaimedAnswerGroups:number[]=[]
+
       //@ts-ignore
       const answerGroupsView=selectAnswerGroups(answerGroup)
-      expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual([])
-      expect(answerGroupsView.unclaimedRewards).toBe("0")
-      expect(answerGroupsView.answerGroupViews[0]['rewardAmount']).toBe(100)
-      expect(answerGroupsView.unclaimedRewardsDisplay).toBe("0.0")
+
+      expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual(expectUnclaimedAnswerGroups)
+      expect(answerGroupsView.unclaimedRewards).toBe(expectedUnclaimedRewards.toString())
+      expect(answerGroupsView.answerGroupViews[0]['rewardAmount']).toBe(answerGroup[0].rewardAmount)
+      expect(answerGroupsView.unclaimedRewardsDisplay).toBe(expectedUnclaimedRewardsDisplay.toFixed(1))
       expect(answerGroupsView.hasUnclaimedRewards).toBeFalsy()
     });
 
     it("Should  get unclaimedRewards and answergroups  as 0 and [] if empty[] passed", () => {
-      const answerGroup: any[]=[]
-      //@ts-ignore
+      const answerGroup: AnswerGroup[]=[]
+      const unclaimedAnswerGroups:number[]=[]
+      const expectedUnclaimedRewards=0
+      const expectedClaimableIds:string[]=[]
+      const expectedAnswerGroupViews:AnswerGroupView[]=[]
+      const expectedUnclaimedRewardsDisplay=0
+
       const answerGroupsView=selectAnswerGroups(answerGroup)
-      expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual([])
-      expect(answerGroupsView.unclaimedRewards).toBe("0")
-      expect(answerGroupsView.claimableIds).toStrictEqual([])
-      expect(answerGroupsView.answerGroupViews).toStrictEqual([])
-      expect(answerGroupsView.unclaimedRewardsDisplay).toBe("0.0")
+      
+      expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual(unclaimedAnswerGroups)
+      expect(answerGroupsView.unclaimedRewards).toBe(expectedUnclaimedRewards.toString())
+      expect(answerGroupsView.claimableIds).toStrictEqual(expectedClaimableIds)
+      expect(answerGroupsView.answerGroupViews).toStrictEqual(expectedAnswerGroupViews)
+      expect(answerGroupsView.unclaimedRewardsDisplay).toBe(expectedUnclaimedRewardsDisplay.toFixed(1))
       expect(answerGroupsView.hasUnclaimedRewards).toBeFalsy()
     });
   });

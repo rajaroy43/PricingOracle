@@ -9,16 +9,20 @@ import { selectAnswer } from "../answer"
         stakeAmount: 10,
         created: 1633697838,
       }
-      const createdTime= msToLocaleDate(answer.created)
+      const expectedCreatedTime= msToLocaleDate(answer.created)
+      const expectedSTakeAmount=answer.stakeAmount/10000;
+
       //@ts-ignore
       const answerView=selectAnswer(answer)
+
       expect(answerView.answerValue).toBe(answer.question.answerSet[answer.answerIndex])
-      expect(answerView.stakeAmountDisplay).toBe("0.001")
-      expect(answerView.createdLocal).toBe(createdTime)
+      expect(answerView.stakeAmountDisplay).toBe(expectedSTakeAmount.toString())
+      expect(answerView.createdLocal).toBe(expectedCreatedTime)
     });
 
     it("Should not get data if answer argument is null ", () => {
       const answer=null
+      
       //@ts-ignore
       expect(() => selectAnswer(answer)).toThrow();
     });

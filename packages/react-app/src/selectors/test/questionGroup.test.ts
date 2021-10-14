@@ -1,6 +1,5 @@
 import { secToLocaleDate } from "../../helpers/formatters"
 import { selectQuestionGroup } from "../questionGroup"
-
 describe("Question Selection ", () => {
     it("Should generate question derived data ", () => {
       const questionGroup={
@@ -13,27 +12,34 @@ describe("Question Selection ", () => {
             created:1633719279,
             pricingTime:1633719279}]
       }
-      const displayTime =secToLocaleDate(questionGroup.questions[0].pricingTime)
+      const pricingTimeDisplay =secToLocaleDate(questionGroup.questions[0].pricingTime)
+      const endTimeDisplay =secToLocaleDate(questionGroup.questions[0].endTime)
+      const expectedTotaLBounty = questionGroup.questions[0].bounty/1e18
+
       //@ts-ignore
       const questionGroupView= selectQuestionGroup(questionGroup)
      
       expect(questionGroupView.questionViews[0].bounty).toBe(questionGroup.questions[0].bounty)
       expect(questionGroupView.isFinished).toBeFalsy()
-      expect(questionGroupView.questionViews[0].pricingTimeDisplay).toBe(displayTime)
-      expect(questionGroupView.questionViews[0].endTimeLocal).toBe(displayTime)
-      expect(questionGroupView.totalBountyDisplay).toBe('0.00000000000000005')
+      expect(questionGroupView.questionViews[0].pricingTimeDisplay).toBe(pricingTimeDisplay)
+      expect(questionGroupView.questionViews[0].endTimeLocal).toBe(endTimeDisplay)
+      expect(questionGroupView.totalBountyDisplay).toBe(expectedTotaLBounty.toFixed(17))
     });
 
     it("Should not generate question derived data if empty data provide ", () => {
       const questionGroup={ }
+
       //@ts-ignore
       expect(()=> selectQuestionGroup(questionGroup)).toThrow()
+
     });
 
-    it("Should not generate question if empty data provide ", () => {
+    it("Should not generate question if null questionGroup provided ", () => {
       const questionGroup=null
+
       //@ts-ignore
       expect(()=> selectQuestionGroup(questionGroup)).toThrow()
+      
     });
 
   });
