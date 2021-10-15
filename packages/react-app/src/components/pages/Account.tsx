@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import Typography from "@material-ui/core/Typography"
 import { subgraphClient } from '../../client'
 import { useGetUser } from '../../queries/user'
 import LoadingCircle from '../atoms/Loading'
