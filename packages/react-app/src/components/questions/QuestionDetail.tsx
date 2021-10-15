@@ -6,7 +6,7 @@ import QuestionInfo from './QuestionInfo'
 const QuestionDetail = ({question}: {question: QuestionView}) => {
   return (
     <div>
-      <Typography variant="h1">Question # {question.id}</Typography>
+      <Typography variant="h1">Question #{question.id}</Typography>
       <QuestionInfo question={question} />
     </div>
   )

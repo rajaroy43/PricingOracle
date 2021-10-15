@@ -1,7 +1,7 @@
 import { BigNumber } from "@ethersproject/abi/node_modules/@ethersproject/bignumber"
-import { formatUnits } from "@ethersproject/units"
 import { QuestionGroup } from "lithium-subgraph"
-import { msToSec, secToLocaleDate, secToMs } from "../helpers/formatters"
+import { formatUnits, msToSec, secToLocaleDate } from "../helpers/formatters"
+import { CategoryLabelDisplay } from "../types/question"
 import { QuestionGroupView } from "../types/questionGroup"
 import { selectQuestion } from "./question"
 
@@ -15,6 +15,11 @@ export const selectQuestionGroup = (questionGroup: QuestionGroup): QuestionGroup
   }, BigNumber.from(0));
   const endTimeLocal = secToLocaleDate(questionGroup.endTime)
   const startTimeLocal = secToLocaleDate(questionGroup.startTime)
+  const totalStake = questionGroup.questions.reduce((acc, question) => {
+    return acc.add(question.totalStaked)
+  }, BigNumber.from(0))
+  const totalPool = totalStake.add(totalBounty)
+  const categoryId = questionGroup.questions[0].category.id
   return {
     ...questionGroup,
     endTimeLocal,
@@ -23,6 +28,12 @@ export const selectQuestionGroup = (questionGroup: QuestionGroup): QuestionGroup
     //@ts-ignore
     questionViews: questionGroup.questions.map(selectQuestion),
     totalBounty: totalBounty.toString(),
-    totalBountyDisplay: formatUnits(totalBounty)
+    totalBountyDisplay: formatUnits(totalBounty.toString()),
+    totalStake: totalStake.toString(),
+    totalStakeDisplay: formatUnits(totalStake.toString()),
+    totalPool: totalPool.toString(),
+    totalPoolDisplay: formatUnits(totalPool.toString()),
+    categoryId,
+    categoryLabel: CategoryLabelDisplay[parseInt(categoryId)]
   }
 }

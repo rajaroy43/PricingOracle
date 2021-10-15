@@ -70,9 +70,22 @@ function publishContract(contractName) {
     if (!fs.existsSync(graphFolderPath)){
       fs.mkdirSync(graphFolderPath);
     }
+    const multiDArray = "[][]"
+    const includesMultiDArray = (params) => {
+      if (params == null)  {
+        return false
+      }
+
+      return !!params.filter(param => param.type.includes(multiDArray)).length 
+    }
+    const abiNoMultiDArrays = contract.abi.filter(methodOrEvent => {
+      const hasMultiDArray =  includesMultiDArray(methodOrEvent.inputs) || includesMultiDArray(methodOrEvent.outputs)
+      return !hasMultiDArray
+    })
+
     fs.writeFileSync(
       `${graphDir}/abis/${contractName}.json`,
-      JSON.stringify(contract.abi, null, 2)
+      JSON.stringify(abiNoMultiDArrays, null, 2)
     );
     const offChainFolderPath =  `${offChainDir}/abis/`
     if (!fs.existsSync(offChainFolderPath)){

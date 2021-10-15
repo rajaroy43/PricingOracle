@@ -11,7 +11,6 @@ const Answering = ({ match}: any)=> {
     const connectedWallet = useContext(WalletContext)
     const {loading, questionGroup} = useGetQuestionGroup(subgraphClient, urlQuestionGroupId)
 
-
     const sideBarProps = {
         activePage: 'availableQuestions',
         // @ts-ignore
@@ -21,11 +20,14 @@ const Answering = ({ match}: any)=> {
     }
     return (
         <WisdomNodeTemplate pageProps={sideBarProps}>
-            {loading ?
-                <LoadingCircle />
-                :
-                // @ts-ignore
-                questionGroup ? connectedWallet.wallet && <AnsweringGroup questionGroup={questionGroup} connectedWallet={connectedWallet} /> : null
+            { // @ts-ignore
+            !connectedWallet.wallet ? <h3>Connect Wallet to Answer Questions</h3> : 
+                loading ?
+                    <LoadingCircle />
+                    :
+                    // @ts-ignore
+                    questionGroup ? connectedWallet.wallet && <AnsweringGroup questionGroup={questionGroup} connectedWallet={connectedWallet} /> : null
+                
             }
         </WisdomNodeTemplate>
     )
