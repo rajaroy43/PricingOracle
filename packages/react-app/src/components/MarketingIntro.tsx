@@ -49,7 +49,7 @@ const MarketingIntro = () => {
       <Typography variant="h1" className={classes.homeSubheading}>Lithium Finance uses collective intelligence to price the unpriced</Typography>
       <Typography variant="h2" className={classes.homeMarketingText}>
           Lithium Protocol prices illiquid assets quickly and inexpensively, enabling price discovery for illiquid assets, just like stocks. 
-          Lithium's proprietary consensus mechanism sets the foundation for real assets x DeFi.
+          Lithium Protocol's unique consensus mechanism sets the foundation for real assets x DeFi.
       </Typography>
     </div>
   )
