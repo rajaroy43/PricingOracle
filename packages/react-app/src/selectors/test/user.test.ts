@@ -3,15 +3,32 @@ import { selectUser } from "../user"
   describe("User Selectors", () => {
 
     it("Should get users states ", () => {
+      const questionGroup={
+        id:'0xdaa',
+        questions:[{   
+            endTime:1633719279,
+            answerSet:['0','1'],
+            answerSetTotalStaked:[10,200],
+            bounty:50,
+            totalStaked:210,
+            created:1633719279,
+            startTime:1633999779,
+            pricingTime:1633719279,
+            category:{
+              id:1
+            }
+          }],
+      }
       const answerGroup=[{
-        isRewardCalculated:"NotCalculated",
+        isRewardCalculated:"Calculated",
         rewardAmount:100,
         answers:[{
             question:{answerSet:['0', '1']},
             answerIndex: 0,
             stakeAmount: 10,
             created: 1633697838,
-        }]
+        }],
+        questionGroup:questionGroup
       }]
       const user={
         totalBounty:'10',
@@ -22,7 +39,6 @@ import { selectUser } from "../user"
         answerGroups:answerGroup
 
       }
-
       const expectedTotalBounty = formatUnits(user.totalBounty)
       const expectedTotalRewardsClaimed = formatUnits(user.totalRewardsClaimed)
       const expectedTotalStaked =formatUnits(user.totalStaked)
