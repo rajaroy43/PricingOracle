@@ -12,6 +12,7 @@ import Admin from './components/pages/Admin'
 import theme from './components/Theme';
 import WalletProvider from "./components/providers/WalletProvider";
 import "./index.css";
+import History from "./components/pages/History";
 
 class App extends Component {
   render() {
@@ -26,6 +27,7 @@ class App extends Component {
             <Route exact path='/wisdom-node/question/:id' component={Question} />
             <Route exact path='/wisdom-node/available-questions' component={AvailableQuestions} />
             <Route exact path='/wisdom-node/answering/:questionGroupId' component={Answering} />
+            <Route exact path='/wisdom-node/history' component={History} />
             <Route exact path='/admin' component={Admin} />
           </Switch>
           </HashRouter>

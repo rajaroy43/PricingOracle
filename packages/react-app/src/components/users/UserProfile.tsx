@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { subgraphClient } from '../../client'
 import { useGetUser } from '../../queries/user'
 import Badge from './Badge'
-import Button from '../atoms/inputs/buttons/Button'
 import Flex from '../atoms/Flex'
 import LoadingCircle from '../atoms/Loading'
 import UserBalances from './UserBalances'
@@ -27,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
   // @ts-ignore
-  const { setWallet, wallet, pricingInstance } = useContext(WalletContext);
+  const { setWallet, pricingInstance } = useContext(WalletContext);
   // @ts-ignore
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
   console.log('user', user);

@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // Wisdom Node ConnectedSideBar
-// const ConnectedSideBar = ({navMenu, getNavItems, isDrawerOpen, setDrawerOpen}: {navMenu: PageParams, getNavItems: GetNavItemParams[], isDrawerOpen: boolean, setDrawerOpen: SetDrawerOpen}
 const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}: NavMenuParams) => {
   const classes = useStyles();
 
@@ -45,7 +44,7 @@ const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}
         { isDrawerOpen ? <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><CloseIcon className={classes.mobileMenuButton} /></IconButton> :
           <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><MenuIcon className={classes.mobileMenuButton} /></IconButton> }
       </div>
-      <div style={{marginTop: '12pxstretch'}}>
+      <div style={{marginTop: '12px'}}>
         <UserProfile walletAddress={pageParams.walletAddress!} />
       </div>
       <div>

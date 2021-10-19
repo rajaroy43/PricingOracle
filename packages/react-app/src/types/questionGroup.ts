@@ -7,5 +7,11 @@ export interface QuestionGroupView extends QuestionGroup {
   isFinished: boolean
   totalBounty: string
   totalBountyDisplay: string
+  totalStake: string
+  totalStakeDisplay: string
+  totalPool: string
+  totalPoolDisplay: string
+  categoryId: string
+  categoryLabel: string
   questionViews: QuestionView[]
 }

@@ -58,6 +58,7 @@ export const ANSWER_FIELDS = gql`
 `
 
 export const ANSWER_GROUP_FIELDS = gql`
+  ${QUESTION_FIELDS}
   ${ANSWER_FIELDS}
   fragment AnswerGroupFields on AnswerGroup {
     id
@@ -66,6 +67,13 @@ export const ANSWER_GROUP_FIELDS = gql`
     }
     questionGroup {
       id
+      category {
+        id
+        label
+      }
+      questions {
+        ...QuestionFields
+      }
     }
     answers {
       ...AnswerFields

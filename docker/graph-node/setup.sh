@@ -34,6 +34,8 @@ echo "Host IP: $HOST_IP"
 # Inject the host IP into docker-compose.yml
 sed -i -e "s/host.docker.internal/$HOST_IP/g" docker-compose.yml
 
+sed -i -e "s/host.docker.internal/$HOST_IP/g" ../docker-compose.local.yml
+
 function stop_graph_node {
     # Ensure graph-node is stopped
     docker-compose stop graph-node
