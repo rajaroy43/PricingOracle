@@ -11,6 +11,7 @@ packages/hardhat/deployments
 !packages/react-app/src/contracts/contracts.js
 packages/hardhat/cache
 packages/hardhat/typechain
+packages/hardhat/hardhat.config.ts
 docker/**/data
 **/docker-compose-aws*.yml
 
