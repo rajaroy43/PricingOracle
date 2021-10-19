@@ -15,10 +15,12 @@ export const selectQuestionGroup = (questionGroup: QuestionGroup): QuestionGroup
   }, BigNumber.from(0));
   const endTimeLocal = secToLocaleDate(questionGroup.endTime)
   const startTimeLocal = secToLocaleDate(questionGroup.startTime)
+  //@ts-ignore
   const totalStake = questionGroup.questions.reduce((acc, question) => {
     return acc.add(question.totalStaked)
   }, BigNumber.from(0))
   const totalPool = totalStake.add(totalBounty)
+  //@ts-ignore
   const categoryId = questionGroup.questions[0].category.id
   return {
     ...questionGroup,
