@@ -1,11 +1,9 @@
 import localConfig from './contractDeployments/localhost/config.json'
 import rinkebyConfig from './contractDeployments/rinkeby/config.json'
-import localTokenAbi from './contractDeployments/localhost/abis/LithiumToken.abi'
 import localPricingAbi from './contractDeployments/localhost/abis/LithiumPricing.abi'
-import rinkebyTokenAbi from './contractDeployments/rinkeby/abis/LithiumToken.abi'
 import rinkebyPricingAbi from './contractDeployments/rinkeby/abis/LithiumPricing.abi'
 
-const lithiumEnv = process.env.REACT_APP_ENV || 'DEV'
+const lithiumEnv = process.env.TARGET_CHAIN
 
 export const CHAIN_IDS = {
   1337: 'Ganache Local',
@@ -14,21 +12,15 @@ export const CHAIN_IDS = {
 }
 
 const config = {
-  DEV: {
+  localhost: {
     CHAIN_ID: 1337,
-    tokenAbi: localTokenAbi,
     pricingAbi: localPricingAbi,
-    LITHIUM_TOKEN_ADDRESS: localConfig.LithiumTokenAddress,
     LITHIUM_PRICING_ADDRESS: localConfig.LithiumPricingAddress,
-    LITHIUM_SUBGRAPH: "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract"
   },
-  TESTNET: {
+  rinkeby: {
     CHAIN_ID: 4,
-    tokenAbi: rinkebyTokenAbi,
     pricingAbi: rinkebyPricingAbi,
-    LITHIUM_TOKEN_ADDRESS: rinkebyConfig.LithiumTokenAddress,
     LITHIUM_PRICING_ADDRESS: rinkebyConfig.LithiumPricingAddress,
-    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.12"
   }
 }
 

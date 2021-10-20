@@ -1,4 +1,4 @@
-[
+module.exports = [
   {
     "inputs": [
       {
@@ -34,4 +34,4 @@
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
