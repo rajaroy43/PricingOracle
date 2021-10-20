@@ -55,15 +55,15 @@ function publishContract(contractName, publishTarget) {
     const abi = publishTarget.abiFilter != null ? contract.abi.filter(publishTarget.abiFilter) : contract.abi
 
     // the subgraph requires a different format
-    const abiExtension = publishTarget.path.includes('subgraph') ? '.json' : '.abi.js'
-    const abiPrefix = publishTarget.path.includes('subgraph') ? '' : 'module.exports =' 
+    const abiExtension = !publishTarget.path.includes('react-app') ? '.json' : '.abi.js'
+    const abiPrefix = !publishTarget.path.includes('react-app') ? '' : 'module.exports = '
     fs.writeFileSync(
       `${abisDir}/${contractName}${abiExtension}`,
-      `module.exports = ${JSON.stringify(abi, null, 2)};`
+      `${abiPrefix}${JSON.stringify(abi, null, 2)}`
     );
     fs.writeFileSync(
       `${abisDir}/${contractName}.bytecode.js`,
-      `${abiPrefix}"${contract.bytecode}";`
+      `module.exports = "${contract.bytecode}";`
     );
 
     fs.writeFileSync(

@@ -1,7 +1,7 @@
 import config from "../../../config"
 
 export const callMethod = (props) => {
-  const txType = config.CHAIN_ID === 1337 ? '0x0' : '0x2'
+  const txType = '0x2'
   console.log(`calling tx type ${txType}\n${JSON.stringify(props)}`)
 
   props.contractMethod.call(null, ...props.args).send({from: props.connectedAddress, value: '0', type: txType})

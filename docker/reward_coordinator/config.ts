@@ -1,9 +1,10 @@
 import localConfig from './contractDeployments/localhost/config.json'
 import rinkebyConfig from './contractDeployments/rinkeby/config.json'
-import localPricingAbi from './contractDeployments/localhost/abis/LithiumPricing.abi'
-import rinkebyPricingAbi from './contractDeployments/rinkeby/abis/LithiumPricing.abi'
 
-const lithiumEnv = process.env.TARGET_CHAIN
+import localPricingAbi from './contractDeployments/localhost/abis/LithiumPricing.json'
+import rinkebyPricingAbi from './contractDeployments/rinkeby/abis/LithiumPricing.json'
+
+const lithiumEnv = process.env.TARGET_CHAIN!
 
 export const CHAIN_IDS = {
   1337: 'Ganache Local',
@@ -11,7 +12,7 @@ export const CHAIN_IDS = {
   4: 'Rinkeby'
 }
 
-const config = {
+const configs = {
   localhost: {
     CHAIN_ID: 1337,
     pricingAbi: localPricingAbi,
@@ -24,5 +25,5 @@ const config = {
   }
 }
 
-
-export default config[lithiumEnv]
+//@ts-ignore
+export const config = configs[lithiumEnv]

@@ -34,4 +34,4 @@ module.exports = [
     "stateMutability": "view",
     "type": "function"
   }
-];
+]

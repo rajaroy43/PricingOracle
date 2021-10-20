@@ -3,7 +3,7 @@ import { Contract } from 'ethers'
 import { coordinatorWallet } from "../client"
 import { QuestionUpdateFields, ReputationUpdateFields, RewardUpdateFields } from "../types"
 //@ts-ignore
-import config from '../config'
+import { config } from '../config'
 
 // ethers
 // @ts-ignore
