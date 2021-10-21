@@ -1,5 +1,9 @@
-import tokenAddress from './contracts/LithiumToken.address'
-import pricingAddress from './contracts/LithiumPricing.address'
+import localConfig from './contractDeployments/localhost/config.json'
+import rinkebyConfig from './contractDeployments/rinkeby/config.json'
+import localTokenAbi from './contractDeployments/localhost/abis/LithiumToken.abi'
+import localPricingAbi from './contractDeployments/localhost/abis/LithiumPricing.abi'
+import rinkebyTokenAbi from './contractDeployments/rinkeby/abis/LithiumToken.abi'
+import rinkebyPricingAbi from './contractDeployments/rinkeby/abis/LithiumPricing.abi'
 
 const lithiumEnv = process.env.REACT_APP_ENV || 'DEV'
 
@@ -12,14 +16,18 @@ export const CHAIN_IDS = {
 const config = {
   DEV: {
     CHAIN_ID: 1337,
-    LITHIUM_TOKEN_ADDRESS: tokenAddress,
-    LITHIUM_PRICING_ADDRESS: pricingAddress,
+    tokenAbi: localTokenAbi,
+    pricingAbi: localPricingAbi,
+    LITHIUM_TOKEN_ADDRESS: localConfig.LithiumTokenAddress,
+    LITHIUM_PRICING_ADDRESS: localConfig.LithiumPricingAddress,
     LITHIUM_SUBGRAPH: "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract"
   },
   TESTNET: {
     CHAIN_ID: 4,
-    LITHIUM_TOKEN_ADDRESS: "0xD54e04F657Cd8b59959b4B8dd157595eAf163A4a",
-    LITHIUM_PRICING_ADDRESS: "0x8c1793d174D45766012eC4e34153a7292F910D2e",
+    tokenAbi: rinkebyTokenAbi,
+    pricingAbi: rinkebyPricingAbi,
+    LITHIUM_TOKEN_ADDRESS: rinkebyConfig.LithiumTokenAddress,
+    LITHIUM_PRICING_ADDRESS: rinkebyConfig.LithiumPricingAddress,
     LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.12"
   }
 }
