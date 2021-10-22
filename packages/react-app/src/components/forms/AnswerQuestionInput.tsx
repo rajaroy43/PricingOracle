@@ -1,7 +1,7 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core'
 import Text from '../atoms/inputs/Text'
 import RadioUI from '../atoms/inputs/Radio'
-import { makeStyles } from '@material-ui/core'
 import { formatNumber } from '../../helpers/formatters'
 
 const useStyles = makeStyles(theme => ({

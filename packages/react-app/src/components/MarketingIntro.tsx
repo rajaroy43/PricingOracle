@@ -1,7 +1,7 @@
 import React from 'react'
-import lithiumLogo from '../assets/logo-lithium.svg';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles'
 import Typography from "@material-ui/core/Typography"
+import lithiumLogo from '../assets/logo-lithium.svg'
 
 const useStyles = makeStyles(theme => ({
   marketingIntro: {

@@ -127,7 +127,7 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
 const getMethodArgs = () => (values: any) => {
     console.log(`inside create Q vals ${JSON.stringify(values)}`)
     const questionCount = 4
-    const categories = new Array(questionCount).fill(values.category)
+    const questionCategories = new Array(questionCount).fill(values.category)
     const PRICING_TYPE = 0
     const questionTypes = new Array(questionCount).fill(PRICING_TYPE)
     const bounties = [values.bounty0, values.bounty1, values.bounty2, values.bounty3].map(parseUnits)
@@ -139,7 +139,7 @@ const getMethodArgs = () => (values: any) => {
     const minimumRequiredAnswers = 1
     return (
         [
-            categories,
+            questionCategories,
             bounties,
             pricingTimes,
             endTimes,

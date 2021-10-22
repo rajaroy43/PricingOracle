@@ -2,8 +2,8 @@ import { ApolloError } from "@apollo/react-hooks";
 import { gql } from 'apollo-boost';
 
 export interface QueryResponse {
-  loading: boolean
-  error: ApolloError | undefined
+  loading: boolean;
+  error: ApolloError | undefined;
 }
 
 export const QUESTION_FIELDS = gql`

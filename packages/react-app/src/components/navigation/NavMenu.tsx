@@ -1,9 +1,9 @@
 import React from 'react'
-import { GetNavItemParams, NavMenuParams, NavItemParams, PageParams } from '../../types/navigation'
 import { makeStyles } from '@material-ui/core/styles';
+import { SwipeableDrawer, useMediaQuery, useTheme } from '@material-ui/core';
+import { GetNavItemParams, NavMenuParams, NavItemParams, PageParams } from '../../types/navigation'
 import Box from '../atoms/Box'
 import NavMenuItem from './NavMenuItem'
-import { SwipeableDrawer, useMediaQuery, useTheme } from '@material-ui/core';
 import NavMenuItemMobile from './NavMenuItemMobile';
 
 const useStyles = makeStyles(theme => ({
@@ -57,7 +57,7 @@ const NavMenu = (props: NavMenuParams) => {
       onOpen={() => props.setDrawerOpen(true)}
       classes={{ paper: classes.navMenuMobile}}
     >
-      <div className={classes.spacer}></div>
+      <div className={classes.spacer} />
       {preppedItems.map(navItem => (
         <NavMenuItemMobile key={navItem.id} {...navItem} />
       ))}

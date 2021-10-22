@@ -91,7 +91,7 @@ const SelectWalletForm = ({setWallet}: any) => {
   const formProps = {
     defaultValues: selectWalletSchema.defaultValues,
     schema: selectWalletSchema.schema,
-    getForm: getForm,
+    getForm,
     getSubmitArgs,
     submit: setWallet,
     stateEls: {}

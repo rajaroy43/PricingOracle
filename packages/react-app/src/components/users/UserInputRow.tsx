@@ -2,6 +2,7 @@ import React from 'react'
 import config from '../../config'
 import Flex from '../atoms/Flex'
 import ApproveLithiumPricingForm from '../forms/ApproveLithiumPricing'
+
 const MAX_APPROVE = '10000000000'
 
 const UserInputRow = ({connectedWallet, pricingIsApproved}: {connectedWallet: any, pricingIsApproved: boolean}) => {

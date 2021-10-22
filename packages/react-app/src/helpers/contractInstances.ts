@@ -1,7 +1,5 @@
 // import { Contract, utils, providers } from 'ethers'
 import config from "../config"
-import tokenAbi from '../contracts/LithiumToken.abi'
-import pricingAbi from '../contracts/LithiumPricing.abi'
 
 // ethers
 // @ts-ignore
@@ -14,6 +12,6 @@ const getDeployedContract = (web3: any, abi: any, address: string) => {
   return contract
 }
 
-export const getLithiumTokenInstance = (web3: any) => getDeployedContract(web3, tokenAbi, config.LITHIUM_TOKEN_ADDRESS)
-export const getLithiumPricingInstance = (web3: any) => getDeployedContract(web3, pricingAbi, config.LITHIUM_PRICING_ADDRESS)
+export const getLithiumTokenInstance = (web3: any) => getDeployedContract(web3, config.tokenAbi, config.LITHIUM_TOKEN_ADDRESS)
+export const getLithiumPricingInstance = (web3: any) => getDeployedContract(web3, config.pricingAbi, config.LITHIUM_PRICING_ADDRESS)
 

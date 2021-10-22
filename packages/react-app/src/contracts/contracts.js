@@ -1,1 +1,0 @@
-module.exports = ["LithiumPricing","LithiumReward","LithiumToken"];
