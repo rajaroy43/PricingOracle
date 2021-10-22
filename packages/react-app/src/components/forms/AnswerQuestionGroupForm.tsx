@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Form } from 'formik'
 import { BigNumber } from 'ethers';
-import { answerQuestionGroupSchema } from '../../schemas/answer'
-import Web3Form from '../formikTLDR/forms/Web3Form'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Typography from "@material-ui/core/Typography"
+import { answerQuestionGroupSchema } from '../../schemas/answer'
+import Web3Form from '../formikTLDR/forms/Web3Form'
 import Button from '../atoms/inputs/buttons/Button'
 import { formatUnits, parseUnits } from '../../helpers/formatters'
 import AnswerQuestionInput from './AnswerQuestionInput'
@@ -178,9 +178,9 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
     //@ts-ignore
-    const totalStakeReducer = (acc, stake) => {
-      if (stake && !isNaN(stake)) { 
-        acc = acc.add(parseUnits(stake));
+    const totalStakeReducer = (acc, _stake) => {
+      if (_stake && !isNaN(stake)) { 
+        acc = acc.add(parseUnits(_stake));
       } 
       
       return acc
@@ -200,7 +200,7 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
   return (
     <Form>
       <div className={classes.answerGroupItems}>
-          {questionGroup.questionViews.map((question: QuestionView, idx: any) => <AnswerQuestionInput key={idx} idx={idx} question={question} updateStake={updateStake(idx)} />)}
+          {questionGroup.questionViews.map((question: QuestionView, idx: any) => <AnswerQuestionInput key={question.id} idx={idx} question={question} updateStake={updateStake(idx)} />)}
       </div>
 
       <Grid container>

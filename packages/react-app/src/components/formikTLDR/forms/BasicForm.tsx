@@ -11,9 +11,9 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Basic
     if (args) {
       submit(args)
       return true
-    } else {
-      return false
     }
+    return false
+    
   }
   return getForm(isValid, onSubmit, cancel, errors)
 }

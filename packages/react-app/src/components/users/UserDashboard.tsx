@@ -6,7 +6,7 @@ import UserEarnings from '../users/UserEarnings'
 import UserStats from '../users/UserStats'
 import UserInputRow from './UserInputRow'
 
-const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet?: any}) => {
+const UserDashboard = ({user, connectedWallet}: {user: UserView, connectedWallet: any}) => {
   if (user && connectedWallet) {
     return (
       <div>

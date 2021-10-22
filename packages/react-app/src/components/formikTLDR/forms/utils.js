@@ -10,7 +10,7 @@ export const callMethod = (props) => {
       props.handleReceipt(receipt)
       props.resetForm()
       props.setSubmitting(false)
-      props.onSuccess && props.onSuccess()
+      if (props.onSuccess) props.onSuccess()
     })
     .on('error', props.handleError)
 }
