@@ -91,6 +91,12 @@ export default createTheme({
         fontWeight: 400,    
         lineHeight: 1.5
     },
+    subtitle1: {
+      fontWeight: 700,
+      lineHeight: '1.25',
+      marginBottom: '20px',
+      marginTop: 0
+    },
     link: {
         color: lithOrange
     }
@@ -211,13 +217,6 @@ export default createTheme({
               marginLeft: 0,
               marginRight: '24px',
             },       
-          }
-        },
-        MuiTextField: {
-          root: {
-            alignItems: 'center !important',
-            flexDirection: 'row !important',
-            justifyContent: 'space-around !important',
           }
         },
         MuiRadio: {

@@ -21,12 +21,15 @@ const useStyles = makeStyles(theme => ({
       width: '100%'
     },
     field: {
+      alignItems: 'center',
       color: '#ffffff !important',
+      flexDirection: 'row',
       flexWrap: 'nowrap',
       justifyContent: 'flex-start !important',
       width: '100%'
     },
     input: {
+      marginLeft: '16px',
       width: '100%'
     }
 }));
