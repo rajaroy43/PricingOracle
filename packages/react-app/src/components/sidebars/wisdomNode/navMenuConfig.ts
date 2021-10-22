@@ -30,11 +30,11 @@ const getNavItems: GetNavItemParams[] = [
         id: 'availableQuestions',
         icon: 'nav-icon-available-sets',
         label: 'Available Questions',
-        getUrl: (params) => {
+        getUrl: (_) => {
           return `/wisdom-node/available-questions`
         },
         getShouldRender: (_) => {
-        return true
+          return true
         },
     },
     {
@@ -64,10 +64,7 @@ const getNavItems: GetNavItemParams[] = [
             '/'
         },
         getShouldRender: (params) => {
-          return params.isWalletConnected ?
-           true
-            :
-            false
+          return params.isWalletConnected
         },
     },
     /*

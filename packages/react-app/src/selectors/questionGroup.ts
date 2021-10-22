@@ -36,6 +36,6 @@ export const selectQuestionGroup = (questionGroup: QuestionGroup): QuestionGroup
     totalPool: totalPool.toString(),
     totalPoolDisplay: formatUnits(totalPool.toString()),
     categoryId,
-    categoryLabel: CategoryLabelDisplay[parseInt(categoryId)]
+    categoryLabel: CategoryLabelDisplay[parseInt(categoryId, 10)]
   }
 }

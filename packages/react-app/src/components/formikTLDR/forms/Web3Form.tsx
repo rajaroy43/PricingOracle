@@ -59,7 +59,9 @@ const getContent = (
   ) => {
   const { successEl, pendingEl, errorEl } = stateEls
   if (state.receipt) {
-    onSuccess && onSuccess()
+    if (onSuccess) {
+      onSuccess()
+    }
     return (
       <div>
         {formOnSuccess && getForm(submit)}

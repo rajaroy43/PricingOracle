@@ -48,11 +48,12 @@ const useStyles = makeStyles(theme => ({
 const NavMenuItem = (item: NavItemParams) => {
   const classes = useStyles();
   const itemClass = item.isActive ? classes.navMenuItemActive : classes.navMenuItem;
+  const icon = require(`../../assets/${item.icon}.svg`)
 
   return (
     item.shouldRender ? 
       <RouterLink to={item.url} className={itemClass}>
-        <img className={classes.navMenuItemIcon} src={require(`../../assets/${item.icon}.svg`)} alt={`${item.label}`} /><span>{item.label}</span>
+        <img className={classes.navMenuItemIcon} src={icon.default} alt={`${item.label}`} /><span>{item.label}</span>
       </RouterLink>
       :
       null

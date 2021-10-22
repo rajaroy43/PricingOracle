@@ -102,7 +102,7 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
     <>
         <div className={classes.titleRow}>
             <div className={classes.titleRowButton}>
-                <Button className={classes.buttonBack} component={RouterLink} to={'/wisdom-node/available-questions'}>Back</Button>
+                <Button className={classes.buttonBack} component={RouterLink} to='/wisdom-node/available-questions'>Back</Button>
             </div>
             <div>
                 <Typography variant="h2" className={classes.questionGroupTitle} noWrap={true}>Question Group</Typography>

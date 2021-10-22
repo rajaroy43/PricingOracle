@@ -1,5 +1,6 @@
-import { createTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles"
 import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+
 const breakpoints = createBreakpoints({});
 
 const lithOrange = "#E96036";
