@@ -66,10 +66,10 @@ const getLocalState = async () => {
     const [wallet, provider] = await wallets[walletType].connectWallet()
 
     return {
-      walletType: walletType,
-      wallet: wallet,
-      address: address,
-      provider: provider
+      walletType,
+      wallet,
+      address,
+      provider
     }
   }
 }
@@ -81,7 +81,7 @@ const WalletProvider = ({children}) => {
   // if so, reconnect so wallet state can survive page reload
   useEffect(() => {
     const init = async () => {
-      let walletState = await getLocalState()
+      const walletState = await getLocalState()
 
       if (walletState)  {
         dispatch({type: 'SET_WALLET', payload: walletState})
