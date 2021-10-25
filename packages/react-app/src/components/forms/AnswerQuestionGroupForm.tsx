@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '20px',
-    fontWeight: 400,
+    fontWeight: 500,
     justifyContent: 'space-between',
     marginLeft: '8px',
     marginRight: '8px',

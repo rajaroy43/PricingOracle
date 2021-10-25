@@ -7,17 +7,26 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = (isSelected:boolean) => makeStyles({
   root: {
-    maxWidth: 345,
+    background: `${isSelected ? '#3f51b5' : 'white'}`,
     cursor: 'pointer',
-    textAlign:'center',
     margin: '0.5em',
-    opacity: `${isSelected ? '100%' : '50%'}`,
+    maxWidth: 345,
+    opacity: '100%',
+    textAlign:'center',
     '&:hover': {
       background: "#3f51b5",
-   },
+      color: 'white'
+    },
+    '& h2': {
+      color: 'white'
+    },
   },
   media: {
     height: 140,
+  },
+  title: {
+    color: "black",
+    fontSize: "2rem"
   }
 });
 
@@ -29,7 +38,7 @@ export default function MediaCard({icon, title, description, isSelected, onClick
       <CardActionArea>
         {icon}
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom variant="h5" component="h2" className={classes.title}>
             {title}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
