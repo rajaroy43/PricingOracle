@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@openzeppelin/contracts-upgradeable": "^4.3.2",
+    "@openzeppelin/hardhat-upgrades": "^1.11.0",
     "@typechain/ethers-v5": "^7.0.1",
     "@types/chai": "^4.2.21",
     "@types/fs-extra": "^9.0.12",

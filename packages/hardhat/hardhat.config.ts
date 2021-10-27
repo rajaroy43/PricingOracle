@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-waffle";
 import "solidity-coverage";
 import "@tenderly/hardhat-tenderly";
 import "@nomiclabs/hardhat-etherscan";
+import "@openzeppelin/hardhat-upgrades"
 require("dotenv").config();
 
 /*
