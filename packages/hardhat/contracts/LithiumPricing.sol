@@ -55,8 +55,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
-  uint8 minAnswerSetLength = 2;
-  uint8 maxAnswerSetLength = 2;
+  uint8 minAnswerSetLength ;
+  uint8 maxAnswerSetLength ;
 
   bytes32[] public categories; 
 
@@ -80,6 +80,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   function initialize() public initializer override {
     Roles.initialize();
     _addCategory("preIPO");
+    minAnswerSetLength = 2;
+    maxAnswerSetLength = 2;
   }
 
 
