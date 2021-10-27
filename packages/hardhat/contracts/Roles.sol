@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract Roles is AccessControl {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-    constructor() {
+contract Roles is AccessControlUpgradeable {
+
+    function initialize() public virtual initializer{
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
+        __AccessControl_init();
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
