@@ -1,7 +1,7 @@
 /* eslint no-use-before-define: "warn" */
 const fs = require("fs");
 const chalk = require("chalk");
-const { config, ethers, tenderly, run, network } = require("hardhat");
+const { config, ethers, tenderly, run, network ,upgrades} = require("hardhat");
 const { utils, BigNumber } = require("ethers");
 const R = require("ramda");
 const { createQuestionGroup, answerQuestionGroups } = require("./utils/lithiumPricing");
@@ -32,7 +32,9 @@ const main = async () => {
 
   console.log("\n\n 📡 Deploying Pricing...\n");
 
-  const lithiumPricing = await deploy("LithiumPricing");
+  const lithiumPricing = await deploy("LithiumPricing",[],{},{},true);
+  const ProxyAdmin= await upgrades.admin.getInstance();
+  const lithiumPricingImplementationAddress=await ProxyAdmin.getProxyImplementation(lithiumPricing.address)
   console.log("\n\n 📡 Deploying Token...\n");
 
   const lithTokenArgs = [account0.address]
@@ -96,7 +98,7 @@ const main = async () => {
     await wait(100000)
     console.log(chalk.blue('verifying on LithiumPricing etherscan'))
     await run("verify:verify", {
-      address: lithiumPricing.address,
+      address: lithiumPricingImplementationAddress,
       contract: "contracts/LithiumPricing.sol:LithiumPricing" // If you are inheriting from multiple contracts in yourContract.sol, you can specify which to verify
     })
 
@@ -170,7 +172,8 @@ const deploy = async (
   contractName,
   _args = [],
   overrides = {},
-  libraries = {}
+  libraries = {},
+  isProxy=false
 ) => {
   console.log(` 🛰  Deploying: ${contractName}`);
 
@@ -178,7 +181,7 @@ const deploy = async (
   const contractArtifacts = await ethers.getContractFactory(contractName, {
     libraries: libraries,
   });
-  const deployed = await contractArtifacts.deploy(...contractArgs, overrides);
+  const deployed = !isProxy ?await contractArtifacts.deploy(...contractArgs, overrides):await upgrades.deployProxy(contractArtifacts,contractArgs);
   const encoded = abiEncodeArgs(deployed, contractArgs);
   fs.writeFileSync(`artifacts/${contractName}.address`, deployed.address);
 
