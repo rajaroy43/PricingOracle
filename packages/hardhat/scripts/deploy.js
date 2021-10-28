@@ -34,7 +34,10 @@ const main = async () => {
 
   const lithiumPricing = await deploy("LithiumPricing",[],{},{},true);
   const ProxyAdmin= await upgrades.admin.getInstance();
+  chalk.cyan(console.log("ProxyAdmin Contract Address",chalk.magenta(ProxyAdmin.address)))
   const lithiumPricingImplementationAddress=await ProxyAdmin.getProxyImplementation(lithiumPricing.address)
+  chalk.cyan(console.log("Lithium Pricing Implementation Address",chalk.magenta(lithiumPricingImplementationAddress)))
+
   console.log("\n\n 📡 Deploying Token...\n");
 
   const lithTokenArgs = [account0.address]
@@ -175,7 +178,7 @@ const deploy = async (
   libraries = {},
   isProxy=false
 ) => {
-  console.log(` 🛰  Deploying: ${contractName}`);
+  console.log(` 🛰  Deploying: ${contractName } ${isProxy?"Proxy":""}`);
 
   const contractArgs = _args || [];
   const contractArtifacts = await ethers.getContractFactory(contractName, {
@@ -197,7 +200,7 @@ const deploy = async (
 
   console.log(
     " 📄",
-    chalk.cyan(contractName),
+    chalk.cyan(contractName,isProxy?"Proxy":""),
     "deployed to:",
     chalk.magenta(deployed.address)
   );
