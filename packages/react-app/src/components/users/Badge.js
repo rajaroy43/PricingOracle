@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Badge = ({ address }) => {
+const Badge = ({ address, mode }) => {
   const classes = useStyles();
 
   if (!address) {
@@ -33,10 +33,10 @@ const Badge = ({ address }) => {
         <Blockie address={address} />
         <div className={classes.badgeAddress} >
           <Address address={address} length={4} />
-          { /*
-            TODO: Toggle Wisdom Node / Wisdom Seeker 
-            */ }
-          <p className={classes.nodeType}>Wisdom Node</p>
+          { mode === 'node' ? 
+            <p className={classes.nodeType}>Wisdom Node</p>
+            : <p className={classes.nodeType}>Wisdom Seeker</p>
+          }
         </div>
       </Box>
     } />

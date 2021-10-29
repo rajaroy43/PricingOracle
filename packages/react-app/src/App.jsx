@@ -30,7 +30,7 @@ class App extends Component {
             <Route exact path='/wisdom-node/answering/:questionGroupId' component={Answering} />
             <Route exact path='/wisdom-node/history' component={History} />
             <Route exact path='/admin' component={Admin} />
-            <Route exact path='/design' component={Design} />
+            <Route exact path='/wisdom-seeker/design' component={Design} />
           </Switch>
           </HashRouter>
         </WalletProvider>

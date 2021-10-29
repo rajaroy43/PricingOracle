@@ -240,6 +240,29 @@ export default createTheme({
             display: 'flex',
             marginLeft: '8px'
           }
+        },
+        MuiToggleButton: {
+          root: {
+            backgroundColor: '#fff',
+            border: '1px solid #000',
+            '&:hover': {
+              backgroundColor: '#fff',
+              '& .MuiToggleButton-label': {
+                color: '#000 !important'
+              }
+            },
+            padding: '8px',
+            '&.MuiToggleButton-root.Mui-selected': {
+              backgroundColor: '#E96036 !important',
+              border: '1px solid #E96036',
+              '& > span': {
+                color: '#fff !important'
+              }
+            },
+            '& .MuiToggleButton-label': {
+              color: '#666 !important'
+            }
+          },
         }
     },
     /*

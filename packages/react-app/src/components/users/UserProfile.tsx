@@ -18,13 +18,10 @@ const useStyles = makeStyles(theme => ({
     border: 0,
     color: '#ffffff',
     padding: '12px'
-  },
-  buttonClaim: {
-    
   }
 }));
 
-const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
+const UserProfile = ({ walletAddress, mode }: {walletAddress: string, mode: string}) => {
   // @ts-ignore
   const { setWallet, pricingInstance } = useContext(WalletContext);
   // @ts-ignore
@@ -39,7 +36,7 @@ const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
   if (walletAddress && user && pricingInstance) {
     return (
       <div className={classes.userProfile}>
-        <Badge address={user.id} />
+        <Badge address={user.id} mode={mode} />
         <UserBalances user={user}/>
         <Flex justifyContent="flex-end" mt="1rem">
           <ClaimRewardForm

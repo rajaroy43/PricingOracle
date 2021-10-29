@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useContext }  from 'react'
 import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { NavMenuParams } from '../../../types/navigation';
+import { WalletContext } from '../../providers/WalletProvider'
 import NavMenu from '../../navigation/NavMenu';
-import UserProfile from '../../users/UserProfile';
+import SelectWallet from '../../forms/SelectWallet'
 import lithiumLogo from '../../../assets/logo-lithium.svg';
-import ToggleMode from '../../../components/navigation/NavMenuMode';
 
 const useStyles = makeStyles(theme => ({
   logo: {
@@ -32,10 +32,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-// Wisdom Node ConnectedSideBar
-const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}: NavMenuParams) => {
+// Wisdom Seeker NOT ConnectedSideBar
+const NotConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}: NavMenuParams) => {
+  // @ts-ignore
+  const { setWallet } = useContext(WalletContext);
   const classes = useStyles();
-  const walletAddress = pageParams.walletAddress || '0x0'
 
   return (
     <div className={classes.sidebar}>
@@ -46,15 +47,14 @@ const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}
         { isDrawerOpen ? <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><CloseIcon className={classes.mobileMenuButton} /></IconButton> :
           <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><MenuIcon className={classes.mobileMenuButton} /></IconButton> }
       </div>
-      <ToggleMode />
       <div style={{marginTop: '12px'}}>
-        <UserProfile walletAddress={walletAddress} mode="node" />
+        <SelectWallet setWallet={setWallet} />
       </div>
       <div>
-        <NavMenu pageParams={pageParams} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen} />
+        <NavMenu pageParams={pageParams} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen}/>
       </div>
     </div>
   )
 }
 
-export default ConnectedSideBar
+export default NotConnectedSideBar
