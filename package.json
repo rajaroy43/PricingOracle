@@ -60,7 +60,8 @@
     "start-reward-coordinator": "cd docker && docker-compose up",
     "docker-clean": "cd docker/ && docker compose -f docker-compose.local.yml down && docker rm -f $(docker ps -a -q) && docker volume rm $(docker volume ls -q)",
     "docker-run-local": "cd docker/ && ./run.sh",
-    "selector:test": "yarn workspace @scaffold-eth/react-app selector:test"
+    "selector:test": "yarn workspace @scaffold-eth/react-app selector:test",
+    "upgrade-lithium-rinkeby": "yarn workspace @scaffold-eth/hardhat upgrade-lithium-rinkeby"
   },
   "workspaces": {
     "packages": [
