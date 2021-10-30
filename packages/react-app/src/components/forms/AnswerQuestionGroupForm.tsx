@@ -13,6 +13,7 @@ import { QuestionView } from '../../types/question'
 import { QuestionGroupView } from '../../types/questionGroup'
 import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
+import { FormStateEls, SuccessProps } from '../formikTLDR/types';
 
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
@@ -163,9 +164,10 @@ const mockData = {
   totalStakeDisplayUSD: '-41.55'
 }
 
-const Success = () => (
+const Success = (props: SuccessProps) => (
   <div>
     <Typography variant="h3">Question Answered!</Typography>
+    {props.receipt.txHash}
   </div>
 )
 
@@ -255,18 +257,17 @@ const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGr
     stakes: questionGroup.questions.map(() => 0) 
   }
   const [stakeState, setTotalStake] = useState(initialStakeState)
+  const stateEls: FormStateEls =  {
+    SuccessEl: Success
+  }
   const formProps = {
     defaultValues: {answers: defaultQuestionValues },
     schema: answerQuestionGroupSchema.schema,
     getForm: getForm(questionGroup, classes, user, stakeState, setTotalStake),
-    // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,
-    // @ts-ignore
     connectedAddress: connectedWallet.address,
     getMethodArgs: getMethodArgs(questionGroup.id),
-    stateEls: {
-      successEl: Success
-    },
+    stateEls,
     formOnSuccess: false,
     onSuccess: null
   }

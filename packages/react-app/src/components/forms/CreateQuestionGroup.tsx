@@ -8,6 +8,7 @@ import CreateQuestionForm from './CreateQuestionForm'
 import createQuestionGroupSchema from '../../schemas/questionGroup'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import { msToSec, parseUnits } from '../../helpers/formatters'
+import { SuccessProps } from '../formikTLDR/types'
 
 const Row = styled.div`
     display: flex;
@@ -152,9 +153,10 @@ const getMethodArgs = () => (values: any) => {
     )
 }
 
-const Success = () => (
+const Success = ({receipt}: SuccessProps) => (
     <div>
-        <h3>Question Created!</h3>
+        <h3>Question Group Created!</h3>
+        {receipt.txHash}
     </div>
 )
 const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {
@@ -171,7 +173,7 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
         connectedAddress,
         getMethodArgs: getMethodArgs(),
         stateEls: {
-            successEl: Success
+            SuccessEl: Success
         },
         formOnSuccess: false,
         onSuccess

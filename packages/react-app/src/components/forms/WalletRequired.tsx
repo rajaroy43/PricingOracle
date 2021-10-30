@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
-import { WalletContext } from '../providers/WalletProvider'
 import { makeStyles } from '@material-ui/core/styles';
-import SelectWallet from "./SelectWallet";
+import ConnectWalletFlow from './connectWallet/ConnectWalletFlow';
 
 const useStyles = makeStyles(theme => ({
     connectContainer: {
@@ -17,14 +16,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const WalletRequired = () => {
-    // @ts-ignore
-    const { setWallet } = useContext(WalletContext);
     const classes = useStyles();
 
     return (
         <div className={classes.connectContainer}>
             <p>This page requires a connected wallet</p>
-            <SelectWallet setWallet={setWallet} />
+            <ConnectWalletFlow />
         </div>
     )
 }

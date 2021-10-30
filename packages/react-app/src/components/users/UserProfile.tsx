@@ -10,6 +10,7 @@ import LoadingCircle from '../atoms/Loading'
 import UserBalances from './UserBalances'
 import { WalletContext } from '../providers/WalletProvider';
 import ClaimRewardForm from '../forms/ClaimReward';
+import ConnectWalletFlow from '../forms/connectWallet/ConnectWalletFlow';
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -24,9 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
-  // @ts-ignore
-  const { setWallet, pricingInstance } = useContext(WalletContext);
-  // @ts-ignore
+  const { pricingInstance } = useContext(WalletContext);
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
   console.log('user', user);
   const classes = useStyles();
@@ -52,7 +51,7 @@ const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
     )
   }
 
-  return <SelectWallet setWallet={setWallet} />
+  return <ConnectWalletFlow />
 }
 
 export default UserProfile

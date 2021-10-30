@@ -2,16 +2,10 @@ import React from 'react'
 import { Form } from 'formik'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Button from '../atoms/inputs/buttons/Button'
-import Modal from '../atoms/Modal'
 import { approveSchema } from '../../schemas/approve'
+import { SuccessProps } from '../formikTLDR/types'
 
-const Success = () => (
-  <div>
-    <h3>Lithium Pricing Approved!</h3>
-  </div>
-)
-
-const getForm = (isDisabled: boolean) => (submit: any, isValid: boolean) => (
+const getForm = (isDisabled: boolean) => (submit: any) => (
   <Form>
      
     <Button
@@ -20,6 +14,13 @@ const getForm = (isDisabled: boolean) => (submit: any, isValid: boolean) => (
       disabled={isDisabled}
     />
   </Form>
+)
+
+const Success = ({receipt}: SuccessProps) => (
+  <div>
+      <h3>Reward Claimed!</h3>
+      {receipt.txHash}
+  </div>
 )
 
 const getMethodArgs = (answerGroupIds: string[]) => (_: any) => {
@@ -36,7 +37,7 @@ const ClaimRewardForm = ({ connectedAddress, pricingInstance, answerGroupIds, is
     connectedAddress,
     getMethodArgs: getMethodArgs(answerGroupIds),
     stateEls: {
-      successEl: Success
+      SuccessEl: Success
     },
     formOnSuccess: false,
     onSuccess: null

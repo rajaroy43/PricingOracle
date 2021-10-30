@@ -40,13 +40,22 @@ const Success = () => (
   </div>
 )
 
-const Error = () => (
+const Error = ({error}: {error: string}) => (
   <div>
     <h3>Transaction Error!</h3>
+    <div>{error}</div>
   </div>
 )
 
-const Pending = () => <Loading  />
+const Pending = ({txHash}: {txHash: string}) => {
+  return (
+    <div>
+      <h3>Transaction Pending</h3>
+      <div>{txHash}</div>
+      <Loading  />
+    </div>
+  )
+}
 
 const getContent = (
   getForm: any,
@@ -57,7 +66,7 @@ const getContent = (
   formOnSuccess: boolean,
   onSuccess: any
   ) => {
-  const { successEl, pendingEl, errorEl } = stateEls
+  const { SuccessEl, PendingEl, ErrorEl } = stateEls
   if (state.receipt) {
     if (onSuccess) {
       onSuccess()
@@ -65,14 +74,13 @@ const getContent = (
     return (
       <div>
         {formOnSuccess && getForm(submit)}
-        {successEl ? successEl(state.receipt) : <Success />}
+        {SuccessEl ? <SuccessEl receipt={state.receipt} /> : <Success />}
       </div>
     )
   } else if (state.error) {
-    // @ts-ignore
-    return errorEl ? errorEl(state.error) : <Error error={state.error} />
+    return ErrorEl ? <ErrorEl error={state.error} /> : <Error error={state.error} />
   } else if (state.txHash) {
-    return pendingEl ? pendingEl(state.txHash) : <Pending />
+    return PendingEl ? <PendingEl txHash={state.txHash} /> : <Pending txHash={state.txHash} />
   }
 
   return getForm(submit, isValid)

@@ -1,7 +1,28 @@
+import { FormikHandlers } from 'formik';
+import React from 'react'
+
+export interface SuccessProps {
+  receipt: any;
+}
+
+export interface PendingProps {
+  txHash: string
+}
+
+export interface ErrorProps {
+  error: string
+}
+
 export interface FormStateEls {
-  successEl?: any;
-  pendingEl?: any;
-  errorEl?: any;
+  SuccessEl?: React.ComponentType<SuccessProps>;
+  PendingEl?: React.ComponentType<PendingProps>;
+  ErrorEl?: React.ComponentType<ErrorProps>;
+}
+
+export interface FormUpdaters {
+  cancel: any;
+  onSuccess: any;
+  onError: any;
 }
 
 export interface BasicFormProps {
@@ -11,7 +32,7 @@ export interface BasicFormProps {
   stateEls: FormStateEls;
   submit: any;
   getSubmitArgs: any;
-  cancel: any;
+  updaters: FormUpdaters;
 }
 
 export interface Web3FormProps {

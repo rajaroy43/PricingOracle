@@ -1,16 +1,16 @@
 import React from 'react'
 import { Form } from 'formik'
 import { makeStyles } from '@material-ui/core'
-import { selectWalletSchema, SUPPORTED_WALLETS } from '../../schemas/wallet'
-import wallets from '../../wallets'
-import Button from '../atoms/inputs/buttons/Button'
-import BasicForm from '../formikTLDR/forms/BasicForm'
-import MetaMaskIcon from '../atoms/logos/MetaMask'
-import CardSelect from '../atoms/inputs/CardSelect'
-import Flex from '../atoms/Flex'
-import Modal from '../atoms/Modal'
-import config from '../../config'
-import { getLithiumPricingInstance, getLithiumTokenInstance } from '../../helpers/contractInstances'
+import { selectWalletSchema } from '../../../schemas/wallet'
+import wallets from '../../../wallets'
+import Button from '../../atoms/inputs/buttons/Button'
+import BasicForm from '../../formikTLDR/forms/BasicForm'
+import MetaMaskIcon from '../../atoms/logos/MetaMask'
+import CardSelect from '../../atoms/inputs/CardSelect'
+import Flex from '../../atoms/Flex'
+import config from '../../../config'
+import { getLithiumPricingInstance, getLithiumTokenInstance } from '../../../helpers/contractInstances'
+import { SUPPORTED_WALLETS } from '../../../types/user'
 
 const useStyles = makeStyles(theme => ({
   selectWalletError: {
@@ -76,12 +76,7 @@ const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
             variant='outlined'
             label="Cancel" />
           <Button
-            onClick={async () => {
-              const success = await submit();
-              if (success) {
-                close()
-              }
-            }}
+            onClick={submit}
             disabled={!isValid}
             label="Connect Wallet" />
         </Flex>
@@ -122,27 +117,22 @@ const getSubmitArgs = async (values: any, setErrors: any) => {
   return args
 }
 
-const SelectWallet = ({setWallet}: any) => {
+const SelectWallet = ({setWallet, updaters}: any) => {
   const formProps = {
     defaultValues: selectWalletSchema.defaultValues,
     schema: selectWalletSchema.schema,
     getForm,
     getSubmitArgs,
     submit: setWallet,
-    stateEls: {}
+    stateEls: {},
+    updaters
   }
 
   return (
-    <Modal 
-      triggerText='Connect Wallet'
-      title='Connect Your Wallet'
-      contentText=''
-      getForm={(cancel: any) => <BasicForm
-        {...formProps}
-        cancel={cancel}
-      /> }
-      />
-    )
+    <BasicForm
+      {...formProps}
+    />
+  )
 }
 
 export default SelectWallet 

@@ -1,9 +1,5 @@
 import * as Yup from 'yup';
-
-export const SUPPORTED_WALLETS = {
-  METAMASK: 'METAMASK',
-  // FORTMATIC: 'FORTMATIC'
-}
+import { SUPPORTED_WALLETS } from '../types/user';
 
 export const selectWalletSchema = {
   defaultValues: {

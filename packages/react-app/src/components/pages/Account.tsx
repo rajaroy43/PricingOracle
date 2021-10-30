@@ -10,15 +10,12 @@ const Account = ({ match }: any) => {
   const urlAddress = match.params.address;
   const connectedWallet = useContext(WalletContext);
   const {loading, user} = useGetUser(subgraphClient, urlAddress);
-  //@ts-ignore
   const userWallet = connectedWallet?.address != null && urlAddress === connectedWallet?.address ?
     connectedWallet : null
 
   const sideBarProps = {
     activePage: 'account',
-    //@ts-ignore
     isWalletConnected: !!connectedWallet.wallet,
-    //@ts-ignore
     walletAddress: connectedWallet.address
   }
 
