@@ -40,7 +40,7 @@ const ClaimRewardForm = ({ connectedAddress, pricingInstance, answerGroupIds, is
       SuccessEl: Success
     },
     formOnSuccess: false,
-    onSuccess: null
+    updaters: {}
   }
   return (
     <Web3Form

@@ -78,7 +78,7 @@ const getContent = (
       </div>
     )
   } else if (state.error) {
-    return ErrorEl ? <ErrorEl error={state.error} /> : <Error error={state.error} />
+    return ErrorEl ? <ErrorEl error={state.error} /> : <Error error={state.error.message} />
   } else if (state.txHash) {
     return PendingEl ? <PendingEl txHash={state.txHash} /> : <Pending txHash={state.txHash} />
   }
@@ -108,8 +108,8 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     getMethodArgs,
     getForm,
     stateEls,
-    formOnSuccess,
-    onSuccess = () => {},
+    formOnSuccess = false,
+    updaters,
     staticArgs } = formProps
   const {values, setSubmitting, resetForm, isValid} = formikProps
   const [state, setState] = useState(initialState)
@@ -145,7 +145,7 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     isValid,
     stateEls,
     formOnSuccess,
-    onSuccess
+    updaters.onSuccess
     )
 }
 

@@ -176,7 +176,9 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
             SuccessEl: Success
         },
         formOnSuccess: false,
-        onSuccess
+        updaters: {
+          onSuccess
+        }
     }
     return (
         <Web3Form

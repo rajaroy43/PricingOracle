@@ -1,12 +1,13 @@
 import React, { useState, useReducer, useContext } from 'react';
+import { BigNumber } from 'ethers';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '../../atoms/inputs/buttons/Button';
 import SelectWallet from './SelectWallet';
 import { WalletContext } from '../../providers/WalletProvider';
-import LoadingCircle from '../../atoms/Loading';
 import CheckUserRegistered from './CheckUserRegistered';
+import ApproveLithiumPricingForm from './ApproveLithiumPricing';
 
 interface Props {
   triggerText: string;
@@ -18,22 +19,22 @@ interface Props {
 }
 
 interface StateProps {
-  loading: false,
-  walletAddress: string | null,
-  userRegistered: boolean | null,
-  pricingApproved: boolean | null
+  loading: boolean,
+  wallet: any | null,
+  userRegistered: boolean,
+  pricingApproved: boolean 
 }
 const initialState:StateProps = {
-loading: false,
- walletAddress: null,
- userRegistered: null,
- pricingApproved: null
+ loading: false,
+ wallet: null,
+ userRegistered: false,
+ pricingApproved: false
 }
 
 const UPDATE_TYPES = {
   WALLET_CONNECTED: 'WALLET_CONNECTED',
   USER_REGISTERED: 'USER_REGISTERED',
-  PRICING_APPROVED: 'PRICING_APPROVED',
+  RESET: 'RESET',
   LOADING: 'LOADING'
 }
 
@@ -42,11 +43,11 @@ function reducer(state: StateProps, action: any) {
     case UPDATE_TYPES.LOADING:
       return {...state, loading: action.loading}
     case UPDATE_TYPES.WALLET_CONNECTED:
-      return {...state, walletAddress: action.address}
+      return {...state, wallet: action.wallet}
     case UPDATE_TYPES.USER_REGISTERED:
       return {...state, userRegistered: action.userRegistered}
-    case UPDATE_TYPES.PRICING_APPROVED:
-        return {...state, pricingAppoved: action.pricingApproved}
+    case UPDATE_TYPES.RESET:
+        return {...initialState}
     default:
       return state;
   }
@@ -56,12 +57,11 @@ export default function ConnectWalletFlow() {
   const walletContext = useContext(WalletContext);
 
   const [open, setOpen] = useState(false);
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, {...initialState})
 
-  const updateWalletConnected = (address: string) => dispatch({type: UPDATE_TYPES.WALLET_CONNECTED, address})
+  const updateWalletConnected = (wallet: any) => dispatch({type: UPDATE_TYPES.WALLET_CONNECTED, wallet})
   const updateUserRegistered = () => dispatch({type: UPDATE_TYPES.USER_REGISTERED, userRegistered: true})
-  const updatePricingApproved = () => dispatch({type: UPDATE_TYPES.PRICING_APPROVED, pricingApproved: true})
-  const updatePricingNotApproved = () => dispatch({type: UPDATE_TYPES.PRICING_APPROVED, pricingApproved: false})
+  const reset = () => dispatch({type: UPDATE_TYPES.RESET})
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -69,6 +69,7 @@ export default function ConnectWalletFlow() {
 
   const handleClose = () => {
     setOpen(false);
+    reset()
   };
   const color = "#fff"
 
@@ -87,16 +88,21 @@ export default function ConnectWalletFlow() {
   }
 
   const handleWalletConnected = (wallet: any) => {
-    updateWalletConnected(wallet.address)
+    updateWalletConnected(wallet)
   }
 
   const handleUserRegistered = (user: any) => {
-    updateUserRegistered()
+    if (BigNumber.from(user.tokenApprovalBalance).isZero()) {
+      updateUserRegistered()
+    } else {
+      handleClose()
+    }
+
   }
 
   let content
-console.log(`inside flow ${walletContext.address} ${JSON.stringify(state, null, 2)}`)
-if ( state.walletAddress === null) {
+
+if ( state.wallet === null) {
     content = (
       <SelectWallet
         setWallet={walletContext.updaters.setWallet}
@@ -106,12 +112,21 @@ if ( state.walletAddress === null) {
         }}
       />
     )
-  } else if (state.walletAddress != null) {
+  } else if (state.wallet != null && state.userRegistered === false) {
     content = (
       <CheckUserRegistered
-        address={state.walletAddress}
+        address={state.wallet.address}
         onSuccess={handleUserRegistered}
         close={handleClose}
+      />
+    )
+  } else if (state.wallet != null && state.userRegistered === true) {
+    content = (
+      <ApproveLithiumPricingForm
+        wallet={state.wallet}
+        updaters = {{
+          ...updaters
+        }}
       />
     )
   }

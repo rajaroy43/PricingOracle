@@ -268,8 +268,7 @@ const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGr
     connectedAddress: connectedWallet.address,
     getMethodArgs: getMethodArgs(questionGroup.id),
     stateEls,
-    formOnSuccess: false,
-    onSuccess: null
+    updaters: {}
   }
   
   return (

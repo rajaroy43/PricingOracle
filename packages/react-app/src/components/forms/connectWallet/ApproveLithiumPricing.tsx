@@ -1,19 +1,18 @@
 import React from 'react'
 import { Form } from 'formik'
 import { BigNumber } from 'ethers'
-import Web3Form from '../formikTLDR/forms/Web3Form'
-import Button from '../atoms/inputs/buttons/Button'
-import Modal from '../atoms/Modal'
-import { parseUnits } from '../../helpers/formatters'
-import { approveSchema } from '../../schemas/approve'
-import config from '../../config'
-import { PendingProps, SuccessProps } from '../formikTLDR/types'
+import Web3Form from '../../formikTLDR/forms/Web3Form'
+import Button from '../../atoms/inputs/buttons/Button'
+import { approveSchema } from '../../../schemas/approve'
+import config from '../../../config'
+import { PendingProps, SuccessProps } from '../../formikTLDR/types'
 
-const MAX_APPROVE = BigNumber.from(2).pow(256).toString()
+
+const MAX_APPROVE = BigNumber.from(2).pow(256).sub(1).toString()
 
 const Pending = ({ txHash }: PendingProps) => (
   <div>
-    <h3>Lithium Pricing Approved!</h3>
+    <h3>Lithium Pricing Approval Pending!</h3>
     <div>{txHash}</div>
   </div>
 )
@@ -39,11 +38,10 @@ const getForm = () => (submit: any, isValid: boolean) => (
 )
 
 const getMethodArgs = (pricingAddress: string, value: string) => (_: any) => {
-  return [pricingAddress, parseUnits(value)]
+  return [pricingAddress, value]
 }
 
-const ApproveLithiumPricingForm = ({ wallet }: {wallet: any}) => {
-
+const ApproveLithiumPricingForm = ({ wallet, updaters }: any) => {
   const formProps = {
     defaultValues: approveSchema.defaultValues,
     schema: approveSchema.schema,
@@ -55,24 +53,13 @@ const ApproveLithiumPricingForm = ({ wallet }: {wallet: any}) => {
       SuccessEl: Success,
       PendingEl: Pending
     },
-    formOnSuccess: false,
-    onSuccess: null
+    updaters
   }
   return (
     <>
-      <Modal
-        triggerText='Approve $LITH'
-        title='Approve $LITH'
-        contentText=''
-        getForm={(cancelForm: any) => {
-          return (
-            <Web3Form
-              formProps={{...formProps, cancelForm}}
-            />
-          )
-        }}
+      <Web3Form
+        formProps={{...formProps}}
       />
-    
     </>
   )
 }

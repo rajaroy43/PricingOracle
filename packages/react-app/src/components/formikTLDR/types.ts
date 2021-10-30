@@ -20,33 +20,30 @@ export interface FormStateEls {
 }
 
 export interface FormUpdaters {
-  cancel: any;
-  onSuccess: any;
-  onError: any;
+  cancel?: any;
+  onSuccess?: any;
+  onError?: any;
 }
 
-export interface BasicFormProps {
+interface Form {
   defaultValues: any;
   schema: any;
   getForm: any;
   stateEls: FormStateEls;
-  submit: any;
-  getSubmitArgs: any;
   updaters: FormUpdaters;
+  formOnSuccess?: boolean;
 }
 
-export interface Web3FormProps {
-  defaultValues: any;
-  schema: any;
-  getForm: any;
+export interface BasicFormProps extends Form {
+  submit: any;
+  getSubmitArgs: any;
+}
+
+export interface Web3FormProps extends Form{
   contractMethod?: string;
   getContractMethod?: any;
   connectedAddress: string;
   methodArgs?: any;
   staticArgs?: any;
   getMethodArgs?: any;
-  stateEls: FormStateEls;
-  formOnSuccess: boolean;
-  cancelForm?: any
-  onSuccess?: any
 }
