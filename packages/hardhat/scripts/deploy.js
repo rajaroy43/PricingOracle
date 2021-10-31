@@ -33,9 +33,9 @@ const main = async () => {
   console.log("\n\n 📡 Deploying Pricing...\n");
 
   const lithiumPricing = await deploy("LithiumPricing",[],{},{},true);
-  const ProxyAdmin= await upgrades.admin.getInstance();
+  const ProxyAdmin = await upgrades.admin.getInstance();
   chalk.cyan(console.log("ProxyAdmin Contract Address",chalk.magenta(ProxyAdmin.address)))
-  const lithiumPricingImplementationAddress=await ProxyAdmin.getProxyImplementation(lithiumPricing.address)
+  const lithiumPricingImplementationAddress = await ProxyAdmin.getProxyImplementation(lithiumPricing.address)
   chalk.cyan(console.log("Lithium Pricing Implementation Address",chalk.magenta(lithiumPricingImplementationAddress)))
 
   console.log("\n\n 📡 Deploying Token...\n");
