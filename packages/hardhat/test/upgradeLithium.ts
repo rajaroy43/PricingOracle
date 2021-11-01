@@ -20,22 +20,22 @@ describe("Upgrading  Lithium Pricing", async function () {
     lithiumPricingProxy = await upgrades.deployProxy(pricingContract);
   });
 
-    it("Shound not upgrade if any variable  `maxAnswerSetLength` and `maxAnswerSetLength` is assigned an initial value", async () => {
+    it("Should not upgrade if any variable  `maxAnswerSetLength` and `maxAnswerSetLength` is assigned an initial value", async () => {
     const pricingContractV2 = await ethers.getContractFactory("LithiumPricingInitializingVariable");
     await expect(upgrades.upgradeProxy(lithiumPricingProxy.address , pricingContractV2)).to.be.rejected 
     });
 
-    it("Shound not upgrade if having constructor in implementation contract", async () => {
+    it("Should not upgrade if having constructor in implementation contract", async () => {
        const pricingContractV2 = await ethers.getContractFactory("LithiumPricingUsingConstructor");
        await expect(upgrades.upgradeProxy(lithiumPricingProxy.address , pricingContractV2)).to.be.rejected
      });
 
-    it("Shound not upgrade if having incompatible storage", async () => {
+    it("Should not upgrade if having incompatible storage", async () => {
        const pricingContractV2 = await ethers.getContractFactory("LithiumPricingIncompatibleStorage");
        await expect(upgrades.upgradeProxy(lithiumPricingProxy.address , pricingContractV2)).to.be.rejected
     });
 
-    it("Shound not upgrade if  implementation logic is totally different", async () => {
+    it("Should not upgrade if  implementation logic is totally different", async () => {
          const pricingContractV2 = await ethers.getContractFactory("Roles");
          await expect(upgrades.upgradeProxy(lithiumPricingProxy.address , pricingContractV2)).to.be.rejected
     });
