@@ -32,6 +32,7 @@
     "@openzeppelin/test-helpers": "^0.5.11",
     "@tenderly/hardhat-tenderly": "^1.0.10",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "chalk": "^4.1.0",
     "ethereum-waffle": "^3.1.1",
     "ethers": "^5.0.17",
