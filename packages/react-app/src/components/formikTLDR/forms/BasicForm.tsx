@@ -9,7 +9,7 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Basic
   const onSubmit = async () => {
     const args = await getSubmitArgs(values, setErrors)
     if (args) {
-      await submit(args)
+      submit(args)
       updaters.onSuccess(args)
       return true
     }

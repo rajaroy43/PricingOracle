@@ -14,6 +14,7 @@ import { QuestionGroupView } from '../../types/questionGroup'
 import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
 import { FormStateEls, SuccessProps } from '../formikTLDR/types';
+import config from '../../config';
 
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
@@ -164,10 +165,11 @@ const mockData = {
   totalStakeDisplayUSD: '-41.55'
 }
 
-const Success = (props: SuccessProps) => (
+const Success = ({receipt}: SuccessProps) => (
   <div>
     <Typography variant="h3">Question Answered!</Typography>
-    {props.receipt.txHash}
+    <h5>Tx Confirmed</h5>
+    <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
   </div>
 )
 
@@ -175,12 +177,10 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
   const lithBalance = user ? user.tokenBalanceDisplay : '0';
 
   const updateStake =  (idx: number) => (stake: number) => {
-    //@ts-ignore
     console.log(` updating stakes with - ${stake}`)
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
-    //@ts-ignore
-    const totalStakeReducer = (acc, _stake) => {
+    const totalStakeReducer = (acc: any, _stake: string) => {
       if (_stake && !isNaN(stake)) { 
         acc = acc.add(parseUnits(_stake));
       } 

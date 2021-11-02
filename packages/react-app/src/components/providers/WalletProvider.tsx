@@ -42,14 +42,18 @@ export const WalletContext = createContext<ConnectedWallet>(initialState)
 const WalletProvider = ({children}: {children: React.ComponentType}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  const updaters = {
+    setWallet: (wallet: ConnectedWallet) =>
+      dispatch({
+        type: ACTION_TYPES.SET_WALLET,
+        payload: wallet
+      })
+  }
+
   const contextValue = useMemo(() => {
     return {
       ...state,
-      setWallet: (wallet: ConnectedWallet) =>
-        dispatch({
-          type: ACTION_TYPES.SET_WALLET,
-          payload: wallet
-        })
+      updaters
     };
   }, [state, dispatch]);
 

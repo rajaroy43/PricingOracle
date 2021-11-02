@@ -9,6 +9,7 @@ import createQuestionGroupSchema from '../../schemas/questionGroup'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import { msToSec, parseUnits } from '../../helpers/formatters'
 import { SuccessProps } from '../formikTLDR/types'
+import config from '../../config'
 
 const Row = styled.div`
     display: flex;
@@ -156,7 +157,8 @@ const getMethodArgs = () => (values: any) => {
 const Success = ({receipt}: SuccessProps) => (
     <div>
         <h3>Question Group Created!</h3>
-        {receipt.txHash}
+        <h5>Tx Confirmed</h5>
+        <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
     </div>
 )
 const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {

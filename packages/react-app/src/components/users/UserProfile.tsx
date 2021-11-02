@@ -27,7 +27,6 @@ const useStyles = makeStyles(theme => ({
 const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
   const { pricingInstance } = useContext(WalletContext);
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
-  console.log('user', user);
   const classes = useStyles();
 
   if (loading) {

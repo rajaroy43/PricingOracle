@@ -3,6 +3,7 @@ import { Formik } from 'formik'
 import { callMethod } from './utils'
 import { Web3FormProps, FormStateEls } from '../types'
 import Loading from '../../atoms/Loading'
+import config from '../../../config'
 
 
 /*
@@ -34,9 +35,10 @@ interface State {
 }
 */
 
-const Success = () => (
+const Success = ({receipt}: any) => (
   <div>
     <h3>Transaction Success!</h3>
+    <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
   </div>
 )
 
@@ -51,7 +53,7 @@ const Pending = ({txHash}: {txHash: string}) => {
   return (
     <div>
       <h3>Transaction Pending</h3>
-      <div>{txHash}</div>
+      <a href={config.getTxExplorerUrl(txHash)}>{txHash}</a>
       <Loading  />
     </div>
   )
@@ -67,10 +69,13 @@ const getContent = (
   onSuccess: any
   ) => {
   const { SuccessEl, PendingEl, ErrorEl } = stateEls
-  if (state.receipt) {
+  if ( state.receipt ) {
     if (onSuccess) {
       onSuccess()
     }
+
+    console.log(`web3form geting content ${state.receipt}`)
+
     return (
       <div>
         {formOnSuccess && getForm(submit)}

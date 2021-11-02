@@ -12,15 +12,16 @@ const MAX_APPROVE = BigNumber.from(2).pow(256).sub(1).toString()
 
 const Pending = ({ txHash }: PendingProps) => (
   <div>
-    <h3>Lithium Pricing Approval Pending!</h3>
-    <div>{txHash}</div>
+    <h3>Lithium Pricing Approval Pending</h3>
+    <a href={config.getTxExplorerUrl(txHash)}>{txHash}</a>
   </div>
 )
 
 const Success = ({receipt}: SuccessProps) => (
   <div>
       <h3>Pricing Approved!</h3>
-      {receipt.txHash}
+      <h5>Tx Confirmed</h5>
+      <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
   </div>
 )
 
