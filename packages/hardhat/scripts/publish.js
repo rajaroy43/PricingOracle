@@ -1,7 +1,7 @@
 const fs = require("fs");
 const chalk = require("chalk");
 const bre = require("hardhat");
-const { network } = require("hardhat");
+
 const multiDArray = "[][]"
 const includesMultiDArray = (params) => {
   if (params == null)  {
@@ -17,7 +17,7 @@ const checkForMultiDArrays =  (methodOrEvent) => {
 }
 
 function publishContract(contractName, publishTarget) {
-  const targetDir = `${publishTarget.path}/contractDeployments/${network.name}`
+  const targetDir = `${publishTarget.path}/contractDeployments/${process.env.DEPLOY_CHAIN_TARGET}`
   const abisDir = publishTarget.abiDir ? `${publishTarget.path}${publishTarget.abiDir}`: `${targetDir}/abis`
   console.log(
     " 💽 Publishing",
