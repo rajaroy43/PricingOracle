@@ -8,9 +8,8 @@ import BasicForm from '../../formikTLDR/forms/BasicForm'
 import MetaMaskIcon from '../../atoms/logos/MetaMask'
 import CardSelect from '../../atoms/inputs/CardSelect'
 import Flex from '../../atoms/Flex'
-import config from '../../../config'
-import { getLithiumPricingInstance, getLithiumTokenInstance } from '../../../helpers/contractInstances'
 import { SUPPORTED_WALLETS } from '../../../types/user'
+import { connectWallet } from '../../../helpers/connectWallet'
 
 const useStyles = makeStyles(theme => ({
   selectWalletError: {
@@ -41,15 +40,6 @@ const walletOptions = [
     connectWallet: wallets.METAMASK.connectWallet
   }
 ]
-
-const isValidProviderNetwork = (provider: any): boolean => {
-  // confirm  the provider chainId matches if not fortmatic
-  if (!provider.isFortmatic && parseInt(provider.chainId, 16) !== config.CHAIN_ID) {
-    return false
-  }
-
-  return true
-}
 
 export const SelectWalletError = ({errors}: any) => {
   const classes = useStyles();
@@ -86,33 +76,7 @@ const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
 }
 
 const getSubmitArgs = async (values: any, setErrors: any) => {
-  if (values?.walletType === '') {
-    setErrors({wallet: 'Please select a wallet'})
-    return
-  }
-
-  // @ts-ignore
-  const [wallet, provider] = await wallets[values.walletType].connectWallet()
-
-  const isValidNetwork = isValidProviderNetwork( provider )
-
-  if (!isValidNetwork) {
-    setErrors({providerNetwork: 'Network Mismatch.', networkName: config.NETWORK_NAME})
-    return
-  }
-
-  // @ts-ignore
-  const address = await wallets[values.walletType].getAddress(wallet)
-  const tokenInstance = getLithiumTokenInstance(wallet)
-  const pricingInstance = getLithiumPricingInstance(wallet)
-  const args = {
-    walletType: values.walletType,
-    wallet,
-    address,
-    provider,
-    tokenInstance,
-    pricingInstance
-  }
+  const args = connectWallet(values, setErrors)
 
   return args
 }
