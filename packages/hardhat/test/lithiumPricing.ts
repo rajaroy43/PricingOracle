@@ -182,6 +182,12 @@ describe("Lithium Pricing", async function () {
         .emit(lithiumPricing, "QuestionGroupCreated")
         .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
+      createQuestionGroupTx.emit(lithiumPricing,"QuestionBidCreated")
+      .withArgs(0,account0.address,bounty)
+
+      createQuestionGroupTx.emit(lithiumPricing,"QuestionBidCreated")
+      .withArgs(1,account0.address,bounty1)
+
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
 
       expect(bounty.add(senderBalanceAfter).add(bounty1)).to.equal(
@@ -989,6 +995,7 @@ describe("Lithium Pricing", async function () {
       ).to.be.revertedWith("Answering question is not started yet");
     });
 
+
     describe("Answering  question group", function () {
       beforeEach(async () => {
         const block = await ethers.provider.getBlock();
@@ -1205,6 +1212,94 @@ describe("Lithium Pricing", async function () {
           "Question is still active and Final Answer status can't be updated"
         );
       });
+
+      describe('Bidding On Questions', function() {
+        it("Should able to increase bid on question by question creater",async()=>{
+          const questionId = 0;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account0.address,lithBidAmount);
+        })
+
+        it("Should able to increase bid mutiple time on question by question creater",async()=>{
+          const questionId = 0;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account0.address,lithBidAmount);
+
+          await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account0.address,lithBidAmount);
+
+          await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account0.address,lithBidAmount);
+        })
+
+        it("Should able to increase  bid mutiple time on question by another user ",async()=>{
+          const questionId = 0;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account1.address,lithBidAmount);
+
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account1.address,lithBidAmount);
+
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          emit(lithiumPricing,"BidReceived").
+          withArgs(questionId,account1.address,lithBidAmount);
+        })
+
+        it("Should not  able to increase  bid if approve amount is 0",async()=>{
+          await lithToken.connect(account1).approve(lithiumPricing.address,0);
+          const questionId = 0;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          to.be.revertedWith("ERC20: transfer amount exceeds allowance")
+        });
+
+        it("Should not  able to increase  bid if lith token balance is less than bid amount",async()=>{
+          await lithToken.connect(account1).transfer(account0.address,transferAmount1);
+          const questionId = 0;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          to.be.revertedWith("ERC20: transfer amount exceeds balance")
+        });
+
+
+        it("Should not  able to increase  bid for invalid quesion ",async()=>{
+          const questionId = 2;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          to.be.revertedWith("Invalid question id")
+        });
+
+        it("Should not  able to increase  bid for 0 amount ",async()=>{
+          const questionId = 0;
+          const lithBidAmount = 0;
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          to.be.revertedWith("Bidding amount must be greater than 0")
+        });
+
+
+        it("Should not  able to increase  bid if end time of question is reached ",async()=>{
+          //Modified Block Timestamp For future
+          const one_minute = 60 * 60;
+          await ethers.provider.send("evm_increaseTime", [one_minute]);
+          await ethers.provider.send("evm_mine");
+          
+          const questionId = 0;
+          const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+          await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
+          to.be.revertedWith("Question is no longer active")
+        });
+
+      })
+      
 
       describe("Reward Mechanism ", async () => {
         beforeEach(async () => {
