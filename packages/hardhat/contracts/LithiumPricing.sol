@@ -374,6 +374,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
     require(questionId < questions.length, "Invalid question id");
     require(lithBidAmount > 0,"Bidding amount must be greater than 0");
+    Question storage question = questions[questionId];
+    require(question.endTime > block.timestamp, "Question is no longer active");
     QuestionBid storage questionBid = questionBids[questionId];
     questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
