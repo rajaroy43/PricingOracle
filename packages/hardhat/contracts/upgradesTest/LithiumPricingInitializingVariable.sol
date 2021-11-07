@@ -7,7 +7,7 @@ import "../interfaces/ILithiumPricing.sol";
 import "../interfaces/ILithiumReward.sol";
 
 /**
- * @title LithiumPricing
+ * @title LithiumPricingInitializingVariable
  */
 contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Roles {
 
@@ -52,6 +52,11 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     StatusCalculated isRewardCalculated;//rewardcalculated status for answergroup
   }
 
+  struct QuestionBid{
+    address user;
+    uint256 bidAmount;
+  }
+
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
@@ -62,6 +67,7 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
+  QuestionBid[] questionBids;
 
 
   address constant public NULL_ADDRESS=address(0);
@@ -77,8 +83,7 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
   // minimumStake put by wisdom nodes when answering question
   uint256 public minimumStake;
 
-
-    function initialize() public initializer override {
+  function initialize() public initializer override {
     Roles.initialize();
     _addCategory("preIPO");
   }
@@ -274,6 +279,9 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     question.questionType = questionType;
     question.startTime = startTime;
     questions.push(question);
+
+    _addQuestionBids(id,bounty);
+
     emit QuestionCreated(
       id,
       bounty,
@@ -352,7 +360,24 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     emit RewardClaimed(_questionGroupId, msg.sender, reward);
   }
 
+  function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
+    
+    QuestionBid memory questionBid;
+    questionBid.user = msg.sender;
+    questionBid.bidAmount = lithBidAmount;
+    questionBids.push(questionBid);
+    emit QuestionBidCreated(questionId,msg.sender,lithBidAmount);
+  }
 
+  function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
+    require(questionId < questions.length, "Invalid question id");
+    require(lithBidAmount > 0,"Bidding amount must be greater than 0");
+    Question storage question = questions[questionId];
+    require(question.endTime > block.timestamp, "Question is no longer active");
+    QuestionBid storage questionBid = questionBids[questionId];
+    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
+    emit BidReceived(questionId,msg.sender,lithBidAmount);
+  }
 
   /**
   * @dev public interface to add a new category
@@ -615,4 +640,17 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
       _claimReward(questionGroupIds[i]);
     }
   }
+
+  /**
+  * @dev Allow users to increase bid amount on specific question id
+  * the `questionId` is the ids of the questions  to increase bid on the question
+  * with Bidding amount lithBidAmount
+  *
+  */
+
+  function increaseBid(uint256 questionId ,uint256 lithBidAmount) external{
+    LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
+    _increaseBid(questionId, lithBidAmount);
+  }
+
 }

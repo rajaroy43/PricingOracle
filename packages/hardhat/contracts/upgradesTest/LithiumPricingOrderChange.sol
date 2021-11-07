@@ -7,7 +7,7 @@ import "../interfaces/ILithiumPricing.sol";
 import "../interfaces/ILithiumReward.sol";
 
 /**
- * @title LithiumPricing
+ * @title LithiumPricingOrderChange
  */
 contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
 
@@ -52,6 +52,11 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     StatusCalculated isRewardCalculated;//rewardcalculated status for answergroup
   }
 
+  struct QuestionBid{
+    address user;
+    uint256 bidAmount;
+  }
+
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
@@ -62,6 +67,7 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
+  QuestionBid[] questionBids;
 
 
   address constant public NULL_ADDRESS=address(0);
@@ -76,8 +82,6 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
   uint256 public minimumStake;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
-  
-
 
   function initialize() public initializer override {
     Roles.initialize();
@@ -277,6 +281,9 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     question.questionType = questionType;
     question.startTime = startTime;
     questions.push(question);
+
+    _addQuestionBids(id,bounty);
+
     emit QuestionCreated(
       id,
       bounty,
@@ -355,7 +362,24 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     emit RewardClaimed(_questionGroupId, msg.sender, reward);
   }
 
+  function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
+    
+    QuestionBid memory questionBid;
+    questionBid.user = msg.sender;
+    questionBid.bidAmount = lithBidAmount;
+    questionBids.push(questionBid);
+    emit QuestionBidCreated(questionId,msg.sender,lithBidAmount);
+  }
 
+  function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
+    require(questionId < questions.length, "Invalid question id");
+    require(lithBidAmount > 0,"Bidding amount must be greater than 0");
+    Question storage question = questions[questionId];
+    require(question.endTime > block.timestamp, "Question is no longer active");
+    QuestionBid storage questionBid = questionBids[questionId];
+    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
+    emit BidReceived(questionId,msg.sender,lithBidAmount);
+  }
 
   /**
   * @dev public interface to add a new category
@@ -618,4 +642,17 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
       _claimReward(questionGroupIds[i]);
     }
   }
+
+  /**
+  * @dev Allow users to increase bid amount on specific question id
+  * the `questionId` is the ids of the questions  to increase bid on the question
+  * with Bidding amount lithBidAmount
+  *
+  */
+
+  function increaseBid(uint256 questionId ,uint256 lithBidAmount) external{
+    LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
+    _increaseBid(questionId, lithBidAmount);
+  }
+
 }
