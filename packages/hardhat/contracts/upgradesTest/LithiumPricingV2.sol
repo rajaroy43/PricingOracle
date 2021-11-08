@@ -2,14 +2,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./Roles.sol";
-import "./interfaces/ILithiumPricing.sol";
-import "./interfaces/ILithiumReward.sol";
+import "../Roles.sol";
+import "../interfaces/ILithiumPricing.sol";
+import "../interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
  */
-contract LithiumPricing is ILithiumPricing,Initializable, Roles {
+contract LithiumPricingV2 is ILithiumPricing,Initializable, Roles {
 
   struct Question {
     address owner; // question creator
@@ -76,6 +76,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   
   // minimumStake put by wisdom nodes when answering question
   uint256 public minimumStake;
+
+  bool public isLithiumTokenSet;
 
   function initialize() public initializer override {
     Roles.initialize();
@@ -378,7 +380,9 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   function setLithiumTokenAddress(address _tokenAddress) public {
     require(isAdmin(msg.sender), "Must be admin to set token address");
     require(_tokenAddress != NULL_ADDRESS,"Token Address can't be null");
+    require(!isLithiumTokenSet ,"Already Lithium Token Set");
     LithiumToken = IERC20(_tokenAddress);
+    isLithiumTokenSet = true;
     emit SetLithiumTokenAddress(address(LithiumToken));
   }
 

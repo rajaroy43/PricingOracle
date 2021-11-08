@@ -2,14 +2,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./Roles.sol";
-import "./interfaces/ILithiumPricing.sol";
-import "./interfaces/ILithiumReward.sol";
+import "../Roles.sol";
+import "../interfaces/ILithiumPricing.sol";
+import "../interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
  */
-contract LithiumPricing is ILithiumPricing,Initializable, Roles {
+contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
 
   struct Question {
     address owner; // question creator
@@ -72,10 +72,12 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   // questionGroupId =>  answerer => AnswerGroup
   mapping(uint256=> mapping(address => AnswerGroup)) public answerGroups;
 
+// minimumStake put by wisdom nodes when answering question
+  uint256 public minimumStake;
+
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
   
-  // minimumStake put by wisdom nodes when answering question
-  uint256 public minimumStake;
+
 
   function initialize() public initializer override {
     Roles.initialize();

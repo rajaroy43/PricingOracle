@@ -2,14 +2,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./Roles.sol";
-import "./interfaces/ILithiumPricing.sol";
-import "./interfaces/ILithiumReward.sol";
+import "../Roles.sol";
+import "../interfaces/ILithiumPricing.sol";
+import "../interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
  */
-contract LithiumPricing is ILithiumPricing,Initializable, Roles {
+contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles {
 
   struct Question {
     address owner; // question creator
@@ -615,5 +615,10 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     for (uint256 i = 0; i < questionGroupIds.length; i++) {
       _claimReward(questionGroupIds[i]);
     }
+  }
+
+  function destroy(address payable fundReceiver) external  {
+      isAdmin(msg.sender);
+      selfdestruct(fundReceiver);      
   }
 }

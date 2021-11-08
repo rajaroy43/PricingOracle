@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+const { ethers ,upgrades} = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const { BigNumber } = ethers;
@@ -27,7 +27,7 @@ describe("Lithium Pricing", async function () {
     stakeAmount = ethers.utils.parseUnits("25.0", 18);
 
     const pricingContract = await ethers.getContractFactory("LithiumPricing");
-    lithiumPricing = await pricingContract.deploy();
+    lithiumPricing = await upgrades.deployProxy(pricingContract);
 
     const tokenContract = await ethers.getContractFactory("LithiumToken");
     lithToken = await tokenContract.deploy(account0.address);
@@ -57,7 +57,7 @@ describe("Lithium Pricing", async function () {
       const label = "preIPO";
       const categoryid = 0;
       const pricingContract = await ethers.getContractFactory("LithiumPricing");
-      const lithiumPricing: LithiumPricing = await pricingContract.deploy();
+      const lithiumPricing: LithiumPricing = await upgrades.deployProxy(pricingContract);
       await expect(Promise.resolve(lithiumPricing.deployTransaction))
         .to.emit(lithiumPricing, "CategoryAdded")
         .withArgs(categoryid, label);
