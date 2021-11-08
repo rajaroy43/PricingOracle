@@ -69,14 +69,11 @@ const getContent = (
   formOnSuccess: boolean,
   onSuccess: any
   ) => {
-    console.log(`getting content ${state.txHash}`)
   const { SuccessEl, PendingEl, ErrorEl } = stateEls
   if ( state.receipt ) {
     if (onSuccess) {
       onSuccess()
     }
-
-    console.log(`web3form geting content ${JSON.stringify(state.receipt)} -- ${state.txHash}`)
 
     return (
       <div>
@@ -122,7 +119,6 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
   const [state, setState] = useState(initialState)
 
   const handleTxHash = (txHash: string) => {
-    console.log('setting web3 hash', txHash)
     setState({...state, txHash})
   }
   const handleReceipt = (receipt: any) => {
@@ -147,7 +143,6 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     })
       :
       () => {}
-  console.log(`inner form rendering ${state.txHash}`)
   return getContent(
     getForm, 
     state,

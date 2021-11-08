@@ -12,7 +12,6 @@ const Account = ({ match }: any) => {
   const {loading, user} = useGetUser(subgraphClient, urlAddress);
   const userWallet = urlAddress === wallet.address ?
     wallet : null
-  console.log(`inside Account ${wallet.address} ${!!wallet.wallet}`)
   const sideBarProps = {
     activePage: 'account',
     isWalletConnected: !!wallet.wallet,

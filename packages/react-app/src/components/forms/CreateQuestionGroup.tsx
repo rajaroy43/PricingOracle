@@ -127,7 +127,6 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
 )
 
 const getMethodArgs = () => (values: any) => {
-    console.log(`inside create Q vals ${JSON.stringify(values)}`)
     const questionCount = 4
     const questionCategories = new Array(questionCount).fill(values.category)
     const PRICING_TYPE = 0

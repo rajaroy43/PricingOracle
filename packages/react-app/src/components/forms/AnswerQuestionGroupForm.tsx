@@ -178,7 +178,6 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
   const lithBalance = user ? user.tokenBalanceDisplay : '0';
 
   const updateStake =  (idx: number) => (stake: number) => {
-    console.log(` updating stakes with - ${stake}`)
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
     const totalStakeReducer = (acc: any, _stake: string) => {
