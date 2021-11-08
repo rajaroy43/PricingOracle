@@ -18,14 +18,21 @@ export enum SUPPORTED_WALLETS {
   // FORTMATIC: 'FORTMATIC'
 }
 
-export interface ConnectedWallet {
+export interface ConnectedWalletProps {
   walletType?: SUPPORTED_WALLETS;
   wallet?: any;
   address?: string;
   provider?: any;
   tokenInstance?: any;
   pricingInstance?: any;
-  updaters: {
-    setWallet: any;
-  }
+}
+
+export interface ConnectedWalletUpdaters {
+  setWallet: any;
+  disconnectWallet: any;
+}
+
+export interface ConnectedWallet {
+  wallet: ConnectedWalletProps;
+  updaters: ConnectedWalletUpdaters;
 }

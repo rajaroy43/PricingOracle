@@ -15,6 +15,7 @@ import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
 import { FormStateEls, SuccessProps } from '../formikTLDR/types';
 import config from '../../config';
+import ExplorerLink from '../atoms/ExplorerLink';
 
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
@@ -169,7 +170,7 @@ const Success = ({receipt}: SuccessProps) => (
   <div>
     <Typography variant="h3">Question Answered!</Typography>
     <h5>Tx Confirmed</h5>
-    <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
+    <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 

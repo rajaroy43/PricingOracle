@@ -8,15 +8,12 @@ import QuestionList from '../questions/QuestionList'
 import MarketingIntro from '../MarketingIntro'
 
 const Home = () => {
-  const connectedWallet = useContext(WalletContext)
+  const {wallet} = useContext(WalletContext)
   const {loading, questions} = useGetQuestions(subgraphClient)
-
   const sideBarProps = {
     activePage: '',
-    // @ts-ignore
-    isWalletConnected: !!connectedWallet.wallet,
-    // @ts-ignore
-    walletAddress: connectedWallet.address
+    isWalletConnected: !!wallet.wallet,
+    walletAddress: wallet.address
   }
 
   const main = (

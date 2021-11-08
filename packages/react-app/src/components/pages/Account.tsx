@@ -8,15 +8,15 @@ import UserDashboard from '../users/UserDashboard'
 
 const Account = ({ match }: any) => {
   const urlAddress = match.params.address;
-  const connectedWallet = useContext(WalletContext);
+  const {wallet} = useContext(WalletContext);
   const {loading, user} = useGetUser(subgraphClient, urlAddress);
-  const userWallet = connectedWallet?.address != null && urlAddress === connectedWallet?.address ?
-    connectedWallet : null
-
+  const userWallet = urlAddress === wallet.address ?
+    wallet : null
+  console.log(`inside Account ${wallet.address} ${!!wallet.wallet}`)
   const sideBarProps = {
     activePage: 'account',
-    isWalletConnected: !!connectedWallet.wallet,
-    walletAddress: connectedWallet.address
+    isWalletConnected: !!wallet.wallet,
+    walletAddress: wallet.address
   }
 
   return (

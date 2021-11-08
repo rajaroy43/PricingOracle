@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
 const WisdomNodeTemplate = ({pageProps, children}: {pageProps: PageParams, children: any}) => {
     const classes = useStyles();
     const [isDrawerOpen, setDrawerOpen] = useState(false); 
-    
     const displaySideBar = (pageProps.isWalletConnected) ? <ConnectedSideBar pageParams={pageProps} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen} /> : <NotConnectedSideBar pageParams={pageProps} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen} />
     return (
         <Grid container>

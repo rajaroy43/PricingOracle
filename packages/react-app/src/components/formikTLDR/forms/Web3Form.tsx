@@ -4,6 +4,7 @@ import { callMethod } from './utils'
 import { Web3FormProps, FormStateEls } from '../types'
 import Loading from '../../atoms/Loading'
 import config from '../../../config'
+import ExplorerLink from '../../atoms/ExplorerLink'
 
 
 /*
@@ -38,7 +39,7 @@ interface State {
 const Success = ({receipt}: any) => (
   <div>
     <h3>Transaction Success!</h3>
-    <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
+    <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 
@@ -53,7 +54,7 @@ const Pending = ({txHash}: {txHash: string}) => {
   return (
     <div>
       <h3>Transaction Pending</h3>
-      <a href={config.getTxExplorerUrl(txHash)}>{txHash}</a>
+      <ExplorerLink txHash={txHash} />
       <Loading  />
     </div>
   )
@@ -68,13 +69,14 @@ const getContent = (
   formOnSuccess: boolean,
   onSuccess: any
   ) => {
+    console.log(`getting content ${state.txHash}`)
   const { SuccessEl, PendingEl, ErrorEl } = stateEls
   if ( state.receipt ) {
     if (onSuccess) {
       onSuccess()
     }
 
-    console.log(`web3form geting content ${state.receipt}`)
+    console.log(`web3form geting content ${JSON.stringify(state.receipt)} -- ${state.txHash}`)
 
     return (
       <div>
@@ -119,7 +121,10 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
   const {values, setSubmitting, resetForm, isValid} = formikProps
   const [state, setState] = useState(initialState)
 
-  const handleTxHash = (txHash: string) => setState({...state, txHash})
+  const handleTxHash = (txHash: string) => {
+    console.log('setting web3 hash', txHash)
+    setState({...state, txHash})
+  }
   const handleReceipt = (receipt: any) => {
     setState({...state, receipt})
   }
@@ -142,7 +147,7 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     })
       :
       () => {}
-  
+  console.log(`inner form rendering ${state.txHash}`)
   return getContent(
     getForm, 
     state,

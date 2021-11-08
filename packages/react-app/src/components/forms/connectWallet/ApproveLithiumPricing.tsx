@@ -6,6 +6,8 @@ import Button from '../../atoms/inputs/buttons/Button'
 import { approveSchema } from '../../../schemas/approve'
 import config from '../../../config'
 import { PendingProps, SuccessProps } from '../../formikTLDR/types'
+import Loading from '../../atoms/Loading'
+import ExplorerLink from '../../atoms/ExplorerLink'
 
 
 const MAX_APPROVE = BigNumber.from(2).pow(256).sub(1).toString()
@@ -13,7 +15,8 @@ const MAX_APPROVE = BigNumber.from(2).pow(256).sub(1).toString()
 const Pending = ({ txHash }: PendingProps) => (
   <div>
     <h3>Lithium Pricing Approval Pending</h3>
-    <a href={config.getTxExplorerUrl(txHash)}>{txHash}</a>
+    <ExplorerLink txHash={txHash} />
+    <Loading />
   </div>
 )
 
@@ -21,7 +24,7 @@ const Success = ({receipt}: SuccessProps) => (
   <div>
       <h3>Pricing Approved!</h3>
       <h5>Tx Confirmed</h5>
-      <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
+      <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 

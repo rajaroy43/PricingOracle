@@ -4,7 +4,7 @@ import Web3Form from '../formikTLDR/forms/Web3Form'
 import Button from '../atoms/inputs/buttons/Button'
 import { approveSchema } from '../../schemas/approve'
 import { SuccessProps } from '../formikTLDR/types'
-import config from '../../config'
+import ExplorerLink from '../atoms/ExplorerLink'
 
 const getForm = (isDisabled: boolean) => (submit: any) => (
   <Form>
@@ -21,7 +21,7 @@ const Success = ({receipt}: SuccessProps) => (
   <div>
       <h3>Reward Claimed!</h3>
       <h5>Tx Confirmed</h5>
-      <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
+      <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 
