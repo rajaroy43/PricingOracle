@@ -650,7 +650,10 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   *
   */
 
-  function increaseBid(uint256 questionId ,uint256 lithBidAmount) external{
+  function increaseBid( 
+    uint256 questionId,
+    uint256 lithBidAmount
+  ) external override{
     LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
     _increaseBid(questionId, lithBidAmount);
   }

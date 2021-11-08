@@ -190,5 +190,9 @@ interface ILithiumPricing {
     uint256[] memory questionGroupIds
   ) external ;
 
+  function increaseBid(
+    uint256 questionId ,
+    uint256 lithBidAmount) external ;
+
 
 }
