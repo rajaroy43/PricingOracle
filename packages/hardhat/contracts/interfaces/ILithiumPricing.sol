@@ -70,6 +70,8 @@ interface ILithiumPricing {
 
   event GroupRewardUpdated(address[] addressesToUpdate,uint256[] groupIds,uint256[] rewardAmounts);
 
+  event BidReceived(uint256 questionId,address bidder,uint256 bidAmount);
+
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
@@ -185,6 +187,10 @@ interface ILithiumPricing {
   function claimRewards (
     uint256[] memory questionGroupIds
   ) external ;
+
+  function increaseBid(
+    uint256 questionId ,
+    uint256 lithBidAmount) external ;
 
 
 }

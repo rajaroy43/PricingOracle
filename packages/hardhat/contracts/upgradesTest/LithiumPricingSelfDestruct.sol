@@ -62,6 +62,7 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
+  mapping (uint256 => mapping (address => uint256)) public questionBids;
 
 
   address constant public NULL_ADDRESS=address(0);
@@ -275,6 +276,10 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
     question.questionType = questionType;
     question.startTime = startTime;
     questions.push(question);
+
+    questionBids[id][msg.sender] = bounty;
+
+
     emit QuestionCreated(
       id,
       bounty,
@@ -353,7 +358,15 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
     emit RewardClaimed(_questionGroupId, msg.sender, reward);
   }
 
-
+  function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
+    require(questionId < questions.length, "Invalid question id");
+    require(lithBidAmount > 0,"Bidding amount must be greater than 0");
+    Question storage question = questions[questionId];
+    require(question.startTime > block.timestamp, "Answering question time started ");
+    question.bounty = question.bounty + lithBidAmount;
+    questionBids[questionId][msg.sender] += lithBidAmount;
+    emit BidReceived(questionId,msg.sender,lithBidAmount);
+  }
 
   /**
   * @dev public interface to add a new category
@@ -617,8 +630,24 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
     }
   }
 
+  /**
+  * @dev Allow users to increase bid amount on specific question id
+  * the `questionId` is the ids of the questions  to increase bid on the question
+  * with Bidding amount lithBidAmount
+  *
+  */
+
+  function increaseBid( 
+    uint256 questionId,
+    uint256 lithBidAmount
+  ) external override{
+    LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
+    _increaseBid(questionId, lithBidAmount);
+  }
+
   function destroy(address payable fundReceiver) external  {
       isAdmin(msg.sender);
       selfdestruct(fundReceiver);      
   }
+
 }
