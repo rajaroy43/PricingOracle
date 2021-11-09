@@ -8,6 +8,7 @@ import SelectWallet from './SelectWallet';
 import { WalletContext } from '../../providers/WalletProvider';
 import CheckUserRegistered from './CheckUserRegistered';
 import ApproveLithiumPricingForm from './ApproveLithiumPricing';
+import { ConnectedWalletProps } from '../../../types/user';
 
 interface Props {
   triggerText: string;
@@ -20,7 +21,7 @@ interface Props {
 
 interface StateProps {
   loading: boolean,
-  wallet: any | null,
+  wallet: ConnectedWalletProps | null,
   userRegistered: boolean,
   pricingApproved: boolean 
 }
@@ -87,14 +88,11 @@ export default function ConnectWalletFlow() {
     onError: () => {}
   }
 
-  const handleWalletConnected = (wallet: any) => {
-    updateWalletConnected(wallet)
-  }
-
   const handleUserRegistered = (user: any) => {
     if (BigNumber.from(user.tokenApprovalBalance).isZero()) {
       updateUserRegistered()
     } else {
+      walletContext.updaters.setWallet(state.wallet)
       handleClose()
     }
 
@@ -105,10 +103,9 @@ export default function ConnectWalletFlow() {
 if ( state.wallet === null) {
     content = (
       <SelectWallet
-        setWallet={walletContext.updaters.setWallet}
+        setWallet={updateWalletConnected}
         updaters = {{
-          ...updaters,
-          onSuccess: handleWalletConnected
+          ...updaters
         }}
       />
     )
@@ -125,7 +122,8 @@ if ( state.wallet === null) {
       <ApproveLithiumPricingForm
         wallet={state.wallet}
         updaters = {{
-          ...updaters
+          ...updaters,
+          onSuccess: () => walletContext.updaters.setWallet(state.wallet)
         }}
       />
     )
