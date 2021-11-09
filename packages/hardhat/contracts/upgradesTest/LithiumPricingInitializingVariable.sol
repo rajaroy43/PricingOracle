@@ -2,14 +2,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./Roles.sol";
-import "./interfaces/ILithiumPricing.sol";
-import "./interfaces/ILithiumReward.sol";
+import "../Roles.sol";
+import "../interfaces/ILithiumPricing.sol";
+import "../interfaces/ILithiumReward.sol";
 
 /**
- * @title LithiumPricing
+ * @title LithiumPricingInitializingVariable
  */
-contract LithiumPricing is ILithiumPricing,Initializable, Roles {
+contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Roles {
 
   struct Question {
     address owner; // question creator
@@ -55,8 +55,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
-  uint8 minAnswerSetLength ;
-  uint8 maxAnswerSetLength ;
+  uint8 minAnswerSetLength =2;
+  uint8 maxAnswerSetLength =2;
 
   bytes32[] public categories; 
 
@@ -81,8 +81,6 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   function initialize() public initializer override {
     Roles.initialize();
     _addCategory("preIPO");
-    minAnswerSetLength = 2;
-    maxAnswerSetLength = 2;
   }
 
 

@@ -2,14 +2,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./Roles.sol";
-import "./interfaces/ILithiumPricing.sol";
-import "./interfaces/ILithiumReward.sol";
+import "../Roles.sol";
+import "../interfaces/ILithiumPricing.sol";
+import "../interfaces/ILithiumReward.sol";
 
 /**
  * @title LithiumPricing
  */
-contract LithiumPricing is ILithiumPricing,Initializable, Roles {
+contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles {
 
   struct Question {
     address owner; // question creator
@@ -278,6 +278,7 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     questions.push(question);
 
     questionBids[id][msg.sender] = bounty;
+
 
     emit QuestionCreated(
       id,
@@ -642,6 +643,11 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   ) external override{
     LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
     _increaseBid(questionId, lithBidAmount);
+  }
+
+  function destroy(address payable fundReceiver) external  {
+      isAdmin(msg.sender);
+      selfdestruct(fundReceiver);      
   }
 
 }

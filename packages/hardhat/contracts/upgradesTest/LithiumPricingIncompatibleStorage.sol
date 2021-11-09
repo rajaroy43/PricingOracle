@@ -2,14 +2,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./Roles.sol";
-import "./interfaces/ILithiumPricing.sol";
-import "./interfaces/ILithiumReward.sol";
+import "../Roles.sol";
+import "../interfaces/ILithiumPricing.sol";
+import "../interfaces/ILithiumReward.sol";
 
 /**
- * @title LithiumPricing
+ * @title LithiumPricingIncompatibleStorage
  */
-contract LithiumPricing is ILithiumPricing,Initializable, Roles {
+contract LithiumPricingIncompatibleStorage is ILithiumPricing,Initializable, Roles {
 
   struct Question {
     address owner; // question creator
@@ -74,7 +74,10 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   mapping(uint256=> mapping(address => AnswerGroup)) public answerGroups;
 
   mapping (address => mapping(uint256=>uint256)) userReputationScores;
-  
+
+  //Incompatible storage: adding new variable totalBid in between userReputationScores and minimumStake
+  uint256 public totalBiding;
+
   // minimumStake put by wisdom nodes when answering question
   uint256 public minimumStake;
 
