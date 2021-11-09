@@ -62,9 +62,13 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
+
+  //questionId -> nodeAddress -> bidAmount
   mapping (uint256 => mapping (address => uint256)) public questionBids;
 
-
+  //questionId -> nodeAddress -> isRefunded
+  mapping (uint256 => mapping (address => bool)) public isBidRefunded;
+  
   address constant public NULL_ADDRESS=address(0);
 
   // questionId => answerer => Answer
@@ -650,4 +654,34 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
       selfdestruct(fundReceiver);      
   }
 
+  /**
+  * @dev Allow admin to refund node address with reward amount for question id
+  * the `questionIds` is the array of question id for which refund amount to be updated
+  * the `nodeAddresses` is the addresses of node which they bid amount on getting answers
+  * the `refundAmounts` is the array of refund amount with respect to nodeAddresses
+  */
+
+  function refundBids(
+    uint256[] memory questionIds,
+    address[] memory nodeAddresses,
+    uint256[] memory refundAmounts
+  ) external override{
+    require(isAdmin(msg.sender), "Must be admin");
+    require(questionIds.length == nodeAddresses.length && questionIds.length == refundAmounts.length ,"argument array length mismatch");
+    require(nodeAddresses.length > 0,"There must be at least 1 node address will be refunded");
+    for (uint256 i = 0; i < questionIds.length; i++) {
+      Question storage question = questions[i];
+      require(question.startTime <= block.timestamp, "Question starting time has not passed yet");
+      bool isRefunded = isBidRefunded[questionIds[i]][nodeAddresses[i]];
+      require(!isRefunded,"Wsidom node already refunded");
+      uint256 userBidAmount = questionBids[questionIds[i]][nodeAddresses[i]];
+      require(userBidAmount >= refundAmounts[i],"Refund amount is more  than user bid amount");
+      if(refundAmounts[i] > 0 ){
+        LithiumToken.transfer(nodeAddresses[i],refundAmounts[i]);
+      }
+      isBidRefunded[questionIds[i]][nodeAddresses[i]] = true;
+      emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
+    }
+  }
 }
+
