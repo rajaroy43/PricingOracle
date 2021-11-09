@@ -52,11 +52,6 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
     StatusCalculated isRewardCalculated;//rewardcalculated status for answergroup
   }
 
-  struct QuestionBid{
-    address user;
-    uint256 bidAmount;
-  }
-
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
@@ -67,7 +62,7 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
-  QuestionBid[] questionBids;
+  mapping (uint256 => mapping (address => uint256)) public questionBids;
 
 
   address constant public NULL_ADDRESS=address(0);
@@ -85,7 +80,7 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
 
 
 
-  function initialize() public initializer override {
+  constructor() {
     Roles.initialize();
     _addCategory("preIPO");
     minAnswerSetLength = 2;
@@ -365,19 +360,17 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
   }
 
   function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
-    
-    QuestionBid memory questionBid;
-    questionBid.user = msg.sender;
-    questionBid.bidAmount = lithBidAmount;
-    questionBids.push(questionBid);
+    questionBids[questionId][msg.sender] = lithBidAmount ;
     emit QuestionBidCreated(questionId,msg.sender,lithBidAmount);
   }
 
   function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
     require(questionId < questions.length, "Invalid question id");
     require(lithBidAmount > 0,"Bidding amount must be greater than 0");
-    QuestionBid storage questionBid = questionBids[questionId];
-    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
+    Question storage question = questions[questionId];
+    require(question.startTime > block.timestamp, "Answering question time started ");
+    question.bounty = question.bounty + lithBidAmount;
+    questionBids[questionId][msg.sender] += lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
@@ -650,7 +643,10 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
   *
   */
 
-  function increaseBid(uint256 questionId ,uint256 lithBidAmount) external override{
+  function increaseBid( 
+    uint256 questionId,
+    uint256 lithBidAmount
+  ) external override{
     LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
     _increaseBid(questionId, lithBidAmount);
   }

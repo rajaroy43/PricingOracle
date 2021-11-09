@@ -52,11 +52,6 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     StatusCalculated isRewardCalculated;//rewardcalculated status for answergroup
   }
 
-  struct QuestionBid{
-    address user;
-    uint256 bidAmount;
-  }
-
   IERC20 LithiumToken;
   ILithiumReward lithiumReward;
 
@@ -67,7 +62,7 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
-  QuestionBid[] questionBids;
+  mapping (uint256 => mapping (address => uint256)) public questionBids;
 
 
   address constant public NULL_ADDRESS=address(0);
@@ -361,11 +356,7 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
   }
 
   function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
-    
-    QuestionBid memory questionBid;
-    questionBid.user = msg.sender;
-    questionBid.bidAmount = lithBidAmount;
-    questionBids.push(questionBid);
+    questionBids[questionId][msg.sender] = lithBidAmount ;
     emit QuestionBidCreated(questionId,msg.sender,lithBidAmount);
   }
 
@@ -373,9 +364,9 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     require(questionId < questions.length, "Invalid question id");
     require(lithBidAmount > 0,"Bidding amount must be greater than 0");
     Question storage question = questions[questionId];
-    require(question.endTime > block.timestamp, "Question is no longer active");
-    QuestionBid storage questionBid = questionBids[questionId];
-    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
+    require(question.startTime > block.timestamp, "Answering question time started ");
+    question.bounty = question.bounty + lithBidAmount;
+    questionBids[questionId][msg.sender] += lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
@@ -648,7 +639,10 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
   *
   */
 
-  function increaseBid(uint256 questionId ,uint256 lithBidAmount) external override{
+  function increaseBid( 
+    uint256 questionId,
+    uint256 lithBidAmount
+  ) external override{
     LithiumToken.transferFrom(msg.sender, address(this), lithBidAmount);
     _increaseBid(questionId, lithBidAmount);
   }
