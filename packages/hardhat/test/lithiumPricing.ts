@@ -182,10 +182,10 @@ describe("Lithium Pricing", async function () {
         .emit(lithiumPricing, "QuestionGroupCreated")
         .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
-      createQuestionGroupTx.emit(lithiumPricing,"QuestionBidCreated")
+      createQuestionGroupTx.emit(lithiumPricing,"BidReceived")
       .withArgs(0,account0.address,bounty)
 
-      createQuestionGroupTx.emit(lithiumPricing,"QuestionBidCreated")
+      createQuestionGroupTx.emit(lithiumPricing,"BidReceived")
       .withArgs(1,account0.address,bounty1)
 
       const questionBidAmount1 = await lithiumPricing.questionBids(0,account0.address)

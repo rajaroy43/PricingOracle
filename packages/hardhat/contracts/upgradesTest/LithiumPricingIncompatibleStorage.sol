@@ -362,7 +362,7 @@ contract LithiumPricingIncompatibleStorage is ILithiumPricing,Initializable, Rol
 
   function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
     questionBids[questionId][msg.sender] = lithBidAmount ;
-    emit QuestionBidCreated(questionId,msg.sender,lithBidAmount);
+    emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
   function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
