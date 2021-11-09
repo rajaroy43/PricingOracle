@@ -111,6 +111,13 @@ const WalletProvider = ({children}:{children: React.ComponentType} ) => {
             dispatch({type: 'SET_WALLET', payload: walletState})
           }
         })
+        // @ts-ignore
+        window.ethereum.on('chainChanged', (accounts: any) => {
+        
+            dispatch({type: 'DISCONNECT_WALLET', payload: {}})
+      
+        })
+
       }
     }
     init()
