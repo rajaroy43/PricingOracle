@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import Button from '../atoms/inputs/buttons/Button'
 import Text from '../atoms/inputs/Text'
+import Select from '../atoms/inputs/Select'
 import DateTime from '../atoms/inputs/DateTime'
 import { WalletContext } from '../providers/WalletProvider'
 import WisdomSeekerTemplate from '../templates/WisdomSeekerTemplate'
@@ -168,6 +169,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const categories = [
+    'preIPO',
+    'crypto',
+    'real estate',
+    'NFT'
+].map((label, idx) => {
+  return {label, value:idx.toString()}
+})
+
 export const SuggestionForm = () => {
     const classes = useStyles();
 
@@ -186,43 +196,57 @@ export const SuggestionForm = () => {
                 }}
             >
                 <Form>
-                    <Text
-                        sx={{
-                            '& .MuiTextField-root': {
-                                flexDirection: 'column !important'
-                            }
-                        }}
-                        label="Enter asset name or symbol below:"
-                        name="assetName"
-                        type="text"
-                        wrapperClass={classes.assetWrapper}
-                        InputLabelProps={{classes: { root: classes.label }, shrink: false}}
-                    />
+                    <div>
+                        <Text
+                            sx={{
+                                '& .MuiTextField-root': {
+                                    flexDirection: 'column !important'
+                                }
+                            }}
+                            label="Enter asset name or symbol below:"
+                            name="assetName"
+                            type="text"
+                            wrapperClass={classes.assetWrapper}
+                            InputLabelProps={{classes: { root: classes.label }, shrink: false}}
+                        />
+                    </div>
 
-                    <label className={classes.label}>What date / time do you want this asset priced?</label>
-                    <p className={classes.sublabel}>(Ex. You want to know the price of Metamask on Nov 1, 2021)</p>
-                    <DateTime
-                        name="pricingTime"
-                    />
+                    <div>
+                        <label className={classes.label}>Select an asset category:</label>
+                        <br />
+                        <Select
+                            name='category'
+                            options={categories}
+                        />
+                    </div>
 
-                    <Text
-                        sx={{
-                            '& .MuiTextField-root': {
-                                flexDirection: 'column !important'
-                            }
-                        }}
-                        label="Enter email if you would like be notified when it is available (optional):"
-                        name="suggestEmail"
-                        type="text"
-                        wrapperClass={classes.assetWrapper}
-                        InputProps={{classes: { root: classes.suggestInput }}}
-                        InputLabelProps={{classes: { root: classes.label }, shrink: false}}
-                    />
+                    <div>
+                        <br />
+                        <label className={classes.label}>What date / time do you want this asset priced?</label>
+                        <p className={classes.sublabel}>(Ex. You want to know the price of Metamask on Nov 1, 2021)</p>
+                        <DateTime
+                            name="pricingTime"
+                        />
 
-                    <Button
-                        label="Submit Suggestion"
-                        type="submit"
-                    />
+                        <Text
+                            sx={{
+                                '& .MuiTextField-root': {
+                                    flexDirection: 'column !important'
+                                }
+                            }}
+                            label="Enter email if you would like be notified when it is available (optional):"
+                            name="suggestEmail"
+                            type="text"
+                            wrapperClass={classes.assetWrapper}
+                            InputProps={{classes: { root: classes.suggestInput }}}
+                            InputLabelProps={{classes: { root: classes.label }, shrink: false}}
+                        />
+
+                        <Button
+                            label="Submit Suggestion"
+                            type="submit"
+                        />
+                    </div>
                 </Form>
             </Formik>
         </div>
