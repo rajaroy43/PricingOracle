@@ -277,7 +277,8 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
     question.startTime = startTime;
     questions.push(question);
 
-    _addQuestionBids(id,bounty);
+    questionBids[id][msg.sender] = bounty;
+
 
     emit QuestionCreated(
       id,
@@ -355,11 +356,6 @@ contract LithiumPricingWithSelfDestruct is ILithiumPricing,Initializable, Roles 
     }
     answerGroup.status = AnswerStatus.Claimed;
     emit RewardClaimed(_questionGroupId, msg.sender, reward);
-  }
-
-  function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
-    questionBids[questionId][msg.sender] = lithBidAmount ;
-    emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
   function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{
