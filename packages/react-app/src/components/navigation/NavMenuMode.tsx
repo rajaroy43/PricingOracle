@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react'
+import { useHistory } from "react-router-dom"
+import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
     modeToggleGroup: {
@@ -30,29 +31,37 @@ const useStyles = makeStyles(theme => ({
     }
 })); 
 
-const ToggleMode = () => {
+//
+const ToggleMode = ({initialMode}: {initialMode: string}) => {
+  const history = useHistory();
   const classes = useStyles();
-  const [mode, setMode] = useState('node');
-
+  const [mode, setMode] = useState(initialMode);
+  
   return (
     <ToggleButtonGroup
       className={classes.modeToggleGroup}
       value={mode}
       exclusive
       onChange={(event, newMode) => {
-        setMode(newMode);
-        console.log('event', event);
-        console.log('newMode', newMode);
+        if (newMode !== null) {
+          setMode(newMode);
+          if (newMode === 'node') {
+            history.push('/wisdom-node/available-questions');
+          } 
+          if (newMode === 'seeker') { 
+            history.push('/wisdom-seeker/design')            
+          }
+        }
       }}
       aria-label="mode"
     >
-      <ToggleButton value="seeker" aria-label="Ask Questions" className={classes.modeToggleButton}>
+      <ToggleButton value="node" aria-label="Ask Questions" className={classes.modeToggleButton}>
         Answer Questions<br />
         <span>Select to price assets<br />
         and Earn LITH</span>
         <span className={classes.title}>Wisdom Node</span>
       </ToggleButton>
-      <ToggleButton value="node" aria-label="Answer Questions" className={classes.modeToggleButton}>
+      <ToggleButton value="seeker" aria-label="Answer Questions" className={classes.modeToggleButton}>
         Ask Questions<br />
         <span>Select to request<br />
         assets to price</span>

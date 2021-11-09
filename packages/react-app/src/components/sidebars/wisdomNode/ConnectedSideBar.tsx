@@ -46,7 +46,7 @@ const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}
         { isDrawerOpen ? <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><CloseIcon className={classes.mobileMenuButton} /></IconButton> :
           <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><MenuIcon className={classes.mobileMenuButton} /></IconButton> }
       </div>
-      <ToggleMode />
+      <ToggleMode initialMode="node" />
       <div style={{marginTop: '12px'}}>
         <UserProfile walletAddress={walletAddress} mode="node" />
       </div>
