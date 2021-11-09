@@ -275,7 +275,7 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     question.startTime = startTime;
     questions.push(question);
 
-    _addQuestionBids(id,bounty);
+    questionBids[id][msg.sender] = bounty;
 
     emit QuestionCreated(
       id,
@@ -353,11 +353,6 @@ contract LithiumPricingInitializingVariable is ILithiumPricing,Initializable, Ro
     }
     answerGroup.status = AnswerStatus.Claimed;
     emit RewardClaimed(_questionGroupId, msg.sender, reward);
-  }
-
-  function _addQuestionBids(uint256 questionId,uint256 lithBidAmount) internal{
-    questionBids[questionId][msg.sender] = lithBidAmount ;
-    emit QuestionBidCreated(questionId,msg.sender,lithBidAmount);
   }
 
   function _increaseBid(uint256 questionId,uint256 lithBidAmount) internal{

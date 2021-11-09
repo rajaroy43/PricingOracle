@@ -10,6 +10,7 @@ import Flex from '../atoms/Flex'
 import Modal from '../atoms/Modal'
 import config from '../../config'
 import { getLithiumPricingInstance, getLithiumTokenInstance } from '../../helpers/contractInstances'
+import { connectWallet } from '../../helpers/connectWallet'
 
 const walletOptions = [
   // {
@@ -81,26 +82,7 @@ const getForm = (isValid: boolean, submit: any, close: any, errors: any) => {
 
 const getSubmitArgs = async (values: any, setErrors: any) => {
   // @ts-ignore
-  const [wallet, provider] = await wallets[values.walletType].connectWallet()
-
-  const isValidNetwork = isValidProviderNetwork( provider )
-
-  if (!isValidNetwork) {
-    setErrors({providerNetwork: 'Network Mismatch'})
-    return
-  }
-  // @ts-ignore
-  const address = await wallets[values.walletType].getAddress(wallet)
-  const tokenInstance = getLithiumTokenInstance(wallet)
-  const pricingInstance = getLithiumPricingInstance(wallet)
-  const args = {
-    walletType: values.walletType,
-    wallet,
-    address,
-    provider,
-    tokenInstance,
-    pricingInstance
-  }
+  const args = connectWallet(values, setErrors)
 
   return args
 }
