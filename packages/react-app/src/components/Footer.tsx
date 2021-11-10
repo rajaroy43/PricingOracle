@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
         fontSize: '14px',
         letterSpacing: '1px',
         lineHeight: '32px',
-        [breakpoints.down('xs')]: {
+        [breakpoints.down('sm')]: {
             lineHeight: '14px'
         }
       }
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'end',
         margin: 0,
         padding: '32px 48px 24px 24px',
-        [breakpoints.down('xs')]: {
+        [breakpoints.down('sm')]: {
             alignItems: 'unset',
             flexDirection: 'column',
             justifyContent: 'start',
@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     },
     webLink: {
         marginLeft: '20px',
-        [breakpoints.down('xs')]: {
+        [breakpoints.down('sm')]: {
             marginLeft: 0,
         }, 
     }
