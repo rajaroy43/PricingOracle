@@ -5,6 +5,7 @@ import { PageParams } from "../../types/navigation";
 import getNavItems from "../sidebars/wisdomNode/navMenuConfig";
 import ConnectedSideBar from '../sidebars/wisdomNode/ConnectedSideBar'
 import NotConnectedSideBar from '../sidebars/wisdomNode/NotConnectedSideBar'
+import Footer from "../Footer";
 
 const useStyles = makeStyles(theme => ({
     mainContent: {
@@ -27,6 +28,7 @@ const WisdomNodeTemplate = ({pageProps, children}: {pageProps: PageParams, child
             <Grid item md={9} xs={12} className={classes.mainContent}>
                 { children }
             </Grid>
+            <Footer />
         </Grid>
     )
 }
