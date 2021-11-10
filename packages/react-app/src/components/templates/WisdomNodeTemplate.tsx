@@ -14,6 +14,12 @@ const useStyles = makeStyles(theme => ({
       [theme.breakpoints.down('sm')]: {
         paddingTop: 0
       },
+    },
+    mainWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      minHeight: '100vh'
     }
   })); 
 
@@ -23,13 +29,15 @@ const WisdomNodeTemplate = ({pageProps, children}: {pageProps: PageParams, child
     
     const displaySideBar = (pageProps.isWalletConnected) ? <ConnectedSideBar pageParams={pageProps} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen} /> : <NotConnectedSideBar pageParams={pageProps} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen} />
     return (
-        <Grid container>
-            <Grid item md={3} xs={12}>{ displaySideBar }</Grid>
-            <Grid item md={9} xs={12} className={classes.mainContent}>
-                { children }
-            </Grid>
-            <Footer />
-        </Grid>
+        <div className={classes.mainWrapper}>
+          <Grid container>
+              <Grid item md={3} xs={12}>{ displaySideBar }</Grid>
+              <Grid item md={9} xs={12} className={classes.mainContent}>
+                  { children }
+              </Grid>
+          </Grid>
+          <Footer />
+        </div>
     )
 }
 

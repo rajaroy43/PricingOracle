@@ -9,24 +9,25 @@ const breakpoints = createBreakpoints({});
 const useStyles = makeStyles(theme => ({
     footerLeft: {
       flexDirection: 'column',
+      justifyContent: 'start',
       margin: 0,
-      padding: '24px',
+      padding: '24px 24px 0 24px',
       '& > p': {
         fontSize: '14px',
         letterSpacing: '1px',
-        lineHeight: '32px',
+        margin: '0 0 22px 0',
         [breakpoints.down('sm')]: {
-            lineHeight: '14px'
+            lineHeight: '16px'
         }
       }
     },
     footerRight: {
-        alignItems: 'end',
+        alignItems: 'start',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'end',
         margin: 0,
-        padding: '32px 48px 24px 24px',
+        padding: '24px 48px 0 24px',
         [breakpoints.down('sm')]: {
             alignItems: 'unset',
             flexDirection: 'column',
@@ -45,7 +46,12 @@ const useStyles = makeStyles(theme => ({
     webLinkWrapper: {
         display: 'flex',
         flexDirection: 'row',
-        marginBottom: '16px',
+        marginBottom: '14px',
+    },
+    webLinkLabel: {
+        [breakpoints.down('xs')]: {
+            display: 'none'
+        } 
     },
     webLink: {
         marginLeft: '20px',
@@ -66,7 +72,7 @@ const Footer = () => {
             </Grid>
             <Grid item md={6} xs={12} className={classes.footerRight}>
                 <div className={classes.wrapper}>
-                    <div className={classes.webLinkWrapper}>WEB &nbsp; <Link href="https://lith.finance" target="_blank" rel="noopener" className={classes.webLink}>lith.finance</Link></div>
+                    <div className={classes.webLinkWrapper}><span className={classes.webLinkLabel}>WEB &nbsp; </span><Link href="https://lith.finance" target="_blank" rel="noopener" className={classes.webLink}>lith.finance</Link></div>
                     <SocialIcons />
                 </div>
             </Grid>
@@ -74,5 +80,4 @@ const Footer = () => {
     )
 }
 
-export default Footer;
-
+export default Footer

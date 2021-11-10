@@ -21,8 +21,7 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'end', 
     margin: '0 20px 0 0',
     [breakpoints.down('xs')]: {
-      margin: '8px 20px 16px 0',
-      width: '100%'
+      display: 'none'
     }  
   },
   socialLink: {
@@ -50,12 +49,12 @@ export default function SocialIcons() {
   return (
     <div className={classes.root}>
       <div className={classes.socialLabel}>SOCIAL</div> 
-      <Link href="https://twitter.com/lithiumfinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-twitter" style={{ color: 'white' }} /></Link>
-      <Link href="https://www.linkedin.com/company/lithium-finance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-linkedin" style={{ color: 'white' }} /></Link>
-      <Link href="https://www.youtube.com/channel/UC7fyPLRGXNlSsAParxE8NvA" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-youtube" style={{ color: 'white' }} /></Link>
-      <Link href="https://github.com/LithiumFinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-github" style={{ color: 'white' }} /></Link>
-      <Link href="https://medium.com/lithiumfinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-medium" style={{ color: 'white' }} /></Link>
-      <Link href="https://lith.finance/community/" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-telegram" style={{ color: 'white' }} /></Link>
+      <Link href="https://twitter.com/lithiumfinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-twitter" style={{ color: 'white', fontSize: '20px' }} /></Link>
+      <Link href="https://www.linkedin.com/company/lithium-finance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-linkedin" style={{ color: 'white', fontSize: '20px' }} /></Link>
+      <Link href="https://www.youtube.com/channel/UC7fyPLRGXNlSsAParxE8NvA" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-youtube" style={{ color: 'white', fontSize: '20px' }} /></Link>
+      <Link href="https://github.com/LithiumFinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-github" style={{ color: 'white', fontSize: '20px' }} /></Link>
+      <Link href="https://medium.com/lithiumfinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-medium" style={{ color: 'white', fontSize: '20px' }} /></Link>
+      <Link href="https://lith.finance/community/" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-telegram" style={{ color: 'white', fontSize: '20px' }} /></Link>
       <Link href="https://lith.finance/community/" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fa fa-ellipsis-h" style={{ color: '#E96036', fontSize: '14px' }} /></Link>
     </div>
   );
