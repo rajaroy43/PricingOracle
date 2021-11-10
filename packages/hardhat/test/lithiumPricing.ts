@@ -182,9 +182,9 @@ describe("Lithium Pricing", async function () {
         .emit(lithiumPricing, "QuestionGroupCreated")
         .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
-      const questionBidAmount1 = await lithiumPricing.questionBids(0,account0.address)
+      const [questionBidAmount1,] = await lithiumPricing.questionBids(0,account0.address)
       expect(questionBidAmount1).to.equal(bounty)
-      const questionBidAmount2 = await lithiumPricing.questionBids(1,account0.address) 
+      const [questionBidAmount2,] = await lithiumPricing.questionBids(1,account0.address) 
       expect(questionBidAmount2).to.equal(bounty1)
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
@@ -1100,11 +1100,11 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase bid on question by question creater",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account0.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account0.address) 
         await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account0.address,lithBidAmount);  
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account0.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account0.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial))
 
         //Checking updated Bounty
@@ -1116,7 +1116,7 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase bid mutiple time on question by question creater",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account0.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account0.address) 
 
         await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
@@ -1130,7 +1130,7 @@ describe("Lithium Pricing", async function () {
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account0.address,lithBidAmount);
 
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account0.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account0.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial).add(lithBidAmount).add(lithBidAmount))
       
         //Checking updated Bounty
@@ -1142,7 +1142,7 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase  bid mutiple time on question by another user ",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account1.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account1.address) 
         
         await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
@@ -1156,7 +1156,7 @@ describe("Lithium Pricing", async function () {
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account1.address,lithBidAmount);
 
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account1.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account1.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial).add(lithBidAmount).add(lithBidAmount))
 
         //Checking updated Bounty
@@ -1210,6 +1210,59 @@ describe("Lithium Pricing", async function () {
         await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
         to.be.revertedWith("Answering question time started ")
       });
+
+      it("Should allow admin  to refund user bids amount+increaseLithBidAmount", async function () {
+        const questionIds = [0,1]
+        const nodeAddresses = [account0.address,account0.address]
+        
+        const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+
+        await expect(lithiumPricing.increaseBid(questionIds[0],lithBidAmount)).
+        emit(lithiumPricing,"BidReceived").
+        withArgs(questionIds[0],account0.address,lithBidAmount);  
+
+        await expect(lithiumPricing.increaseBid(questionIds[1],lithBidAmount)).
+        emit(lithiumPricing,"BidReceived").
+        withArgs(questionIds[1],account0.address,lithBidAmount);  
+
+        const refundAmounts = [transferAmount1.add(lithBidAmount),transferAmount1.add(lithBidAmount)]
+
+        const [initialBidAmount1,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+        const [initialBidAmount2,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+        expect(initialBidAmount1).to.equal(refundAmounts[0])
+        expect(initialBidAmount2).to.equal(refundAmounts[1])
+        expect(initialIsBidRefunded1).to.be.false
+        expect(initialIsBidRefunded2).to.be.false
+        
+        const one_minute = 60 * 60;
+        await ethers.provider.send("evm_increaseTime", [one_minute]);
+        await ethers.provider.send("evm_mine");
+
+        const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+        const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+        refundedBidTx
+          .emit(lithiumPricing,"BidRefunded")
+          .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+
+        refundedBidTx
+          .emit(lithiumPricing,"BidRefunded")
+          .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+        const finallLithBalance = await lithToken.balanceOf(account0.address);
+        
+        expect(finallLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+        
+        const [finalLeftRefundAmount1,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+        const [finalLeftRefundAmount2,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+        
+        expect(finalLeftRefundAmount1).to.equal(0)
+        expect(finalLeftRefundAmount2).to.equal(0)            
+        
+        expect(finalIsBidRefunded1).to.be.true
+        expect(finalIsBidRefunded2).to.be.true
+
+      })
 
     })
 
@@ -1438,10 +1491,13 @@ describe("Lithium Pricing", async function () {
             const nodeAddresses = [account0.address,account0.address]
             const refundAmounts = [transferAmount1,transferAmount1]
     
-            const initialIsBidRefunded1 = await lithiumPricing.isBidRefunded(questionIds[0],nodeAddresses[0])
-            const initialIsBidRefunded2 = await lithiumPricing.isBidRefunded(questionIds[1],nodeAddresses[1])
+            const [,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
             expect(initialIsBidRefunded1).to.be.false
             expect(initialIsBidRefunded2).to.be.false
+
+            const initialLithBalance = await lithToken.balanceOf(account0.address);
+
             const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
             refundedBidTx
               .emit(lithiumPricing,"BidRefunded")
@@ -1450,24 +1506,32 @@ describe("Lithium Pricing", async function () {
             refundedBidTx
               .emit(lithiumPricing,"BidRefunded")
               .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+            const finallLithBalance = await lithToken.balanceOf(account0.address);
+        
+            expect(finallLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
             
-            const finalIsBidRefunded1 = await lithiumPricing.isBidRefunded(questionIds[0],nodeAddresses[0])
-            const finalIsBidRefunded2 = await lithiumPricing.isBidRefunded(questionIds[1],nodeAddresses[1])
+            const [,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
             
             expect(finalIsBidRefunded1).to.be.true
             expect(finalIsBidRefunded2).to.be.true
     
           })
+
     
           it("Should allow admin to refund user bid amount  (bid amount less than refund amount) bidAmount/2", async function () {
             const questionIds = [0,1]
             const nodeAddresses = [account0.address,account0.address]
             const refundAmounts = [transferAmount1.div(2),transferAmount1.div(2)]
     
-            const initialIsBidRefunded1 = await lithiumPricing.isBidRefunded(questionIds[0],nodeAddresses[0])
-            const initialIsBidRefunded2 = await lithiumPricing.isBidRefunded(questionIds[1],nodeAddresses[1])
+            const [,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
             expect(initialIsBidRefunded1).to.be.false
             expect(initialIsBidRefunded2).to.be.false
+
+            const initialLithBalance = await lithToken.balanceOf(account0.address);
+
             const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
             refundedBidTx
               .emit(lithiumPricing,"BidRefunded")
@@ -1476,9 +1540,14 @@ describe("Lithium Pricing", async function () {
             refundedBidTx
               .emit(lithiumPricing,"BidRefunded")
               .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+              const finallLithBalance = await lithToken.balanceOf(account0.address);
+        
+              expect(finallLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+              
             
-            const finalIsBidRefunded1 = await lithiumPricing.isBidRefunded(questionIds[0],nodeAddresses[0])
-            const finalIsBidRefunded2 = await lithiumPricing.isBidRefunded(questionIds[1],nodeAddresses[1])
+            const [,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
             
             expect(finalIsBidRefunded1).to.be.true
             expect(finalIsBidRefunded2).to.be.true
