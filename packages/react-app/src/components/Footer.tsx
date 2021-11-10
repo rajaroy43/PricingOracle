@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'row',
         justifyContent: 'end',
         margin: 0,
-        padding: '24px 48px 0 24px',
+        padding: '24px 24px 0 24px',
         [breakpoints.down('sm')]: {
             alignItems: 'unset',
             flexDirection: 'column',
