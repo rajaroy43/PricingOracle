@@ -7,7 +7,6 @@ import ErrorMessage from './ErrorMessage';
 import CardItem from './CardItem'
 import Flex from '../Flex';
 
-
 const SelectUI = (props:any) => {
   const [field, meta, helper] = useField(props);
   const isError = false// meta.touched && !!meta.error
@@ -35,7 +34,6 @@ const SelectUI = (props:any) => {
   },
   formControl: {
     margin: theme.spacing.unit,
-    width: '100%'
   },
   chips: {
     display: 'flex',

@@ -1,6 +1,7 @@
 import wallets from '../wallets'
 import config from '../config'
 import { getLithiumPricingInstance, getLithiumTokenInstance } from '../helpers/contractInstances'
+import { SUPPORTED_WALLETS } from '../types/user'
 
 
 const isValidProviderNetwork = (provider: any): boolean => {
@@ -10,6 +11,18 @@ const isValidProviderNetwork = (provider: any): boolean => {
   }
 
   return true
+}
+
+export const getWalletInstances = async (walletType: SUPPORTED_WALLETS,  wallet: any) => {
+  // @ts-ignore
+  const address = await wallets[walletType].getAddress(wallet)
+  const tokenInstance = getLithiumTokenInstance(wallet)
+  const pricingInstance = getLithiumPricingInstance(wallet)
+  return {
+    address,
+    tokenInstance,
+    pricingInstance
+  }
 }
 
 export const connectWallet = async (values: any, setErrors: any) => {
@@ -22,10 +35,8 @@ export const connectWallet = async (values: any, setErrors: any) => {
       setErrors({providerNetwork: 'Network Mismatch'})
       return
     }
-    // @ts-ignore
-    const address = await wallets[values.walletType].getAddress(wallet)
-    const tokenInstance = getLithiumTokenInstance(wallet)
-    const pricingInstance = getLithiumPricingInstance(wallet)
+
+    const { address, tokenInstance, pricingInstance } = await getWalletInstances(values.walletType, wallet)
     const args = {
       walletType: values.walletType,
       wallet,

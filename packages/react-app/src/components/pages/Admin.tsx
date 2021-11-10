@@ -7,14 +7,12 @@ import CreateQuestionGroup from '../forms/CreateQuestionGroup'
 import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 
 const Admin = () => {
-  const connectedWallet = useContext(WalletContext)
+  const {wallet} = useContext(WalletContext)
   const { loading } = useGetQuestions(subgraphClient)
   const sideBarProps = {
     activePage: '',
-    // @ts-ignore
-    isWalletConnected: !!connectedWallet.wallet,
-    // @ts-ignore
-    walletAddress: connectedWallet.address
+    isWalletConnected: !!wallet.wallet,
+    walletAddress: wallet.address
   }
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
@@ -22,8 +20,7 @@ const Admin = () => {
      {loading 
         ? <LoadingCircle />
         : <div>
-            {/* @ts-ignore */}
-            <CreateQuestionGroup connectedAddress={connectedWallet.address} pricingInstance={connectedWallet.pricingInstance} />
+            <CreateQuestionGroup connectedAddress={wallet.address} pricingInstance={wallet.pricingInstance} />
         </div>
      }
     </WisdomNodeTemplate>
