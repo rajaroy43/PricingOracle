@@ -15,8 +15,9 @@ const useStyles = makeStyles(theme => ({
       '& > p': {
         fontSize: '14px',
         letterSpacing: '1px',
-        margin: '0 0 22px 0',
+        margin: '0 0 16px 0',
         [breakpoints.down('sm')]: {
+            fontSize: '12px',
             lineHeight: '16px'
         }
       }
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
             alignItems: 'unset',
             flexDirection: 'column',
             justifyContent: 'start',
-            margin: '0 24px 24px 24px',
+            margin: '0 24px 16px 24px',
             padding: 0
         }, 
     },
