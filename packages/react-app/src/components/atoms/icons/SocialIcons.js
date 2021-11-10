@@ -2,17 +2,34 @@ import React from 'react'
 import { loadCSS } from 'fg-loadcss'
 import { makeStyles } from '@material-ui/core/styles'
 import { Icon, Link } from '@material-ui/core'
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+
+const breakpoints = createBreakpoints({});
 
 const useStyles = makeStyles((theme) => ({
   root: {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'right',
-    textAlign: 'center'
+    justifyContent: 'end',
+    [breakpoints.down('xs')]: {
+      flexWrap: 'wrap',
+      justifyContent: 'start'
+    }
+  },
+  socialLabel: {
+    alignSelf: 'end', 
+    margin: '0 20px 0 0',
+    [breakpoints.down('xs')]: {
+      margin: '8px 20px 16px 0',
+      width: '100%'
+    }  
   },
   socialLink: {
-    margin: '0 20px 0 0'
+    margin: '0 20px 0 0',
+    [breakpoints.down('xs')]: {
+      margin: '0 16px 0 0'
+    } 
   }
 }));
 
@@ -32,7 +49,7 @@ export default function SocialIcons() {
 
   return (
     <div className={classes.root}>
-      <div style={{'alignSelf': 'end', 'margin': '0 20px 0 0'}}>SOCIAL</div> 
+      <div className={classes.socialLabel}>SOCIAL</div> 
       <Link href="https://twitter.com/lithiumfinance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-twitter" style={{ color: 'white' }} /></Link>
       <Link href="https://www.linkedin.com/company/lithium-finance" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-linkedin" style={{ color: 'white' }} /></Link>
       <Link href="https://www.youtube.com/channel/UC7fyPLRGXNlSsAParxE8NvA" target="_blank" rel="noopener" className={classes.socialLink}><Icon className="fab fa-youtube" style={{ color: 'white' }} /></Link>
