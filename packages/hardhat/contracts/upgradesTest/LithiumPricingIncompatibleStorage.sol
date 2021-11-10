@@ -63,11 +63,13 @@ contract LithiumPricingIncompatibleStorage is ILithiumPricing,Initializable, Rol
   Question[] questions;
   QuestionGroup[] public questionGroups;
   
-  //questionId -> nodeAddress -> bidAmount
-  mapping (uint256 => mapping (address => uint256)) public questionBids;
+  struct QuestionBid{
+    uint256 bidAmount;
+    bool isBidRefunded;
+  }
 
-  //questionId -> nodeAddress -> isRefunded
-  mapping (uint256 => mapping (address => bool)) public isBidRefunded;
+  //questionId -> nodeAddress -> QuestionBid
+  mapping (uint256 => mapping (address => QuestionBid)) public questionBids;
 
   address constant public NULL_ADDRESS=address(0);
 
@@ -284,7 +286,7 @@ contract LithiumPricingIncompatibleStorage is ILithiumPricing,Initializable, Rol
     question.startTime = startTime;
     questions.push(question);
 
-    questionBids[id][msg.sender] = bounty;
+    questionBids[id][msg.sender] = QuestionBid(bounty,false);
 
     emit QuestionCreated(
       id,
@@ -370,7 +372,8 @@ contract LithiumPricingIncompatibleStorage is ILithiumPricing,Initializable, Rol
     Question storage question = questions[questionId];
     require(question.startTime > block.timestamp, "Answering question time started ");
     question.bounty = question.bounty + lithBidAmount;
-    questionBids[questionId][msg.sender] += lithBidAmount;
+    QuestionBid storage questionBid = questionBids[questionId][msg.sender];
+    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
@@ -669,14 +672,16 @@ contract LithiumPricingIncompatibleStorage is ILithiumPricing,Initializable, Rol
     for (uint256 i = 0; i < questionIds.length; i++) {
       Question storage question = questions[i];
       require(question.startTime <= block.timestamp, "Question starting time has not passed yet");
-      bool isRefunded = isBidRefunded[questionIds[i]][nodeAddresses[i]];
+      QuestionBid storage questionBid = questionBids[questionIds[i]][nodeAddresses[i]];
+      bool isRefunded = questionBid.isBidRefunded;
       require(!isRefunded,"Wsidom node already refunded");
-      uint256 userBidAmount = questionBids[questionIds[i]][nodeAddresses[i]];
+      uint256 userBidAmount = questionBid.bidAmount;
       require(userBidAmount >= refundAmounts[i],"Refund amount is more  than user bid amount");
       if(refundAmounts[i] > 0 ){
         LithiumToken.transfer(nodeAddresses[i],refundAmounts[i]);
       }
-      isBidRefunded[questionIds[i]][nodeAddresses[i]] = true;
+      questionBid.isBidRefunded = true;
+      questionBid.bidAmount = userBidAmount - refundAmounts[i];
       emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
     }
   }
