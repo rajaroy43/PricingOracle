@@ -47,7 +47,7 @@ const ToggleMode = ({initialMode}: {initialMode: string}) => {
             history.push('/wisdom-node/available-questions');
           } 
           if (newMode === 'seeker') { 
-            history.push('/wisdom-seeker/design')            
+            history.push('/wisdom-seeker/suggestasset')            
           }
         }
       }}

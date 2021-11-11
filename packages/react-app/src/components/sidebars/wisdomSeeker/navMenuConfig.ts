@@ -23,50 +23,8 @@ const getNavItems: GetNavItemParams[] = [
         getShouldRender: (params) => {
             return true
         },
+    },
 
-    },
-    {
-        ...baseMenuItem,
-        id: 'availableQuestions',
-        icon: 'nav-icon-available-sets',
-        label: 'Available Questions',
-        getUrl: (_) => {
-          return `/wisdom-node/available-questions`
-        },
-        getShouldRender: (_) => {
-          return true
-        },
-    },
-    {
-        ...baseMenuItem,
-        id: 'upcomingQuestions',
-        icon: 'nav-icon-upcoming-questions',
-        label: 'Upcoming Questions',
-        getUrl: (params) => {
-        return params.isWalletConnected ?
-            `/wisdom-node/upcoming-questions/${params.walletAddress}`
-            :
-            '/'
-        },
-        getShouldRender: (_) => {
-        return true
-        },
-    },
-    {
-        ...baseMenuItem,
-        id: 'history',
-        icon: 'nav-icon-history',
-        label: 'History / My Answers',
-        getUrl: (params) => {
-          return params.isWalletConnected ?
-            `/wisdom-node/history`
-            :
-            '/'
-        },
-        getShouldRender: (params) => {
-          return params.isWalletConnected
-        },
-    },
     /*
     {
         ...baseMenuItem,
