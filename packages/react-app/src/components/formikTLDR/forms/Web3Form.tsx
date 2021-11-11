@@ -55,7 +55,8 @@ const getContent = (
   isValid: boolean,
   stateEls: FormStateEls,
   formOnSuccess: boolean,
-  onSuccess: any
+  onSuccess: any,
+  values: any
   ) => {
   const { successEl, pendingEl, errorEl } = stateEls
   if (state.receipt) {
@@ -75,7 +76,7 @@ const getContent = (
     return pendingEl ? pendingEl(state.txHash) : <Pending />
   }
 
-  return getForm(submit, isValid)
+  return getForm(submit, isValid, values)
 }
 
 interface InnerFormState {
@@ -137,7 +138,8 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     isValid,
     stateEls,
     formOnSuccess,
-    onSuccess
+    onSuccess,
+    values
     )
 }
 

@@ -19,3 +19,8 @@ export enum CategoryLabelDisplay {
   RealEstate,
   NFT
 }
+
+export enum QuestionType {
+  Pricing,
+  GroundTruth
+}

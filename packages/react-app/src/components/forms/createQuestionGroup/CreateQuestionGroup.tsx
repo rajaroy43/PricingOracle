@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 // @ts-ignore
 import styled from 'styled-components'
-import { Form } from 'formik'
-import DateTime from '../atoms/inputs/DateTime'
-import Select from '../atoms/inputs/Select'
+import { Form, FieldArray } from 'formik'
+import DateTime from '../../atoms/inputs/DateTime'
+import Select from '../../atoms/inputs/Select'
+import Text from '../../atoms/inputs/Text'
 import CreateQuestionForm from './CreateQuestionForm'
-import createQuestionGroupSchema from '../../schemas/questionGroup'
-import Web3Form from '../formikTLDR/forms/Web3Form'
-import { msToSec, parseUnits } from '../../helpers/formatters'
+import createQuestionGroupSchema, { groundTruthQuestionDefaults, pricingQuestionDefaults} from '../../../schemas/questionGroup'
+import Web3Form from '../../formikTLDR/forms/Web3Form'
+import { msToSec, parseUnits } from '../../../helpers/formatters'
+import DeleteIcon from '../../atoms/icons/Delete'
+import { QuestionType } from '../../../types/question'
+import CreateQuestionArray from './CreateQuestionArray'
 
 const Row = styled.div`
     display: flex;
@@ -60,7 +64,14 @@ const categories = [
   return {label, value:idx.toString()}
 })
 
-const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (  
+const components = {
+  Button,
+  FormRow,
+  Row 
+}
+const getForm = () => (submit: any, isValid: boolean, values: any) => {
+  console.log(`geting q create form ${JSON.stringify(values)}`)
+  return (  
     <Form>
         <FormContainer>
             <div>
@@ -68,10 +79,20 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
                     <label htmlFor="category">Category</label>
                 </FormRow>
                 <FormRow>
+                  <Col style={{ marginRight: '4.5em' }}>
                     <Select
-                        name='category'
-                        options={categories}
+                      name='category'
+                      options={categories}
                     />
+                  </Col>
+                  <Col style={{ marginRight: '2.25em' }}>
+                    <Text
+                      style={{color: '#fff !important',  width: '10em'}}
+                      label="Minimum Required Answers"
+                      name='minimumRequiredAnswers'
+                      type="number" 
+                    />
+                  </Col>
                 </FormRow>
                 <FormRow style={{ marginTop: '2.5em' }}>
                     <Col style={{ marginRight: '2.25em' }}>
@@ -97,21 +118,23 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
                     </Col>
                 </FormRow>
                 <hr style={{ width: '45em' }} />
-                <FormRow style={{ margin: '16px 0' }}>
-                    <label htmlFor="weeksLocked">List of Questions</label>
-                </FormRow>
+                <CreateQuestionArray
+                  name='pricingQuestions'
+                  title='Pricing Questions'
+                  defaultValues={pricingQuestionDefaults}
+                  components={components}
+                  values={values.pricingQuestions}
+                  questionType={QuestionType.Pricing}
+                />
 
-                {[...Array(4)].map((el, i) => {
-                    return (
-                        <div key={i}>
-                            <p style={{ color: 'white', fontWeight: 700 }}>{`Question ${ i + 1 }`}</p>
-                            <Row>
-                                <CreateQuestionForm key={i} index={i} />
-                            </Row>
-                        </div>
-                    )
-                })}
-
+                <CreateQuestionArray
+                  name='groundTruthQuestions'
+                  title='Ground Truth Questions'
+                  defaultValues={groundTruthQuestionDefaults}
+                  components={components}
+                  values={values.groundTruthQuestions}
+                  questionType={QuestionType.GroundTruth}
+                />
                 <FormRow style={{ width: '100%'}} >
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Button style={{ width: '10em', height: '3em', cursor: 'pointer' }} type="submit" onClick={submit}>
@@ -122,21 +145,23 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
             </div>
         </FormContainer>
     </Form>
-)
+  )
+}
 
 const getMethodArgs = () => (values: any) => {
     console.log(`inside create Q vals ${JSON.stringify(values)}`)
-    const questionCount = 4
+    const questions = values.pricingQuestions.concat(values.groundTruthQuestions)
+    const questionCount = questions.length
+
     const questionCategories = new Array(questionCount).fill(values.category)
-    const PRICING_TYPE = 0
-    const questionTypes = new Array(questionCount).fill(PRICING_TYPE)
-    const bounties = [values.bounty0, values.bounty1, values.bounty2, values.bounty3].map(parseUnits)
-    const pricingTimes = [values.pricingTime, values.pricingTime, values.pricingTime, values.pricingTime].map(msToSec)
-    const endTimes= [values.endTime, values.endTime, values.endTime, values.endTime].map(msToSec)
-    const startTimes = [values.startTime, values.startTime, values.startTime, values.startTime].map(msToSec)
-    const answerSets = [values.answerSet0, values.answerSet1, values.answerSet2, values.answerSet3].map((as) => [0,as])
-    const descriptions = [values.description0, values.description1, values.description2, values.description3]
-    const minimumRequiredAnswers = 1
+    const pricingTimes = new Array(questionCount).fill(values.pricingTime).map(msToSec)
+    const endTimes= new Array(questionCount).fill(values.endTime).map(msToSec)
+    const startTimes = new Array(questionCount).fill(values.startTime).map(msToSec)
+
+    const questionTypes = questions.map((q: any) => q.questionType)
+    const bounties = questions.map((q: any) => q.bounty)
+    const answerSets = questions.map((q: any) => q.answerSet).map((as: string) => [0,as])
+    const descriptions = questions.map((q: any) => q.description)
     return (
         [
             questionCategories,
@@ -147,7 +172,7 @@ const getMethodArgs = () => (values: any) => {
             descriptions,
             answerSets,
             startTimes,
-            minimumRequiredAnswers
+            values.miniumumRequiredAnswers
         ]
     )
 }
@@ -166,7 +191,7 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
     const formProps = {
         defaultValues: createQuestionGroupSchema.defaultValues,
         schema: createQuestionGroupSchema.schema,
-        getForm: CreateQuestionGroup(),
+        getForm: getForm(),
         contractMethod: pricingInstance.methods.createQuestionGroup,
         connectedAddress,
         getMethodArgs: getMethodArgs(),

@@ -3,7 +3,7 @@ import { subgraphClient } from '../../client'
 import { useGetQuestions } from '../../queries/question'
 import LoadingCircle from '../atoms/Loading'
 import { WalletContext } from '../providers/WalletProvider'
-import CreateQuestionGroup from '../forms/CreateQuestionGroup'
+import CreateQuestionGroup from '../forms/createQuestionGroup/CreateQuestionGroup'
 import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 
 const Admin = () => {
