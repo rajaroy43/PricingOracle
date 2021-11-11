@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
 // @ts-ignore
 import styled from 'styled-components'
-import { Form, FieldArray } from 'formik'
+import { Form } from 'formik'
 import DateTime from '../../atoms/inputs/DateTime'
 import Select from '../../atoms/inputs/Select'
 import Text from '../../atoms/inputs/Text'
-import CreateQuestionForm from './CreateQuestionForm'
 import createQuestionGroupSchema, { groundTruthQuestionDefaults, pricingQuestionDefaults} from '../../../schemas/questionGroup'
 import Web3Form from '../../formikTLDR/forms/Web3Form'
-import { msToSec, parseUnits } from '../../../helpers/formatters'
-import DeleteIcon from '../../atoms/icons/Delete'
+import { msToSec } from '../../../helpers/formatters'
 import { QuestionType } from '../../../types/question'
 import CreateQuestionArray from './CreateQuestionArray'
+import config from '../../../config'
 
 const Row = styled.div`
     display: flex;
@@ -177,9 +176,11 @@ const getMethodArgs = () => (values: any) => {
     )
 }
 
-const Success = () => (
+const Success = ({receipt}: SuccessProps) => (
     <div>
-        <h3>Question Created!</h3>
+        <h3>Question Group Created!</h3>
+        <h5>Tx Confirmed</h5>
+        <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
     </div>
 )
 const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {
@@ -196,10 +197,12 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
         connectedAddress,
         getMethodArgs: getMethodArgs(),
         stateEls: {
-            successEl: Success
+            SuccessEl: Success
         },
         formOnSuccess: false,
-        onSuccess
+        updaters: {
+          onSuccess
+        }
     }
     return (
         <Web3Form

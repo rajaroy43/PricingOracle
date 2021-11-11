@@ -4,21 +4,23 @@ import { BasicFormProps } from '../types'
 
 const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: BasicFormProps}) => {
   const {values, isValid, setErrors, errors } = formikProps
-  const { getForm, getSubmitArgs, submit, cancel } = formProps
+  const { getForm, getSubmitArgs, submit, updaters } = formProps
   
   const onSubmit = async () => {
     const args = await getSubmitArgs(values, setErrors)
     if (args) {
       submit(args)
+      updaters.onSuccess(args)
       return true
     }
+    updaters.onError(errors)
     return false
     
   }
-  return getForm(isValid, onSubmit, cancel, errors)
+  return getForm(isValid, onSubmit, updaters.cancel, errors)
 }
 
-const MutationForm = (formProps: BasicFormProps) => {
+const BasicForm = (formProps: BasicFormProps) => {
   return (
     <Formik
       initialValues={formProps.defaultValues}
@@ -30,4 +32,4 @@ const MutationForm = (formProps: BasicFormProps) => {
   );
 };
 
-export default MutationForm
+export default BasicForm

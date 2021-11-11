@@ -13,6 +13,9 @@ import { QuestionView } from '../../types/question'
 import { QuestionGroupView } from '../../types/questionGroup'
 import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
+import { FormStateEls, SuccessProps } from '../formikTLDR/types';
+import config from '../../config';
+import ExplorerLink from '../atoms/ExplorerLink';
 
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
@@ -62,7 +65,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '20px',
-    fontWeight: 400,
+    fontWeight: 500,
     justifyContent: 'space-between',
     marginLeft: '8px',
     marginRight: '8px',
@@ -163,9 +166,11 @@ const mockData = {
   totalStakeDisplayUSD: '-41.55'
 }
 
-const Success = () => (
+const Success = ({receipt}: SuccessProps) => (
   <div>
     <Typography variant="h3">Question Answered!</Typography>
+    <h5>Tx Confirmed</h5>
+    <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 
@@ -173,12 +178,9 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
   const lithBalance = user ? user.tokenBalanceDisplay : '0';
 
   const updateStake =  (idx: number) => (stake: number) => {
-    //@ts-ignore
-    console.log(` updating stakes with - ${stake}`)
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
-    //@ts-ignore
-    const totalStakeReducer = (acc, _stake) => {
+    const totalStakeReducer = (acc: any, _stake: string) => {
       if (_stake && !isNaN(stake)) { 
         acc = acc.add(parseUnits(_stake));
       } 
@@ -255,20 +257,18 @@ const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGr
     stakes: questionGroup.questions.map(() => 0) 
   }
   const [stakeState, setTotalStake] = useState(initialStakeState)
+  const stateEls: FormStateEls =  {
+    SuccessEl: Success
+  }
   const formProps = {
     defaultValues: {answers: defaultQuestionValues },
     schema: answerQuestionGroupSchema.schema,
     getForm: getForm(questionGroup, classes, user, stakeState, setTotalStake),
-    // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,
-    // @ts-ignore
     connectedAddress: connectedWallet.address,
     getMethodArgs: getMethodArgs(questionGroup.id),
-    stateEls: {
-      successEl: Success
-    },
-    formOnSuccess: false,
-    onSuccess: null
+    stateEls,
+    updaters: {}
   }
   
   return (

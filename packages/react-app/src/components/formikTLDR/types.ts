@@ -1,31 +1,49 @@
-export interface FormStateEls {
-  successEl?: any;
-  pendingEl?: any;
-  errorEl?: any;
+import { FormikHandlers } from 'formik';
+import React from 'react'
+
+export interface SuccessProps {
+  receipt: any;
 }
 
-export interface BasicFormProps {
+export interface PendingProps {
+  txHash: string
+}
+
+export interface ErrorProps {
+  error: string
+}
+
+export interface FormStateEls {
+  SuccessEl?: React.ComponentType<SuccessProps>;
+  PendingEl?: React.ComponentType<PendingProps>;
+  ErrorEl?: React.ComponentType<ErrorProps>;
+}
+
+export interface FormUpdaters {
+  cancel?: any;
+  onSuccess?: any;
+  onError?: any;
+}
+
+interface Form {
   defaultValues: any;
   schema: any;
   getForm: any;
   stateEls: FormStateEls;
-  submit: any;
-  getSubmitArgs: any;
-  cancel: any;
+  updaters: FormUpdaters;
+  formOnSuccess?: boolean;
 }
 
-export interface Web3FormProps {
-  defaultValues: any;
-  schema: any;
-  getForm: any;
+export interface BasicFormProps extends Form {
+  submit: any;
+  getSubmitArgs: any;
+}
+
+export interface Web3FormProps extends Form{
   contractMethod?: string;
   getContractMethod?: any;
   connectedAddress: string;
   methodArgs?: any;
   staticArgs?: any;
   getMethodArgs?: any;
-  stateEls: FormStateEls;
-  formOnSuccess: boolean;
-  cancelForm?: any
-  onSuccess?: any
 }

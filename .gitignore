@@ -13,6 +13,8 @@ packages/hardhat/cache
 packages/hardhat/typechain
 packages/hardhat/hardhat.config.ts
 docker/**/data
+docker/docker-compose-aws-rinkeby-dev.yml
+
 
 packages/subgraph/config/config.json
 tenderly.yaml

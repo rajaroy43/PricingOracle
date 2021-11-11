@@ -3,6 +3,7 @@ import { Formik } from 'formik'
 import { callMethod } from './utils'
 import { Web3FormProps, FormStateEls } from '../types'
 import Loading from '../../atoms/Loading'
+import ExplorerLink from '../../atoms/ExplorerLink'
 
 
 /*
@@ -34,19 +35,29 @@ interface State {
 }
 */
 
-const Success = () => (
+const Success = ({receipt}: any) => (
   <div>
     <h3>Transaction Success!</h3>
+    <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 
-const Error = () => (
+const Error = ({error}: {error: string}) => (
   <div>
     <h3>Transaction Error!</h3>
+    <div>{error}</div>
   </div>
 )
 
-const Pending = () => <Loading  />
+const Pending = ({txHash}: {txHash: string}) => {
+  return (
+    <div>
+      <h3>Transaction Pending</h3>
+      <ExplorerLink txHash={txHash} />
+      <Loading  />
+    </div>
+  )
+}
 
 const getContent = (
   getForm: any,
@@ -58,22 +69,22 @@ const getContent = (
   onSuccess: any,
   values: any
   ) => {
-  const { successEl, pendingEl, errorEl } = stateEls
-  if (state.receipt) {
+  const { SuccessEl, PendingEl, ErrorEl } = stateEls
+  if ( state.receipt ) {
     if (onSuccess) {
       onSuccess()
     }
+
     return (
       <div>
         {formOnSuccess && getForm(submit)}
-        {successEl ? successEl(state.receipt) : <Success />}
+        {SuccessEl ? <SuccessEl receipt={state.receipt} /> : <Success />}
       </div>
     )
   } else if (state.error) {
-    // @ts-ignore
-    return errorEl ? errorEl(state.error) : <Error error={state.error} />
+    return ErrorEl ? <ErrorEl error={state.error} /> : <Error error={state.error.message} />
   } else if (state.txHash) {
-    return pendingEl ? pendingEl(state.txHash) : <Pending />
+    return PendingEl ? <PendingEl txHash={state.txHash} /> : <Pending txHash={state.txHash} />
   }
 
   return getForm(submit, isValid, values)
@@ -101,13 +112,15 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     getMethodArgs,
     getForm,
     stateEls,
-    formOnSuccess,
-    onSuccess = () => {},
+    formOnSuccess = false,
+    updaters,
     staticArgs } = formProps
   const {values, setSubmitting, resetForm, isValid} = formikProps
   const [state, setState] = useState(initialState)
 
-  const handleTxHash = (txHash: string) => setState({...state, txHash})
+  const handleTxHash = (txHash: string) => {
+    setState({...state, txHash})
+  }
   const handleReceipt = (receipt: any) => {
     setState({...state, receipt})
   }
@@ -130,7 +143,6 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     })
       :
       () => {}
-  
   return getContent(
     getForm, 
     state,
