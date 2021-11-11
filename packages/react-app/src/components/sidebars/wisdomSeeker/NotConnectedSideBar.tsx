@@ -7,8 +7,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { NavMenuParams } from '../../../types/navigation';
 import { WalletContext } from '../../providers/WalletProvider'
 import NavMenu from '../../navigation/NavMenu';
-import SelectWallet from '../../forms/SelectWallet'
 import lithiumLogo from '../../../assets/logo-lithium.svg';
+import ConnectWalletFlow from '../../forms/connectWallet/ConnectWalletFlow';
 
 const useStyles = makeStyles(theme => ({
   logo: {
@@ -48,7 +48,7 @@ const NotConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOp
           <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><MenuIcon className={classes.mobileMenuButton} /></IconButton> }
       </div>
       <div style={{marginTop: '12px'}}>
-        <SelectWallet setWallet={setWallet} />
+        <ConnectWalletFlow />      
       </div>
       <div>
         <NavMenu pageParams={pageParams} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen}/>

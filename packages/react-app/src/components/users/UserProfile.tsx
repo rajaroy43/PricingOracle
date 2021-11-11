@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
+const UserProfile = ({ walletAddress, mode }: {walletAddress: string, mode: string}) => {
   const { wallet: {pricingInstance}, updaters: {disconnectWallet} } = useContext(WalletContext);
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
   const classes = useStyles();
@@ -34,7 +34,7 @@ const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
     return (
       <div className={classes.userProfile}>
         <Button label='Disconnect' onClick={disconnectWallet} />
-        <Badge address={user.id} />
+        <Badge address={user.id} mode={mode} />
         <UserBalances user={user}/>
         <Flex justifyContent="flex-end" mt="1rem">
           <ClaimRewardForm

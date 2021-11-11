@@ -11,17 +11,17 @@ export const baseMenuItem = {
 const getNavItems: GetNavItemParams[] = [
     {
         ...baseMenuItem,
-        id: 'account',
+        id: 'suggestAsset',
         icon: 'nav-icon-dashboard',
-        label: 'Dashboard',
+        label: 'Suggest Asset',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-node/account/${params.walletAddress}`
+            `/wisdom-node/suggestasset/`
             :
             '/'
         },
         getShouldRender: (params) => {
-        return params.isWalletConnected
+            return true
         },
 
     },

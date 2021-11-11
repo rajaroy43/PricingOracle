@@ -263,6 +263,7 @@ export default createTheme({
               color: '#666 !important'
             }
           },
+        },
         MuiDialog: {
           paperWidthSm: {
             margin: '16px',
@@ -289,7 +290,6 @@ export default createTheme({
             width: ''
           }
         }
-      }
     },
     /*
     subtitle1: {

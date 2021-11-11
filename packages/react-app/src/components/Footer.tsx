@@ -1,10 +1,10 @@
-import React from 'react'
-import { Grid, Link } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
-import SocialIcons from './atoms/icons/SocialIcons'
+import React from "react"
+import { Grid, Link } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core/styles"
+import createBreakpoints from "@material-ui/core/styles/createBreakpoints"
+import SocialIcons from "./atoms/icons/SocialIcons"
 
-const breakpoints = createBreakpoints({});
+const breakpoints = createBreakpoints({})
 
 const useStyles = makeStyles(theme => ({
     footerLeft: {
