@@ -11,7 +11,7 @@ export const baseMenuItem = {
 const getNavItems: GetNavItemParams[] = [
     {
         ...baseMenuItem,
-        id: 'suggestAsset',
+        id: 'suggestasset',
         icon: 'nav-icon-dashboard',
         label: 'Suggest Asset',
         getUrl: (params) => {
