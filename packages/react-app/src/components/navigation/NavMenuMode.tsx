@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from "react-router-dom"
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
@@ -31,7 +30,6 @@ const useStyles = makeStyles(theme => ({
     }
 })); 
 
-//
 const ToggleMode = ({initialMode}: {initialMode: string}) => {
   const history = useHistory();
   const classes = useStyles();

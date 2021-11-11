@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { PageParams } from "../../types/navigation";
-import getNavItems from "../sidebars/wisdomNode/navMenuConfig";
+import getNavItems from "../sidebars/wisdomSeeker/navMenuConfig";
 import ConnectedSideBar from '../sidebars/wisdomSeeker/ConnectedSideBar'
 import NotConnectedSideBar from '../sidebars/wisdomSeeker/NotConnectedSideBar'
 
