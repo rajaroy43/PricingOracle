@@ -68,7 +68,6 @@ const Footer = () => {
     return (
         <Grid container>
             <Grid item md={6} xs={12} className={classes.footerLeft}>
-                <p>Incubated by Liquefy Labs</p>
                 <p>Lithium Finance &copy; {(new Date().getFullYear())}. All Rights Reserved</p>
             </Grid>
             <Grid item md={6} xs={12} className={classes.footerRight}>
