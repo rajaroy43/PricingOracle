@@ -20,7 +20,8 @@ const config = {
     pricingAbi: localPricingAbi,
     LITHIUM_TOKEN_ADDRESS: localConfig.LithiumTokenAddress,
     LITHIUM_PRICING_ADDRESS: localConfig.LithiumPricingAddress,
-    LITHIUM_SUBGRAPH: "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract"
+    LITHIUM_SUBGRAPH: "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract",
+    getTxExplorerUrl: (txHash) => `https://etherscan.io/tx/${txHash}`
   },
   TESTNET: {
     CHAIN_ID: 4,
@@ -28,7 +29,8 @@ const config = {
     pricingAbi: rinkebyPricingAbi,
     LITHIUM_TOKEN_ADDRESS: rinkebyConfig.LithiumTokenAddress,
     LITHIUM_PRICING_ADDRESS: rinkebyConfig.LithiumPricingAddress,
-    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.12"
+    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.12",
+    getTxExplorerUrl: (txHash) => `https://rinkeby.etherscan.io/tx/${txHash}`
   }
 }
 

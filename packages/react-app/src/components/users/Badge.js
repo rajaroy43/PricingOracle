@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Badge = ({ address, mode }) => {
+const Badge = ({ address, mode = 'node' }) => {
   const classes = useStyles();
 
   if (!address) {

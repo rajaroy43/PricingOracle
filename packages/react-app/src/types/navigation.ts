@@ -1,7 +1,7 @@
 export interface PageParams {
   activePage: string
   isWalletConnected: boolean
-  walletAddress: string | null
+  walletAddress: string | undefined
 }
 
 export interface NavMenuParams {

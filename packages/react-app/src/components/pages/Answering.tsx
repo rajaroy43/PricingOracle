@@ -8,25 +8,22 @@ import AnsweringGroup from '../questions/AnsweringGroup'
 
 const Answering = ({ match}: any)=> {
     const urlQuestionGroupId = match.params.questionGroupId;
-    const connectedWallet = useContext(WalletContext)
+    const {wallet} = useContext(WalletContext)
     const {loading, questionGroup} = useGetQuestionGroup(subgraphClient, urlQuestionGroupId)
 
     const sideBarProps = {
         activePage: 'availableQuestions',
-        // @ts-ignore
-        isWalletConnected: !!connectedWallet.wallet,
-        // @ts-ignore
-        walletAddress: connectedWallet.address
+        isWalletConnected: !!wallet.wallet,
+        walletAddress: wallet.address
     }
     return (
         <WisdomNodeTemplate pageProps={sideBarProps}>
-            { // @ts-ignore
-            !connectedWallet.wallet ? <h3>Connect Wallet to Answer Questions</h3> : 
+            { 
+            !wallet.wallet ? <h3>Connect Wallet to Answer Questions</h3> : 
                 loading ?
                     <LoadingCircle />
                     :
-                    // @ts-ignore
-                    questionGroup ? connectedWallet.wallet && <AnsweringGroup questionGroup={questionGroup} connectedWallet={connectedWallet} /> : null
+                    questionGroup ? wallet.wallet && <AnsweringGroup questionGroup={questionGroup} connectedWallet={wallet} /> : null
                 
             }
         </WisdomNodeTemplate>

@@ -39,7 +39,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1
     },
     h2: {
@@ -49,7 +49,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h3: {
@@ -68,7 +68,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h5: {
@@ -78,7 +78,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h6: {
@@ -88,7 +88,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     subtitle1: {
@@ -263,7 +263,33 @@ export default createTheme({
               color: '#666 !important'
             }
           },
+        MuiDialog: {
+          paperWidthSm: {
+            margin: '16px',
+            width: '320px'
+          }
+        },
+        MuiDialogTitle: {
+          root: {
+            '& h2': {
+              color: 'black',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              textAlign: 'center'
+            }
+          }
+        },
+        MuiDialogContent: {
+          root: {
+            paddingTop: '0'
+          }
+        },
+        MuiCard: {
+          root: {
+            width: ''
+          }
         }
+      }
     },
     /*
     subtitle1: {

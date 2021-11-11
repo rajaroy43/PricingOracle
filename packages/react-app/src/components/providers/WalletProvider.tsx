@@ -1,4 +1,6 @@
 import React, { createContext, useReducer, useMemo, useEffect } from 'react'
+import { getWalletInstances } from '../../helpers/connectWallet'
+import { ConnectedWallet, ConnectedWalletProps, SUPPORTED_WALLETS } from '../../types/user'
 import wallets from '../../wallets'
 
 const UPDATE_TYPES = {
@@ -7,14 +9,20 @@ const UPDATE_TYPES = {
   DISCONNECT_WALLET: 'DISCONNECT_WALLET'
 }
 
-const initialState = {
-  walletType: null,
-  wallet: null,
-  address: null,
-  provider: null
+const initialState: ConnectedWallet = {
+  wallet: {
+    walletType: undefined,
+    wallet: null,
+    address: undefined,
+    provider: null
+  },
+  updaters: {
+    setWallet: () => {},
+    disconnectWallet: () => {}
+  }
 }
 
-const setWalletLocalStorage = (walletType, address) => {
+const setWalletLocalStorage = (walletType: SUPPORTED_WALLETS, address: string) => {
   // set wallet type and address so we can reconnect on page load
   localStorage.setItem('walletType', walletType);
   localStorage.setItem('address', address);
@@ -26,19 +34,15 @@ const disconnectWallet = () => {
   localStorage.removeItem('address')
 }
 
-const reducer = (state, action) => {
+const reducer = (state: ConnectedWallet, action: any) => {
   switch(action.type) {
     case UPDATE_TYPES.SET_WALLET:
       setWalletLocalStorage(action.payload.walletType, action.payload.address)
       return {
         ...state,
-        walletType: action.payload.walletType,
-        wallet: action.payload.wallet,
-        address: action.payload.address,
-        provider: action.payload.provider,
-        tokenInstance: action.payload.tokenInstance,
-        pricingInstance: action.payload.pricingInstance,
-        disconnectWallet: action.payload.disconnectWallet
+        wallet: {
+          ...action.payload
+        }
       }
     case UPDATE_TYPES.DISCONNECT_WALLET:
       disconnectWallet()
@@ -50,7 +54,7 @@ const reducer = (state, action) => {
   }
 }
 
-export const WalletContext = createContext(null)
+export const WalletContext = createContext<ConnectedWallet>(initialState)
 
 const getLocalState = async () => {
   if (!localStorage) return null
@@ -63,18 +67,23 @@ const getLocalState = async () => {
     return null
   } else {
     // reconnect to get wallet and provider api
-    const [wallet, provider] = await wallets[walletType].connectWallet()
+    // @ts-ignore
+    const [ wallet, provider ] = await wallets[walletType].connectWallet()
+    // @ts-ignore
+    const { tokenInstance, pricingInstance } = await getWalletInstances(walletType, wallet)
 
     return {
       walletType,
       wallet,
       address,
-      provider
+      provider,
+      pricingInstance,
+      tokenInstance
     }
   }
 }
 
-const WalletProvider = ({children}) => {
+const WalletProvider = ({children}:{children: React.ComponentType} ) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   // on page load check if there is local storage cookie
@@ -89,10 +98,12 @@ const WalletProvider = ({children}) => {
 
       if (
         typeof window !== 'undefined' &&
+        // @ts-ignore
         typeof window.ethereum !== 'undefined' &&
         walletState
       ) {
-        window.ethereum.on('accountsChanged', (accounts) => {
+        // @ts-ignore
+        window.ethereum.on('accountsChanged', (accounts: any) => {
           if (accounts.length < 1) {
             dispatch({type: 'DISCONNECT_WALLET', payload: {}})
           } else {
@@ -100,6 +111,13 @@ const WalletProvider = ({children}) => {
             dispatch({type: 'SET_WALLET', payload: walletState})
           }
         })
+        // @ts-ignore
+        window.ethereum.on('chainChanged', (accounts: any) => {
+        
+            dispatch({type: 'DISCONNECT_WALLET', payload: {}})
+      
+        })
+
       }
     }
     init()
@@ -108,20 +126,15 @@ const WalletProvider = ({children}) => {
   const contextValue = useMemo(() => {
     return {
       ...state,
-      setWallet: ({ walletType, wallet, address, pricingInstance, tokenInstance, provider }) => {
-        dispatch({
-          type: UPDATE_TYPES.SET_WALLET,
-          payload: {
-            walletType,
-            wallet,
-            address,
-            pricingInstance,
-            tokenInstance,
-            provider
-          }
-      })},
-      disconnectWallet: () => {
-        dispatch({ type: 'DISCONNECT_WALLET', payload: {}})
+      updaters: {
+        setWallet: (payload: ConnectedWalletProps) => {
+          dispatch({
+            type: UPDATE_TYPES.SET_WALLET,
+            payload
+        })},
+        disconnectWallet: () => {
+          dispatch({ type: 'DISCONNECT_WALLET', payload: {}})
+        }
       }
     };
   }, [state, dispatch]);
