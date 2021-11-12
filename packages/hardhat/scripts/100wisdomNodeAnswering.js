@@ -44,6 +44,13 @@ const answers100 = async () => {
       "LithiumToken",
       LithiumTokenAddress.toString()
     );
+    let getquestionGroups;
+    try {
+      getquestionGroups = await lithiumPricing.getQuestionIds(questionGroupId);
+    } catch (error) {
+      console.log(`Given questionGroupId ${questionGroupId} is not a valid question group id` )
+      return ;
+    }
     const accounts = await ethers.getSigners();
     const userAccounts = [...accounts.slice(1, 101)];
     const transferBalance = ethers.utils.parseUnits("100000.0", 18);
@@ -61,9 +68,8 @@ const answers100 = async () => {
       )
     );
     console.log("Account Prepared");
-    
-    //Assuming 4 questions in a QuestionGroup
-    const questionGroups = [[[1,2,3,4]]]
+  
+    const questionGroups = [[getquestionGroups]]
 
     await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts, questionGroupId);
 
