@@ -7,10 +7,11 @@ import { useGetUser } from '../../queries/user'
 import Badge from './Badge'
 import Flex from '../atoms/Flex'
 import LoadingCircle from '../atoms/Loading'
+import Button from '../atoms/inputs/buttons/Button'
 import UserBalances from './UserBalances'
 import { WalletContext } from '../providers/WalletProvider';
-import SelectWalletForm from '../forms/SelectWallet';
 import ClaimRewardForm from '../forms/ClaimReward';
+import ConnectWalletFlow from '../forms/connectWallet/ConnectWalletFlow';
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -18,28 +19,22 @@ const useStyles = makeStyles(theme => ({
     border: 0,
     color: '#ffffff',
     padding: '12px'
-  },
-  buttonClaim: {
-    
   }
 }));
 
-const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
-  // @ts-ignore
-  const { setWallet, pricingInstance } = useContext(WalletContext);
-  // @ts-ignore
+const UserProfile = ({ walletAddress, mode }: {walletAddress: string, mode: string}) => {
+  const { wallet: {pricingInstance}, updaters: {disconnectWallet} } = useContext(WalletContext);
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
-  console.log('user', user);
   const classes = useStyles();
 
   if (loading) {
     return <LoadingCircle />
   } 
-
   if (walletAddress && user && pricingInstance) {
     return (
       <div className={classes.userProfile}>
-        <Badge address={user.id} />
+        <Button label='Disconnect' onClick={disconnectWallet} />
+        <Badge address={user.id} mode={mode} />
         <UserBalances user={user}/>
         <Flex justifyContent="flex-end" mt="1rem">
           <ClaimRewardForm
@@ -53,7 +48,7 @@ const UserProfile = ({ walletAddress }: {walletAddress: string}) => {
     )
   }
 
-  return <SelectWalletForm setWallet={setWallet} />
+  return <ConnectWalletFlow />
 }
 
 export default UserProfile

@@ -8,6 +8,8 @@ import CreateQuestionForm from './CreateQuestionForm'
 import createQuestionGroupSchema from '../../schemas/questionGroup'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import { msToSec, parseUnits } from '../../helpers/formatters'
+import { SuccessProps } from '../formikTLDR/types'
+import config from '../../config'
 
 const Row = styled.div`
     display: flex;
@@ -125,9 +127,8 @@ const CreateQuestionGroup = () => (submit: any, isValid: boolean) => (
 )
 
 const getMethodArgs = () => (values: any) => {
-    console.log(`inside create Q vals ${JSON.stringify(values)}`)
     const questionCount = 4
-    const categories = new Array(questionCount).fill(values.category)
+    const questionCategories = new Array(questionCount).fill(values.category)
     const PRICING_TYPE = 0
     const questionTypes = new Array(questionCount).fill(PRICING_TYPE)
     const bounties = [values.bounty0, values.bounty1, values.bounty2, values.bounty3].map(parseUnits)
@@ -139,7 +140,7 @@ const getMethodArgs = () => (values: any) => {
     const minimumRequiredAnswers = 1
     return (
         [
-            categories,
+            questionCategories,
             bounties,
             pricingTimes,
             endTimes,
@@ -152,9 +153,11 @@ const getMethodArgs = () => (values: any) => {
     )
 }
 
-const Success = () => (
+const Success = ({receipt}: SuccessProps) => (
     <div>
-        <h3>Question Created!</h3>
+        <h3>Question Group Created!</h3>
+        <h5>Tx Confirmed</h5>
+        <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
     </div>
 )
 const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {
@@ -171,10 +174,12 @@ const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId
         connectedAddress,
         getMethodArgs: getMethodArgs(),
         stateEls: {
-            successEl: Success
+            SuccessEl: Success
         },
         formOnSuccess: false,
-        onSuccess
+        updaters: {
+          onSuccess
+        }
     }
     return (
         <Web3Form

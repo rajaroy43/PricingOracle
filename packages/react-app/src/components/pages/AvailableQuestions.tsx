@@ -9,14 +9,12 @@ import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import QuestionGroupList from '../questions/QuestionGroupList'
 
 const AvailableQuestions = () => {
-  const connectedWallet = useContext(WalletContext)
+  const {wallet} = useContext(WalletContext)
   const {loading, questionGroups} = useGetActiveQuestionGroups(subgraphClient)
   const sideBarProps = {
     activePage: 'availableQuestions',
-    // @ts-ignore
-    isWalletConnected: !!connectedWallet.wallet,
-    // @ts-ignore
-    walletAddress: connectedWallet.address
+    isWalletConnected: !!wallet.wallet,
+    walletAddress: wallet.address
   }
 
   const main = (

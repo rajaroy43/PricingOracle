@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import Typography from "@material-ui/core/Typography"
 import UserReputationScoreItem from './UserReputationScoreItem'
 
+const iconInfo = require(`../../assets/icon-info.svg`)
+
 const useStyles = makeStyles(theme => ({
   userStats: {
     display: 'flex',
@@ -58,7 +60,7 @@ const UserStats = () => {
           reputationScores.map((scoreItem => <UserReputationScoreItem scoreItem={scoreItem} key={scoreItem.category} />))
           :
           <div className={classes.noScore}>
-            <img className={classes.infoIcon} src={require(`../../assets/icon-info.svg`)} alt='Info' />
+            <img className={classes.infoIcon} src={iconInfo} alt='Info' />
             <p>My Stats measures the accuracy<br />
              of your scores in each category.<br />
              Answer 10 questions to reach Level 1.</p>

@@ -1,5 +1,6 @@
-import { createTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles"
 import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+
 const breakpoints = createBreakpoints({});
 
 const lithOrange = "#E96036";
@@ -38,7 +39,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1
     },
     h2: {
@@ -48,7 +49,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h3: {
@@ -67,7 +68,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h5: {
@@ -77,7 +78,7 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
     },
     h6: {
@@ -87,8 +88,14 @@ export default createTheme({
           'sans-serif'
         ].join(', '),
         fontSize: "2.5rem",
-        fontWeight: 400,    
+        fontWeight: 500,    
         lineHeight: 1.5
+    },
+    subtitle1: {
+      fontWeight: 700,
+      lineHeight: '1.25',
+      marginBottom: '20px',
+      marginTop: 0
     },
     link: {
         color: lithOrange
@@ -212,13 +219,6 @@ export default createTheme({
             },       
           }
         },
-        MuiTextField: {
-          root: {
-            alignItems: 'center !important',
-            flexDirection: 'row !important',
-            justifyContent: 'space-around !important',
-          }
-        },
         MuiRadio: {
           root: {
             backgroundColor: '#222222',
@@ -239,6 +239,55 @@ export default createTheme({
             alignItems: 'center',
             display: 'flex',
             marginLeft: '8px'
+          }
+        },
+        MuiToggleButton: {
+          root: {
+            backgroundColor: '#fff',
+            border: '1px solid #000',
+            '&:hover': {
+              backgroundColor: '#fff',
+              '& .MuiToggleButton-label': {
+                color: '#000 !important'
+              }
+            },
+            padding: '8px',
+            '&.MuiToggleButton-root.Mui-selected': {
+              backgroundColor: '#E96036 !important',
+              border: '1px solid #E96036',
+              '& > span': {
+                color: '#fff !important'
+              }
+            },
+            '& .MuiToggleButton-label': {
+              color: '#666 !important'
+            }
+          },
+        },
+        MuiDialog: {
+          paperWidthSm: {
+            margin: '16px',
+            width: '320px'
+          }
+        },
+        MuiDialogTitle: {
+          root: {
+            '& h2': {
+              color: 'black',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              textAlign: 'center'
+            }
+          }
+        },
+        MuiDialogContent: {
+          root: {
+            paddingTop: '0'
+          }
+        },
+        MuiCard: {
+          root: {
+            width: ''
           }
         }
     },

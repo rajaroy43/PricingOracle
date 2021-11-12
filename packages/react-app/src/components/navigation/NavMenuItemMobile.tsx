@@ -48,11 +48,12 @@ const useStyles = makeStyles(theme => ({
 const NavMenuItemMobile = (item: NavItemParams) => {
   const classes = useStyles();
   const itemClass = item.isActive ? classes.navMenuItemMobileActive : classes.navMenuItemMobile;
+  const icon = require(`../../assets/${item.icon}.svg`)
 
   return (
     item.shouldRender ? 
       <RouterLink to={item.url} className={itemClass}>
-        <img className={classes.navMenuItemMobileIcon} src={require(`../../assets/${item.icon}.svg`)} alt={`${item.label}`} /><span>{item.label}</span>
+        <img className={classes.navMenuItemMobileIcon} src={icon.default} alt={`${item.label}`} /><span>{item.label}</span>
       </RouterLink>
       :
       null

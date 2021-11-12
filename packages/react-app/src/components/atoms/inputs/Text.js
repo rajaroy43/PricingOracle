@@ -1,10 +1,10 @@
 import React from 'react'
 import { useField } from 'formik'
 import TextField from '@material-ui/core/TextField'
-import ErrorMessage from './ErrorMessage';
 import { makeStyles } from '@material-ui/core';
+import ErrorMessage from './ErrorMessage';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   textFieldError: {
     display: 'block',
     position: 'relative',
@@ -27,7 +27,7 @@ const Text = (props) => {
   const updatedRestProps = {
     ...rest,
     onChange: (e) => {
-      onChange && onChange(e.target.value)
+      if(onChange) onChange(e.target.value)
       field.onChange(e)
     }
   }

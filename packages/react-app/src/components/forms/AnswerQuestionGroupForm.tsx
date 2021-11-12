@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Form } from 'formik'
 import { BigNumber } from 'ethers';
-import { answerQuestionGroupSchema } from '../../schemas/answer'
-import Web3Form from '../formikTLDR/forms/Web3Form'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Typography from "@material-ui/core/Typography"
+import { answerQuestionGroupSchema } from '../../schemas/answer'
+import Web3Form from '../formikTLDR/forms/Web3Form'
 import Button from '../atoms/inputs/buttons/Button'
 import { formatUnits, parseUnits } from '../../helpers/formatters'
 import AnswerQuestionInput from './AnswerQuestionInput'
@@ -13,6 +13,9 @@ import { QuestionView } from '../../types/question'
 import { QuestionGroupView } from '../../types/questionGroup'
 import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
+import { FormStateEls, SuccessProps } from '../formikTLDR/types';
+import config from '../../config';
+import ExplorerLink from '../atoms/ExplorerLink';
 
 const useStyles = makeStyles(theme => ({
   answerGroupItems: {
@@ -62,7 +65,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '20px',
-    fontWeight: 400,
+    fontWeight: 500,
     justifyContent: 'space-between',
     marginLeft: '8px',
     marginRight: '8px',
@@ -163,9 +166,11 @@ const mockData = {
   totalStakeDisplayUSD: '-41.55'
 }
 
-const Success = () => (
+const Success = ({receipt}: SuccessProps) => (
   <div>
     <Typography variant="h3">Question Answered!</Typography>
+    <h5>Tx Confirmed</h5>
+    <ExplorerLink txHash={receipt.transactionHash} />
   </div>
 )
 
@@ -173,14 +178,11 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
   const lithBalance = user ? user.tokenBalanceDisplay : '0';
 
   const updateStake =  (idx: number) => (stake: number) => {
-    //@ts-ignore
-    console.log(` updating stakes with - ${stake}`)
     const stakes = [...stakeState.stakes]
     stakes[idx] = stake
-    //@ts-ignore
-    const totalStakeReducer = (acc, stake) => {
-      if (stake && !isNaN(stake)) { 
-        acc = acc.add(parseUnits(stake));
+    const totalStakeReducer = (acc: any, _stake: string) => {
+      if (_stake && !isNaN(stake)) { 
+        acc = acc.add(parseUnits(_stake));
       } 
       
       return acc
@@ -200,7 +202,7 @@ const getForm = (questionGroup: QuestionGroupView, classes: any, user: any, stak
   return (
     <Form>
       <div className={classes.answerGroupItems}>
-          {questionGroup.questionViews.map((question: QuestionView, idx: any) => <AnswerQuestionInput key={idx} idx={idx} question={question} updateStake={updateStake(idx)} />)}
+          {questionGroup.questionViews.map((question: QuestionView, idx: any) => <AnswerQuestionInput key={question.id} idx={idx} question={question} updateStake={updateStake(idx)} />)}
       </div>
 
       <Grid container>
@@ -255,20 +257,18 @@ const AnswerQuestionGroupForm = ({ questionGroup, connectedWallet }: {questionGr
     stakes: questionGroup.questions.map(() => 0) 
   }
   const [stakeState, setTotalStake] = useState(initialStakeState)
+  const stateEls: FormStateEls =  {
+    SuccessEl: Success
+  }
   const formProps = {
     defaultValues: {answers: defaultQuestionValues },
     schema: answerQuestionGroupSchema.schema,
     getForm: getForm(questionGroup, classes, user, stakeState, setTotalStake),
-    // @ts-ignore    
     contractMethod: connectedWallet.pricingInstance.methods.answerQuestions,
-    // @ts-ignore
     connectedAddress: connectedWallet.address,
     getMethodArgs: getMethodArgs(questionGroup.id),
-    stateEls: {
-      successEl: Success
-    },
-    formOnSuccess: false,
-    onSuccess: null
+    stateEls,
+    updaters: {}
   }
   
   return (

@@ -1,9 +1,9 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
+import MUButton from '@material-ui/core/Button'
 
-const _Button = ({onClick = () => {}, label, type = 'button', disabled = false, variant = 'contained',  style = {}, className = ''}) =>
-  <Button variant={variant} onClick={onClick} color="primary" type={type} disabled={disabled} style={style} className={className} disableElevation>
+const Button = ({onClick = () => {}, label, type = 'button', disabled = false, variant = 'contained',  style = {}, className = ''}) =>
+  <MUButton variant={variant} onClick={onClick} color="primary" type={type} disabled={disabled} style={style} className={className} disableElevation>
     {label}
-  </Button>
+  </MUButton>
 
-export default _Button
+export default Button

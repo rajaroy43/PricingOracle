@@ -1,7 +1,7 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core'
 import Text from '../atoms/inputs/Text'
 import RadioUI from '../atoms/inputs/Radio'
-import { makeStyles } from '@material-ui/core'
 import { formatNumber } from '../../helpers/formatters'
 
 const useStyles = makeStyles(theme => ({
@@ -56,7 +56,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   stakeAmount: {
+    alignItems: 'center',
     color: '#ffffff !important',
+    flexDirection: 'row',
     flexWrap: 'nowrap',
     marginRight: '4px',
     textAlign: 'right',

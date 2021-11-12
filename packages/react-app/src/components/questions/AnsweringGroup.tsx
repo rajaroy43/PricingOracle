@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '16px',
-    fontWeight: 400
+    fontWeight: 500
   },
   questionGroupId: {
     fontFamily: [
@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
       'sans-serif'
     ].join(', '),
     fontSize: '32px',
-    fontWeight: 400
+    fontWeight: 500
   },
   timeCol: {
     alignSelf: 'end',
@@ -102,7 +102,7 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
     <>
         <div className={classes.titleRow}>
             <div className={classes.titleRowButton}>
-                <Button className={classes.buttonBack} component={RouterLink} to={'/wisdom-node/available-questions'}>Back</Button>
+                <Button className={classes.buttonBack} component={RouterLink} to='/wisdom-node/available-questions'>Back</Button>
             </div>
             <div>
                 <Typography variant="h2" className={classes.questionGroupTitle} noWrap={true}>Question Group</Typography>

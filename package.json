@@ -45,7 +45,8 @@
     "clean": "cd packages/hardhat && npx hardhat clean",
     "graph-run-node": "cd docker/graph-node && docker-compose up",
     "graph-remove-node": "cd docker/graph-node && docker-compose down",
-    "graph-prepare": "mustache packages/subgraph/config/config.json packages/subgraph/src/subgraph.template.yaml > packages/subgraph/subgraph.yaml",
+    "graph-prepare": "mustache packages/subgraph/contractDeployments/localhost/config.json packages/subgraph/src/subgraph.template.yaml > packages/subgraph/subgraph.yaml",
+    "graph-prepare-rinkeby": "mustache packages/subgraph/contractDeployments/rinkeby/config.json packages/subgraph/src/subgraph.template.yaml > packages/subgraph/subgraph.yaml",
     "graph-codegen": "yarn workspace @scaffold-eth/subgraph graph codegen",
     "graph-build": "yarn workspace @scaffold-eth/subgraph graph build",
     "graph-create-local": "yarn workspace @scaffold-eth/subgraph graph create --node http://localhost:8020/ scaffold-eth/your-contract",
@@ -58,8 +59,10 @@
     "watch-theme": "yarn workspace @scaffold-eth/react-app watch",
     "generate-lithium-subgraph-types": "graphql-codegen --config codegen-lithium-subgraph.yml",
     "start-reward-coordinator": "cd docker && docker-compose up",
-    "docker-clean":" cd docker/ && docker compose -f docker-compose.local.yml down && docker rm -f $(docker ps -a -q) && docker volume rm $(docker volume ls -q)",
-    "docker-run-local": "cd docker/ && ./run.sh"
+    "docker-clean": "cd docker/ && docker compose -f docker-compose.local.yml down && docker rm -f $(docker ps -a -q) && docker volume rm $(docker volume ls -q)",
+    "docker-run-local": "cd docker/ && ./run.sh",
+    "selector:test": "yarn workspace @scaffold-eth/react-app selector:test",
+    "upgrade-lithium-rinkeby": "yarn workspace @scaffold-eth/hardhat upgrade-lithium-rinkeby"
   },
   "workspaces": {
     "packages": [

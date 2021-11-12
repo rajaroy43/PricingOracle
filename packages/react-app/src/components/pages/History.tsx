@@ -5,17 +5,14 @@ import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import AnswerGroupList from '../answers/AnswerGroupList'
 
 const History = () => {
-  const connectedWallet = useContext(WalletContext)
-  //@ts-ignore
-  const address = connectedWallet.address || ''
+  const {wallet} = useContext(WalletContext)
+  const address = wallet.address || ''
 
 
   const sideBarProps = {
     activePage: 'history',
-    // @ts-ignore
-    isWalletConnected: !!connectedWallet.wallet,
-    // @ts-ignore
-    walletAddress: connectedWallet.address
+    isWalletConnected: !!wallet.wallet,
+    walletAddress: wallet.address
   }
 
   const main = (
