@@ -126,6 +126,13 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     return question;
     }
 
+  //Get questionIds from questionGroups
+
+  function getQuestionIds(uint256 questiongroupId
+   ) external view returns (uint256[] memory){
+     return questionGroups[questiongroupId].questionIds;
+   }
+
   //Get all data for question and about the answer  with questionId _id and answr submitter as _answerer
   function getAnswer (
     uint256 _questionId,
