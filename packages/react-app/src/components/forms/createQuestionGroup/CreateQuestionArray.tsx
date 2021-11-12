@@ -16,7 +16,6 @@ interface Props {
 
 const CreateQuestionArray = ({ name, title, defaultValues, components, values, questionType }: Props) => {
   const { Button, FormRow, Row } = components
-  console.log(`q create name ${name} ${JSON.stringify(values)}`)
   return (
     <FieldArray
       name={name}
@@ -36,7 +35,7 @@ const CreateQuestionArray = ({ name, title, defaultValues, components, values, q
                 <p style={{ color: 'white', fontWeight: 700 }}>{`Question ${ index + 1 }`}</p>
                 <Row>
                   <DeleteIcon onClick={() => arrayHelpers.remove(index)} color='secondary' />
-                  <CreateQuestionForm id={`${name}${index}`} questionType={questionType} />
+                  <CreateQuestionForm id={`${name}.${index}`} questionType={questionType} />
                 </Row>
               </div>
             ))

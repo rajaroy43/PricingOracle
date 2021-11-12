@@ -150,7 +150,7 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     isValid,
     stateEls,
     formOnSuccess,
-    onSuccess,
+    updaters.onSuccess,
     values
     )
 }

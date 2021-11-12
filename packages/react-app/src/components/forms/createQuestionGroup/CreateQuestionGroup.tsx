@@ -11,6 +11,7 @@ import { msToSec } from '../../../helpers/formatters'
 import { QuestionType } from '../../../types/question'
 import CreateQuestionArray from './CreateQuestionArray'
 import config from '../../../config'
+import { SuccessProps } from '../../formikTLDR/types'
 
 const Row = styled.div`
     display: flex;
@@ -69,7 +70,6 @@ const components = {
   Row 
 }
 const getForm = () => (submit: any, isValid: boolean, values: any) => {
-  console.log(`geting q create form ${JSON.stringify(values)}`)
   return (  
     <Form>
         <FormContainer>
@@ -148,7 +148,8 @@ const getForm = () => (submit: any, isValid: boolean, values: any) => {
 }
 
 const getMethodArgs = () => (values: any) => {
-    console.log(`inside create Q vals ${JSON.stringify(values)}`)
+  console.log(`formatting method args ${JSON.stringify(values)}`)
+
     const questions = values.pricingQuestions.concat(values.groundTruthQuestions)
     const questionCount = questions.length
 
@@ -161,19 +162,20 @@ const getMethodArgs = () => (values: any) => {
     const bounties = questions.map((q: any) => q.bounty)
     const answerSets = questions.map((q: any) => q.answerSet).map((as: string) => [0,as])
     const descriptions = questions.map((q: any) => q.description)
-    return (
-        [
-            questionCategories,
-            bounties,
-            pricingTimes,
-            endTimes,
-            questionTypes,
-            descriptions,
-            answerSets,
-            startTimes,
-            values.miniumumRequiredAnswers
-        ]
-    )
+    const args = [
+      questionCategories,
+      bounties,
+      pricingTimes,
+      endTimes,
+      questionTypes,
+      descriptions,
+      answerSets,
+      startTimes,
+      values.minimumRequiredAnswers
+    ]
+    console.log(`final method args ${JSON.stringify(args)}`)
+
+    return args
 }
 
 const Success = ({receipt}: SuccessProps) => (
@@ -183,7 +185,7 @@ const Success = ({receipt}: SuccessProps) => (
         <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
     </div>
 )
-const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, categoryId, onSuccess }: any) => {
+const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, onSuccess }: any) => {
     const [selectedCategory, setSelectedCategory] = useState(categories[0])
 
     if ( !connectedAddress || !pricingInstance) {
