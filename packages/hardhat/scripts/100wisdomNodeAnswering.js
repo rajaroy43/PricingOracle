@@ -44,9 +44,9 @@ const answers100 = async () => {
       "LithiumToken",
       LithiumTokenAddress.toString()
     );
-    let getquestionGroups;
+    let getQuestionIds;
     try {
-      getquestionGroups = await lithiumPricing.getQuestionIds(questionGroupId);
+      getQuestionIds = await lithiumPricing.getQuestionIds(questionGroupId);
     } catch (error) {
       console.log(`Given questionGroupId ${questionGroupId} is not a valid question group id` )
       return ;
@@ -69,7 +69,7 @@ const answers100 = async () => {
     );
     console.log("Account Prepared");
   
-    const questionGroups = [[getquestionGroups]]
+    const questionGroups = [[getQuestionIds]]
 
     await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts, questionGroupId);
 
