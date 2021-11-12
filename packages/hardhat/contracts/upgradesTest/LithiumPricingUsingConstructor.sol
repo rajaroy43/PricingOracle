@@ -62,9 +62,16 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
-  mapping (uint256 => mapping (address => uint256)) public questionBids;
 
+  struct QuestionBid{
+    uint256 bidAmount;
+    bool isBidRefunded;
+  }
 
+  //questionId -> nodeAddress -> QuestionBid
+  mapping (uint256 => mapping (address => QuestionBid)) public questionBids;
+
+  
   address constant public NULL_ADDRESS=address(0);
 
   // questionId => answerer => Answer
@@ -279,7 +286,7 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
     question.startTime = startTime;
     questions.push(question);
 
-    questionBids[id][msg.sender] = bounty;
+    questionBids[id][msg.sender] = QuestionBid(bounty,false);
 
     emit QuestionCreated(
       id,
@@ -365,7 +372,8 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
     Question storage question = questions[questionId];
     require(question.startTime > block.timestamp, "Answering question time started ");
     question.bounty = question.bounty + lithBidAmount;
-    questionBids[questionId][msg.sender] += lithBidAmount;
+    QuestionBid storage questionBid = questionBids[questionId][msg.sender];
+    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
@@ -646,4 +654,36 @@ contract LithiumPricingUsingConstructor is ILithiumPricing,Initializable, Roles 
     _increaseBid(questionId, lithBidAmount);
   }
 
+  /**
+  * @dev Allow admin to refund node address with reward amount for question id
+  * the `questionIds` is the array of question id for which refund amount to be updated
+  * the `nodeAddresses` is the addresses of node which they bid amount on getting answers
+  * the `refundAmounts` is the array of refund amount with respect to nodeAddresses
+  */
+
+  function refundBids(
+    uint256[] memory questionIds,
+    address[] memory nodeAddresses,
+    uint256[] memory refundAmounts
+  ) external override{
+    require(isAdmin(msg.sender), "Must be admin");
+    require(questionIds.length == nodeAddresses.length && questionIds.length == refundAmounts.length ,"argument array length mismatch");
+    require(nodeAddresses.length > 0,"There must be at least 1 node address will be refunded");
+    for (uint256 i = 0; i < questionIds.length; i++) {
+      Question storage question = questions[i];
+      require(question.startTime <= block.timestamp, "Question starting time has not passed yet");
+      QuestionBid storage questionBid = questionBids[questionIds[i]][nodeAddresses[i]];
+      bool isRefunded = questionBid.isBidRefunded;
+      require(!isRefunded,"Wsidom node already refunded");
+      uint256 userBidAmount = questionBid.bidAmount;
+      require(userBidAmount >= refundAmounts[i],"Refund amount is more  than user bid amount");
+      if(refundAmounts[i] > 0 ){
+        LithiumToken.transfer(nodeAddresses[i],refundAmounts[i]);
+      }
+      questionBid.isBidRefunded = true;
+      questionBid.bidAmount = userBidAmount - refundAmounts[i];
+      emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
+    }
+  }
 }
+
