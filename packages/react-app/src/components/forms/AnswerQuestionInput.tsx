@@ -56,7 +56,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   stakeAmount: {
+    alignItems: 'center',
     color: '#ffffff !important',
+    flexDirection: 'row',
     flexWrap: 'nowrap',
     marginRight: '4px',
     textAlign: 'right',

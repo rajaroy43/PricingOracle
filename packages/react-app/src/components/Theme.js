@@ -91,6 +91,12 @@ export default createTheme({
         fontWeight: 500,    
         lineHeight: 1.5
     },
+    subtitle1: {
+      fontWeight: 700,
+      lineHeight: '1.25',
+      marginBottom: '20px',
+      marginTop: 0
+    },
     link: {
         color: lithOrange
     }
@@ -213,13 +219,6 @@ export default createTheme({
             },       
           }
         },
-        MuiTextField: {
-          root: {
-            alignItems: 'center !important',
-            flexDirection: 'row !important',
-            justifyContent: 'space-around !important',
-          }
-        },
         MuiRadio: {
           root: {
             backgroundColor: '#222222',
@@ -241,6 +240,29 @@ export default createTheme({
             display: 'flex',
             marginLeft: '8px'
           }
+        },
+        MuiToggleButton: {
+          root: {
+            backgroundColor: '#fff',
+            border: '1px solid #000',
+            '&:hover': {
+              backgroundColor: '#fff',
+              '& .MuiToggleButton-label': {
+                color: '#000 !important'
+              }
+            },
+            padding: '8px',
+            '&.MuiToggleButton-root.Mui-selected': {
+              backgroundColor: '#E96036 !important',
+              border: '1px solid #E96036',
+              '& > span': {
+                color: '#fff !important'
+              }
+            },
+            '& .MuiToggleButton-label': {
+              color: '#666 !important'
+            }
+          },
         },
         MuiDialog: {
           paperWidthSm: {
