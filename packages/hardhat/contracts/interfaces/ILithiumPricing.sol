@@ -72,6 +72,7 @@ interface ILithiumPricing {
 
   event BidReceived(uint256 questionId,address bidder,uint256 bidAmount);
 
+  event BidRefunded(uint256 questonId, address nodeAddress,uint256 refundAmount);
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
@@ -190,7 +191,15 @@ interface ILithiumPricing {
 
   function increaseBid(
     uint256 questionId ,
-    uint256 lithBidAmount) external ;
+    uint256 lithBidAmount
+  ) external ;
+
+
+  function refundBids (
+    uint256[] memory questionIds,
+    address[] memory nodeAddresses,
+    uint256[] memory refundAmounts
+  ) external ;
 
 
 }

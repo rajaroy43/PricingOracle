@@ -182,9 +182,9 @@ describe("Lithium Pricing", async function () {
         .emit(lithiumPricing, "QuestionGroupCreated")
         .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
-      const questionBidAmount1 = await lithiumPricing.questionBids(0,account0.address)
+      const [questionBidAmount1,] = await lithiumPricing.questionBids(0,account0.address)
       expect(questionBidAmount1).to.equal(bounty)
-      const questionBidAmount2 = await lithiumPricing.questionBids(1,account0.address) 
+      const [questionBidAmount2,] = await lithiumPricing.questionBids(1,account0.address) 
       expect(questionBidAmount2).to.equal(bounty1)
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
@@ -994,6 +994,73 @@ describe("Lithium Pricing", async function () {
       ).to.be.revertedWith("Answering question is not started yet");
     });
 
+    it("Should not  able to refund bids if start time not passed ", async () => {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const startTime = block.timestamp + 4;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+      // QuestionType{ Pricing, GroundTruth }
+      //if questiontype = 0 ,then question is Pricing type
+      //if questiontype = 1 ,then question is GroundTruth type
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      const createQuestionGroupTx = await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      );
+      //createQuestionGroupTx
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionCreated")
+        .withArgs(
+          0,
+          bounty,
+          pricingTime,
+          endTime,
+          categoryId,
+          account0.address,
+          description,
+          answerSet,
+          questiontype,
+          startTime
+        );
+
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionGroupCreated")
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
+
+      const questionIds = [0,1]
+      const nodeAddresses = [account0.address,account0.address]
+      const refundAmounts = [transferAmount1,transferAmount1]
+
+      await expect(
+        lithiumPricing
+          .refundBids(questionIds,nodeAddresses,refundAmounts)
+      ).to.be.revertedWith("Question starting time has not passed yet");
+    });
+
     describe('Bidding On Questions', function() {
 
       beforeEach(async () => {
@@ -1033,11 +1100,11 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase bid on question by question creater",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account0.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account0.address) 
         await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account0.address,lithBidAmount);  
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account0.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account0.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial))
 
         //Checking updated Bounty
@@ -1049,7 +1116,7 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase bid mutiple time on question by question creater",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account0.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account0.address) 
 
         await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
@@ -1063,7 +1130,7 @@ describe("Lithium Pricing", async function () {
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account0.address,lithBidAmount);
 
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account0.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account0.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial).add(lithBidAmount).add(lithBidAmount))
       
         //Checking updated Bounty
@@ -1075,7 +1142,7 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase  bid mutiple time on question by another user ",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account1.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account1.address) 
         
         await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
@@ -1089,7 +1156,7 @@ describe("Lithium Pricing", async function () {
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account1.address,lithBidAmount);
 
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account1.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account1.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial).add(lithBidAmount).add(lithBidAmount))
 
         //Checking updated Bounty
@@ -1137,12 +1204,65 @@ describe("Lithium Pricing", async function () {
         const increaseTime = 15;
         await ethers.provider.send("evm_increaseTime", [increaseTime]);
         await ethers.provider.send("evm_mine");
-        
+
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
         await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
         to.be.revertedWith("Answering question time started ")
       });
+
+      it("Should allow admin  to refund user bids amount+increaseLithBidAmount", async function () {
+        const questionIds = [0,1]
+        const nodeAddresses = [account0.address,account0.address]
+        
+        const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+
+        await expect(lithiumPricing.increaseBid(questionIds[0],lithBidAmount)).
+        emit(lithiumPricing,"BidReceived").
+        withArgs(questionIds[0],account0.address,lithBidAmount);  
+
+        await expect(lithiumPricing.increaseBid(questionIds[1],lithBidAmount)).
+        emit(lithiumPricing,"BidReceived").
+        withArgs(questionIds[1],account0.address,lithBidAmount);  
+
+        const refundAmounts = [transferAmount1.add(lithBidAmount),transferAmount1.add(lithBidAmount)]
+
+        const [initialBidAmount1,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+        const [initialBidAmount2,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+        expect(initialBidAmount1).to.equal(refundAmounts[0])
+        expect(initialBidAmount2).to.equal(refundAmounts[1])
+        expect(initialIsBidRefunded1).to.be.false
+        expect(initialIsBidRefunded2).to.be.false
+        
+        const one_minute = 60 * 60;
+        await ethers.provider.send("evm_increaseTime", [one_minute]);
+        await ethers.provider.send("evm_mine");
+
+        const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+        const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+        refundedBidTx
+          .emit(lithiumPricing,"BidRefunded")
+          .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+
+        refundedBidTx
+          .emit(lithiumPricing,"BidRefunded")
+          .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+        const finallLithBalance = await lithToken.balanceOf(account0.address);
+        
+        expect(finallLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+        
+        const [finalLeftRefundAmount1,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+        const [finalLeftRefundAmount2,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+        
+        expect(finalLeftRefundAmount1).to.equal(0)
+        expect(finalLeftRefundAmount2).to.equal(0)            
+        
+        expect(finalIsBidRefunded1).to.be.true
+        expect(finalIsBidRefunded2).to.be.true
+
+      })
 
     })
 
@@ -1362,7 +1482,151 @@ describe("Lithium Pricing", async function () {
         ).to.be.revertedWith(
           "Question is still active and Final Answer status can't be updated"
         );
-      });
+      })
+
+      describe('Refunding Bidding to users', function() {
+
+          it("Should allow admin  to refund user bids amount", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            const [,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            expect(initialIsBidRefunded1).to.be.false
+            expect(initialIsBidRefunded2).to.be.false
+
+            const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+            const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+    
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+            const finallLithBalance = await lithToken.balanceOf(account0.address);
+        
+            expect(finallLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+            
+            const [,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            
+            expect(finalIsBidRefunded1).to.be.true
+            expect(finalIsBidRefunded2).to.be.true
+    
+          })
+
+    
+          it("Should allow admin to refund user bid amount  (bid amount less than refund amount) bidAmount/2", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1.div(2),transferAmount1.div(2)]
+    
+            const [,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            expect(initialIsBidRefunded1).to.be.false
+            expect(initialIsBidRefunded2).to.be.false
+
+            const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+            const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+    
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+              const finallLithBalance = await lithToken.balanceOf(account0.address);
+        
+              expect(finallLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+              
+            
+            const [,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            
+            expect(finalIsBidRefunded1).to.be.true
+            expect(finalIsBidRefunded2).to.be.true
+    
+          })
+    
+          it("Should not allow non-admin  to refund user bids amount ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            await expect(lithiumPricing.connect(account1).refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("Must be admin")
+          })
+    
+          it("Should not allow admin  to refund user bids if mismatch argument `questionIds` provided ", async function () {
+            const questionIds = [0]
+            const nodeAddresses = [account0.address,account1.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("argument array length mismatch")
+          })
+    
+          it("Should not allow admin  to refund user bids if mismatch argument `refundAmounts` provided ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("argument array length mismatch")
+          })
+    
+          it("Should not allow admin  to refund user bids if mismatch argument `nodeAddresses` provided ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("argument array length mismatch")
+          })
+    
+          it("Should not allow admin  to refund user bids amount if there is no node address to refund ", async function () {
+            const questionIds = []
+            const nodeAddresses = []
+            const refundAmounts = []
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("There must be at least 1 node address will be refunded")
+          })
+    
+    
+          it("Should not allow admin  to refund user bids amount if its done already ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+    
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("Wsidom node already refunded")
+          })
+
+          it("Should not allow admin  to refund user bids amount if refund amount more than user bid amount ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1.add(100),transferAmount1.add(100)]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("Refund amount is more  than user bid amount")
+          })
+        })
 
       describe("Reward Mechanism ", async () => {
         beforeEach(async () => {

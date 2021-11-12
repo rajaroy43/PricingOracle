@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-// Wisdom Node ConnectedSideBar
+// Wisdom Seeker ConnectedSideBar
 const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}: NavMenuParams) => {
   const classes = useStyles();
   const walletAddress = pageParams.walletAddress || '0x0'
@@ -46,9 +46,9 @@ const ConnectedSideBar = ({pageParams, getNavItems, isDrawerOpen, setDrawerOpen}
         { isDrawerOpen ? <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><CloseIcon className={classes.mobileMenuButton} /></IconButton> :
           <IconButton className={classes.mobileMenuButton} onClick={() => setDrawerOpen(!isDrawerOpen)} disableRipple><MenuIcon className={classes.mobileMenuButton} /></IconButton> }
       </div>
-      <ToggleMode initialMode="node" />
+      <ToggleMode initialMode="seeker" />
       <div style={{marginTop: '12px'}}>
-        <UserProfile walletAddress={walletAddress} mode="node" />
+        <UserProfile walletAddress={walletAddress} mode='seeker' />
       </div>
       <div>
         <NavMenu pageParams={pageParams} getNavItems={getNavItems} isDrawerOpen={isDrawerOpen} setDrawerOpen={setDrawerOpen} />
