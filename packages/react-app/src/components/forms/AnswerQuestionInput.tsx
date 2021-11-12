@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700,
     position: 'relative',
     top: '32px',
-    left: '-92px',
+    left: '-255px',
     [theme.breakpoints.down('xs')]: {
       top: '16px',
       left: '18px'
@@ -136,10 +136,8 @@ const AnswerQuestionInput = ({
           InputProps={inputProps}
           InputLabelProps={inputLabelProps}
           errorCss={classes.error}
-          followText="$LITH"
+          followText="$LITH &nbsp; &nbsp; 1 LITH Minimum Stake"
         />
-
-        <div className={classes.stakeMinimum}>1 LITH Minimum Stake</div>
       </div>
     </div>
   )
