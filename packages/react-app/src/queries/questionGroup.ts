@@ -14,6 +14,10 @@ interface ActiveQuestionGroupsQueryVars {
   now: string
 }
 
+interface UpcomingQuestionGroupsQueryVars {
+  now: string
+}
+
 interface GetQuestionGroupData {
   questionGroup: QuestionGroup
 }
@@ -57,6 +61,19 @@ export const GET_ACTIVE_QUESTION_GROUPS  = gql`
   ${QUESTION_FIELDS}
   query questionGroups($now: String!) {
     questionGroups(where: {endTime_gt: $now, startTime_lt: $now}) {
+      id
+      endTime
+      questions {
+        ...QuestionFields
+      }
+    }
+}
+`;
+
+export const GET_UPCOMING_QUESTION_GROUPS  = gql`
+  ${QUESTION_FIELDS}
+  query questionGroups($now: String!) {
+    questionGroups(where: {startTime_gt: $now}) {
       id
       endTime
       questions {
@@ -115,3 +132,22 @@ export const useGetActiveQuestionGroups = (client: any): GetQuestionGroupsRespon
     questionGroups: data != null ? data.questionGroups.map(selectQuestionGroup) : null
   } 
 }
+
+export const useGetUpcomingQuestionGroups = (client: any): GetQuestionGroupsResponse => {
+  const now = msToSec(new Date().getTime()).toString()
+  const {loading, error, data} = useQuery<GetQuestionGroupsData, UpcomingQuestionGroupsQueryVars>(
+    GET_UPCOMING_QUESTION_GROUPS,
+    {
+      client,
+      variables: {now},
+      fetchPolicy: 'no-cache'
+    });
+  return {
+    loading,
+    error,
+    questionGroups: data != null ? data.questionGroups.map(selectQuestionGroup) : null
+  } 
+}
+
+
+
