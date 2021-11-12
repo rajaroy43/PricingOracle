@@ -11,7 +11,7 @@ export const answerQuestionGroupSchema = {
         answerIndex: Yup.string().required("Answer required"),
         stakeAmount: Yup.number()
                       .typeError("Stake Amount must be a number")
-                      .min(0, "Stake Amount must be a positive number")
+                      .min(1, "1 LITH minimum stake is required")
                       .required("Stake Amount is required")
       })
     )
