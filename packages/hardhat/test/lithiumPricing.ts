@@ -271,6 +271,112 @@ describe("Lithium Pricing", async function () {
         senderBalance
       );
     });
+
+    it("Should  allow   admin  to create a single question", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
+
+      const args = [
+        categoryId, 
+        bounty,
+        pricingTime,
+        endTime,
+        questiontype0,
+        description,
+        answerSet,
+        startTime
+      ];
+      await expect(//@ts-ignore
+        lithiumPricing.createQuestion(...args)
+      ).emit(lithiumPricing,"QuestionCreated")
+      .withArgs(
+        0,
+        bounty,
+        pricingTime,
+        endTime,
+        categoryId,
+        account0.address,
+        description,
+        answerSet,
+        questiontype0,
+        startTime
+      );
+
+    });
+
+    it("Should not allow non admin  to create a question group", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+      const questiontype1 = 1;
+      // QuestionType{ Pricing, GroundTruth }
+      //if questiontype = 0 ,then question is Pricing type
+      //if questiontype = 1 ,then question is GroundTruth type
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype0, questiontype1],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      await expect(//@ts-ignore
+        lithiumPricing.connect(account1).createQuestionGroup(...args)
+      ).to.be.revertedWith("Must be Admin")
+
+    });
+
+
+    it("Should not allow non  admin  to create a single question", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
+
+      const args = [
+        categoryId, 
+        bounty,
+        pricingTime,
+        endTime,
+        questiontype0,
+        description,
+        answerSet,
+        startTime
+      ];
+      await expect(//@ts-ignore
+        lithiumPricing.connect(account1).createQuestion(...args)
+      ).to.be.revertedWith("Must be Admin")
+
+    });
+
     it("Should not create a question group with categoryIds param length mismatch", async function () {
       const block = await ethers.provider.getBlock();
       const pricingTime = block.timestamp + 7;
@@ -920,10 +1026,10 @@ describe("Lithium Pricing", async function () {
         [startTime, startTime],
         minimumRequiredAnswer,
       ];
-      await lithToken.connect(account1).approve(lithiumPricing.address, 0);
+      await lithToken.approve(lithiumPricing.address, 0);
       await expect(
         //@ts-ignore
-        lithiumPricing.connect(account1).createQuestionGroup(...args)
+        lithiumPricing.createQuestionGroup(...args)
       ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
     });
 
