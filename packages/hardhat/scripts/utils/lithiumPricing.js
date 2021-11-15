@@ -1,14 +1,21 @@
 const { utils } = require("ethers");
 const { generateMockQuestionData } = require("./mockQuestionData");
-const {ethers} = require("hardhat")
-const createQuestionGroup = async (lithiumPricing, endTimeFutureSeconds = 10000, minimumRequiredAnswer = 1) => {
-  const args = await generateMockQuestionData(endTimeFutureSeconds, minimumRequiredAnswer);
+
+const createQuestionGroup = async (
+  lithiumPricing,
+  endTimeFutureSeconds = 10000,
+  minimumRequiredAnswer = 1
+) => {
+  const args = await generateMockQuestionData(
+    endTimeFutureSeconds,
+    minimumRequiredAnswer
+  );
   console.log("\n\n 📡 Creating mock question groups \n");
   for (var i = 0; i < args.length; i++) {
     await lithiumPricing.createQuestionGroup(...args[i]);
   }
-  return args
-}
+  return args;
+};
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -31,11 +38,18 @@ const answerQuestionGroups = async (lithiumPricing, questions, accounts, idxStar
   await ethers.provider.send('evm_increaseTime', [time]); 
   await ethers.provider.send('evm_mine')
   for (let i = 0; i < questions.length; i++) {
+    console.log(`Answering group ${i + idxStart}`);
     for (let t = 0; t < accounts.length; t++) {
-      await answerQuestionGroup(lithiumPricing, i + idxStart, questions[i], accounts[t])
+      console.log(`Answering by wisdom node ${t + 1}`);
+      await answerQuestionGroup(
+        lithiumPricing,
+        i + idxStart,
+        questions[i],
+        accounts[t]
+      );
     }
   }
-}
+};
 
 const getRandomBidAmount= (max)=>{
   const amount = getRandomInt(max).toString()
