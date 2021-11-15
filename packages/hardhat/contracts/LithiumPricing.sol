@@ -534,6 +534,7 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     uint256[] memory answerSet,
     uint256 startTime
   ) external override {
+    require(isAdmin(msg.sender),"Must be Admin");
     _createQuestion(
       categoryId,
       bounty,
@@ -563,6 +564,7 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     uint256[] memory startTimes,
     uint16 minimumRequiredAnswer
   ) external override {
+    require(isAdmin(msg.sender),"Must be Admin");
     require(
       categoryIds.length == bounties.length
       && categoryIds.length == pricingTimes.length
