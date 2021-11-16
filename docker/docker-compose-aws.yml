@@ -1,4 +1,5 @@
 version: "3"
+# see https://docs.docker.com/cloud/ecs-compose-examples/ for help
 
 services:
     node:
@@ -8,8 +9,7 @@ services:
             - "9000:9000"
         stdin_open: true
         tty: true
-        env_file:
-          - local.env
+        x-aws-logs_retention: 10
 
     python:
         container_name: reward_calculator
@@ -18,4 +18,5 @@ services:
             - "9001:9001"
         stdin_open: true
         tty: true
+        x-aws-logs_retention: 10
 
