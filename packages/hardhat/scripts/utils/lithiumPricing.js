@@ -32,12 +32,11 @@ const answerQuestionGroup = async (lithiumPricing, groupId, questions, account) 
   const answer = await lithiumPricing.connect(account).answerQuestions(groupId, stakeAmounts, answerIndexes)
 }
 
-const answerQuestionGroups = async (
-  lithiumPricing,
-  questions,
-  accounts,
-  idxStart = 0
-) => {
+const answerQuestionGroups = async (lithiumPricing, questions, accounts, idxStart = 0) => {
+  //time in seconds
+  const time = 15
+  await ethers.provider.send('evm_increaseTime', [time]); 
+  await ethers.provider.send('evm_mine')
   for (let i = 0; i < questions.length; i++) {
     console.log(`Answering group ${i + idxStart}`);
     for (let t = 0; t < accounts.length; t++) {
@@ -52,7 +51,23 @@ const answerQuestionGroups = async (
   }
 };
 
+const getRandomBidAmount= (max)=>{
+  const amount = getRandomInt(max).toString()
+  return amount == '0' ? utils.parseUnits('1', 18) :utils.parseUnits(amount, 18);
+}
+
+const putBids = async(lithiumPricing , bidders , questionIds)=>{
+  const bidAmounts = questionIds.map(() => getRandomBidAmount(101));
+  console.log(`\n\n 📡 putting bids on questionIds ${questionIds} with bidding Amount ${bidAmounts.map(bid=>bid/1e18)} \n`);
+  for (var i = 0; i < questionIds.length; i++) {
+    const bidder = bidders[getRandomInt(bidders.length)]
+    await lithiumPricing.connect(bidder).increaseBid(questionIds[i],bidAmounts[i])
+  }
+  console.log("Bids havebeen placed")
+}
+
 module.exports = {
   createQuestionGroup,
   answerQuestionGroups,
-};
+  putBids
+}

@@ -9,7 +9,7 @@ const generateMockQuestionData = async (endTimeFutureSeconds, minimumRequiredAns
   const categoryId = 0;
 
 
-  const startTime = block.timestamp + 2;
+  const startTime = block.timestamp + 15;
   const description1 = `What is the price of an TATA NANO share  `;
   const bounty1 = ethers.utils.parseUnits("120.0", 18);
   const answerSet1 = [0, 1320];
