@@ -4,7 +4,7 @@ const chalk = require("chalk");
 const { config, ethers, tenderly, run, network ,upgrades} = require("hardhat");
 const { utils, BigNumber } = require("ethers");
 const R = require("ramda");
-const { createQuestionGroup, answerQuestionGroups } = require("./utils/lithiumPricing");
+const { createQuestionGroup, answerQuestionGroups ,putBids} = require("./utils/lithiumPricing");
 
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,6 +18,17 @@ const prepareAccount = async (lithToken, lithiumPricing, account, approveAmount,
   await lithToken
     .transfer(account.address, transferAmount);
 
+}
+
+const getQuestionIdsByIndex = (startingQuestionId,lastIndex) =>{
+  if(startingQuestionId > lastIndex){
+    throw new Error("Invalid question id index")
+  }
+  var questionIds =[];
+  for (let i=startingQuestionId;i<=lastIndex;i++){
+      questionIds.push(i)
+  }
+  return questionIds;
 }
 
 const main = async () => {
@@ -75,6 +86,11 @@ const main = async () => {
       //Creating mock QuestionsGroup valid answers ends 1 minute
       const questionGroups = await createQuestionGroup(lithiumPricing, 60, 3);
       console.log(chalk.magenta("<>QuestionGroups created ", "\n"));
+      
+      //above  question group id 0 (i.e start from 0 to 7  questionIds:[0,1,2,3,4,5,6,7]))
+      const questionIds1 = getQuestionIdsByIndex(0,7)
+      await putBids(lithiumPricing,userAccounts,questionIds1);
+
       wait(4000)
       await answerQuestionGroups(lithiumPricing, questionGroups, userAccounts)
       console.log(chalk.magenta("<>QuestionGroups answered ", "\n"));
@@ -90,9 +106,20 @@ const main = async () => {
       await createQuestionGroup(lithiumPricing, 60, 1);
       console.log(chalk.magenta("<><><>QuestionGroups created no answers invalid", "\n"));
 
+      //above  question group id 4 and 5 (i.e start from 16 to 23  questionIds:[16,17,18,19,20,21,22,23))
+      const questionIds2 = getQuestionIdsByIndex(16,23)
+
+      await putBids(lithiumPricing,userAccounts,questionIds2)
+
       //Creating mock QuestionsGroup no answers ends 100 minute
       await createQuestionGroup(lithiumPricing, 6000, 1);
       console.log(chalk.magenta("<><><><>QuestionGroups created no answers ongoing", "\n"));
+
+      //above is question group id 6 and 7  (i.e start from 24 to 31 )
+      const questionIds3 = getQuestionIdsByIndex(24,31)
+
+      await putBids(lithiumPricing,userAccounts,questionIds3)      
+
     } 
   }
 
