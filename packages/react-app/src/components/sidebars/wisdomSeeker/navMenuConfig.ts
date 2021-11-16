@@ -11,12 +11,12 @@ export const baseMenuItem = {
 const getNavItems: GetNavItemParams[] = [
     {
         ...baseMenuItem,
-        id: 'suggestasset',
+        id: 'suggestAsset',
         icon: 'nav-icon-dashboard',
         label: 'Suggest Asset',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-node/suggestasset/`
+            `/wisdom-seeker/suggestasset/`
             :
             '/'
         },
@@ -27,78 +27,35 @@ const getNavItems: GetNavItemParams[] = [
     },
     {
         ...baseMenuItem,
-        id: 'availableQuestions',
-        icon: 'nav-icon-available-sets',
-        label: 'Available Questions',
-        getUrl: (_) => {
-          return `/wisdom-node/available-questions`
-        },
-        getShouldRender: (_) => {
-          return true
-        },
-    },
-    {
-        ...baseMenuItem,
-        id: 'upcomingQuestions',
+        id: 'biddableQuestions',
         icon: 'nav-icon-upcoming-questions',
-        label: 'Upcoming Questions',
+        label: 'Biddable Questions',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-node/upcoming-questions/${params.walletAddress}`
+            `/wisdom-seeker/biddablequestions/`
             :
             '/'
         },
-        getShouldRender: (_) => {
-        return true
+        getShouldRender: (params) => {
+            return true
         },
-    },
+
+    },    
     {
         ...baseMenuItem,
-        id: 'history',
+        id: 'myBids',
         icon: 'nav-icon-history',
-        label: 'History / My Answers',
+        label: 'My Bids',
         getUrl: (params) => {
           return params.isWalletConnected ?
-            `/wisdom-node/history`
+            `/wisdom-seeker/mybids`
             :
             '/'
         },
         getShouldRender: (params) => {
           return params.isWalletConnected
         },
-    },
-    /*
-    {
-        ...baseMenuItem,
-        id: 'stats',
-        icon: 'nav-icon-stats',
-        label: 'Stats / My Profile',
-        getUrl: (params) => {
-        return params.isWalletConnected ?
-            `/stats/${params.walletAddress}`
-            :
-            '/'
-        },
-        getShouldRender: (_) => {
-        return true
-        },
-    },
-    {
-        ...baseMenuItem,
-        id: 'staking',
-        icon: 'nav-icon-staking',
-        label: 'Staking',
-        getUrl: (params) => {
-        return params.isWalletConnected ?
-            `/staking/${params.walletAddress}`
-            :
-            '/'
-        },
-        getShouldRender: (_) => {
-        return true
-        },
-    }  
-    */  
+    }
 ]
 
 export default getNavItems;

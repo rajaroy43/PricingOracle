@@ -15,6 +15,8 @@ import "./index.css"
 import History from "./components/pages/History"
 import Design from "./components/pages/Design"
 import SuggestAsset from "./components/pages/SuggestAsset"
+import BiddableQuestions from "./components/pages/BiddableQuestions"
+import MyBids from "./components/pages/MyBids"
 
 class App extends Component {
   render() {
@@ -33,6 +35,8 @@ class App extends Component {
             <Route exact path="/admin" component={Admin} />
             <Route exact path="/wisdom-seeker/design" component={Design} />
             <Route exact path="/wisdom-seeker/suggestasset" component={SuggestAsset} />
+            <Route exact path="/wisdom-seeker/biddablequestions" component={BiddableQuestions} />
+            <Route exact path="/wisdom-seeker/mybids" component={MyBids} />
           </Switch>
           </HashRouter>
         </WalletProvider>

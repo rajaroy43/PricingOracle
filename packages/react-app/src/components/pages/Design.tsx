@@ -153,31 +153,23 @@ const useStyles = makeStyles(theme => ({
 export const BidTiers = () => {
     const classes = useStyles();
 
-    const mockData = {
-        tier1BidAmount: 300,
-        tier2BidAmount: 200,
-        tier3BidAmount: 100
-    }
-
     return (
         <>
             <h3 className={classes.bidTierHeading}>Bidding Tiers</h3>
             <div className={classes.bidTiers}>
                 <div className={classes.bidTierItem}>
                     <h3>First to Know</h3>
-                    <h4>{mockData.tier1BidAmount} LITH</h4>
+                    <br />
                     <p>Asset price revealed immediately when available</p>
                 </div>
 
                 <div className={classes.bidTierItem}>
                     <h3>Second to Know</h3>
-                    <h4>{mockData.tier2BidAmount} LITH</h4>
                     <p>Asset price revealed one hour after it is available</p>
                 </div>
 
                 <div className={classes.bidTierItem}>
                     <h3>Third to Know</h3>
-                    <h4>{mockData.tier3BidAmount} LITH</h4>
                     <p>Asset price revealed two hours after it is available</p>
                 </div>
             </div>

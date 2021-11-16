@@ -42,7 +42,7 @@ const SuggestAssetForm = () => {
 
     return (
         <div>
-            <Typography variant="h3">Suggestion Form</Typography>
+            <Typography variant="h1">Suggestion Form</Typography>
             <p className={classes.subtitle}>What asset would you like priced by Lithium?</p>
             <Formik
                 initialValues={{
