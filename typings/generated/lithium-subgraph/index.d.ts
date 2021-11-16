@@ -67,10 +67,21 @@ export type Question = {
   isAnswerCalculated: StatusCalculated;
   answerCount: Scalars['BigInt'];
   answers?: Maybe<Array<Answer>>;
+  bids?: Maybe<Array<QuestionBid>>;
+  bidCount: Scalars['BigInt'];
   created: Scalars['BigInt'];
   finalAnswerIndex: Scalars['Int'];
   finalAnswerValue: Scalars['BigInt'];
   questionGroup?: Maybe<QuestionGroup>;
+};
+
+export type QuestionBid = {
+  __typename?: 'QuestionBid';
+  id: Scalars['ID'];
+  amount: Scalars['BigInt'];
+  isRefunded: Scalars['Boolean'];
+  question: Question;
+  user: User;
 };
 
 export type QuestionCategory = {
@@ -121,6 +132,8 @@ export type User = {
   tokenBalance: Scalars['BigInt'];
   tokenApprovalBalance: Scalars['BigInt'];
   categoryReputations?: Maybe<Array<UserCategoryReputation>>;
+  bidCount: Scalars['BigInt'];
+  bids?: Maybe<Array<QuestionBid>>;
 };
 
 export type UserCategoryReputation = {
