@@ -1,9 +1,10 @@
-import React from 'react'
-import { Formik, Form } from 'formik'
 import { makeStyles } from '@material-ui/core/styles'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
-import Text from '../atoms/inputs/Text'
+import Whatshot from '@material-ui/icons/Whatshot'
+import { Form, Formik } from 'formik'
+import React from 'react'
 import Address from '../atoms/Address'
+import Text from '../atoms/inputs/Text'
 
 const useStyles = makeStyles(theme => ({
     /* biddable questions form */
@@ -68,6 +69,9 @@ const useStyles = makeStyles(theme => ({
         margin: '32px 0 32px 0',
         width: '100%'
     },
+    hot: {
+        fill: '#E96036 !important'
+    }
 }));
 
 const BiddableQuestionItem = ({id, question}: {id: string, question: any}) => {
@@ -126,6 +130,8 @@ const BiddableQuestionItem = ({id, question}: {id: string, question: any}) => {
                       :
                       ''
           : '' }
+
+          { question.hot ? <div className={classes.bidInfo}><Whatshot style={{fill: '#E96036'}} /> High number of bids on this question</div> : '' }
       </div>
     )
 }

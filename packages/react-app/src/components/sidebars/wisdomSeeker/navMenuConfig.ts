@@ -16,7 +16,7 @@ const getNavItems: GetNavItemParams[] = [
         label: 'Suggest Asset',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-seeker/suggestasset/`
+            `/wisdom-seeker/suggest-asset/`
             :
             '/'
         },
@@ -32,7 +32,7 @@ const getNavItems: GetNavItemParams[] = [
         label: 'Biddable Questions',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-seeker/biddablequestions/`
+            `/wisdom-seeker/biddable-questions/`
             :
             '/'
         },

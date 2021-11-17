@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { useHistory } from "react-router-dom"
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import React, { useState } from 'react';
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     modeToggleGroup: {
@@ -47,7 +47,7 @@ const ToggleMode = ({initialMode}: {initialMode: string}) => {
             history.push('/wisdom-node/available-questions');
           } 
           if (newMode === 'seeker') { 
-            history.push('/wisdom-seeker/design')            
+            history.push('/wisdom-seeker/biddable-questions')            
           }
         }
       }}
