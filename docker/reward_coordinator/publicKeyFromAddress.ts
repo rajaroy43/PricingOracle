@@ -1,10 +1,10 @@
 import getPublicKey from "./utils/getPublicKey"
 import { lithiumPricing } from "./contractInstances/lithiumPricing"
-import { ethProvider } from "./client"
+import { getTransactionCount } from "./queries/ethNode"
 
 const publicKeyFromAddress = async (userAddress:string)=>{
   const address = userAddress.replace(/\s+/g, '');
-  const getTxCount = await ethProvider.getTransactionCount(address)
+  const getTxCount = await getTransactionCount(address);
   if(getTxCount == 0){
     throw new Error(`This user ${address} don't have any transaction yet`)
   }
@@ -18,6 +18,5 @@ const publicKeyFromAddress = async (userAddress:string)=>{
   
   return publicKey;
 }
-
 
 export default publicKeyFromAddress
