@@ -683,11 +683,12 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
       require(!isRefunded,"Wsidom node already refunded");
       uint256 userBidAmount = questionBid.bidAmount;
       require(userBidAmount >= refundAmounts[i],"Refund amount is more  than user bid amount");
+      questionBid.isBidRefunded = true;
+      questionBid.bidAmount = userBidAmount - refundAmounts[i];
+      question.bounty = question.bounty - refundAmounts[i];
       if(refundAmounts[i] > 0 ){
         LithiumToken.transfer(nodeAddresses[i],refundAmounts[i]);
       }
-      questionBid.isBidRefunded = true;
-      questionBid.bidAmount = userBidAmount - refundAmounts[i];
       emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
     }
   }
