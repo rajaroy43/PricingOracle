@@ -20,9 +20,11 @@ export const CHAIN_IDS = {
 const configs = {
   localhost: {
     CHAIN_ID: 1337,
+    Hardfork:"london",
     ...targetConfigs
   },
   rinkeby: {
+    Hardfork:"london",
     CHAIN_ID: 4,
     ...targetConfigs
   }
