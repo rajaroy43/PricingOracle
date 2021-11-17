@@ -59,7 +59,7 @@ def calc_numerical_answers(npa, all_question_ids, n_choices, num_answers):
             # Fit a normal distribution to
             # the data:
             # mean and standard deviation
-            mu, std = norm.fit(npa[i])
+            mu, std = norm.fit(new_npa[:,i])
             ans[i] = mu
 
     # print('ids ========== ')
