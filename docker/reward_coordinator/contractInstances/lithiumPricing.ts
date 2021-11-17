@@ -10,7 +10,7 @@ import { config } from '../config'
 // export const getLithiumTokenInstance = (provider: any) => new Contract(config.LITHIUM_TOKEN_ADDRESS, new utils.Interface(tokenAbi), new providers.Web3Provider(provider))
 // @ts-ignore
 // export const getLithiumPricingInstance = (provider: any) => new Contract(config.LITHIUM_PRICING_ADDRESS, new utils.Interface(pricingAbi), new providers.Web3Provider(provider))
-const lithiumPricing = (() => new Contract(config.LITHIUM_PRICING_ADDRESS, config.pricingAbi, coordinatorWallet))()
+export const lithiumPricing = (() => new Contract(config.LITHIUM_PRICING_ADDRESS, config.pricingAbi, coordinatorWallet))()
 
 export const updateQuestionStatus = (
   updates: QuestionUpdateFields

@@ -14,7 +14,7 @@ export const subgraphClient = new ApolloClient({
 });
 
 
-const ethProvider = ethers.providers.getDefaultProvider(process.env.ETH_NODE)
+export const ethProvider = ethers.providers.getDefaultProvider(process.env.ETH_NODE)
 
 //@ts-ignore
 export const coordinatorWallet = (() => new NonceManager(new ethers.Wallet( process.env.COORDINATER_KEY, ethProvider )))()
