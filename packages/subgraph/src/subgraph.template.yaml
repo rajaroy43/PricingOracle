@@ -30,7 +30,7 @@ dataSources:
           handler: handleQuestionCreated
         - event: QuestionGroupCreated(uint256,address,uint256[],uint16)
           handler: handleQuestionGroupCreated
-        - event: QuestionAnswered(uint256,address,uint256,uint16)
+        - event: QuestionAnswered(uint256,indexed address,uint256,uint16)
           handler: handleQuestionAnswered
         - event: RewardClaimed(uint256,address,uint256)
           handler: handleRewardClaimed
