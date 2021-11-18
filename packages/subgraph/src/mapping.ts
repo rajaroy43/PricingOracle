@@ -1,6 +1,8 @@
 import { Address, BigInt, log } from "@graphprotocol/graph-ts"
 import {
   AnswerGroupSetSubmitted,
+  BidReceived,
+  BidRefunded,
   CategoryAdded,
   GroupRewardUpdated,
   FinalAnswerCalculatedStatus,
@@ -11,6 +13,7 @@ import {
   RewardClaimed,
   SetLithiumRewardAddress,
   SetLithiumTokenAddress,
+  BidReceived__Params,
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
@@ -23,6 +26,7 @@ import {
   AnswerGroup,
   PricingContractMeta,
   Question,
+  QuestionBid,
   QuestionGroup,
   QuestionCategory,
   User,
@@ -55,6 +59,10 @@ function getAnswerGroupId(ownerAddress: string, questionGroupId: string): string
   return ownerAddress + "-" + questionGroupId
 }
 
+function getQuestionBidId(userId: string, questionId: string): string {
+  return userId + "-" + questionId
+}
+
 function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
   let meta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
   if (meta == null) {
@@ -64,6 +72,21 @@ function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
   }
 
   return meta as PricingContractMeta
+}
+
+function getOrCreateQuestionBid(userId: string, questionId: string): QuestionBid {
+  let bidId = getQuestionBidId(userId, questionId)
+  let bid = QuestionBid.load(bidId)
+  if (bid == null) {
+    bid = new QuestionBid(bidId)
+    bid.question = questionId
+    bid.user = userId
+    bid.amount = ZERO
+    bid.isRefunded = false
+    bid.save()
+  }
+
+  return bid as QuestionBid
 }
 
 function getOrCreateUserCategoryReputation(userId: string, categoryId: string): UserCategoryReputation {
@@ -87,6 +110,7 @@ function getOrCreateUser(address: string): User {
     user = new User(address)
     user.questionCount = ZERO
     user.totalBounty = ZERO
+    user.bidCount = ZERO
     user.answerCount = ZERO
     user.answerGroupCount = ZERO
     user.totalRewardsClaimed = ZERO
@@ -116,6 +140,42 @@ export function handleReputationUpdated(event: ReputationUpdated): void {
     let score = scores[i]
     updateUserCategoryReputation(userId.toHexString(), categoryId.toString(), score)
   }
+}
+
+export function handleBidReceived(event: BidReceived): void {
+  let user = User.load(event.params.bidder.toHexString())
+  let question = Question.load(event.params.questionId.toString())
+  let bid = getOrCreateQuestionBid(event.params.bidder.toHexString(), event.params.questionId.toString())
+
+  if (bid.amount == ZERO) {
+    question.bidCount = question.bidCount.plus(ONE)
+    user.bidCount = user.bidCount.plus(ONE)
+  }
+
+  bid.amount = bid.amount.plus(event.params.bidAmount)
+  bid.save()
+
+  
+  question.bounty = question.bounty.plus(event.params.bidAmount)
+  question.save()
+
+  user.totalBounty = user.totalBounty.plus(event.params.bidAmount)
+  user.save()
+}
+
+export function handleBidRefunded(event: BidRefunded): void {
+  let user = User.load(event.params.nodeAddress.toHexString())
+  let question = Question.load(event.params.questionId.toString())
+  let bid = getOrCreateQuestionBid(event.params.nodeAddress.toHexString(), event.params.questionId.toString())
+  bid.amount = bid.amount.minus(event.params.refundAmount)
+  bid.isRefunded = true
+  bid.save()
+
+  question.bounty = question.bounty.minus(event.params.refundAmount)
+  question.save()
+
+  user.totalBounty = user.totalBounty.minus(event.params.refundAmount)
+  user.save()
 }
 
 export function handleSetLithiumRewardAddress(event: SetLithiumRewardAddress): void {
@@ -168,6 +228,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.pricingTime = event.params.pricingTime
   question.isAnswerCalculated = STATUS_CALCULATED[0]
   question.created = event.block.timestamp
+  question.bidCount = ZERO
   question.save()
 
   let category = QuestionCategory.load(BigInt.fromI32(event.params.categoryId).toString())

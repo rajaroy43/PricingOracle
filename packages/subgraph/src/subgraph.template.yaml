@@ -48,6 +48,10 @@ dataSources:
           handler: handleGroupRewardUpdated
         - event: ReputationUpdated(address[],uint256[],uint256[])
           handler: handleReputationUpdated
+        - event: BidReceived(uint256,address,uint256)
+          handler: handleBidReceived
+        - event: BidRefunded(uint256,address,uint256)
+          handler: handleBidRefunded
       file: ./src/mapping.ts
 
   - kind: ethereum/contract

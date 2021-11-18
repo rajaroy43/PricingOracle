@@ -72,7 +72,7 @@ interface ILithiumPricing {
 
   event BidReceived(uint256 questionId,address bidder,uint256 bidAmount);
 
-  event BidRefunded(uint256 questonId, address nodeAddress,uint256 refundAmount);
+  event BidRefunded(uint256 questionId, address nodeAddress,uint256 refundAmount);
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
