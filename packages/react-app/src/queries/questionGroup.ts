@@ -4,10 +4,15 @@ import { QuestionGroup } from 'lithium-subgraph'
 import { QueryResponse, QUESTION_FIELDS, QUESTION_GROUP_FIELDS } from './common'
 import { selectQuestionGroup } from '../selectors/questionGroup';
 import { QuestionGroupView } from '../types/questionGroup';
-import { msToSec } from '../helpers/formatters';
+import { msToSec, toLowerCase } from '../helpers/formatters';
 
 interface QuestionGroupQueryVars {
   id: string
+}
+
+interface QuestionGroupAndUserAnswerQueryVars {
+  id: string;
+  address: string;
 }
 
 interface ActiveQuestionGroupsQueryVars {
@@ -26,6 +31,7 @@ interface GetQuestionGroupsData {
   questionGroups: QuestionGroupView[] 
 }
 
+
 export const GET_QUESTION  = gql`
   ${QUESTION_GROUP_FIELDS}
   ${QUESTION_FIELDS}
@@ -34,6 +40,20 @@ export const GET_QUESTION  = gql`
       ...QuestionGroupFields
       questions {
         ...QuestionFields
+      }
+    }
+}
+`;
+
+export const GET_QUESTION_GROUP_AND_USER_ANSWER  = gql`
+  ${QUESTION_GROUP_FIELDS}
+  ${QUESTION_FIELDS}
+  query questionGroup($id: ID!, $address: String!) {
+    questionGroup(id: $id) {
+      ...QuestionGroupFields
+      questions {
+        ...QuestionFields
+        answers(where: {answerer: $address})
       }
     }
 }
@@ -93,6 +113,22 @@ export const useGetQuestionGroup = (client: any, id: string): GetQuestionGroupRe
     {
       client,
       variables: { id },
+      fetchPolicy: 'no-cache'
+    });
+  return {
+    loading,
+    error,
+    questionGroup: data != null ? selectQuestionGroup(data.questionGroup) : null
+  } 
+}
+
+export const useGetQuestionGroupAndUserAnswer = (client: any, id: string, address: string): GetQuestionGroupResponse => {
+  address = toLowerCase(address)
+  const {loading, error, data} = useQuery<GetQuestionGroupData, QuestionGroupAndUserAnswerQueryVars>(
+    GET_QUESTION_GROUP_AND_USER_ANSWER,
+    {
+      client,
+      variables: { id, address },
       fetchPolicy: 'no-cache'
     });
   return {

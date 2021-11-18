@@ -108,6 +108,8 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
   const notStarted = <div>Question Group Not Yet AVailable for Answering</div>
   const finished = <div>Question Group Answering Period Completed</div>
   const content = !questionGroup.isStarted ? notStarted : questionGroup.isFinished ? finished : form
+  const isAnsweredContent = <Typography variant="h3">Question Set Already Answered</Typography>
+  const isAnswered = !!(questionGroup.questions[0].answers && questionGroup.questions[0].answers.length)
   return (
     <>
         <div className={classes.titleRow}>
@@ -127,7 +129,7 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
             <TimeLeft label='Time Left' targetTime={secToMs(parseInt(questionGroup.endTime, 10))} />
         </div>
 
-        {content}
+        {isAnswered ? isAnsweredContent : content}
     </>
   )
 }
