@@ -32,7 +32,7 @@ interface ILithiumPricing {
 
   event QuestionAnswered (
     uint256 questionId,
-    address answerer,
+    address indexed answerer,
     uint256 stakeAmount,
     uint16 answerIndex
   );
