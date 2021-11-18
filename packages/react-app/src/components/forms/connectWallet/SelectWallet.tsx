@@ -10,6 +10,7 @@ import CardSelect from '../../atoms/inputs/CardSelect'
 import Flex from '../../atoms/Flex'
 import { SUPPORTED_WALLETS } from '../../../types/user'
 import { connectWallet } from '../../../helpers/connectWallet'
+import config, { CHAIN_IDS } from '../../../config'
 
 const useStyles = makeStyles(theme => ({
   selectWalletError: {
@@ -43,8 +44,10 @@ const walletOptions = [
 
 export const SelectWalletError = ({errors}: any) => {
   const classes = useStyles();
+  // @ts-ignore
+  const chainName = CHAIN_IDS[config.CHAIN_ID]
   let displayErrors = errors && errors.wallet ? errors.wallet : '';
-  displayErrors = errors && errors.providerNetwork ? `${errors.providerNetwork} Please connect your wallet to ${errors.networkName} network and Reload.` : displayErrors;
+  displayErrors = errors && errors.providerNetwork ? `${errors.providerNetwork} Please connect your wallet to ${chainName} network` : displayErrors;
 
   return (
     <p className={classes.selectWalletError}>{displayErrors}</p>
