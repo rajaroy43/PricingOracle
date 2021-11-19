@@ -4,13 +4,13 @@ import { Question } from 'lithium-subgraph'
 import { QueryResponse, QUESTION_FIELDS, QUESTION_BID_FIELDS } from './common'
 import { QuestionView } from '../types/question';
 import { selectQuestion } from '../selectors/question';
-import { toLowerCase } from '../helpers/formatters';
+import { msToSec, toLowerCase } from '../helpers/formatters';
 
 interface QuestionQueryVars {
   id: string
 }
 
-interface ActiveQuestionsAndUserBidQueryVars {
+interface BiddableQuestionsAndUserBidQueryVars {
   now: string,
   address: string
 }
@@ -19,7 +19,7 @@ interface GetQuestionData {
   question: Question
 }
 
-interface GetUsersData {
+interface GetQuestionsData {
   questions: Question[] 
 }
 
@@ -41,11 +41,11 @@ export const GET_ACTIVE_QUESTIONS  = gql`
 }
 `;
 
-export const GET_ACTIVE_QUESTIONS_AND_USER_BID  = gql`
+export const GET_BIDDABLE_QUESTIONS_AND_USER_BID  = gql`
   ${QUESTION_FIELDS}
   ${QUESTION_BID_FIELDS}
   query questions($now: String!, $address: String!) {
-    questions(where: {startTime_gt: $now}) {
+    questions(where: {startTime_gt: $now, questionType: "Pricing" }) {
       ...QuestionFields
       bids(where: {user: $address}) {
         ...QuestionBidFields
@@ -68,7 +68,7 @@ interface GetQuestionsResponse extends QueryResponse {
 }
 
 export const useGetQuestions = (client: any): GetQuestionsResponse => {
-  const {loading, error, data} = useQuery<GetUsersData, {}>(
+  const {loading, error, data} = useQuery<GetQuestionsData, {}>(
     GET_QUESTIONS,
     {
       client,
@@ -82,11 +82,11 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
   } 
 }
 
-export const useGetActiveQuestionsAndUserBid = (client: any, address: string): GetQuestionsResponse => {
-  const now = (new Date().getTime() / 1000).toString()
+export const useGetBiddableQuestionsAndUserBid = (client: any, address: string): GetQuestionsResponse => {
+  const now = msToSec(new Date().getTime()).toString()
   address = toLowerCase(address)
-  const {loading, error, data} = useQuery<GetUsersData, ActiveQuestionsAndUserBidQueryVars>(
-    GET_ACTIVE_QUESTIONS_AND_USER_BID,
+  const {loading, error, data} = useQuery<GetQuestionsData, BiddableQuestionsAndUserBidQueryVars>(
+    GET_BIDDABLE_QUESTIONS_AND_USER_BID,
     {
       client,
       variables: {now, address},

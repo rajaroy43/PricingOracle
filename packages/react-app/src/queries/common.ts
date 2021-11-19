@@ -25,6 +25,7 @@ export const QUESTION_FIELDS = gql`
     startTime
     pricingTime
     answerCount
+    bidCount
     created
   }
 `
