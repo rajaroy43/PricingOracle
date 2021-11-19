@@ -10,6 +10,11 @@ interface QuestionGroupQueryVars {
   id: string
 }
 
+interface QuestionGroupAndUserBidQueryVars {
+  id: string,
+  address: string
+}
+
 interface QuestionGroupAndUserAnswerQueryVars {
   id: string;
   address: string;
@@ -32,7 +37,7 @@ interface GetQuestionGroupsData {
 }
 
 
-export const GET_QUESTION  = gql`
+export const GET_QUESTION_GROUP  = gql`
   ${QUESTION_GROUP_FIELDS}
   ${QUESTION_FIELDS}
   query questionGroup($id: ID!) {
@@ -45,6 +50,7 @@ export const GET_QUESTION  = gql`
 }
 `;
 
+
 export const GET_QUESTION_GROUP_AND_USER_ANSWER  = gql`
   ${QUESTION_GROUP_FIELDS}
   ${QUESTION_FIELDS}
@@ -53,7 +59,9 @@ export const GET_QUESTION_GROUP_AND_USER_ANSWER  = gql`
       ...QuestionGroupFields
       questions {
         ...QuestionFields
-        answers(where: {answerer: $address})
+        answers(where: {answerer: $address}) {
+          id
+        }
       }
     }
 }
@@ -103,16 +111,34 @@ export const GET_UPCOMING_QUESTION_GROUPS  = gql`
 }
 `;
 
+
+
 interface GetQuestionGroupsResponse extends QueryResponse {
   questionGroups: QuestionGroupView [] | null
 }
 
 export const useGetQuestionGroup = (client: any, id: string): GetQuestionGroupResponse => {
   const {loading, error, data} = useQuery<GetQuestionGroupData, QuestionGroupQueryVars>(
-    GET_QUESTION,
+    GET_QUESTION_GROUP,
     {
       client,
       variables: { id },
+      fetchPolicy: 'no-cache'
+    });
+  return {
+    loading,
+    error,
+    questionGroup: data != null ? selectQuestionGroup(data.questionGroup) : null
+  } 
+}
+
+export const useGetQuestionGroupAndUserBid = (client: any, id: string, address: string): GetQuestionGroupResponse => {
+  address = toLowerCase(address)
+  const {loading, error, data} = useQuery<GetQuestionGroupData, QuestionGroupAndUserBidQueryVars>(
+    GET_QUESTION_GROUP,
+    {
+      client,
+      variables: { id, address },
       fetchPolicy: 'no-cache'
     });
   return {

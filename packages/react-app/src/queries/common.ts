@@ -97,12 +97,21 @@ export const USER_FIELDS = gql`
     }
   `
 
-  export const REPUTATION_FIELDS = gql`
-    fragment CategoryReputationFields on UserCategoryReputation {
-      category {
-        id
-        label
-      }
-      score
+export const REPUTATION_FIELDS = gql`
+  fragment CategoryReputationFields on UserCategoryReputation {
+    category {
+      id
+      label
     }
-  `
+    score
+  }
+`
+
+ export const QUESTION_BID_FIELDS = gql`
+  fragment QuestionBidFields on QuestionBid {
+    id
+    amount
+    isRefunded
+  }
+`
+
