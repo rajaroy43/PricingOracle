@@ -154,7 +154,12 @@ def calculate_rewards(data):
     # print('DMI DATA')
     # print(dmi_data)
     # dmi_data format is now an np array with np array elements.
-    rewards = do_calc_dmi(dmi_data, metadata.numberQuestionChoices , metadata.numberQuestions)
+
+    try:
+        rewards = do_calc_dmi(dmi_data, metadata.numberQuestionChoices , metadata.numberQuestions)
+    except ValueError as e:
+        if str(e) == 'Insufficient number of tasks.' or str(e) == 'Too few agents.':
+            return returnFormattedData(metadata, [], [])
 
     # print("\nrewards: ", rewards)
 
@@ -162,19 +167,15 @@ def calculate_rewards(data):
     # Function accepts the raw array (no wisdomNodeAddress or question id)
     # and calculates one number per question (column), which returns a vector of length (num_answers)
 
-    # answers = calc_numerical_answers(dmi_data, all_question_ids, metadata.numberQuestionChoices, metadata.numberQuestions)
     answers = calc_numerical_answers(num_answers, all_question_ids, metadata.numberQuestionChoices, metadata.numberQuestions)
-    # print('answers shape: ', answers.shape)
-    # print(answers)
     # answers=answers[:,np.newaxis]
 
     # print("\nanswers: ", answers)
     # add in reputation and staking calculation here
-
     reputation, rewards = update_reputation(rewards, reputation_staking, metadata.totalBounty, metadata.totalStaked)
     # print("\nreputation: ", reputation)
 
-    return returnFormattedData(metadata, rewards, answers, reputation)
+    return returnFormattedData(metadata, rewards, answers, reputation=reputation)
 
 
 if __name__ == "__main__":
@@ -249,8 +250,40 @@ if __name__ == "__main__":
     # return_data = calculate_rewards(np.array(all_entries))
 
     # metadata_return, rewards, answers, reputation = calculate_rewards(metadata, dmi_data, num_answers, reputation_staking)
-    return_data = calculate_rewards(np.array(test2))
-    print(return_data)
+    # return_data = calculate_rewards(np.array(test2))
+    # print(return_data)
+
+    test3 = [
+                ["0", 2, 4, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "0", ["0", "50"], "50", 1, "20", "0", "10", "300"],
+                ["0", 2, 4, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "1", ["0", "1320"], "0",0, "50", "0", "20", "395"],
+                ["0", 2, 4, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "2", ["0", "9870"], "0",0, "55", "0", "10", "290"],
+                ["0", 2, 4, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "3", ["0", "9870"], "0",0, "25", "0","50", "280"]
+                ]
+    # test_exception = calculate_rewards(np.array(test3))
+    # print(test_exception)
+
+    test4 = [
+              ["0", 2, 3, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "0", ["0", "50"], "50",1, "20", "0", "10", "300"],
+              ["0", 2, 3, 3, "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc", "0", ["0", "50"], "50",1, "50", "0", "10", "300"],
+              ["0", 2, 3, 3, "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", "0", ["0", "50"], "0", 0,"80", "0", "10", "300"],
+              ["0", 2, 3, 3, "0x90f79bf6eb2c4f870365e785982e1f101e93b906", "0", ["0", "50"], "50",1, "10", "0", "10", "300"],
+              ["0", 2, 3, 3, "0x976ea74026e726554db657fa54763abd0c3a0aa9", "0", ["0", "50"], "0", 0,"50", "0", "10", "300"],
+              ["0", 2, 3, 3, "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc", "0", ["0", "50"], "0",0, "90", "0", "10", "300"],
+              ["0", 2, 3, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "1", ["0", "1320"], "0",0, "50", "0", "20", "395"],
+              ["0", 2, 3, 3, "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc", "1", ["0", "1320"], "0", 0,"90", "0", "20", "395"],
+              ["0", 2, 3, 3, "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", "1", ["0", "1320"], "1320",1, "70", "0","20", "395"],
+              ["0", 2, 3, 3, "0x90f79bf6eb2c4f870365e785982e1f101e93b906", "1", ["0", "1320"], "0", 0,"20", "0", "20", "395"],
+              ["0", 2, 3, 3, "0x976ea74026e726554db657fa54763abd0c3a0aa9", "1", ["0", "1320"], "0",0, "85", "0","20", "395"],
+              ["0", 2, 3, 3, "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc", "1", ["0", "1320"], "1320",1, "80", "0","20", "395"],
+              ["0", 2, 3, 3, "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65", "2", ["0", "9870"], "0",0, "55", "0", "10", "290"],
+              ["0", 2, 3, 3, "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc", "2", ["0", "9870"], "9870",1, "85", "0","10", "290"],
+              ["0", 2, 3, 3, "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", "2", ["0", "9870"], "0", 0,"25", "0", "10", "290"],
+              ["0", 2, 3, 3, "0x90f79bf6eb2c4f870365e785982e1f101e93b906", "2", ["0", "9870"], "9870",1, "65", "0", "10", "290"],
+              ["0", 2, 3, 3, "0x976ea74026e726554db657fa54763abd0c3a0aa9", "2", ["0", "9870"], "0",0, "15", "0","10", "290"],
+              ["0", 2, 3, 3, "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc", "2", ["0", "9870"], "0",0, "55", "0", "10", "290"]]
+
+    test_exception2 = calculate_rewards(np.array(test4))
+    print(test_exception2)
     # metadata_return, rewards, answers, reputation = calculate_rewards(test)
     #
     # print("calculate_rewards for : ", metadata_return.questionGroupId)

@@ -23,24 +23,39 @@ def prepareValidationData(answer):
   return validationData
 
 
-def prepareOutgoingValidationData(metadata, rewards, answers, reputation):
-  validationData={}
-  validationData['questionGroupId']=metadata.questionGroupId
-  validationData['questionGroupCategory']=str(metadata.questionGroupCategory)
-  validationData['questionIds']= answers[:,0].tolist() #the first column of answers
-  validationData['answerStatus']=0
-  finalAnswerValues=[]
-  finalAnswerIndexes=[]
-  for answer in answers:
-    finalAnswerValues.append(str(answer[0]))
-    finalAnswerIndexes.append(int(float(answer[1]))) 
-  validationData["finalAnswerIndex"]=finalAnswerIndexes
-  validationData["finalAnswerValue"]=finalAnswerValues
-  wisdomNodeUpdates= []
-  for reward in rewards:
-    wisdomNodeUpdates.append([str(reward[0]),str(reward[1]),'0.0'])
-  validationData["wisdomNodeUpdates"]=wisdomNodeUpdates
-  return validationData
+def prepareOutgoingValidationData(metadata, rewards, answers, reputation=None):
+    validationData = {}
+    validationData['questionGroupId'] = metadata.questionGroupId
+    validationData['questionGroupCategory'] = str(metadata.questionGroupCategory)
+
+    finalAnswerValues = []
+    finalAnswerIndexes = []
+
+    if list(rewards) == []:
+        validationData['questionIds'] = ['None']
+        validationData['answerStatus'] = 1 # AnswerStatus.Failure
+    else:
+        validationData['questionIds'] = answers[:,0].tolist() # the first column of answers
+        validationData['answerStatus'] = 0 # AnswerStatus.Success
+
+        for answer in answers:
+            finalAnswerValues.append(str(answer[0]))
+            finalAnswerIndexes.append(int(float(answer[1])))
+
+    validationData["finalAnswerIndex"] = finalAnswerIndexes
+    validationData["finalAnswerValue"] = finalAnswerValues
+
+    if list(rewards) == []:
+        wisdomNodeUpdates = [['None', 'None', '0.0']]
+    else:
+        wisdomNodeUpdates = []
+
+        for reward in rewards:
+            wisdomNodeUpdates.append([str(reward[0]), str(reward[1]), '0.0'])
+
+    validationData["wisdomNodeUpdates"] = wisdomNodeUpdates
+
+    return validationData
 
 # [questionGroupId, numberQuestionChoices, numberQuestions, questionGroupCategory, wisdomNodeAddess, questionId, answerSet, answerValue, answerIndex, stakeAmount, wisdomNodeReputation, totalBounty, totalStaked]
 def prepareDataPayload(data):
@@ -69,7 +84,7 @@ def prepareDataPayload(data):
       wisdom_node_answers[node_address][0].append(answer['answerIndex'])
       wisdom_node_answers[node_address][1].append(answer['answerValue'])
       wisdom_node_answers[node_address][2].append(answer['questionId'])
-      user_total_stake[node_address] = user_total_stake[node_address] + answer['stakeAmount'] 
+      user_total_stake[node_address] = user_total_stake[node_address] + answer['stakeAmount']
 
     if answer['questionId'] not in question_totals:
       question_totals[answer['questionId']] = [answer['totalBounty'], answer['totalStake']]
@@ -95,10 +110,10 @@ def prepareDataPayload(data):
   return group_meta_data, dmi_data, num_answers, reputation_staking, ordered_question_ids
 
 
-def returnFormattedData(metadata,rewards, answers, reputation):
+def returnFormattedData(metadata, rewards, answers, reputation=None):
   #  Need to add schema validate here on the returned data
 
-  returnData=prepareOutgoingValidationData(metadata,rewards, answers, reputation)
+  returnData=prepareOutgoingValidationData(metadata, rewards, answers, reputation)
   #print("returnFormattedData",returnData)
   returnDataSchema.validate(returnData)
   return returnData
