@@ -15,6 +15,8 @@ import WalletProvider from "./components/providers/WalletProvider"
 import "./index.css"
 import History from "./components/pages/History"
 import SuggestAsset from "./components/pages/SuggestAsset"
+import BiddableQuestions from "./components/pages/wisdomSeeker/BiddableQuestions"
+
 
 class App extends Component {
   render() {
@@ -33,6 +35,7 @@ class App extends Component {
             <Route exact path="/wisdom-node/history" component={History} />
             <Route exact path="/admin" component={Admin} />
             <Route exact path="/wisdom-seeker/suggestasset" component={SuggestAsset} />
+            <Route exact path="/wisdom-seeker/biddable-questions" component={BiddableQuestions} />
           </Switch>
           </HashRouter>
         </WalletProvider>
