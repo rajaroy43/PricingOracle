@@ -11,7 +11,7 @@ const BiddableQuestions = () => {
   const {wallet} = useContext(WalletContext)
   const {loading, questions} = useGetBiddableQuestionsAndUserBid(subgraphClient, wallet.address || "0x0")
   const sideBarProps = {
-    activePage: 'availableQuestions',
+    activePage: 'biddableQuestions',
     isWalletConnected: !!wallet.wallet,
     walletAddress: wallet.address
   }
