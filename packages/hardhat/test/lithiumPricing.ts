@@ -2257,10 +2257,39 @@ describe("Lithium Pricing", async function () {
       expect(getMinimumStake).equal(minimumStake);
     });
 
-    it("Should not allow admins to set minimum stake ", async () => {
+    it("Should not allow non admins to set minimum stake ", async () => {
       const minimumStake = ethers.utils.parseUnits("10.0", 18);
       await expect(
         lithiumPricing.connect(account1).updateMinimumStake(minimumStake)
+      ).to.be.revertedWith("Must be admin");
+    });
+  });
+
+  describe("Tier Thresholds", () => {
+    it("Should be set after deploy ", async () => {
+      //minimum stake=10LITH tokens
+      const thresholds = await lithiumPricing.getRevealTiers();
+      const initialTierCount = 2;
+
+      expect(thresholds.length).equal(initialTierCount);
+    });
+
+    it("Should allow admins to update tierThresholds", async () => {
+      const newThresholds = [20, 100, 300];
+      await expect(lithiumPricing.updateRevealTiers(newThresholds))
+      .emit(lithiumPricing, "RevealTiersUpdated")
+      .withArgs(newThresholds);
+
+      const thresholds = await lithiumPricing["getRevealTiers()"]();
+      expect(thresholds.length).equal(newThresholds.length);
+      expect(thresholds[0]).equal(newThresholds[0])
+      expect(thresholds[1]).equal(newThresholds[1])
+    });
+
+    it("Should not allow non admins update tierThresholds", async () => {
+      const newThresholds = [20, 100, 300];    
+      await expect(
+        lithiumPricing.connect(account1).updateRevealTiers(newThresholds)
       ).to.be.revertedWith("Must be admin");
     });
   });

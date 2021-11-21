@@ -1,0 +1,1360 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "txHash": "0x2bb1bbc732cad97a64681269fac10aee43903464ba47f69e52741a98b45d2c60",
+    "deployTransaction": {
+      "hash": "0x2bb1bbc732cad97a64681269fac10aee43903464ba47f69e52741a98b45d2c60",
+      "blockHash": "0x2b6f24fd59078e24a946eeb268adf88e6e06088cdb0be509fd8f59e332891bc9",
+      "blockNumber": 2,
+      "transactionIndex": 0,
+      "confirmations": 1,
+      "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "gasPrice": {
+        "type": "BigNumber",
+        "hex": "0x6b6d2f20"
+      },
+      "gasLimit": {
+        "type": "BigNumber",
+        "hex": "0x0762b4"
+      },
+      "to": null,
+      "value": {
+        "type": "BigNumber",
+        "hex": "0x00"
+      },
+      "nonce": 1,
+      "data": "0x608060405234801561001057600080fd5b50600080546001600160a01b031916339081178255604051909182917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a350610759806100616000396000f3fe60806040526004361061007b5760003560e01c80639623609d1161004e5780639623609d1461011157806399a88ec414610124578063f2fde38b14610144578063f3b7dead146101645761007b565b8063204e1c7a14610080578063715018a6146100bc5780637eff275e146100d35780638da5cb5b146100f3575b600080fd5b34801561008c57600080fd5b506100a061009b366004610515565b610184565b6040516001600160a01b03909116815260200160405180910390f35b3480156100c857600080fd5b506100d1610215565b005b3480156100df57600080fd5b506100d16100ee366004610554565b610292565b3480156100ff57600080fd5b506000546001600160a01b03166100a0565b6100d161011f36600461058c565b61031c565b34801561013057600080fd5b506100d161013f366004610554565b6103ad565b34801561015057600080fd5b506100d161015f366004610515565b610405565b34801561017057600080fd5b506100a061017f366004610515565b6104ef565b6000806000836001600160a01b03166040516101aa90635c60da1b60e01b815260040190565b600060405180830381855afa9150503d80600081146101e5576040519150601f19603f3d011682016040523d82523d6000602084013e6101ea565b606091505b5091509150816101f957600080fd5b8080602001905181019061020d9190610538565b949350505050565b6000546001600160a01b031633146102485760405162461bcd60e51b815260040161023f906106c0565b60405180910390fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b6000546001600160a01b031633146102bc5760405162461bcd60e51b815260040161023f906106c0565b6040516308f2839760e41b81526001600160a01b038281166004830152831690638f283970906024015b600060405180830381600087803b15801561030057600080fd5b505af1158015610314573d6000803e3d6000fd5b505050505050565b6000546001600160a01b031633146103465760405162461bcd60e51b815260040161023f906106c0565b60405163278f794360e11b81526001600160a01b03841690634f1ef286903490610376908690869060040161065d565b6000604051808303818588803b15801561038f57600080fd5b505af11580156103a3573d6000803e3d6000fd5b5050505050505050565b6000546001600160a01b031633146103d75760405162461bcd60e51b815260040161023f906106c0565b604051631b2ce7f360e11b81526001600160a01b038281166004830152831690633659cfe6906024016102e6565b6000546001600160a01b0316331461042f5760405162461bcd60e51b815260040161023f906106c0565b6001600160a01b0381166104945760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161023f565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b0392909216919091179055565b6000806000836001600160a01b03166040516101aa906303e1469160e61b815260040190565b600060208284031215610526578081fd5b81356105318161070b565b9392505050565b600060208284031215610549578081fd5b81516105318161070b565b60008060408385031215610566578081fd5b82356105718161070b565b915060208301356105818161070b565b809150509250929050565b6000806000606084860312156105a0578081fd5b83356105ab8161070b565b925060208401356105bb8161070b565b9150604084013567ffffffffffffffff808211156105d7578283fd5b818601915086601f8301126105ea578283fd5b8135818111156105fc576105fc6106f5565b604051601f8201601f19908116603f01168101908382118183101715610624576106246106f5565b8160405282815289602084870101111561063c578586fd5b82602086016020830137856020848301015280955050505050509250925092565b600060018060a01b038416825260206040818401528351806040850152825b818110156106985785810183015185820160600152820161067c565b818111156106a95783606083870101525b50601f01601f191692909201606001949350505050565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b634e487b7160e01b600052604160045260246000fd5b6001600160a01b038116811461072057600080fd5b5056fea2646970667358221220d849f96f3086b9f82cdcf665adb8c697ace05638da1c7c16ab2d26293717af6764736f6c63430008020033",
+      "r": "0xaff6b66193246a849b26ac6031af6c76f8258ad9abef1bb4f7a95d85c21047f3",
+      "s": "0x334cf55a71ccdcfd0f53c716455fae24f86ae3d10327b58d919679a3a3e77281",
+      "v": 1,
+      "creates": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "chainId": 1337
+    }
+  },
+  "proxies": [
+    {
+      "address": "0xC3549920b94a795D75E6C003944943D552C46F97",
+      "txHash": "0x733a7b2a1c9a22512b24347f03c5cfaf34abb0cceed48f116e1abbf41371ef76",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8659DF1C638CDA8E475CD3C6481730C2b4f85873",
+      "txHash": "0x6ea2cb44905607ff9b302dc9cf05cc7076e7064a02691b0b9c632f302e3b4d6a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1E2e9190Cea3A97b5Aa85d9757117F499D31C47d",
+      "txHash": "0x4f99742ca715cd70ce6798cbce26ce40c933d1fa293f7741492f9f8e11a2ad18",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x53DaB165b879542E9aDFC41c6474A9d797B9b042",
+      "txHash": "0xb6159f740c6288a242d1ec939bc4cde976fefe5f020ca44bbe242b5a99723882",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6cD036fDBD89BaA51c8722Eec0B56CeEd301cC68",
+      "txHash": "0x91a01276aa02177b6a2a5156c3ac783af618313e725a19ba10620261e913c91f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0x32c8000dc6dbcd605b7dd45e96eaec436fbd3f0b71e0b8810f51a087ffcddc0c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "txHash": "0x245c22907fc9a46f718291d9cd533a90ab6851ca00321f5a3e01e1279916187a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
+      "txHash": "0xfb1212567994518774f6e00225e50be8488a20ffe70ede4099bf9aa1fbf25a78",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+      "txHash": "0x0f22b911c2fdc0b7c4fd235f134ee1ac8f1add702e98d356555592ffe4074d1b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
+      "txHash": "0x37a82e88a6ca632d06049b17f41c22f853cb3b728402554b9dcbc4293300d5e2",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
+      "txHash": "0xe85bef77744dd0204a8fe9c887a396756c7616a4b9a00fa80f36ff5d4812f0d9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
+      "txHash": "0x3809b10b3c0613f30f1154daf61593067b710f6aa9872981dfe2c8768109e320",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
+      "txHash": "0x6e4bab353202fbecbb4570411ca9da16f6045364085ca4516baa473cd3a939b6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+      "txHash": "0x4353f67178959913910da775c23c931c85b0bbfdb99dc16758989eee3399dec8",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
+      "txHash": "0x8564bb86702f5fb6afd0905dd9257198a5cc8a61ee206e1d3cd92efdc72b62ab",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f",
+      "txHash": "0x333f7b70b4e09025f68b3f80f773d51bd95411bd316bbad6f9d42458d7380a60",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x21dF544947ba3E8b3c32561399E88B52Dc8b2823",
+      "txHash": "0x66ee0f588bb8baa9bea4c557621f379e8826d5d41d2d5a14380ed55700064d43",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8",
+      "txHash": "0x1bb40426f7a9109212a6f41c80664328b48fb0a908bd55971001eaf0bb01525e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1c85638e118b37167e9298c2268758e058DdfDA0",
+      "txHash": "0x14dce096e60451222e94dd2dd6b17827798e625ac125eda86d873918adbf799d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf953b3A269d80e3eB0F2947630Da976B896A8C5b",
+      "txHash": "0xcdd8471b6530a0d4fbfcb254c6090fc6cf747dd3e567163e648aa9f15eb425d7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCace1b78160AE76398F486c8a18044da0d66d86D",
+      "txHash": "0xbd92106eb865b3cd273e8200883dd18dd094ebfa92df636a5eea3af7b31bde3b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA7c59f010700930003b33aB25a7a0679C860f29c",
+      "txHash": "0x8ff96d5ce8f9afee50952231db4eb80dfd8b8e699196fb7f09d26d131a9c0db1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xE3011A37A904aB90C8881a99BD1F6E21401f1522",
+      "txHash": "0x5b07bc1561b3107bbe621da8d72d9e05b16fb627e826068627618b252a9dd41a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8",
+      "txHash": "0x741b5c318da2ab21fad3f3024e1bb54c0b483166686f6c3fefbdf8770e8bcdd4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x976fcd02f7C4773dd89C309fBF55D5923B4c98a1",
+      "txHash": "0x59427ab07b550d2d82c9991873afeab7732b42b21c01fbe6a59c0bdfba4a2e21",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6C2d83262fF84cBaDb3e416D527403135D757892",
+      "txHash": "0xfeb74ae474f7aef55d712d93db49662d27415807503a541ef7c74278b56d3a4b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xde2Bd2ffEA002b8E84ADeA96e5976aF664115E2c",
+      "txHash": "0xafba55d2c422c99f3ff6b2d5122f9ae61b4ea445759cae14a81c52550b74250d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8bCe54ff8aB45CB075b044AE117b8fD91F9351aB",
+      "txHash": "0x2be124bf2ba7978b135a523a05f5d4365ed7f380403b5474ebc18def456ba831",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB06c856C8eaBd1d8321b687E188204C1018BC4E5",
+      "txHash": "0x1b8f55449b78ceecfb643d95eb7fbfccc542384178442ed7b0a3cbc04eecab09",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5133BBdfCCa3Eb4F739D599ee4eC45cBCD0E16c5",
+      "txHash": "0x042082bfe6e4f5a2057e38b81e7fc62365a48405e7ac6afbffc355257969ebdd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xdFdE6B33f13de2CA1A75A6F7169f50541B14f75b",
+      "txHash": "0x1cbb0a869c0ab03f100691643784818ea581a1c9951c1a16c75a6a6e6bac68fd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x071586BA1b380B00B793Cc336fe01106B0BFbE6D",
+      "txHash": "0xfea1d7e490524e72c28407ff583b818b04f0f360d25fbc0c1c8bbbe9e24314ba",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD6b040736e948621c5b6E0a494473c47a6113eA8",
+      "txHash": "0x61407b9ad9c918ddf4206a133574d981258c4153a64ab7d3e0e877fca47d03a4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC7143d5bA86553C06f5730c8dC9f8187a621A8D4",
+      "txHash": "0x8e9a485f6c8cfc3c7ab80d40e7bf5fa11227b00b2b376ee2d581f7bb495bf54b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x67aD6EA566BA6B0fC52e97Bc25CE46120fdAc04c",
+      "txHash": "0xeb9a97d783a28fce03f6a2b8656c9f1f065ce120e5fa6f4cf0ffac1e711e1b4b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc7cDb7A2E5dDa1B7A0E792Fe1ef08ED20A6F56D4",
+      "txHash": "0x6001eb265db0f5f3a5f9d589ea6aa3a6a176bf7338b0d2497077e2477b6d3738",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1c9fD50dF7a4f066884b58A05D91e4b55005876A",
+      "txHash": "0x5aabe6eef720b015671a85e431b90fda8aa34df695513417130b0e504d462f3e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1343248Cbd4e291C6979e70a138f4c774e902561",
+      "txHash": "0x1d202bcc257983462ffd526f1c5678e35c3f087ffd512f8a0a98c60414b8bff6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd9fEc8238711935D6c8d79Bef2B9546ef23FC046",
+      "txHash": "0x3a62c92ba8e4d10db9799d2865dc7918ef02564bf94a6427b9ecfcbdb9cd6625",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2c8ED11fd7A058096F2e5828799c68BE88744E2F",
+      "txHash": "0x85c3fce09958c3e9f537e2442d7d8dcbd1732a321a275685b69ebf01dac6131a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xdF46e54aAadC1d55198A4a8b4674D7a4c927097A",
+      "txHash": "0xa88e7c84fca933f8dd5f236344b5262ede9af4e3d98c5d4b72d21545f671ab1d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x286B8DecD5ED79c962b2d8F4346CD97FF0E2C352",
+      "txHash": "0x84f1b73103c77a9510277a23f66a4b740a6f81fda81e4904ca559e61acc822a4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2F54D1563963fC04770E85AF819c89Dc807f6a06",
+      "txHash": "0xa7323cb31ad442fb94198e2b9f079d855f741618e7223fdaade55f0f61cedb15",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa62835D1A6bf5f521C4e2746E1F51c923b8f3483",
+      "txHash": "0x1c98b07f969871467d677ec6e7ed392ad7721be87715380959d6993717a1f770",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x06b3244b086cecC40F1e5A826f736Ded68068a0F",
+      "txHash": "0xbd95309eded66faac4018fa9ff415270e9a3845d138e926382b1b6b4f5fb8211",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3f9A1B67F3a3548e0ea5c9eaf43A402d12b6a273",
+      "txHash": "0x6b2f97b749433fe6b7452bfc8e33bcb0917e9b6932eea65fad03a4eefc6d7192",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA3307BF348ACC4bEDdd67CCA2f7F0c4349d347Db",
+      "txHash": "0x3383fc0c8989331b58571ed31d638de2df1af7b00a4ec45130550a27542a4caf",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x707531c9999AaeF9232C8FEfBA31FBa4cB78d84a",
+      "txHash": "0x650ee2bfb661716116f3774e723c1edcc8285193aea1ec9871721bc38dc1b3d9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x90b97E83e22AFa2e6A96b3549A0E495D5Bae61aF",
+      "txHash": "0x38c71c54f935689d82b0abe010cbd78dd8a176e7c9e1dc673ea23a5742fb9409",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCa57C1d3c2c35E667745448Fef8407dd25487ff8",
+      "txHash": "0x1249b3efbb04d74be28cac9c92d8fc595dc4f836f19b4a27a32d12bb7d7c09d0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xFCFE742e19790Dd67a627875ef8b45F17DB1DaC6",
+      "txHash": "0x49a7364d6cc36f20fab9c04011c680bd90675ecd72bfad7e71755d7dfef19b0f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x09120eAED8e4cD86D85a616680151DAA653880F2",
+      "txHash": "0xd1321a00d4249b02e1d3be4cb33fc650b88d74c3662023d850eceff64ef8f95e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xDf951d2061b12922BFbF22cb17B17f3b39183570",
+      "txHash": "0xef5d6deb2f95ec1fd9b2ecf62b3b3d41f7a26d97be9186994a4459af4d35173e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD2D5e508C82EFc205cAFA4Ad969a4395Babce026",
+      "txHash": "0x7382cb5ae37668d7b75bf676d4744eb88a67ef0fe4f4cc32f2f6c1b8864cab5c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x52173b6ac069619c206b9A0e75609fC92860AB2A",
+      "txHash": "0x456c4e2639e88a9d60ba5cd1eb2bb0b12db53572a08045e7a05f4d1327b629e1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa31F4c0eF2935Af25370D9AE275169CCd9793DA3",
+      "txHash": "0xe53be6ecb531d3011a6e8126d0f89a152727281e321bf06ae9ae1a3f61870cda",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5A569Ad19272Afa97103fD4DbadF33B2FcbaA175",
+      "txHash": "0xabe9a72b0b3412677a80f43d19adc3bbeb5a9610dae48962660d238dc5fed369",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6D712CB50297b97b79dE784d10F487C00d7f8c2C",
+      "txHash": "0x6d48255492db025f19f4269765b25b7079280f2add7a1c9f318b70f61f9c300f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0c03eCB91Cb50835e560a7D52190EB1a5ffba797",
+      "txHash": "0xc8e7331eef31d7479419b0ec0ebeca5f95351295eefe90ed6e38f9211ad65512",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5E5713a0d915701F464DEbb66015adD62B2e6AE9",
+      "txHash": "0xc48ff0c886c7b801b56fd7150732aa6f8582021b7fbdfa37f9cb01ed624548be",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x30426D33a78afdb8788597D5BFaBdADc3Be95698",
+      "txHash": "0xcfcd9c6d510bef3d06adbc9039dc7f82c5518b4c1e157b1bea263d62dc1d99a0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xC6c5Ab5039373b0CBa7d0116d9ba7fb9831C3f42",
+      "txHash": "0x7ebb2f7401e7be5cd76645bd189e0e2893538cbb624794b529b916190b30b71d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xce830DA8667097BB491A70da268b76a081211814",
+      "txHash": "0x1ae4a6a306311fe8222a4de78f169d5adbc02fa7b991d767e1b8df42442e90f5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf201fFeA8447AB3d43c98Da3349e0749813C9009",
+      "txHash": "0xa0c8016bc458510d26b4da3c70605a7be5af774615e97774a55409c5d46cef87",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x837a41023CF81234f89F956C94D676918b4791c1",
+      "txHash": "0xab999689bec0b4e289131bea667c7da540f1b685945714061890ef82a85d99e1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x96E303b6D807c0824E83f954784e2d6f3614f167",
+      "txHash": "0x472c4362cd11a1fc38771bf2529a4af47158d6b4fd0c8aedfec1264af0bf24b5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa8d297D643a11cE83b432e87eEBce6bee0fd2bAb",
+      "txHash": "0xdf4543f5f5f56e354a58ece0231d26902daa5d045eddcab45825ba1cd3b13483",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x52bad4A8584909895C22bdEcf8DBF33314468Fb0",
+      "txHash": "0x330e656226c24052557d49ee36f74dc5577946a12824ee59a23492028aa61b5a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9eb52339B52e71B1EFD5537947e75D23b3a7719B",
+      "txHash": "0x6f2eb63af7bbcf6790910b5fe196827fc91c297132a9b92afa20621783057e5c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8B64968F69E669faCc86FA3484FD946f1bBE7c91",
+      "txHash": "0xd61d5a2d5eac50c3f886d4ae680a25e668afc00d62c6dd165abfb2a2fc7e32a7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x7c02b58029beeA7c1FcC872803dC9818f57A0E61",
+      "txHash": "0x606182ee1ccd8f14f88f279f989e0933cd33d5fa86fd752643164e74ee042f9f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa95A928eEc085801d981d13FFE749872D8FD5bec",
+      "txHash": "0xe2ead6b6060cc32d00e7a5e7b4bc94e5bd55a9662642d582bd6f8be50161665a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8b9d5A75328b5F3167b04B42AD00092E7d6c485c",
+      "txHash": "0x3ef5acafb3314c72597cd367e044fd736a615369e0db34b7e7fae1884fe05a4a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x02e8910B3B89690d4aeC9fcC0Ae2cD16fB6A4828",
+      "txHash": "0xb2532cf3c7454c3eef40d8fdb89f6c382543ce1775932c667dfa8deec05bac93",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xD28F3246f047Efd4059B24FA1fa587eD9fa3e77F",
+      "txHash": "0x543e21745e28afd9cca0877a58afc90f621eeed3152aa800d798a5c4d78f35cd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x24EcC5E6EaA700368B8FAC259d3fBD045f695A08",
+      "txHash": "0x4c2491afa7a6f25711b91aee7a5114c497376fe374b7b886539bfa08670c3dc1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x54287AaB4D98eA51a3B1FBceE56dAf27E04a56A6",
+      "txHash": "0x751337399851c23f9d2d15e4252007e83cdc3f34ce308157439dc3ceca090f33",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x29023DE63D7075B4cC2CE30B55f050f9c67548d4",
+      "txHash": "0xdb1c06e77a95590d7152da0b77d395ae0e9d1a46e587a7ee011d2ddd885fe629",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x04F75a27cE2FDC591C71a88f1EcaC7e5Ce44f5Fc",
+      "txHash": "0x39df7606efefcd846d4fe5ab7b9a8ec5a03ff48cdbb18b15f07564f03b19630a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf42Ec71A4440F5e9871C643696DD6Dc9a38911F8",
+      "txHash": "0xbb2f4ab488ef4543563704839c762d2fd5610bcc3288c703856046055d43e79c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2f321ed425c82E74925488139e1556f9B76a2551",
+      "txHash": "0x972e89f23acbb84e8d322ebdab494457ed5b222b8b0aa23f700d13c98b93ee9f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0Deeb4b6492C1a55Bb7C0555AaFf65fF6dC424B2",
+      "txHash": "0x0e719dff8a8970f5577eaa513e370a48dcd6f524488b7dde19d15d8e1f9f4333",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x49AeF2C4005Bf572665b09014A563B5b9E46Df21",
+      "txHash": "0xe037c8bb7dc1f343b94247da9ba92a68c64ce14b9a8e06b97c247172d9c57542",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf524930660f75CF602e909C15528d58459AB2A56",
+      "txHash": "0x02cffb01a7b493ba83670de2887839d4ded8fc26c89912c14c823fb269c70acf",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xE57A305f34fD0B6A55A66e8ec9559e6573100cBe",
+      "txHash": "0x5ed19563beedce4cd68f1d04afbcb7241e005660ab77b0b5e6426b5999b3cf84",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x221416CFa5A3CD92035E537ded1dD12d4d587c03",
+      "txHash": "0x7000d68a28a6893c36b6f68d2314e1ed765e970fb0bd99ebe2bff4ec0540d336",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0b5dcAf621a877dAcF3C540c1e5208C8a3eb7B23",
+      "txHash": "0x75e0acf32231fa5d2a6f4a461d6a16a342d08c52f5d375c610e7ee8e9f21ff22",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0462Bc7390a33C8BB748d5c2ad76E93690A365c5",
+      "txHash": "0xa3c2fce88770d24bb09f31d9a939c9fea4990550d6900d67abf51969c20f6299",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd2983525E903Ef198d5dD0777712EB66680463bc",
+      "txHash": "0xb82fcd58d4b4adf05064ccd7731f828deed9a858df4abf78f581873b05dd0023",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xAAd4F7BB5FB661181D500829e60010043833a85B",
+      "txHash": "0xfdc47d7e178f34e47bbd03848bbba83330b58b1c1a88110cc9918165dcf41e27",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xE634d83f8E016B04e51F2516e6086b5f238675C7",
+      "txHash": "0xdd4bbfc80b3a24d31b83b81ee5458a5c39b7b522450c0798b4ea9aec2e53182d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x63ecE4C05B8fB272D16844E96702Ea2f26370982",
+      "txHash": "0x1286d6701eff1e7ffcce361aa84cbe345695b58ddb2e53b248c24c6f23a8455a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x81ED8e0325B17A266B2aF225570679cfd635d0bb",
+      "txHash": "0x607b608ca89239fb1e992929c5a2c8982e861d53cbf19cb129d4081d8111a2a0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9581c795DBcaf408E477F6f1908a41BE43093122",
+      "txHash": "0x9bf067e094db30485958f73721b5f2af98a01e7a154152a023d8eb8ae39edb4f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xf0F5e9b00b92f3999021fD8B88aC75c351D93fc7",
+      "txHash": "0x921f15d1ef76c462e8d082efc8695d75e4a83eefef2f0fb1eeae43199fe31a6a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x810090f35DFA6B18b5EB59d298e2A2443a2811E2",
+      "txHash": "0x2716aa8274ddcd0e9eddadd7de5626be6aeb0627db192e9f8729aa2e1de742ca",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xF94AB55a20B32AC37c3A105f12dB535986697945",
+      "txHash": "0xa3e281c02f8816131fb3da766153934515692fcd34145433dec198e4aed3862b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xAB8Eb9F37bD460dF99b11767aa843a8F27FB7A6e",
+      "txHash": "0x2bc70917975ec436265bfe1af14206903df555b8b833a0fa8cc41590079f8c3f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1f9c84B161b2c7FFB540BC5354543108cCE37df1",
+      "txHash": "0xdb339921867fb76aa3e1adae12fa3acf922b5e5e029738ce1dfac1ee955c3eae",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x52c9dE743a250a4D8E1194E11e447bb45324436f",
+      "txHash": "0x5c9d9cc3a2f128eff5509d519ce276a1020cb33b7f1ca5922acf0c8b2af705f5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x03F7F064E6ceD8e154e3FdAAF92DcCC4e818E97B",
+      "txHash": "0x8df5fad4bec0f08e9f63ccfd8bf0c8032d955e9bae25fdf7556f3442e17203d5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x64386BC53c213F23C6960d3e080139A0f9Ef1733",
+      "txHash": "0x306f3ced5e9a1cfd3a1b3b2e8a64cb19c8dadb917e6f91ef2ce59aefe5ee5d90",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4A65b9d13908487A1654be48e6aa9Bc701735910",
+      "txHash": "0xcee81e17327e28277988227e9c0976dee579110139034cef10d94eaa3c02f160",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x295129609d6876f5ECC62052Ba6bc082139A982c",
+      "txHash": "0xa032d95ded4fd2e754397d07ecbeaac74983ba1bf83dec4e70171e46fd55a01f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB92257D74B8815EC711071889cB506C8d66A6a06",
+      "txHash": "0x396b5fd0f05ecde6bef11e1c761ee9734ecc588f25ff8c4ca383d2628eee7e1f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x737b8F095E3c575a6Ae5FE1711AdB8F271E20269",
+      "txHash": "0xd6d20119b9589ef39ee98586ee2b36522c1f96e2fae31ad067d7f6361707119c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xAd3E631c01798f9aAE4692dabF791a62c226C5D4",
+      "txHash": "0x785477fffc95152077b2a6fcc992dfb7b762bdc7c5a0a5a079dd23f025f77903",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "48bfc1976b5493caeb2599521ba4ad16a707afb3e63e2e6aa96fdd60bf38cb0c": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0xfee9bb742eb578549b3d1b24811c2b951c77c9c44e46e60a4548ba09408dd04f",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:35"
+          },
+          {
+            "contract": "AccessControlUpgradeable",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)43_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:63"
+          },
+          {
+            "contract": "AccessControlUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:219"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "LithiumToken",
+            "type": "t_contract(IERC20)836",
+            "src": "contracts/LithiumPricing.sol:55"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "lithiumReward",
+            "type": "t_contract(ILithiumReward)3549",
+            "src": "contracts/LithiumPricing.sol:56"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "minAnswerSetLength",
+            "type": "t_uint8",
+            "src": "contracts/LithiumPricing.sol:58"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "maxAnswerSetLength",
+            "type": "t_uint8",
+            "src": "contracts/LithiumPricing.sol:59"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "categories",
+            "type": "t_array(t_bytes32)dyn_storage",
+            "src": "contracts/LithiumPricing.sol:61"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "questions",
+            "type": "t_array(t_struct(Question)885_storage)dyn_storage",
+            "src": "contracts/LithiumPricing.sol:63"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "questionGroups",
+            "type": "t_array(t_struct(QuestionGroup)893_storage)dyn_storage",
+            "src": "contracts/LithiumPricing.sol:64"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "revealTiers",
+            "type": "t_array(t_uint16)dyn_storage",
+            "src": "contracts/LithiumPricing.sol:66"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "questionBids",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(QuestionBid)953_storage))",
+            "src": "contracts/LithiumPricing.sol:74"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "answers",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(Answer)905_storage))",
+            "src": "contracts/LithiumPricing.sol:79"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "answerGroups",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(AnswerGroup)924_storage))",
+            "src": "contracts/LithiumPricing.sol:82"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "userReputationScores",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/LithiumPricing.sol:84"
+          },
+          {
+            "contract": "LithiumPricing",
+            "label": "minimumStake",
+            "type": "t_uint256",
+            "src": "contracts/LithiumPricing.sol:87"
+          }
+        ],
+        "types": {
+          "t_contract(IERC20)836": {
+            "label": "contract IERC20"
+          },
+          "t_contract(ILithiumReward)3549": {
+            "label": "contract ILithiumReward"
+          },
+          "t_uint8": {
+            "label": "uint8"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_array(t_struct(Question)885_storage)dyn_storage": {
+            "label": "struct LithiumPricing.Question[]"
+          },
+          "t_struct(Question)885_storage": {
+            "label": "struct LithiumPricing.Question",
+            "members": [
+              {
+                "label": "owner",
+                "type": "t_address"
+              },
+              {
+                "label": "id",
+                "type": "t_uint256"
+              },
+              {
+                "label": "categoryId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "description",
+                "type": "t_string_storage"
+              },
+              {
+                "label": "answerSet",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "answerSetTotalStaked",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "bounty",
+                "type": "t_uint256"
+              },
+              {
+                "label": "totalStaked",
+                "type": "t_uint256"
+              },
+              {
+                "label": "endTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "pricingTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "finalAnswerIndex",
+                "type": "t_uint256"
+              },
+              {
+                "label": "finalAnswerValue",
+                "type": "t_uint256"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "isAnswerCalculated",
+                "type": "t_enum(StatusCalculated)3320"
+              },
+              {
+                "label": "questionType",
+                "type": "t_enum(QuestionType)3323"
+              }
+            ]
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_enum(StatusCalculated)3320": {
+            "label": "enum ILithiumPricing.StatusCalculated",
+            "members": [
+              "NotCalculated",
+              "Calculated",
+              "Invalid"
+            ]
+          },
+          "t_enum(QuestionType)3323": {
+            "label": "enum ILithiumPricing.QuestionType",
+            "members": [
+              "Pricing",
+              "GroundTruth"
+            ]
+          },
+          "t_array(t_struct(QuestionGroup)893_storage)dyn_storage": {
+            "label": "struct LithiumPricing.QuestionGroup[]"
+          },
+          "t_struct(QuestionGroup)893_storage": {
+            "label": "struct LithiumPricing.QuestionGroup",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256"
+              },
+              {
+                "label": "questionIds",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "minimumRequiredAnswer",
+                "type": "t_uint16"
+              }
+            ]
+          },
+          "t_uint16": {
+            "label": "uint16"
+          },
+          "t_array(t_uint16)dyn_storage": {
+            "label": "uint16[]"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(QuestionBid)953_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct LithiumPricing.QuestionBid))"
+          },
+          "t_mapping(t_address,t_struct(QuestionBid)953_storage)": {
+            "label": "mapping(address => struct LithiumPricing.QuestionBid)"
+          },
+          "t_struct(QuestionBid)953_storage": {
+            "label": "struct LithiumPricing.QuestionBid",
+            "members": [
+              {
+                "label": "bidAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "isBidRefunded",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(Answer)905_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct LithiumPricing.Answer))"
+          },
+          "t_mapping(t_address,t_struct(Answer)905_storage)": {
+            "label": "mapping(address => struct LithiumPricing.Answer)"
+          },
+          "t_struct(Answer)905_storage": {
+            "label": "struct LithiumPricing.Answer",
+            "members": [
+              {
+                "label": "answerer",
+                "type": "t_address"
+              },
+              {
+                "label": "questionId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "stakeAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "answerIndex",
+                "type": "t_uint16"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(AnswerStatus)3316"
+              }
+            ]
+          },
+          "t_enum(AnswerStatus)3316": {
+            "label": "enum ILithiumPricing.AnswerStatus",
+            "members": [
+              "Unclaimed",
+              "Claimed"
+            ]
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(AnswerGroup)924_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct LithiumPricing.AnswerGroup))"
+          },
+          "t_mapping(t_address,t_struct(AnswerGroup)924_storage)": {
+            "label": "mapping(address => struct LithiumPricing.AnswerGroup)"
+          },
+          "t_struct(AnswerGroup)924_storage": {
+            "label": "struct LithiumPricing.AnswerGroup",
+            "members": [
+              {
+                "label": "answerer",
+                "type": "t_address"
+              },
+              {
+                "label": "questionGroupId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "stakeAmounts",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "answerIndexes",
+                "type": "t_array(t_uint16)dyn_storage"
+              },
+              {
+                "label": "rewardAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(AnswerStatus)3316"
+              },
+              {
+                "label": "isRewardCalculated",
+                "type": "t_enum(StatusCalculated)3320"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)43_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)"
+          },
+          "t_struct(RoleData)43_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "488468ae4bc1cb52d79f3d456871bae062ed8e3674760ecf58e1881a62245e2a": {
+      "address": "0x4D1338Fa46ca6060F1472b70599cc635Ad275EDa",
+      "txHash": "0xda05b6d287475c5e717949e493a845022738ad7e6d12ad3aa5aaca8eab9d3d06",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:35"
+          },
+          {
+            "contract": "AccessControlUpgradeable",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)43_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:63"
+          },
+          {
+            "contract": "AccessControlUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:219"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "LithiumToken",
+            "type": "t_contract(IERC20)836",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:55"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "lithiumReward",
+            "type": "t_contract(ILithiumReward)3549",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:56"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "minAnswerSetLength",
+            "type": "t_uint8",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:58"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "maxAnswerSetLength",
+            "type": "t_uint8",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:59"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "categories",
+            "type": "t_array(t_bytes32)dyn_storage",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:61"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "questions",
+            "type": "t_array(t_struct(Question)14306_storage)dyn_storage",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:63"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "questionGroups",
+            "type": "t_array(t_struct(QuestionGroup)14314_storage)dyn_storage",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:64"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "revealTiers",
+            "type": "t_array(t_uint16)dyn_storage",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:66"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "questionBids",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(QuestionBid)14374_storage))",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:74"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "answers",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(Answer)14326_storage))",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:80"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "answerGroups",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(AnswerGroup)14345_storage))",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:83"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "userReputationScores",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:85"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "minimumStake",
+            "type": "t_uint256",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:88"
+          },
+          {
+            "contract": "LithiumPricingV2",
+            "label": "isLithiumTokenSet",
+            "type": "t_bool",
+            "src": "contracts/upgradesTest/LithiumPricingV2.sol:90"
+          }
+        ],
+        "types": {
+          "t_contract(IERC20)836": {
+            "label": "contract IERC20"
+          },
+          "t_contract(ILithiumReward)3549": {
+            "label": "contract ILithiumReward"
+          },
+          "t_uint8": {
+            "label": "uint8"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_array(t_struct(Question)14306_storage)dyn_storage": {
+            "label": "struct LithiumPricingV2.Question[]"
+          },
+          "t_struct(Question)14306_storage": {
+            "label": "struct LithiumPricingV2.Question",
+            "members": [
+              {
+                "label": "owner",
+                "type": "t_address"
+              },
+              {
+                "label": "id",
+                "type": "t_uint256"
+              },
+              {
+                "label": "categoryId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "description",
+                "type": "t_string_storage"
+              },
+              {
+                "label": "answerSet",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "answerSetTotalStaked",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "bounty",
+                "type": "t_uint256"
+              },
+              {
+                "label": "totalStaked",
+                "type": "t_uint256"
+              },
+              {
+                "label": "endTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "pricingTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "finalAnswerIndex",
+                "type": "t_uint256"
+              },
+              {
+                "label": "finalAnswerValue",
+                "type": "t_uint256"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "isAnswerCalculated",
+                "type": "t_enum(StatusCalculated)3320"
+              },
+              {
+                "label": "questionType",
+                "type": "t_enum(QuestionType)3323"
+              }
+            ]
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_enum(StatusCalculated)3320": {
+            "label": "enum ILithiumPricing.StatusCalculated",
+            "members": [
+              "NotCalculated",
+              "Calculated",
+              "Invalid"
+            ]
+          },
+          "t_enum(QuestionType)3323": {
+            "label": "enum ILithiumPricing.QuestionType",
+            "members": [
+              "Pricing",
+              "GroundTruth"
+            ]
+          },
+          "t_array(t_struct(QuestionGroup)14314_storage)dyn_storage": {
+            "label": "struct LithiumPricingV2.QuestionGroup[]"
+          },
+          "t_struct(QuestionGroup)14314_storage": {
+            "label": "struct LithiumPricingV2.QuestionGroup",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256"
+              },
+              {
+                "label": "questionIds",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "minimumRequiredAnswer",
+                "type": "t_uint16"
+              }
+            ]
+          },
+          "t_uint16": {
+            "label": "uint16"
+          },
+          "t_array(t_uint16)dyn_storage": {
+            "label": "uint16[]"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(QuestionBid)14374_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct LithiumPricingV2.QuestionBid))"
+          },
+          "t_mapping(t_address,t_struct(QuestionBid)14374_storage)": {
+            "label": "mapping(address => struct LithiumPricingV2.QuestionBid)"
+          },
+          "t_struct(QuestionBid)14374_storage": {
+            "label": "struct LithiumPricingV2.QuestionBid",
+            "members": [
+              {
+                "label": "bidAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "isBidRefunded",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(Answer)14326_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct LithiumPricingV2.Answer))"
+          },
+          "t_mapping(t_address,t_struct(Answer)14326_storage)": {
+            "label": "mapping(address => struct LithiumPricingV2.Answer)"
+          },
+          "t_struct(Answer)14326_storage": {
+            "label": "struct LithiumPricingV2.Answer",
+            "members": [
+              {
+                "label": "answerer",
+                "type": "t_address"
+              },
+              {
+                "label": "questionId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "stakeAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "answerIndex",
+                "type": "t_uint16"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(AnswerStatus)3316"
+              }
+            ]
+          },
+          "t_enum(AnswerStatus)3316": {
+            "label": "enum ILithiumPricing.AnswerStatus",
+            "members": [
+              "Unclaimed",
+              "Claimed"
+            ]
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(AnswerGroup)14345_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct LithiumPricingV2.AnswerGroup))"
+          },
+          "t_mapping(t_address,t_struct(AnswerGroup)14345_storage)": {
+            "label": "mapping(address => struct LithiumPricingV2.AnswerGroup)"
+          },
+          "t_struct(AnswerGroup)14345_storage": {
+            "label": "struct LithiumPricingV2.AnswerGroup",
+            "members": [
+              {
+                "label": "answerer",
+                "type": "t_address"
+              },
+              {
+                "label": "questionGroupId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "stakeAmounts",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "answerIndexes",
+                "type": "t_array(t_uint16)dyn_storage"
+              },
+              {
+                "label": "rewardAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(AnswerStatus)3316"
+              },
+              {
+                "label": "isRewardCalculated",
+                "type": "t_enum(StatusCalculated)3320"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)43_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)"
+          },
+          "t_struct(RoleData)43_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    }
+  }
+}

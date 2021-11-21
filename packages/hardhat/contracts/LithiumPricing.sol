@@ -63,6 +63,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   Question[] questions;
   QuestionGroup[] public questionGroups;
 
+  uint16[] public revealTiers;
+
   struct QuestionBid{
     uint256 bidAmount;
     bool isBidRefunded;
@@ -89,6 +91,10 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     _addCategory("preIPO");
     minAnswerSetLength = 2;
     maxAnswerSetLength = 2;
+    uint16[] memory tiers = new uint16[](2);
+    tiers[0] = 5;
+    tiers[1] = 50;
+    _updateRevealTiers(tiers);
   }
 
 
@@ -221,6 +227,9 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     return userReputationScores[user][categoryId];
   }
 
+  function getRevealTiers()external view override returns (uint16[] memory) {
+    return revealTiers;
+  }
 
     /**
   * @dev Adds new category
@@ -379,6 +388,11 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     QuestionBid storage questionBid = questionBids[questionId][msg.sender];
     questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
+  }
+
+  function _updateRevealTiers(uint16[] memory _revealTiers) internal {
+    revealTiers = _revealTiers;
+    emit RevealTiersUpdated(revealTiers);
   }
 
   /**
@@ -691,5 +705,12 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
       }
       emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
     }
+  }
+
+  function updateRevealTiers(
+    uint16[] memory _revealTiers
+  ) external override {
+    require(isAdmin(msg.sender), "Must be admin");
+    _updateRevealTiers(_revealTiers);
   }
 }
