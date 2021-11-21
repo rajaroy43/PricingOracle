@@ -74,7 +74,7 @@ interface ILithiumPricing {
 
   event BidRefunded(uint256 questionId, address nodeAddress,uint256 refundAmount);
 
-  event RevealTiersUpdated(uint16[] tierThresholds);
+  event RevealTiersUpdated(uint16[] revealTiers);
 
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }

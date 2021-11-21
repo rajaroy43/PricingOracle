@@ -23,6 +23,7 @@ type PricingContractMeta @entity {
   address: Bytes!
   tokenAddress: Bytes
   rewardAddress: Bytes
+  revealTiers: [Int!]!
 }
 
 type User @entity {
