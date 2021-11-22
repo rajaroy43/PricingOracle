@@ -28,12 +28,13 @@ describe("Upgrading  Lithium Pricing", async function () {
     const lithiumTokenAddress = account1.address;
 
     const upgradedProxy = await upgrades.upgradeProxy(lithiumPricingProxy.address , pricingContractV2)
-    
-    await expect(lithiumPricingProxy.setLithiumTokenAddress(lithiumTokenAddress))
+
+    lithiumPricingProxy = await ethers.getContractAt("LithiumPricingV2",previousAddress)
+    await expect(lithiumPricingProxy.setLithiumTokenBool(lithiumTokenAddress))
     .emit(lithiumPricingProxy,"SetLithiumTokenAddress")
     .withArgs(lithiumTokenAddress)
 
-    await expect(lithiumPricingProxy.setLithiumTokenAddress(lithiumTokenAddress))
+    await expect(lithiumPricingProxy.setLithiumTokenBool(lithiumTokenAddress))
     .to.be.revertedWith("Already Lithium Token Set")
 
     expect(upgradedProxy.address).to.equal(previousAddress);
