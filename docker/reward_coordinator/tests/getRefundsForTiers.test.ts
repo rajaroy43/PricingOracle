@@ -1,9 +1,11 @@
+import { BigNumber } from "ethers";
+import getRefundsForTiers from "../utils/getRefundsForTiers";
 
 const testData = [
   {
     id: '0x1234-0',
     isRefunded: false,
-    amount: '123000000000000000000'
+    amount: '123000000000000000'
   },
   {
     id: '0x2234-0',
@@ -41,22 +43,22 @@ const testData = [
     amount: '2623000000000000000000'
   },
   {
-    id: '0x221234-0',
+    id: '0x921234-0',
     isRefunded: false,
     amount: '5123000000000000000000'
   },
   {
-    id: '0x122234-0',
+    id: '0x1022234-0',
     isRefunded: false,
     amount: '3123000000000000000000'
   },
   {
-    id: '0x123422-0',
+    id: '0x1123422-0',
     isRefunded: false,
     amount: '8323000000000000000000'
   },
   {
-    id: '0x22541234-0',
+    id: '0x122541234-0',
     isRefunded: false,
     amount: '59763000000000000000000'
   },
@@ -73,24 +75,25 @@ const testData = [
 ]
 
 describe("Can calculate refund amounts for tiers", () => {
+  const allEqualStakes = (tier: any) => {
+    const tierStakeAmount = BigNumber.from(tier[tier.length - 1].amount).toString()
+    for(var i = 0; i < tier.length; i++) {
+      const effectiveStake = BigNumber.from(tier[i].amount).sub(tier[i].refundAmount).toString()
+      expect(effectiveStake).toBe(tierStakeAmount)
+    }
+  }
   it("Can calculate refunds for 3 tiers ", () => {
     const tierCounts = [2,4]
-    const refundAmo
-      for (let index=0 ; index<mockTransactionData.length ; index++){
-        //@ts-ignore
-        const transactionData= mockTransactionData[index]
-        const customCommon = Common.custom(
-          {
-            chainId: mockTransactionData[index].chainId,
-          },
-          { 
-            hardfork:'london'
-          },
-        );
-      //@ts-ignore
-      const tx = FeeMarketEIP1559Transaction.fromTxData(transactionData, { common: customCommon  })
-      const userAddress = EthUtil.bufferToHex(tx.getSenderAddress())
-      expect(transactionData.from.toLowerCase()).toBe(userAddress.toLowerCase())
-      }
-  });
+    const refundAmounts = getRefundsForTiers(tierCounts, testData)
+    expect(refundAmounts.length).toBe(tierCounts.length + 1)
+    refundAmounts.forEach(allEqualStakes)
+  })
+
+  it("Can calculate refunds for 3 tiers ", () => {
+    const tierCounts = [2,3,5]
+    const refundAmounts = getRefundsForTiers(tierCounts, testData)
+    expect(refundAmounts.length).toBe(tierCounts.length + 1)
+    refundAmounts.forEach(allEqualStakes)
+  })
+
 })
