@@ -4,6 +4,7 @@ const { solidity } = require("ethereum-waffle");
 const { BigNumber } = ethers;
 use(solidity);
 import { Wallet } from "@ethersproject/wallet";
+import { getBytes32FromMultiash ,getMultihashFromBytes32} from "../scripts/utils/multihash"
 import { LithiumPricing, LithiumReward, LithiumToken } from "../typechain";
 describe("Lithium Pricing", async function () {
   let lithiumPricing: LithiumPricing,
@@ -15,6 +16,9 @@ describe("Lithium Pricing", async function () {
     stakeAmount: any,
     transferAmount1: any,
     minimumRequiredAnswer: any;
+
+  const mockIpfsHash:string = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB';
+
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
     account0 = accounts[0];
@@ -1581,16 +1585,11 @@ describe("Lithium Pricing", async function () {
 
       it("Should not  update final answer status if question deadline is not ended yet", async () => {
         const questionIds = [0, 1];
-        const finalAnswerIndexes = [1, 1];
-        const finalAnswerValues = [50, 100];
         const answersStatus = [1, 1];
+        const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+        
         await expect(
-          lithiumPricing.updateFinalAnswerStatus(
-            questionIds,
-            finalAnswerIndexes,
-            finalAnswerValues,
-            answersStatus
-          )
+          lithiumPricing.updateFinalAnswerStatus(questionIds,answerHashes,answersStatus)
         ).to.be.revertedWith(
           "Question is still active and Final Answer status can't be updated"
         );
@@ -1776,69 +1775,101 @@ describe("Lithium Pricing", async function () {
 
         it("Should able to update final answer status", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           //Before updating final answer status
           const beforeUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
-          expect(beforeUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
+          
+          expect(parseInt(beforeUpdatingAnswerStatusquestion1.answerHash.digest)).to.equal(
             0
           );
-          expect(beforeUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
+
+          expect(beforeUpdatingAnswerStatusquestion1.answerHash.hashFunction).to.equal(
             0
           );
+
+          expect(beforeUpdatingAnswerStatusquestion1.answerHash.size).to.equal(
+            0
+          );
+
           expect(
             beforeUpdatingAnswerStatusquestion1.isAnswerCalculated
           ).to.equal(0);
+
           const beforeUpdatingAnswerStatusquestion2 =
             await lithiumPricing.getQuestion(questionIds[1]);
-          expect(beforeUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
-            0
-          );
-          expect(beforeUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
-            0
-          );
+          expect(parseInt(beforeUpdatingAnswerStatusquestion2.answerHash.digest)).to.equal(
+              0
+            );
+  
+          expect(beforeUpdatingAnswerStatusquestion2.answerHash.hashFunction).to.equal(
+              0
+            );
+  
+          expect(beforeUpdatingAnswerStatusquestion2.answerHash.size).to.equal(
+              0
+            );
           expect(
             beforeUpdatingAnswerStatusquestion2.isAnswerCalculated
           ).to.equal(0);
 
+
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
+          )    
+          .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+          .withArgs(
+            questionIds[0],
+            [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size],
+            answersStatuses[0]
           )
-            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(
-              questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
-              answersStatuses
-            );
+
+          .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+          .withArgs(
+            questionIds[1],
+            [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size],
+            answersStatuses[1]
+          ) 
 
           const afterUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
 
-          expect(afterUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
-            finalAnswerIndexes[0]
+
+          const multihash1 = afterUpdatingAnswerStatusquestion1.answerHash;
+          const expectedIpfsHash1 = getMultihashFromBytes32(multihash1);
+
+          expect(expectedIpfsHash1).to.equal(mockIpfsHash);
+
+          expect(
+            [afterUpdatingAnswerStatusquestion1.answerHash.digest,
+            afterUpdatingAnswerStatusquestion1.answerHash.hashFunction,
+            afterUpdatingAnswerStatusquestion1.answerHash.size]).
+            to.eql(
+            [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size]
           );
-          expect(afterUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
-            finalAnswerValues[0]
-          );
+
           expect(
             afterUpdatingAnswerStatusquestion1.isAnswerCalculated
           ).to.equal(1);
 
           const afterUpdatingAnswerStatusquestion2 =
             await lithiumPricing.getQuestion(questionIds[1]);
-          expect(afterUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
-            finalAnswerIndexes[1]
-          );
-          expect(afterUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
-            finalAnswerValues[1]
+
+          const multihash2 = afterUpdatingAnswerStatusquestion2.answerHash;
+          const expectedIpfsHash2 = getMultihashFromBytes32(multihash2);
+  
+          expect(expectedIpfsHash2).to.equal(mockIpfsHash);
+          expect(
+            [afterUpdatingAnswerStatusquestion2.answerHash.digest,
+            afterUpdatingAnswerStatusquestion2.answerHash.hashFunction,
+            afterUpdatingAnswerStatusquestion2.answerHash.size]).
+          to.eql(
+            [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size]
           );
           expect(
             afterUpdatingAnswerStatusquestion2.isAnswerCalculated
@@ -1847,16 +1878,14 @@ describe("Lithium Pricing", async function () {
 
         it("Should not allow non admin to update final answer status ", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           await expect(
             lithiumPricing
               .connect(account2)
               .updateFinalAnswerStatus(
                 questionIds,
-                finalAnswerIndexes,
-                finalAnswerValues,
+                answerHashes,
                 answersStatuses
               )
           ).to.be.revertedWith("Must be admin");
@@ -1865,15 +1894,13 @@ describe("Lithium Pricing", async function () {
         it("Should not allow  admin to update final answer status if having invalid question id", async () => {
           //invalid question id here
           const questionIds = [0, 81];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("Invalid question id");
@@ -1881,14 +1908,13 @@ describe("Lithium Pricing", async function () {
 
         it("Should not  update final answer status if passing answerstatus as NotCalculated", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [0, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+         
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("Not allowed to updated status  Notcalculated");
@@ -1896,14 +1922,13 @@ describe("Lithium Pricing", async function () {
 
         it("Should not  update final answer status if passing questionIds as empty array", async () => {
           const questionIds: number[] = [];
-          const finalAnswerIndexes: number[] = [];
-          const finalAnswerValues: number[] = [];
           const answersStatuses: number[] = [];
+          const answerHashes :any[]= []
+         
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("question IDs length must be greater than zero");
@@ -1912,14 +1937,12 @@ describe("Lithium Pricing", async function () {
         it("Should not  update final answer status if having mismath argument ", async () => {
           //invalid question id here
           const questionIds = [0, 1, 0];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("argument array length mismatch");
@@ -1928,30 +1951,33 @@ describe("Lithium Pricing", async function () {
         it("Should not  update final answer status again ", async () => {
           //invalid question id here
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           )
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
             .withArgs(
-              questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
-              answersStatuses
-            );
+              questionIds[0],
+              [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size],
+              answersStatuses[0]
+            )
+
+            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+            .withArgs(
+              questionIds[1],
+              [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size],
+              answersStatuses[1]
+            )
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("Answer is already calculated");
@@ -1972,18 +1998,16 @@ describe("Lithium Pricing", async function () {
 
         it("Should not  update final answer status if wrong status is passed ", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           //Answer can't be calulated for question id 0
           //so we mark as invalid
           //and not able to update group rewards
           const answersStatuses = [1, 4];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.reverted;
@@ -1992,13 +2016,11 @@ describe("Lithium Pricing", async function () {
         describe("Update Group Reward Amounts", async () => {
           beforeEach(async () => {
             const questionIds = [0, 1];
-            const finalAnswerIndexes = [1, 1];
-            const finalAnswerValues = [50, 100];
             const answersStatuses = [1, 1];
+            const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
             await lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             );
           });
