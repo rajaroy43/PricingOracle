@@ -12,8 +12,7 @@ import {
   ReputationUpdated,
   RewardClaimed,
   SetLithiumRewardAddress,
-  SetLithiumTokenAddress,
-  BidReceived__Params,
+  SetLithiumTokenAddress
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
@@ -64,6 +63,7 @@ function getQuestionBidId(userId: string, questionId: string): string {
 }
 
 function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
+  log.info('getting or creating meta at {}', [address.toHexString()])
   let meta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
   if (meta == null) {
     meta = new PricingContractMeta(PRICING_CONTRACT_META_ID)
@@ -196,7 +196,7 @@ export function handleCategoryAdded(event: CategoryAdded): void {
   category.questionCount = ZERO
   category.totalBounty = ZERO
   category.totalStaked = ZERO
-  category.rewardedQuestionCount = ZERO
+  category.answeredQuestionCount = ZERO
   category.save()
 }
 
