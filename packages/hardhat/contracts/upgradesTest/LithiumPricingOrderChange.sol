@@ -61,6 +61,8 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
+
+  uint16[] public revealTiers;
   
   struct QuestionBid{
     uint256 bidAmount;
@@ -224,6 +226,9 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     emit CategoryAdded(categories.length - 1,  _label);
   }
 
+  function getRevealTiers()external view override returns(uint16[] memory){
+    return revealTiers;
+  }
 
   /**
   * @dev Adds a Question to contract storage.
@@ -372,6 +377,12 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     QuestionBid storage questionBid = questionBids[questionId][msg.sender];
     questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
+  }
+
+
+  function _updateRevealTiers(uint16[] memory _revealTiers) internal {
+    revealTiers = _revealTiers;
+    emit RevealTiersUpdated(revealTiers);
   }
 
   /**
@@ -680,6 +691,13 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
       questionBid.bidAmount = userBidAmount - refundAmounts[i];
       emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
     }
+  }
+
+  function updateRevealTiers(
+    uint16[] memory _revealTiers
+  ) external override {
+    require(isAdmin(msg.sender), "Must be admin");
+    _updateRevealTiers(_revealTiers);
   }
 }
 

@@ -36,7 +36,7 @@ export const GET_QUESTION  = gql`
       }
       
     }
-}
+  }
 `;
 
 export const getQuestion = async (id: string, categoryId: string) => {
@@ -46,6 +46,33 @@ export const getQuestion = async (id: string, categoryId: string) => {
     fetchPolicy: "network-only"
   })
 
-  return response.data
-  
+  return response.data  
+}
+
+export const GET_BIDS_TO_REFUND = gql`
+  query questions($now: String!, $metaId: String!) {
+    questions(where: {startTime_lt: $now}) {
+      id
+      bidCount
+      bids {
+        id
+        isRefunded
+        amount
+      }
+    }
+    pricingContractMeta(id: $metaId) {
+      revealTiers
+    }
+  }
+`
+
+export const getBidsToRefund = async () => {
+  const now = Math.floor(new Date().getTime() / 1000).toString();
+  const response = await subgraphClient.query({
+    query: GET_BIDS_TO_REFUND,
+    variables: {now},
+    fetchPolicy: "network-only"
+  })
+
+  return response.data  
 }
