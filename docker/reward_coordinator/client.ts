@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { NonceManager } from "@ethersproject/experimental"
 
 
-console.log(`subgraph endpoint `, process.env.LITHIUM_SUBGRAPH_URI, process.env.COORDINATER_KEY, JSON.stringify(process.env))
+console.log(`subgraph endpoint `, process.env.LITHIUM_SUBGRAPH_URI, process.env.COORDINATOR_KEY, JSON.stringify(process.env))
 export const subgraphClient = new ApolloClient({
   link: new HttpLink({
     uri: process.env.LITHIUM_SUBGRAPH_URI,
@@ -17,4 +17,4 @@ export const subgraphClient = new ApolloClient({
 const ethProvider = ethers.providers.getDefaultProvider(process.env.ETH_NODE)
 
 //@ts-ignore
-export const coordinatorWallet = (() => new NonceManager(new ethers.Wallet( process.env.COORDINATER_KEY, ethProvider )))()
+export const coordinatorWallet = (() => new NonceManager(new ethers.Wallet( process.env.COORDINATOR_KEY, ethProvider )))()

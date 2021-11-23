@@ -5,3 +5,6 @@ numpy
 pytest
 schema
 scipy
+pandas
+pycoingecko
+schema
