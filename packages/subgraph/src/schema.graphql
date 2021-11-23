@@ -80,8 +80,7 @@ type Question @entity {
   bids: [QuestionBid!] @derivedFrom(field: "question")
   bidCount: BigInt!
   created: BigInt!
-  finalAnswerIndex: Int!
-  finalAnswerValue: BigInt!
+  answerHashes: [String!]!
   questionGroup: QuestionGroup
 }
 
