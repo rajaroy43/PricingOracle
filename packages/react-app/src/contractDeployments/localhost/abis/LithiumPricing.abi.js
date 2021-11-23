@@ -166,7 +166,7 @@ module.exports = [
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "answerer",
         "type": "address"

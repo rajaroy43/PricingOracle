@@ -24,6 +24,14 @@ const getNavItems: GetNavItemParams[] = [
             return true
         },
     },
+    {
+      ...baseMenuItem,
+      id: 'biddableQuestions',
+      icon: 'nav-icon-available-sets',
+      label: 'Biddable Questions',
+      getUrl: (_) => '/wisdom-seeker/biddable-questions',
+      getShouldRender: (_) => true,
+    },
 
     /*
     {

@@ -8,6 +8,16 @@ pragma solidity ^0.8.0;
  *
  */
 interface ILithiumPricing {
+
+  /* Structs */
+
+ 
+  struct Multihash {
+    bytes32 digest;
+    uint8 hashFunction;
+    uint8 size;
+  }
+
   /* events */
 
   event QuestionCreated (
@@ -54,10 +64,9 @@ interface ILithiumPricing {
   );
 
   event FinalAnswerCalculatedStatus(
-    uint256[] questionIds,
-    uint256[] answerIndexes,
-    uint256[] answerValues,
-    StatusCalculated[] answerStatuses
+    uint256 questionId,
+    Multihash multiHash,
+    StatusCalculated answerStatus
   );
 
   event SetLithiumRewardAddress(
@@ -132,17 +141,16 @@ interface ILithiumPricing {
 /* External Functions */
 
   function updateFinalAnswerStatus(
-   uint256[] memory questionIds, 
-   uint256[] memory finalAnswerIndexes,
-   uint256[] memory finalAnswerValues,
-   StatusCalculated[] memory answerStatuses
-    )external;
+   uint256[] memory  questionIds, 
+   Multihash[] memory answerHashes,
+   StatusCalculated[] memory  answerStatuses
+  )external; 
 
   function updateReputation(
     address[] memory addressesToUpdate,
     uint256[] memory categoryIds,
     uint256[] memory  reputationScores
-    ) external;
+  ) external;
   
   function updateMinimumStake (
     uint256 minimumStake

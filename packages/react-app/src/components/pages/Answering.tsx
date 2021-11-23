@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { WalletContext } from '../providers/WalletProvider'
 import { subgraphClient } from '../../client'
-import { useGetQuestionGroup } from '../../queries/questionGroup'
+import { useGetQuestionGroup, useGetQuestionGroupAndUserAnswer } from '../../queries/questionGroup'
 import LoadingCircle from '../atoms/Loading'
 import WisdomNodeTemplate from '../templates/WisdomNodeTemplate'
 import AnsweringGroup from '../questions/AnsweringGroup'
@@ -9,7 +9,7 @@ import AnsweringGroup from '../questions/AnsweringGroup'
 const Answering = ({ match}: any)=> {
     const urlQuestionGroupId = match.params.questionGroupId;
     const {wallet} = useContext(WalletContext)
-    const {loading, questionGroup} = useGetQuestionGroup(subgraphClient, urlQuestionGroupId)
+    const {loading, questionGroup} = useGetQuestionGroupAndUserAnswer(subgraphClient, urlQuestionGroupId, wallet.address || '0x0')
 
     const sideBarProps = {
         activePage: 'availableQuestions',
