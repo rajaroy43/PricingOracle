@@ -30,6 +30,7 @@ You will need 3 terminal windows to operate and a browser with metamask
 6) In a new terminal window:
 7) `cd {project root}`
 8) `yarn deploy`
+Wait for steps 5 and 8 to complete and then
 9) `yarn graph-init-local`
 10) asks for input, use `v0.0.1`
 runs to completion
