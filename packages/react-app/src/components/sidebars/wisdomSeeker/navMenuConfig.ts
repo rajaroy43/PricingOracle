@@ -24,7 +24,15 @@ const getNavItems: GetNavItemParams[] = [
             return true
         },
 
-    },   
+    },  
+    {
+        ...baseMenuItem,
+        id: 'biddableQuestions',
+        icon: 'nav-icon-available-sets',
+        label: 'Biddable Questions',
+        getUrl: (_) => '/wisdom-seeker/biddable-questions',
+        getShouldRender: (_) => true,
+    },     
     {
         ...baseMenuItem,
         id: 'myBids',
@@ -32,7 +40,7 @@ const getNavItems: GetNavItemParams[] = [
         label: 'My Bids',
         getUrl: (params) => {
           return params.isWalletConnected ?
-            `/wisdom-seeker/mybids`
+            `/wisdom-seeker/my-bids`
             :
             '/'
         },
@@ -41,13 +49,20 @@ const getNavItems: GetNavItemParams[] = [
         },
     },
     {
-      ...baseMenuItem,
-      id: 'biddableQuestions',
-      icon: 'nav-icon-available-sets',
-      label: 'Biddable Questions',
-      getUrl: (_) => '/wisdom-seeker/biddable-questions',
-      getShouldRender: (_) => true,
-    },
+        ...baseMenuItem,
+        id: 'myAnswers',
+        icon: 'nav-icon-history',
+        label: 'My Answers',
+        getUrl: (params) => {
+          return params.isWalletConnected ?
+            `/wisdom-seeker/my-answers`
+            :
+            '/'
+        },
+        getShouldRender: (_) => {
+        return true
+        },
+    },    
 
     /*
     {
@@ -56,15 +71,15 @@ const getNavItems: GetNavItemParams[] = [
         icon: 'nav-icon-stats',
         label: 'Stats / My Profile',
         getUrl: (params) => {
+
         return params.isWalletConnected ?
             `/stats/${params.walletAddress}`
-            :
-            '/'
         },
-        getShouldRender: (_) => {
-        return true
+        getShouldRender: (params) => {
+          return params.isWalletConnected
         },
     },
+
     {
         ...baseMenuItem,
         id: 'staking',

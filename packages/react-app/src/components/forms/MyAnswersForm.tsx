@@ -1,8 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import MyBidsItem from '../bids/MyBidsItem';
-
+import MyAnswersItem from '../bids/MyAnswersItem';
 
 const useStyles = makeStyles(theme => ({
     /* my bid questions */
@@ -38,20 +37,20 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const MyBidQuestionsForm = ({questions}: {questions: any}) => {
+const MyAnswersForm = ({questions}: {questions: any}) => {
     const classes = useStyles();
 
     return (
         <div className={classes.myBidQuestionWrapper}> 
-            <Typography variant="h1">My Bids</Typography>
+            <Typography variant="h1">My Answers</Typography>
             {questions.length ?
                 // @ts-ignore
-                questions.map((question => <MyBidsItem id={question.id} question={question} key={question.id} />))
+                questions.map((question => <MyAnswersItem id={question.id} question={question} key={question.id} />))
                 :
-                <div>No Current Bids - [Link to Biddable Questions]</div>
+                <div>No Current Answers - [Link to Biddable Questions]</div>
             }
         </div>
     );
 }
 
-export default MyBidQuestionsForm
+export default MyAnswersForm
