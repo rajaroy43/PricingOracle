@@ -49,6 +49,31 @@ module.exports = [
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "questionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "nodeAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "refundAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "BidRefunded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "id",
         "type": "uint256"
       },
@@ -141,7 +166,7 @@ module.exports = [
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "answerer",
         "type": "address"
@@ -929,6 +954,25 @@ module.exports = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "questiongroupId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getQuestionIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "user",
         "type": "address"
@@ -1117,8 +1161,13 @@ module.exports = [
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "bidAmount",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isBidRefunded",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -1146,6 +1195,29 @@ module.exports = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "questionIds",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "nodeAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "refundAmounts",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "refundBids",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

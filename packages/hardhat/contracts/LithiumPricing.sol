@@ -22,9 +22,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
     uint256 pricingTime;//Indicate when the asset should be priced for
-    uint256 finalAnswerIndex;//Final answer index  of a question
-    uint256 finalAnswerValue;//Final answer vaule of question 
     uint256 startTime; //startTime for answering question
+    Multihash answerHash;//Encrypted answer in form of multihash
     StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
   }
@@ -63,6 +62,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   Question[] questions;
   QuestionGroup[] public questionGroups;
 
+  uint16[] public revealTiers;
+
   struct QuestionBid{
     uint256 bidAmount;
     bool isBidRefunded;
@@ -89,6 +90,10 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     _addCategory("preIPO");
     minAnswerSetLength = 2;
     maxAnswerSetLength = 2;
+    uint16[] memory tiers = new uint16[](2);
+    tiers[0] = 5;
+    tiers[1] = 50;
+    _updateRevealTiers(tiers);
   }
 
 
@@ -221,6 +226,9 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     return userReputationScores[user][categoryId];
   }
 
+  function getRevealTiers()external view override returns (uint16[] memory) {
+    return revealTiers;
+  }
 
     /**
   * @dev Adds new category
@@ -381,6 +389,11 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     emit BidReceived(questionId,msg.sender,lithBidAmount);
   }
 
+  function _updateRevealTiers(uint16[] memory _revealTiers) internal {
+    revealTiers = _revealTiers;
+    emit RevealTiersUpdated(revealTiers);
+  }
+
   /**
   * @dev public interface to add a new category
   *
@@ -422,8 +435,7 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
  /**
   * @dev Allow Lithium Coordinator to submit final answer value and its index 
   * the `questionIds` is the  array of question id  
-  * the `finalAnswerIndex` is the array  for final answer index of questionIds
-  * the `finalAnswerValue` is the array  for final answer value of questionIds
+  * the `answerHashes` is the array  for final answer index of questionIds
   * Requirements
   *
   * - the caller must be admin of this contract
@@ -432,10 +444,10 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndexes,uint256[] memory finalAnswerValues, StatusCalculated[] memory answerStatuses)external override{
+  function updateFinalAnswerStatus(uint256[] memory questionIds,Multihash[] memory answerHashes, StatusCalculated[] memory answerStatuses)external override{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionIds.length != 0, "question IDs length must be greater than zero");
-    require(questionIds.length == finalAnswerIndexes.length && questionIds.length == finalAnswerValues.length && questionIds.length == answerStatuses.length,"argument array length mismatch"); 
+    require(questionIds.length == answerHashes.length && questionIds.length == answerStatuses.length,"argument array length mismatch"); 
     for(uint256 i=0;i< questionIds.length ;i++)
     {
     uint256 questionId = questionIds[i];
@@ -444,11 +456,11 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
-    question.finalAnswerIndex = finalAnswerIndexes[i];
-    question.finalAnswerValue = finalAnswerValues[i];
+    Multihash memory answerMultihash = Multihash(answerHashes[i].digest,answerHashes[i].hashFunction, answerHashes[i].size);
+    question.answerHash = answerMultihash;
     question.isAnswerCalculated = answerStatuses[i];
-    }
-    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndexes,finalAnswerValues,answerStatuses);
+    emit FinalAnswerCalculatedStatus(questionId,answerMultihash,question.isAnswerCalculated);
+   }
   }
 
    /**
@@ -691,5 +703,12 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
       }
       emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
     }
+  }
+
+  function updateRevealTiers(
+    uint16[] memory _revealTiers
+  ) external override {
+    require(isAdmin(msg.sender), "Must be admin");
+    _updateRevealTiers(_revealTiers);
   }
 }

@@ -1,6 +1,6 @@
-import { Question } from "lithium-subgraph"
+import { Question, QuestionBid } from "lithium-subgraph"
 import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
-import { QuestionView } from "../types/question"
+import { QuestionView, QuestionBidView } from "../types/question"
 import { getTopAnswer } from "./common"
 
 export const generateAnswerSetOptions = (answerSet: string[]) => {
@@ -13,12 +13,26 @@ export const generateAnswerSetOptions = (answerSet: string[]) => {
   })
 }
 
+export const selectQuestionBid = (bid: QuestionBid): QuestionBidView => {
+  return {
+    ...bid,
+    amountDisplay: formatUnits(bid.amount)
+  }
+}
+
 export const selectQuestion = (question: Question): QuestionView => {
   //TODO query a node to get the latest block time
   const now = msToSec(new Date().getTime())
   const isFinished = question.endTime < now
   const topAnswer = getTopAnswer(question.answerSetTotalStaked)
   const answerSetOptions = generateAnswerSetOptions(question.answerSet)
+
+  // there should only be a single user bid on the question
+  // all question bids are fetched on a separate query
+  const userBidView = question.bids && question.bids.length ?
+    selectQuestionBid(question.bids[0])
+    :
+    undefined
   return {
     ...question,
     // @ts-ignore
@@ -31,6 +45,8 @@ export const selectQuestion = (question: Question): QuestionView => {
     pricingTimeDisplay: secToLocaleDate(question.pricingTime),
     topAnswerIndex: topAnswer.index,
     topAnswerValue: topAnswer.value.toString(),
-    topAnswerDisplay: answerSetOptions[topAnswer.index].label
+    topAnswerDisplay: answerSetOptions[topAnswer.index].label,
+    userBidView
+
   }
 }

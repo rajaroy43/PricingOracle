@@ -51,3 +51,5 @@ export const zeroPad = (str: string, digits: number) => {
 
   return str
 }
+
+export const toLowerCase = (target: string) => target.split('').map(f => f.toLowerCase()).join('')

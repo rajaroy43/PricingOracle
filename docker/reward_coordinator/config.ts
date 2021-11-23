@@ -1,14 +1,9 @@
-// @ts-ignore
-import targetConfig from `./contractDeployments/${process.env.TARGET_CHAIN!}/config.json`
-// import rinkebyConfig from './contractDeployments/rinkeby/config.json'
+import localConfig from './contractDeployments/localhost/config.json'
+import rinkebyConfig from './contractDeployments/rinkeby/config.json'
 
-// @ts-ignore
-import pricingAbi from `./contractDeployments/${process.env.TARGET_CHAIN!}/abis/LithiumPricing.json`
+import localPricingAbi from './contractDeployments/localhost/abis/LithiumPricing.json'
+import rinkebyPricingAbi from './contractDeployments/rinkeby/abis/LithiumPricing.json'
 
-const targetConfigs = {
-  pricingAbi,
-  LITHIUM_PRICING_ADDRESS: targetConfig.LithiumPricingAddress
-}
 const lithiumEnv = process.env.TARGET_CHAIN!
 
 export const CHAIN_IDS = {
@@ -19,12 +14,16 @@ export const CHAIN_IDS = {
 
 const configs = {
   localhost: {
+    Hardfork:"london",
     CHAIN_ID: 1337,
-    ...targetConfigs
+    pricingAbi: localPricingAbi,
+    LITHIUM_PRICING_ADDRESS: localConfig.LithiumPricingAddress,
   },
   rinkeby: {
+    Hardfork:"london",
     CHAIN_ID: 4,
-    ...targetConfigs
+    pricingAbi: rinkebyPricingAbi,
+    LITHIUM_PRICING_ADDRESS: rinkebyConfig.LithiumPricingAddress,
   }
 }
 
