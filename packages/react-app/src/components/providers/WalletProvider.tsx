@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useMemo, useEffect } from 'react'
-import { getWalletInstances } from '../../helpers/connectWallet'
+import { getWalletInstances, isValidProviderNetwork } from '../../helpers/connectWallet'
 import { ConnectedWallet, ConnectedWalletProps, SUPPORTED_WALLETS } from '../../types/user'
 import wallets from '../../wallets'
 
@@ -69,6 +69,10 @@ const getLocalState = async () => {
     // reconnect to get wallet and provider api
     // @ts-ignore
     const [ wallet, provider ] = await wallets[walletType].connectWallet()
+    if (!isValidProviderNetwork(provider)) {
+      disconnectWallet()
+      return null
+    }
     // @ts-ignore
     const { tokenInstance, pricingInstance } = await getWalletInstances(walletType, wallet)
 
@@ -86,6 +90,14 @@ const getLocalState = async () => {
 const WalletProvider = ({children}:{children: React.ComponentType} ) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  const handleAccountsChanged = (accounts: any) => {
+    dispatch({type: 'DISCONNECT_WALLET', payload: {}})
+  }
+
+  const handleChainChanged = (networkId: any) => {
+    dispatch({type: 'DISCONNECT_WALLET', payload: {}})
+  }
+
   // on page load check if there is local storage cookie
   // if so, reconnect so wallet state can survive page reload
   useEffect(() => {
@@ -99,28 +111,30 @@ const WalletProvider = ({children}:{children: React.ComponentType} ) => {
       if (
         typeof window !== 'undefined' &&
         // @ts-ignore
-        typeof window.ethereum !== 'undefined' &&
-        walletState
+        typeof window.ethereum !== 'undefined'
       ) {
         // @ts-ignore
-        window.ethereum.on('accountsChanged', (accounts: any) => {
-          if (accounts.length < 1) {
-            dispatch({type: 'DISCONNECT_WALLET', payload: {}})
-          } else {
-            walletState.address = accounts[0]
-            dispatch({type: 'SET_WALLET', payload: walletState})
-          }
-        })
+        window.ethereum.on('accountsChanged', handleAccountsChanged )
         // @ts-ignore
-        window.ethereum.on('chainChanged', (accounts: any) => {
-        
-            dispatch({type: 'DISCONNECT_WALLET', payload: {}})
-      
-        })
+        window.ethereum.on('chainChanged', handleChainChanged)
 
       }
     }
     init()
+
+    return () => {
+      if (
+        typeof window !== 'undefined' &&
+        // @ts-ignore
+        typeof window.ethereum !== 'undefined'
+      ) {
+        // @ts-ignore
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged )
+        // @ts-ignore
+        window.ethereum.removeListener('chainChanged', handleChainChanged)
+
+      }
+    }
   }, [])
 
   const contextValue = useMemo(() => {

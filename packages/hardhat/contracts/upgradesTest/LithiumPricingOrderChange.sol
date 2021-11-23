@@ -22,9 +22,8 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     uint256 totalStaked; // the sum of AnswerSetTotals in LITH token
     uint256 endTime; // the time answering ends relative to block.timestamp
     uint256 pricingTime;//Indicate when the asset should be priced for
-    uint256 finalAnswerIndex;//Final answer index  of a question
-    uint256 finalAnswerValue;//Final answer vaule of question 
     uint256 startTime; //startTime for answering question
+    Multihash answerHash;//Encrypted answer in form of multihash
     StatusCalculated isAnswerCalculated;//answer calculated status will be Updated by LithiumCordinator once deadline passed
     QuestionType questionType;//Type of a question can be one of two (Pricing  or  GroundTruth )
   }
@@ -62,8 +61,16 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
 
   Question[] questions;
   QuestionGroup[] public questionGroups;
-  mapping (uint256 => mapping (address => uint256)) public questionBids;
 
+  uint16[] public revealTiers;
+  
+  struct QuestionBid{
+    uint256 bidAmount;
+    bool isBidRefunded;
+  }
+
+  //questionId -> nodeAddress -> QuestionBid
+  mapping (uint256 => mapping (address => QuestionBid)) public questionBids;
 
   address constant public NULL_ADDRESS=address(0);
 
@@ -219,6 +226,9 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     emit CategoryAdded(categories.length - 1,  _label);
   }
 
+  function getRevealTiers()external view override returns(uint16[] memory){
+    return revealTiers;
+  }
 
   /**
   * @dev Adds a Question to contract storage.
@@ -277,7 +287,7 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     question.startTime = startTime;
     questions.push(question);
 
-    questionBids[id][msg.sender] = bounty;
+    questionBids[id][msg.sender] = QuestionBid(bounty,false);
 
 
     emit QuestionCreated(
@@ -364,8 +374,15 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     Question storage question = questions[questionId];
     require(question.startTime > block.timestamp, "Answering question time started ");
     question.bounty = question.bounty + lithBidAmount;
-    questionBids[questionId][msg.sender] += lithBidAmount;
+    QuestionBid storage questionBid = questionBids[questionId][msg.sender];
+    questionBid.bidAmount = questionBid.bidAmount + lithBidAmount;
     emit BidReceived(questionId,msg.sender,lithBidAmount);
+  }
+
+
+  function _updateRevealTiers(uint16[] memory _revealTiers) internal {
+    revealTiers = _revealTiers;
+    emit RevealTiersUpdated(revealTiers);
   }
 
   /**
@@ -406,11 +423,10 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     emit SetLithiumRewardAddress(address(lithiumReward));
   }
 
- /**
+/**
   * @dev Allow Lithium Coordinator to submit final answer value and its index 
   * the `questionIds` is the  array of question id  
-  * the `finalAnswerIndex` is the array  for final answer index of questionIds
-  * the `finalAnswerValue` is the array  for final answer value of questionIds
+  * the `answerHashes` is the array  for final answer index of questionIds
   * Requirements
   *
   * - the caller must be admin of this contract
@@ -419,10 +435,10 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
   * - rewards can't be updated again with same question id
   * - question id must be valid 
   */
-  function updateFinalAnswerStatus(uint256[] memory questionIds, uint256[] memory finalAnswerIndexes,uint256[] memory finalAnswerValues, StatusCalculated[] memory answerStatuses)external override{
+  function updateFinalAnswerStatus(uint256[] memory questionIds,Multihash[] memory answerHashes, StatusCalculated[] memory answerStatuses)external override{
     require(isAdmin(msg.sender),"Must be admin");
     require(questionIds.length != 0, "question IDs length must be greater than zero");
-    require(questionIds.length == finalAnswerIndexes.length && questionIds.length == finalAnswerValues.length && questionIds.length == answerStatuses.length,"argument array length mismatch"); 
+    require(questionIds.length == answerHashes.length && questionIds.length == answerStatuses.length,"argument array length mismatch"); 
     for(uint256 i=0;i< questionIds.length ;i++)
     {
     uint256 questionId = questionIds[i];
@@ -431,11 +447,11 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
-    question.finalAnswerIndex = finalAnswerIndexes[i];
-    question.finalAnswerValue = finalAnswerValues[i];
+    Multihash memory answerMultihash = Multihash(answerHashes[i].digest,answerHashes[i].hashFunction, answerHashes[i].size);
+    question.answerHash = answerMultihash;
     question.isAnswerCalculated = answerStatuses[i];
-    }
-    emit FinalAnswerCalculatedStatus(questionIds,finalAnswerIndexes,finalAnswerValues,answerStatuses);
+    emit FinalAnswerCalculatedStatus(questionId,answerMultihash,question.isAnswerCalculated);
+   }
   }
 
    /**
@@ -645,4 +661,43 @@ contract LithiumPricingOrderChange is ILithiumPricing,Initializable, Roles {
     _increaseBid(questionId, lithBidAmount);
   }
 
+  /**
+  * @dev Allow admin to refund node address with reward amount for question id
+  * the `questionIds` is the array of question id for which refund amount to be updated
+  * the `nodeAddresses` is the addresses of node which they bid amount on getting answers
+  * the `refundAmounts` is the array of refund amount with respect to nodeAddresses
+  */
+
+  function refundBids(
+    uint256[] memory questionIds,
+    address[] memory nodeAddresses,
+    uint256[] memory refundAmounts
+  ) external override{
+    require(isAdmin(msg.sender), "Must be admin");
+    require(questionIds.length == nodeAddresses.length && questionIds.length == refundAmounts.length ,"argument array length mismatch");
+    require(nodeAddresses.length > 0,"There must be at least 1 node address will be refunded");
+    for (uint256 i = 0; i < questionIds.length; i++) {
+      Question storage question = questions[i];
+      require(question.startTime <= block.timestamp, "Question starting time has not passed yet");
+      QuestionBid storage questionBid = questionBids[questionIds[i]][nodeAddresses[i]];
+      bool isRefunded = questionBid.isBidRefunded;
+      require(!isRefunded,"Wsidom node already refunded");
+      uint256 userBidAmount = questionBid.bidAmount;
+      require(userBidAmount >= refundAmounts[i],"Refund amount is more  than user bid amount");
+      if(refundAmounts[i] > 0 ){
+        LithiumToken.transfer(nodeAddresses[i],refundAmounts[i]);
+      }
+      questionBid.isBidRefunded = true;
+      questionBid.bidAmount = userBidAmount - refundAmounts[i];
+      emit BidRefunded(questionIds[i],nodeAddresses[i],refundAmounts[i]);
+    }
+  }
+
+  function updateRevealTiers(
+    uint16[] memory _revealTiers
+  ) external override {
+    require(isAdmin(msg.sender), "Must be admin");
+    _updateRevealTiers(_revealTiers);
+  }
 }
+

@@ -4,6 +4,7 @@ const { solidity } = require("ethereum-waffle");
 const { BigNumber } = ethers;
 use(solidity);
 import { Wallet } from "@ethersproject/wallet";
+import { getBytes32FromMultiash ,getMultihashFromBytes32} from "../scripts/utils/multihash"
 import { LithiumPricing, LithiumReward, LithiumToken } from "../typechain";
 describe("Lithium Pricing", async function () {
   let lithiumPricing: LithiumPricing,
@@ -15,6 +16,9 @@ describe("Lithium Pricing", async function () {
     stakeAmount: any,
     transferAmount1: any,
     minimumRequiredAnswer: any;
+
+  const mockIpfsHash:string = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB';
+
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
     account0 = accounts[0];
@@ -182,9 +186,9 @@ describe("Lithium Pricing", async function () {
         .emit(lithiumPricing, "QuestionGroupCreated")
         .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
-      const questionBidAmount1 = await lithiumPricing.questionBids(0,account0.address)
+      const [questionBidAmount1,] = await lithiumPricing.questionBids(0,account0.address)
       expect(questionBidAmount1).to.equal(bounty)
-      const questionBidAmount2 = await lithiumPricing.questionBids(1,account0.address) 
+      const [questionBidAmount2,] = await lithiumPricing.questionBids(1,account0.address) 
       expect(questionBidAmount2).to.equal(bounty1)
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
@@ -271,6 +275,112 @@ describe("Lithium Pricing", async function () {
         senderBalance
       );
     });
+
+    it("Should  allow   admin  to create a single question", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
+
+      const args = [
+        categoryId, 
+        bounty,
+        pricingTime,
+        endTime,
+        questiontype0,
+        description,
+        answerSet,
+        startTime
+      ];
+      await expect(//@ts-ignore
+        lithiumPricing.createQuestion(...args)
+      ).emit(lithiumPricing,"QuestionCreated")
+      .withArgs(
+        0,
+        bounty,
+        pricingTime,
+        endTime,
+        categoryId,
+        account0.address,
+        description,
+        answerSet,
+        questiontype0,
+        startTime
+      );
+
+    });
+
+    it("Should not allow non admin  to create a question group", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+      const questiontype1 = 1;
+      // QuestionType{ Pricing, GroundTruth }
+      //if questiontype = 0 ,then question is Pricing type
+      //if questiontype = 1 ,then question is GroundTruth type
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype0, questiontype1],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      await expect(//@ts-ignore
+        lithiumPricing.connect(account1).createQuestionGroup(...args)
+      ).to.be.revertedWith("Must be Admin")
+
+    });
+
+
+    it("Should not allow non  admin  to create a single question", async function () {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+      const questiontype0 = 0;
+      const startTime = block.timestamp + 3;
+
+      const args = [
+        categoryId, 
+        bounty,
+        pricingTime,
+        endTime,
+        questiontype0,
+        description,
+        answerSet,
+        startTime
+      ];
+      await expect(//@ts-ignore
+        lithiumPricing.connect(account1).createQuestion(...args)
+      ).to.be.revertedWith("Must be Admin")
+
+    });
+
     it("Should not create a question group with categoryIds param length mismatch", async function () {
       const block = await ethers.provider.getBlock();
       const pricingTime = block.timestamp + 7;
@@ -920,10 +1030,10 @@ describe("Lithium Pricing", async function () {
         [startTime, startTime],
         minimumRequiredAnswer,
       ];
-      await lithToken.connect(account1).approve(lithiumPricing.address, 0);
+      await lithToken.approve(lithiumPricing.address, 0);
       await expect(
         //@ts-ignore
-        lithiumPricing.connect(account1).createQuestionGroup(...args)
+        lithiumPricing.createQuestionGroup(...args)
       ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
     });
 
@@ -994,6 +1104,73 @@ describe("Lithium Pricing", async function () {
       ).to.be.revertedWith("Answering question is not started yet");
     });
 
+    it("Should not  able to refund bids if start time not passed ", async () => {
+      const block = await ethers.provider.getBlock();
+      const pricingTime = block.timestamp + 7;
+      const endTime = block.timestamp + 5;
+      const description = "foo";
+      const bounty = transferAmount1;
+      const answerSet = [0, 50];
+      const categoryId = 0;
+
+      const startTime = block.timestamp + 4;
+
+      const pricingTime1 = block.timestamp + 7;
+      const endTime1 = block.timestamp + 5;
+      const description1 = "foo1";
+      const bounty1 = transferAmount1;
+      const answerSet1 = [0, 100];
+      const categoryId1 = 0;
+
+      const questiontype = 0;
+      // QuestionType{ Pricing, GroundTruth }
+      //if questiontype = 0 ,then question is Pricing type
+      //if questiontype = 1 ,then question is GroundTruth type
+      const args = [
+        [categoryId, categoryId1],
+        [bounty, bounty1],
+        [pricingTime, pricingTime1],
+        [endTime, endTime1],
+        [questiontype, questiontype],
+        [description, description1],
+        [answerSet, answerSet1],
+        [startTime, startTime],
+        minimumRequiredAnswer,
+      ];
+      const createQuestionGroupTx = await expect(
+        //@ts-ignore
+        lithiumPricing.createQuestionGroup(...args)
+      );
+      //createQuestionGroupTx
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionCreated")
+        .withArgs(
+          0,
+          bounty,
+          pricingTime,
+          endTime,
+          categoryId,
+          account0.address,
+          description,
+          answerSet,
+          questiontype,
+          startTime
+        );
+
+      createQuestionGroupTx
+        .emit(lithiumPricing, "QuestionGroupCreated")
+        .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
+
+      const questionIds = [0,1]
+      const nodeAddresses = [account0.address,account0.address]
+      const refundAmounts = [transferAmount1,transferAmount1]
+
+      await expect(
+        lithiumPricing
+          .refundBids(questionIds,nodeAddresses,refundAmounts)
+      ).to.be.revertedWith("Question starting time has not passed yet");
+    });
+
     describe('Bidding On Questions', function() {
 
       beforeEach(async () => {
@@ -1033,11 +1210,11 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase bid on question by question creater",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account0.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account0.address) 
         await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account0.address,lithBidAmount);  
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account0.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account0.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial))
 
         //Checking updated Bounty
@@ -1049,7 +1226,7 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase bid mutiple time on question by question creater",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account0.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account0.address) 
 
         await expect(lithiumPricing.increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
@@ -1063,7 +1240,7 @@ describe("Lithium Pricing", async function () {
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account0.address,lithBidAmount);
 
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account0.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account0.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial).add(lithBidAmount).add(lithBidAmount))
       
         //Checking updated Bounty
@@ -1075,7 +1252,7 @@ describe("Lithium Pricing", async function () {
       it("Should able to increase  bid mutiple time on question by another user ",async()=>{
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
-        const biddingAmountInitial = await lithiumPricing.questionBids(questionId,account1.address) 
+        const [biddingAmountInitial,] = await lithiumPricing.questionBids(questionId,account1.address) 
         
         await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
         emit(lithiumPricing,"BidReceived").
@@ -1089,7 +1266,7 @@ describe("Lithium Pricing", async function () {
         emit(lithiumPricing,"BidReceived").
         withArgs(questionId,account1.address,lithBidAmount);
 
-        const biddingAmountFinal = await lithiumPricing.questionBids(questionId,account1.address)
+        const [biddingAmountFinal,] = await lithiumPricing.questionBids(questionId,account1.address)
         expect(biddingAmountFinal).to.equal(lithBidAmount.add(biddingAmountInitial).add(lithBidAmount).add(lithBidAmount))
 
         //Checking updated Bounty
@@ -1137,12 +1314,71 @@ describe("Lithium Pricing", async function () {
         const increaseTime = 15;
         await ethers.provider.send("evm_increaseTime", [increaseTime]);
         await ethers.provider.send("evm_mine");
-        
+
         const questionId = 0;
         const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
         await expect(lithiumPricing.connect(account1).increaseBid(questionId,lithBidAmount)).
         to.be.revertedWith("Answering question time started ")
       });
+
+      it("Should allow admin  to refund user bids amount+increaseLithBidAmount", async function () {
+        const questionIds = [0,1]
+        const nodeAddresses = [account0.address,account0.address]
+        
+        const lithBidAmount = ethers.utils.parseUnits("10.0", 18);
+
+        await expect(lithiumPricing.increaseBid(questionIds[0],lithBidAmount)).
+        emit(lithiumPricing,"BidReceived").
+        withArgs(questionIds[0],account0.address,lithBidAmount);  
+
+        await expect(lithiumPricing.increaseBid(questionIds[1],lithBidAmount)).
+        emit(lithiumPricing,"BidReceived").
+        withArgs(questionIds[1],account0.address,lithBidAmount);  
+
+        const refundAmounts = [transferAmount1.add(lithBidAmount),transferAmount1.add(lithBidAmount)]
+
+        const [initialBidAmount1,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+        const [initialBidAmount2,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+        expect(initialBidAmount1).to.equal(refundAmounts[0])
+        expect(initialBidAmount2).to.equal(refundAmounts[1])
+        expect(initialIsBidRefunded1).to.be.false
+        expect(initialIsBidRefunded2).to.be.false
+        
+        const one_minute = 60 * 60;
+        await ethers.provider.send("evm_increaseTime", [one_minute]);
+        await ethers.provider.send("evm_mine");
+
+        const questionBountyBeforeRefunding0 = (await lithiumPricing.getQuestion(questionIds[0])).bounty;
+        const questionBountyBeforeRefunding1 =  (await lithiumPricing.getQuestion(questionIds[1])).bounty;
+        const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+        const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+        refundedBidTx
+          .emit(lithiumPricing,"BidRefunded")
+          .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+
+        refundedBidTx
+          .emit(lithiumPricing,"BidRefunded")
+          .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+        const finalLithBalance = await lithToken.balanceOf(account0.address);
+        const questionBountyAfterRefunding0 = (await lithiumPricing.getQuestion(questionIds[0])).bounty;
+        const questionBountyAfterRefunding1 = (await lithiumPricing.getQuestion(questionIds[1])).bounty;
+        
+        expect(questionBountyAfterRefunding0.add(refundAmounts[0])).to.equal(questionBountyBeforeRefunding0)
+        expect(questionBountyAfterRefunding1.add(refundAmounts[1])).to.equal(questionBountyBeforeRefunding1)
+        expect(finalLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+        
+        const [finalLeftRefundAmount1,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+        const [finalLeftRefundAmount2,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+        
+        expect(finalLeftRefundAmount1).to.equal(0)
+        expect(finalLeftRefundAmount2).to.equal(0)            
+        
+        expect(finalIsBidRefunded1).to.be.true
+        expect(finalIsBidRefunded2).to.be.true
+
+      })
 
     })
 
@@ -1349,20 +1585,179 @@ describe("Lithium Pricing", async function () {
 
       it("Should not  update final answer status if question deadline is not ended yet", async () => {
         const questionIds = [0, 1];
-        const finalAnswerIndexes = [1, 1];
-        const finalAnswerValues = [50, 100];
         const answersStatus = [1, 1];
+        const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+        
         await expect(
-          lithiumPricing.updateFinalAnswerStatus(
-            questionIds,
-            finalAnswerIndexes,
-            finalAnswerValues,
-            answersStatus
-          )
+          lithiumPricing.updateFinalAnswerStatus(questionIds,answerHashes,answersStatus)
         ).to.be.revertedWith(
           "Question is still active and Final Answer status can't be updated"
         );
-      });
+      })
+
+      describe('Refunding Bidding to users', function() {
+
+          it("Should allow admin  to refund user bids amount", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            const [,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            expect(initialIsBidRefunded1).to.be.false
+            expect(initialIsBidRefunded2).to.be.false
+
+            const questionBountyBeforeRefunding0 = (await lithiumPricing.getQuestion(questionIds[0])).bounty;
+            const questionBountyBeforeRefunding1 =  (await lithiumPricing.getQuestion(questionIds[1])).bounty;
+            
+            const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+            const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+    
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+            const questionBountyAfterRefunding0 = (await lithiumPricing.getQuestion(questionIds[0])).bounty;
+            const questionBountyAfterRefunding1 = (await lithiumPricing.getQuestion(questionIds[1])).bounty;
+              
+            expect(questionBountyAfterRefunding0.add(refundAmounts[0])).to.equal(questionBountyBeforeRefunding0)
+            expect(questionBountyAfterRefunding1.add(refundAmounts[1])).to.equal(questionBountyBeforeRefunding1)
+           
+
+            const finalLithBalance = await lithToken.balanceOf(account0.address);
+        
+            expect(finalLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+            
+            const [,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            
+            expect(finalIsBidRefunded1).to.be.true
+            expect(finalIsBidRefunded2).to.be.true
+    
+          })
+
+    
+          it("Should allow admin to refund user bid amount  (bid amount less than refund amount) bidAmount/2", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1.div(2),transferAmount1.div(2)]
+    
+            const [,initialIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,initialIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            expect(initialIsBidRefunded1).to.be.false
+            expect(initialIsBidRefunded2).to.be.false
+
+            const initialLithBalance = await lithToken.balanceOf(account0.address);
+
+            const questionBountyBeforeRefunding0 = (await lithiumPricing.getQuestion(questionIds[0])).bounty;
+            const questionBountyBeforeRefunding1 =  (await lithiumPricing.getQuestion(questionIds[1])).bounty;
+            
+            const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+    
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+
+              const questionBountyAfterRefunding0 = (await lithiumPricing.getQuestion(questionIds[0])).bounty;
+              const questionBountyAfterRefunding1 = (await lithiumPricing.getQuestion(questionIds[1])).bounty;
+                
+              expect(questionBountyAfterRefunding0.add(refundAmounts[0])).to.equal(questionBountyBeforeRefunding0)
+              expect(questionBountyAfterRefunding1.add(refundAmounts[1])).to.equal(questionBountyBeforeRefunding1)
+             
+
+            const finalLithBalance = await lithToken.balanceOf(account0.address);
+        
+            expect(finalLithBalance).to.equal(initialLithBalance.add(refundAmounts[0].add(refundAmounts[1])))
+              
+            
+            const [,finalIsBidRefunded1] = await lithiumPricing.questionBids(questionIds[0],nodeAddresses[0])
+            const [,finalIsBidRefunded2] = await lithiumPricing.questionBids(questionIds[1],nodeAddresses[1])
+            
+            expect(finalIsBidRefunded1).to.be.true
+            expect(finalIsBidRefunded2).to.be.true
+    
+          })
+    
+          it("Should not allow non-admin  to refund user bids amount ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            await expect(lithiumPricing.connect(account1).refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("Must be admin")
+          })
+    
+          it("Should not allow admin  to refund user bids if mismatch argument `questionIds` provided ", async function () {
+            const questionIds = [0]
+            const nodeAddresses = [account0.address,account1.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("argument array length mismatch")
+          })
+    
+          it("Should not allow admin  to refund user bids if mismatch argument `refundAmounts` provided ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("argument array length mismatch")
+          })
+    
+          it("Should not allow admin  to refund user bids if mismatch argument `nodeAddresses` provided ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("argument array length mismatch")
+          })
+    
+          it("Should not allow admin  to refund user bids amount if there is no node address to refund ", async function () {
+            const questionIds = []
+            const nodeAddresses = []
+            const refundAmounts = []
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("There must be at least 1 node address will be refunded")
+          })
+    
+    
+          it("Should not allow admin  to refund user bids amount if its done already ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1,transferAmount1]
+    
+            const refundedBidTx = await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[0],nodeAddresses[0],refundAmounts[0])
+    
+            refundedBidTx
+              .emit(lithiumPricing,"BidRefunded")
+              .withArgs(questionIds[1],nodeAddresses[1],refundAmounts[1])
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("Wsidom node already refunded")
+          })
+
+          it("Should not allow admin  to refund user bids amount if refund amount more than user bid amount ", async function () {
+            const questionIds = [0,1]
+            const nodeAddresses = [account0.address,account0.address]
+            const refundAmounts = [transferAmount1.add(100),transferAmount1.add(100)]
+    
+            await expect(lithiumPricing.refundBids(questionIds,nodeAddresses,refundAmounts))
+            .to.be.revertedWith("Refund amount is more  than user bid amount")
+          })
+        })
 
       describe("Reward Mechanism ", async () => {
         beforeEach(async () => {
@@ -1380,69 +1775,101 @@ describe("Lithium Pricing", async function () {
 
         it("Should able to update final answer status", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           //Before updating final answer status
           const beforeUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
-          expect(beforeUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
+          
+          expect(parseInt(beforeUpdatingAnswerStatusquestion1.answerHash.digest)).to.equal(
             0
           );
-          expect(beforeUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
+
+          expect(beforeUpdatingAnswerStatusquestion1.answerHash.hashFunction).to.equal(
             0
           );
+
+          expect(beforeUpdatingAnswerStatusquestion1.answerHash.size).to.equal(
+            0
+          );
+
           expect(
             beforeUpdatingAnswerStatusquestion1.isAnswerCalculated
           ).to.equal(0);
+
           const beforeUpdatingAnswerStatusquestion2 =
             await lithiumPricing.getQuestion(questionIds[1]);
-          expect(beforeUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
-            0
-          );
-          expect(beforeUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
-            0
-          );
+          expect(parseInt(beforeUpdatingAnswerStatusquestion2.answerHash.digest)).to.equal(
+              0
+            );
+  
+          expect(beforeUpdatingAnswerStatusquestion2.answerHash.hashFunction).to.equal(
+              0
+            );
+  
+          expect(beforeUpdatingAnswerStatusquestion2.answerHash.size).to.equal(
+              0
+            );
           expect(
             beforeUpdatingAnswerStatusquestion2.isAnswerCalculated
           ).to.equal(0);
 
+
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
+          )    
+          .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+          .withArgs(
+            questionIds[0],
+            [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size],
+            answersStatuses[0]
           )
-            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
-            .withArgs(
-              questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
-              answersStatuses
-            );
+
+          .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+          .withArgs(
+            questionIds[1],
+            [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size],
+            answersStatuses[1]
+          ) 
 
           const afterUpdatingAnswerStatusquestion1 =
             await lithiumPricing.getQuestion(questionIds[0]);
 
-          expect(afterUpdatingAnswerStatusquestion1.finalAnswerIndex).to.equal(
-            finalAnswerIndexes[0]
+
+          const multihash1 = afterUpdatingAnswerStatusquestion1.answerHash;
+          const expectedIpfsHash1 = getMultihashFromBytes32(multihash1);
+
+          expect(expectedIpfsHash1).to.equal(mockIpfsHash);
+
+          expect(
+            [afterUpdatingAnswerStatusquestion1.answerHash.digest,
+            afterUpdatingAnswerStatusquestion1.answerHash.hashFunction,
+            afterUpdatingAnswerStatusquestion1.answerHash.size]).
+            to.eql(
+            [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size]
           );
-          expect(afterUpdatingAnswerStatusquestion1.finalAnswerValue).to.equal(
-            finalAnswerValues[0]
-          );
+
           expect(
             afterUpdatingAnswerStatusquestion1.isAnswerCalculated
           ).to.equal(1);
 
           const afterUpdatingAnswerStatusquestion2 =
             await lithiumPricing.getQuestion(questionIds[1]);
-          expect(afterUpdatingAnswerStatusquestion2.finalAnswerIndex).to.equal(
-            finalAnswerIndexes[1]
-          );
-          expect(afterUpdatingAnswerStatusquestion2.finalAnswerValue).to.equal(
-            finalAnswerValues[1]
+
+          const multihash2 = afterUpdatingAnswerStatusquestion2.answerHash;
+          const expectedIpfsHash2 = getMultihashFromBytes32(multihash2);
+  
+          expect(expectedIpfsHash2).to.equal(mockIpfsHash);
+          expect(
+            [afterUpdatingAnswerStatusquestion2.answerHash.digest,
+            afterUpdatingAnswerStatusquestion2.answerHash.hashFunction,
+            afterUpdatingAnswerStatusquestion2.answerHash.size]).
+          to.eql(
+            [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size]
           );
           expect(
             afterUpdatingAnswerStatusquestion2.isAnswerCalculated
@@ -1451,16 +1878,14 @@ describe("Lithium Pricing", async function () {
 
         it("Should not allow non admin to update final answer status ", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           await expect(
             lithiumPricing
               .connect(account2)
               .updateFinalAnswerStatus(
                 questionIds,
-                finalAnswerIndexes,
-                finalAnswerValues,
+                answerHashes,
                 answersStatuses
               )
           ).to.be.revertedWith("Must be admin");
@@ -1469,15 +1894,13 @@ describe("Lithium Pricing", async function () {
         it("Should not allow  admin to update final answer status if having invalid question id", async () => {
           //invalid question id here
           const questionIds = [0, 81];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("Invalid question id");
@@ -1485,14 +1908,13 @@ describe("Lithium Pricing", async function () {
 
         it("Should not  update final answer status if passing answerstatus as NotCalculated", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [0, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+         
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("Not allowed to updated status  Notcalculated");
@@ -1500,14 +1922,13 @@ describe("Lithium Pricing", async function () {
 
         it("Should not  update final answer status if passing questionIds as empty array", async () => {
           const questionIds: number[] = [];
-          const finalAnswerIndexes: number[] = [];
-          const finalAnswerValues: number[] = [];
           const answersStatuses: number[] = [];
+          const answerHashes :any[]= []
+         
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("question IDs length must be greater than zero");
@@ -1516,14 +1937,12 @@ describe("Lithium Pricing", async function () {
         it("Should not  update final answer status if having mismath argument ", async () => {
           //invalid question id here
           const questionIds = [0, 1, 0];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("argument array length mismatch");
@@ -1532,30 +1951,33 @@ describe("Lithium Pricing", async function () {
         it("Should not  update final answer status again ", async () => {
           //invalid question id here
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           const answersStatuses = [1, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           )
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
             .withArgs(
-              questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
-              answersStatuses
-            );
+              questionIds[0],
+              [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size],
+              answersStatuses[0]
+            )
+
+            .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+            .withArgs(
+              questionIds[1],
+              [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size],
+              answersStatuses[1]
+            )
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.revertedWith("Answer is already calculated");
@@ -1576,18 +1998,16 @@ describe("Lithium Pricing", async function () {
 
         it("Should not  update final answer status if wrong status is passed ", async () => {
           const questionIds = [0, 1];
-          const finalAnswerIndexes = [1, 1];
-          const finalAnswerValues = [50, 100];
           //Answer can't be calulated for question id 0
           //so we mark as invalid
           //and not able to update group rewards
           const answersStatuses = [1, 4];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
 
           await expect(
             lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             )
           ).to.be.reverted;
@@ -1596,13 +2016,11 @@ describe("Lithium Pricing", async function () {
         describe("Update Group Reward Amounts", async () => {
           beforeEach(async () => {
             const questionIds = [0, 1];
-            const finalAnswerIndexes = [1, 1];
-            const finalAnswerValues = [50, 100];
             const answersStatuses = [1, 1];
+            const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
             await lithiumPricing.updateFinalAnswerStatus(
               questionIds,
-              finalAnswerIndexes,
-              finalAnswerValues,
+              answerHashes,
               answersStatuses
             );
           });
@@ -1861,10 +2279,39 @@ describe("Lithium Pricing", async function () {
       expect(getMinimumStake).equal(minimumStake);
     });
 
-    it("Should not allow admins to set minimum stake ", async () => {
+    it("Should not allow non admins to set minimum stake ", async () => {
       const minimumStake = ethers.utils.parseUnits("10.0", 18);
       await expect(
         lithiumPricing.connect(account1).updateMinimumStake(minimumStake)
+      ).to.be.revertedWith("Must be admin");
+    });
+  });
+
+  describe("Tier Thresholds", () => {
+    it("Should be set after deploy ", async () => {
+      //minimum stake=10LITH tokens
+      const thresholds = await lithiumPricing.getRevealTiers();
+      const initialTierCount = 2;
+
+      expect(thresholds.length).equal(initialTierCount);
+    });
+
+    it("Should allow admins to update tierThresholds", async () => {
+      const newThresholds = [20, 100, 300];
+      await expect(lithiumPricing.updateRevealTiers(newThresholds))
+      .emit(lithiumPricing, "RevealTiersUpdated")
+      .withArgs(newThresholds);
+
+      const thresholds = await lithiumPricing["getRevealTiers()"]();
+      expect(thresholds.length).equal(newThresholds.length);
+      expect(thresholds[0]).equal(newThresholds[0])
+      expect(thresholds[1]).equal(newThresholds[1])
+    });
+
+    it("Should not allow non admins update tierThresholds", async () => {
+      const newThresholds = [20, 100, 300];    
+      await expect(
+        lithiumPricing.connect(account1).updateRevealTiers(newThresholds)
       ).to.be.revertedWith("Must be admin");
     });
   });

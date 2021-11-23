@@ -25,6 +25,7 @@
     "compile": "yarn workspace @scaffold-eth/hardhat compile",
     "coverage": "yarn workspace @scaffold-eth/hardhat coverage",
     "deploy": "yarn workspace @scaffold-eth/hardhat deploy",
+    "answer-100": "yarn workspace @scaffold-eth/hardhat answer-100",
     "deploy-rinkeby": "yarn workspace @scaffold-eth/hardhat deploy-rinkeby",
     "watch": "yarn workspace @scaffold-eth/hardhat watch",
     "accounts": "yarn workspace @scaffold-eth/hardhat accounts",

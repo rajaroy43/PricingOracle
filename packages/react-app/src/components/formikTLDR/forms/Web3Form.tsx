@@ -3,7 +3,6 @@ import { Formik } from 'formik'
 import { callMethod } from './utils'
 import { Web3FormProps, FormStateEls } from '../types'
 import Loading from '../../atoms/Loading'
-import config from '../../../config'
 import ExplorerLink from '../../atoms/ExplorerLink'
 
 
@@ -67,7 +66,8 @@ const getContent = (
   isValid: boolean,
   stateEls: FormStateEls,
   formOnSuccess: boolean,
-  onSuccess: any
+  onSuccess: any,
+  values: any
   ) => {
   const { SuccessEl, PendingEl, ErrorEl } = stateEls
   if ( state.receipt ) {
@@ -87,7 +87,7 @@ const getContent = (
     return PendingEl ? <PendingEl txHash={state.txHash} /> : <Pending txHash={state.txHash} />
   }
 
-  return getForm(submit, isValid)
+  return getForm(submit, isValid, values)
 }
 
 interface InnerFormState {
@@ -150,7 +150,8 @@ const InnerForm = ({formikProps, formProps}: {formikProps: any, formProps: Web3F
     isValid,
     stateEls,
     formOnSuccess,
-    updaters.onSuccess
+    updaters.onSuccess,
+    values
     )
 }
 

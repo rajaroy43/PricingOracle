@@ -1,11 +1,11 @@
-import { readFileSync }from "fs";
-import "hardhat-typechain";
+const {readFileSync}=require("fs")
+require("hardhat-typechain");
 
-import "@nomiclabs/hardhat-waffle";
-import "solidity-coverage";
-import "@tenderly/hardhat-tenderly";
-import "@nomiclabs/hardhat-etherscan";
-import "@openzeppelin/hardhat-upgrades"
+require("@nomiclabs/hardhat-waffle");
+require("solidity-coverage");
+require("@tenderly/hardhat-tenderly");
+require("@nomiclabs/hardhat-etherscan");
+require("@openzeppelin/hardhat-upgrades")
 require("dotenv").config();
 
 /*
@@ -49,10 +49,10 @@ module.exports = {
     },
     hardhat: {
       chainId: 1337,
-      /*
-        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-      */
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+        count: 101,
+      },
     },
     rinkeby: {
       url: process.env.RINKEBY_PROVIDER_ENDPOINT, //<---- YOUR INFURA ID! (or it won't work)

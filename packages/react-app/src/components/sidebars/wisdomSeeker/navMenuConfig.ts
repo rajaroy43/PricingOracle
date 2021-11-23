@@ -24,23 +24,7 @@ const getNavItems: GetNavItemParams[] = [
             return true
         },
 
-    },
-    {
-        ...baseMenuItem,
-        id: 'biddableQuestions',
-        icon: 'nav-icon-upcoming-questions',
-        label: 'Biddable Questions',
-        getUrl: (params) => {
-        return params.isWalletConnected ?
-            `/wisdom-seeker/biddable-questions/`
-            :
-            '/'
-        },
-        getShouldRender: (params) => {
-            return true
-        },
-
-    },    
+    },   
     {
         ...baseMenuItem,
         id: 'myBids',
@@ -55,7 +39,48 @@ const getNavItems: GetNavItemParams[] = [
         getShouldRender: (params) => {
           return params.isWalletConnected
         },
-    }
+    },
+    {
+      ...baseMenuItem,
+      id: 'biddableQuestions',
+      icon: 'nav-icon-available-sets',
+      label: 'Biddable Questions',
+      getUrl: (_) => '/wisdom-seeker/biddable-questions',
+      getShouldRender: (_) => true,
+    },
+
+    /*
+    {
+        ...baseMenuItem,
+        id: 'stats',
+        icon: 'nav-icon-stats',
+        label: 'Stats / My Profile',
+        getUrl: (params) => {
+        return params.isWalletConnected ?
+            `/stats/${params.walletAddress}`
+            :
+            '/'
+        },
+        getShouldRender: (_) => {
+        return true
+        },
+    },
+    {
+        ...baseMenuItem,
+        id: 'staking',
+        icon: 'nav-icon-staking',
+        label: 'Staking',
+        getUrl: (params) => {
+        return params.isWalletConnected ?
+            `/staking/${params.walletAddress}`
+            :
+            '/'
+        },
+        getShouldRender: (_) => {
+        return true
+        },
+    }  
+    */  
 ]
 
 export default getNavItems;

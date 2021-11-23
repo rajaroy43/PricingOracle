@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { WalletContext } from '../providers/WalletProvider'
 import WisdomSeekerTemplate from '../templates/WisdomSeekerTemplate'
-import SuggestAssetForm from '../forms/SuggestAssetForm'
 
 const SuggestAsset = ({ match }: any) => {
     const connectedWallet = useContext(WalletContext)
@@ -15,7 +14,7 @@ const SuggestAsset = ({ match }: any) => {
 
     return (
         <WisdomSeekerTemplate pageProps={sideBarProps}>
-            <SuggestAssetForm />
+            TBD
         </WisdomSeekerTemplate>
     )
 }

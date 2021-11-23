@@ -7,6 +7,8 @@ import Typography from "@material-ui/core/Typography"
 import { Link as RouterLink } from 'react-router-dom'
 import AnswerQuestionGroupForm from '../forms/AnswerQuestionGroupForm'
 import { QuestionGroupView } from '../../types/questionGroup'
+import TimeLeft from '../atoms/TimeLeft'
+import { secToMs } from '../../helpers/formatters'
 
 const useStyles = makeStyles(theme => ({
   buttonBack: {
@@ -97,7 +99,17 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
   const mockData = {
     timeLeft: "00:00:00"
   };
-
+  const form = questionGroup.questionViews.length ?
+    <AnswerQuestionGroupForm questionGroup={questionGroup} connectedWallet={connectedWallet} />
+    :
+    <div className={classes.answerGroupItems}>
+      <div>No Questions</div>
+    </div>
+  const notStarted = <div>Question Group Not Yet AVailable for Answering</div>
+  const finished = <div>Question Group Answering Period Completed</div>
+  const content = !questionGroup.isStarted ? notStarted : questionGroup.isFinished ? finished : form
+  const isAnsweredContent = <Typography variant="h3">Question Set Already Answered</Typography>
+  const isAnswered = !!(questionGroup.questions[0].answers && questionGroup.questions[0].answers.length)
   return (
     <>
         <div className={classes.titleRow}>
@@ -109,20 +121,15 @@ const AnsweringGroup = ({questionGroup, connectedWallet}: {questionGroup: Questi
                 <Typography variant="h3" className={classes.questionGroupId}>#{questionGroup.id}</Typography>
             </div>
             <div className={classes.timeCol}>
-                {false && <div className={classes.questionGroupTime}>Time left: {mockData.timeLeft}</div>} 
+              <TimeLeft label='Time Left' targetTime={secToMs(parseInt(questionGroup.endTime, 10))} />
+               
             </div>    
         </div>  
         <div className={classes.timeRowMobile}>
-            {false && <div className={classes.questionGroupTime}>Time left: {mockData.timeLeft}</div>} 
+            <TimeLeft label='Time Left' targetTime={secToMs(parseInt(questionGroup.endTime, 10))} />
         </div>
 
-        {questionGroup.questionViews.length ?
-          <AnswerQuestionGroupForm questionGroup={questionGroup} connectedWallet={connectedWallet} />
-          :
-          <div className={classes.answerGroupItems}>
-            <div>No Question Groups</div>
-          </div>
-        }
+        {isAnswered ? isAnsweredContent : content}
     </>
   )
 }

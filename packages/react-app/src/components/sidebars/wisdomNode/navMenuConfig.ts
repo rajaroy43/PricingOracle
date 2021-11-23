@@ -44,12 +44,12 @@ const getNavItems: GetNavItemParams[] = [
         label: 'Upcoming Questions',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-node/upcoming-questions/${params.walletAddress}`
+            `/wisdom-node/upcoming-questions`
             :
             '/'
         },
         getShouldRender: (_) => {
-        return true
+          return true
         },
     },
     {

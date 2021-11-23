@@ -4,7 +4,7 @@ import { getLithiumPricingInstance, getLithiumTokenInstance } from '../helpers/c
 import { SUPPORTED_WALLETS } from '../types/user'
 
 
-const isValidProviderNetwork = (provider: any): boolean => {
+export const isValidProviderNetwork = (provider: any): boolean => {
   // confirm  the provider chainId matches if not fortmatic
   if (!provider.isFortmatic && parseInt(provider.chainId, 16) !== config.CHAIN_ID) {
     return false

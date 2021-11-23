@@ -1,4 +1,9 @@
-import { Question } from 'lithium-subgraph'
+import { Question, QuestionBid } from 'lithium-subgraph'
+
+export interface QuestionBidView extends QuestionBid {
+  amountDisplay: string;
+}
+
 
 export interface QuestionView extends Question {
   answerSetTotalStakedDisplay: string[];
@@ -11,6 +16,7 @@ export interface QuestionView extends Question {
   isFinished: boolean;
   createdLocal: string;
   pricingTimeDisplay: string;
+  userBidView?: QuestionBidView
 }
 
 export enum CategoryLabelDisplay {
@@ -18,4 +24,9 @@ export enum CategoryLabelDisplay {
   Crypto,
   RealEstate,
   NFT
+}
+
+export enum QuestionType {
+  Pricing,
+  GroundTruth
 }

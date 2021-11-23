@@ -5,6 +5,7 @@ export interface QuestionGroupView extends QuestionGroup {
   endTimeLocal: string
   startTimeLocal: string
   isFinished: boolean
+  isStarted: boolean
   totalBounty: string
   totalBountyDisplay: string
   totalStake: string

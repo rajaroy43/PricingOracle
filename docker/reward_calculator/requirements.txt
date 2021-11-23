@@ -3,5 +3,7 @@ gunicorn
 requests
 numpy
 pytest
-schema
 scipy
+pycoingecko
+schema
+pandas

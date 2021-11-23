@@ -9,6 +9,7 @@ packages/hardhat/*.txt
 packages/hardhat/artifacts
 packages/hardhat/deployments
 !packages/react-app/src/contracts/contracts.js
+packages/subgraph/contractDeployments/localhost/
 packages/hardhat/cache
 packages/hardhat/typechain
 packages/hardhat/hardhat.config.ts

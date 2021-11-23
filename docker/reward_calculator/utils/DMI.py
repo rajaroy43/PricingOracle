@@ -5,16 +5,16 @@ Based off the paper: https://arxiv.org/abs/1911.00272
 "Dominantly Truthful Multi-task Peer Prediction with a Constant Number of Tasks"
 by Yuqing Kong
 
-Call the function `DMI` with answers `x` and the number of choices `C`. `x` should be 
-given in the `numpy.array` form or `list` form. If there are n agents and m tasks,  
-`x` is a `n*m` matrix. Please make sure `m >= 2c` and each answer in `x` is an integer 
-in `[0, < c)`, otherwise the function will raise a `ValueError`.  DMI scores will return 
+Call the function `DMI` with answers `x` and the number of choices `C`. `x` should be
+given in the `numpy.array` form or `list` form. If there are n agents and m tasks,
+`x` is a `n*m` matrix. Please make sure `m >= 2c` and each answer in `x` is an integer
+in `[0, < c)`, otherwise the function will raise a `ValueError`.  DMI scores will return
 in `numpy.array` form.
 
 inputs:  numpy.array: answers
         int: choice_n
         use_norm: False # Tell it to calculate the normalized payment or leave as raw payment data
-        shuffle: False # Do the shuffling within the function (True) or assume the 
+        shuffle: False # Do the shuffling within the function (True) or assume the
             answer matrix is already shuffled.
 Here is an example
 >>> fem.DMI([[1, 1, 0, 1, 1, 0, 1, 1, 1], [1, 1, 0, 0, 1, 0, 1, 0, 1]], 2)
@@ -49,20 +49,23 @@ def dmi2(A1, B1, A2, B2, C):
 
 
 def DMI(answers, choice_n, use_norm = True, shuffle = False):
-    # takes np array of answers, number of choices and flag to calculate 
-    # normalization of payments and a flag to shuffle the array or not.  
-    # If shuffle = False, the array should be pre-shuffled.  
+    # takes np array of answers, number of choices and flag to calculate
+    # normalization of payments and a flag to shuffle the array or not.
+    # If shuffle = False, the array should be pre-shuffled.
     # This can be helpful when carrying wisdom node ids
     if type(answers) == list:
         answers = np.array(answers)
     agent_n, task_n = answers.shape
-
+    print('answers in DMI.py ==== ')
+    print(answers)
     print("\nUsing agent_n: ",agent_n, " and task_n: ", task_n)
 
     # T >= 2C; N > 1;
     if task_n < 2 * choice_n:
+        print('Notice: Insufficient number of tasks!')
         raise ValueError('Insufficient number of tasks.')
     if agent_n <= 1:
+        print('Notice: Too few agents!')
         raise ValueError('Too few agents.')
 
     # T tasks are arbitrarily divided into two disjoint parts T_1 , T_2
@@ -89,4 +92,3 @@ def DMI(answers, choice_n, use_norm = True, shuffle = False):
         payments.append(p)
 
     return np.array([payments]).T, norm_factor
-

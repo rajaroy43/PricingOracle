@@ -23,6 +23,7 @@ type PricingContractMeta @entity {
   address: Bytes!
   tokenAddress: Bytes
   rewardAddress: Bytes
+  revealTiers: [Int!]!
 }
 
 type User @entity {
@@ -39,6 +40,8 @@ type User @entity {
   tokenBalance: BigInt!
   tokenApprovalBalance: BigInt!
   categoryReputations: [UserCategoryReputation!] @derivedFrom(field: "user")
+  bidCount: BigInt!
+  bids: [QuestionBid!] @derivedFrom(field: "user")
 }
 
 type QuestionCategory @entity {
@@ -74,6 +77,8 @@ type Question @entity {
   isAnswerCalculated: StatusCalculated!
   answerCount: BigInt!
   answers: [Answer!] @derivedFrom(field: "question")
+  bids: [QuestionBid!] @derivedFrom(field: "question")
+  bidCount: BigInt!
   created: BigInt!
   finalAnswerIndex: Int!
   finalAnswerValue: BigInt!
@@ -89,6 +94,15 @@ type QuestionGroup @entity {
   startTime: BigInt!
   minimumRequiredAnswers: Int!
 }
+
+ type QuestionBid @entity {
+    id: ID!
+    amount: BigInt!
+    isRefunded: Boolean!
+    question: Question!
+    user: User!
+  }
+
 
 type Answer @entity {
   id: ID! # questionId-answerer address

@@ -14,11 +14,13 @@ export const CHAIN_IDS = {
 
 const configs = {
   localhost: {
+    Hardfork:"london",
     CHAIN_ID: 1337,
     pricingAbi: localPricingAbi,
     LITHIUM_PRICING_ADDRESS: localConfig.LithiumPricingAddress,
   },
   rinkeby: {
+    Hardfork:"london",
     CHAIN_ID: 4,
     pricingAbi: rinkebyPricingAbi,
     LITHIUM_PRICING_ADDRESS: rinkebyConfig.LithiumPricingAddress,
