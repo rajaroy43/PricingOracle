@@ -212,6 +212,7 @@ const deploy = async (
     libraries: libraries,
   });
   const deployed = !isProxy ?await contractArtifacts.deploy(...contractArgs, overrides):await upgrades.deployProxy(contractArtifacts,contractArgs);
+  await deployed.deployTransaction.wait();
   const encoded = abiEncodeArgs(deployed, contractArgs);
   fs.writeFileSync(`artifacts/${contractName}.address`, deployed.address);
 

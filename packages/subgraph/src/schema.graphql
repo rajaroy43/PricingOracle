@@ -50,7 +50,7 @@ type QuestionCategory @entity {
   questionCount: BigInt!
   totalBounty: BigInt!
   totalStaked: BigInt!
-  rewardedQuestionCount: BigInt!
+  answeredQuestionCount: BigInt!
   questions: [Question!] @derivedFrom(field: "category")
 }
 
@@ -95,13 +95,13 @@ type QuestionGroup @entity {
   minimumRequiredAnswers: Int!
 }
 
- type QuestionBid @entity {
-    id: ID!
-    amount: BigInt!
-    isRefunded: Boolean!
-    question: Question!
-    user: User!
-  }
+type QuestionBid @entity {
+  id: ID!
+  amount: BigInt!
+  isRefunded: Boolean!
+  question: Question!
+  user: User!
+}
 
 
 type Answer @entity {
