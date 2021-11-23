@@ -10,9 +10,10 @@ import {
   QuestionGroupCreated,
   QuestionAnswered,
   ReputationUpdated,
+  RevealTiersUpdated,
   RewardClaimed,
   SetLithiumRewardAddress,
-  SetLithiumTokenAddress
+  SetLithiumTokenAddress,
 } from "../generated/LithiumPricing/LithiumPricing"
 
 import { 
@@ -68,6 +69,7 @@ function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
   if (meta == null) {
     meta = new PricingContractMeta(PRICING_CONTRACT_META_ID)
     meta.address = address
+    meta.revealTiers = []
     meta.save()
   }
 
@@ -176,6 +178,12 @@ export function handleBidRefunded(event: BidRefunded): void {
 
   user.totalBounty = user.totalBounty.minus(event.params.refundAmount)
   user.save()
+}
+
+export function handleRevealTiersUpdated(event: RevealTiersUpdated): void {
+  let meta = getOrCreatePricingContractMeta(event.address)
+  meta.revealTiers = event.params.revealTiers
+  meta.save()
 }
 
 export function handleSetLithiumRewardAddress(event: SetLithiumRewardAddress): void {

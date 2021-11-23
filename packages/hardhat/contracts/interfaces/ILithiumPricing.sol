@@ -83,6 +83,8 @@ interface ILithiumPricing {
 
   event BidRefunded(uint256 questionId, address nodeAddress,uint256 refundAmount);
 
+  event RevealTiersUpdated(uint16[] revealTiers);
+
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
   //Invalid is for if answer can't be calculated
@@ -135,6 +137,11 @@ interface ILithiumPricing {
     uint256 _questionId
   ) external view returns (
     uint256
+  );
+
+  function getRevealTiers (
+  ) external view returns (
+    uint16[] memory
   );
 
 
@@ -209,5 +216,7 @@ interface ILithiumPricing {
     uint256[] memory refundAmounts
   ) external ;
 
-
+  function updateRevealTiers (
+    uint16[] memory _revealTiers
+  ) external;
 }
