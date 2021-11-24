@@ -52,6 +52,8 @@ dataSources:
           handler: handleBidReceived
         - event: BidRefunded(uint256,address,uint256)
           handler: handleBidRefunded
+        - event: RevealTiersUpdated(uint16[])
+          handler: handleRevealTiersUpdated
       file: ./src/mapping.ts
 
   - kind: ethereum/contract

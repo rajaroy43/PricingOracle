@@ -9,6 +9,13 @@ services:
             - "9000:9000"
         stdin_open: true
         tty: true
+        environment:
+            LITHIUM_SUBGRAPH_URI: ${LITHIUM_SUBGRAPH_URI}
+            REWARD_CALCULATOR_URI: ${REWARD_CALCULATOR_URI}
+            FETCH_INTERVAL: ${FETCH_INTERVAL}
+            ETH_NODE: ${ETH_NODE}
+            TARGET_CHAIN: ${TARGET_CHAIN}
+            COORDINATOR_KEY: ${COORDINATOR_KEY}
         x-aws-logs_retention: 10
 
     python:
@@ -18,5 +25,12 @@ services:
             - "9001:9001"
         stdin_open: true
         tty: true
+        environment:
+            LITHIUM_SUBGRAPH_URI: ${LITHIUM_SUBGRAPH_URI}
+            REWARD_CALCULATOR_URI: ${REWARD_CALCULATOR_URI}
+            FETCH_INTERVAL: ${FETCH_INTERVAL}
+            ETH_NODE: ${ETH_NODE}
+            TARGET_CHAIN: ${TARGET_CHAIN}
+            COORDINATOR_KEY: ${COORDINATOR_KEY}
         x-aws-logs_retention: 10
 
