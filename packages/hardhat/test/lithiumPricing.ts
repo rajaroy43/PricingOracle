@@ -814,7 +814,7 @@ describe("Lithium Pricing", async function () {
       await expect(
         //@ts-ignore
         lithiumPricing.createQuestionGroup(...args)
-      ).to.be.revertedWith("VM Exception while processing transaction: revert");
+      ).to.be.revertedWith("Transaction reverted without a reason string");
     });
 
     it("Should fail to create a questionGroup  if any question  with an invalid answerSet length: too few", async function () {
