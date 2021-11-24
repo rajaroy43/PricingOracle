@@ -17,13 +17,15 @@ const getEncryptedAnswer = async(publicKey:string,bidder:string,answerValue:numb
 
 }
 
-const getEncryptedAnswers = async(publicKeys:string[],bidders:string[],answerValues:number[])=>{
-    let userEncryptedAnswers:any ={};
+const getEncryptedAnswers = async(questionId: number,publicKeys:string[],bidders:string[],answerValues:number[])=>{
+    let encryptedAnswers :any={questionId:questionId};
+    let bidderEncryptedAnswers :any={}
     for(let i=0;i<bidders.length;i++){
-      userEncryptedAnswers[bidders[i]] = await getEncryptedAnswer(publicKeys[i],bidders[i],answerValues[i])
+      const encryptedAnswer = await getEncryptedAnswer(publicKeys[i],bidders[i],answerValues[i])
+      bidderEncryptedAnswers[bidders[i]] = encryptedAnswer;
     }
-
-    return userEncryptedAnswers;
+    encryptedAnswers['answers'] = bidderEncryptedAnswers
+    return encryptedAnswers;
 }
 
 export default getEncryptedAnswers
