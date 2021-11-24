@@ -1,10 +1,11 @@
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import Whatshot from '@material-ui/icons/Whatshot'
 import { Form, Formik } from 'formik'
-import React from 'react'
 import Address from '../atoms/Address'
 import Text from '../atoms/inputs/Text'
+import Button from '../atoms/inputs/buttons/Button'
 
 const useStyles = makeStyles(theme => ({
     /* biddable questions form */
@@ -29,12 +30,12 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '4px'
     },
     bidRow: {
+        alignItems: 'start',
         display: 'flex',
         flexDirection: 'row',
         fontSize: '18px',
         justifyContent: 'space-between',
         marginTop: '16px',
-        maxWidth: '400px',
         '& > div': {
             alignItems: 'start',
             display: 'flex',
@@ -44,16 +45,30 @@ const useStyles = makeStyles(theme => ({
             '& > .topBid': {
                 marginTop: '16px !important',
             }
+        },
+        [theme.breakpoints.up('sm')]: {
+            // @ts-ignore
+            // Expands the height to accomodate the bid update form on open bids
+            height: ({ isBiddingOpen }) => isBiddingOpen === true ? "85px" : "auto"
         }
+    },
+    updateCol: {
+        '& > p': {
+            marginTop: '0'
+        },
+        minWidth: '115px'
     },
     myBidWrapper: {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        whiteSpace: 'nowrap',
-        '& > .myBidUnit': {
-            marginLeft: '4px'
-        }
+        whiteSpace: 'nowrap'
+    },
+    bidUnit: {
+        marginLeft: '4px'
+    },
+    buttonUpdateBid: {
+        marginTop: '16px'
     },
     bidInfo: {
         alignItems: 'center',
@@ -75,7 +90,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const BiddableQuestionItem = ({id, question}: {id: string, question: any}) => {
-    const classes = useStyles();
+    const isBiddingOpen = question.isBiddingOpen;
+    const classes = useStyles({ isBiddingOpen });
   
     return (
       <div className={classes.question}>
@@ -83,13 +99,23 @@ const BiddableQuestionItem = ({id, question}: {id: string, question: any}) => {
         <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
         <div className={classes.bidRow}>
           <div>
-              Top Bid:
+              Top Bid<br />
+              <br />
               <div>
                   {question.currentBid ? question.currentBid + ' LITH' : 'No Bids'}
               </div>
           </div> 
-          <div>My Bid:    
-              { question.biddingIsOpen === true ? 
+          <div>
+              My Bid<br />
+              <br />
+              <div>
+                {question.myBid} LITH 
+              </div>
+          </div>
+          <div className={classes.updateCol}>   
+              { question.isBiddingOpen === true ? 
+                <>
+                  <p><strong>Update Bid</strong></p>
                   <Formik 
                       initialValues={{
                           assetName: '',
@@ -100,38 +126,39 @@ const BiddableQuestionItem = ({id, question}: {id: string, question: any}) => {
                           console.log(JSON.stringify(values, null, 2));
                       }}
                       >
+                    <Form>
                       <div className={classes.myBidWrapper}>
-                          <Form>
-                              <Text
-                                  name="myBid"
-                                  type="text"
-                                  style={{width: '80px'}}
-                                  defaultValue={question.myBid}
-                              />
-                          </Form>
-                          <div className="myBidUnit">LITH</div>
+                        <Text
+                            name="myBid"
+                            type="text"
+                            style={{width: '80px'}}
+                            defaultValue=""
+                        /><span className={classes.bidUnit}>LITH</span>
                       </div>
+                      <Button label="Update Bid"
+                        className={classes.buttonUpdateBid} />
+                    </Form>
                   </Formik>
+                  </>
               :
-              <>
-                  <div style={{"marginRight": "50px"}}>
-                      { question.myBid } LITH
-                  </div>
-              </>
+              null
               }
           </div>  
         </div>
+
         { question.myBid ? 
               question.myBid === question.currentBid ? 
                   <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding Tier: First to Know</div>
                   :
-                  question.biddingIsOpen ?
+                  question.isBiddingOpen ?
                       <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding { question.myBid + 100 } LITH will advance your bid to [next tier].</div>
                       :
                       ''
           : '' }
 
           { question.hot ? <div className={classes.bidInfo}><Whatshot style={{fill: '#E96036'}} /> High number of bids on this question</div> : '' }
+         
+          <hr className={classes.bidRule} />
       </div>
     )
 }

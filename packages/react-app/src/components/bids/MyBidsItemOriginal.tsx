@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const MyAnswersItem = ({id, question}: {id: string, question: any}) => {
+const MyBidQuestionItem = ({id, question}: {id: string, question: any}) => {
     const classes = useStyles();
   
     return (
@@ -101,4 +101,4 @@ const MyAnswersItem = ({id, question}: {id: string, question: any}) => {
     )
 }
 
-export default MyAnswersItem
+export default MyBidQuestionItem
