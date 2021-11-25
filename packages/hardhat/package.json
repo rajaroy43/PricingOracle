@@ -55,6 +55,7 @@
     "deploy": "TOKEN_ADDRESS='' hardhat run scripts/deploy.js",
     "answer-100": "node ./scripts/100wisdomNodeAnswering.js",
     "deploy-rinkeby": "DEPLOY_CHAIN_TARGET='rinkeby' TOKEN_ADDRESS='0xD54e04F657Cd8b59959b4B8dd157595eAf163A4a' hardhat run scripts/deploy.js --network rinkeby && DEPLOY_CHAIN_TARGET='rinkeby' yarn postdeploy",
+    "deploy-goerli": "DEPLOY_CHAIN_TARGET='goerli' TOKEN_ADDRESS='' hardhat run scripts/deploy.js --network goerli && DEPLOY_CHAIN_TARGET='goerli' yarn postdeploy",
     "postdeploy": "hardhat run scripts/publish.js",
     "watch": "node scripts/watch.js",
     "accounts": "hardhat accounts",
