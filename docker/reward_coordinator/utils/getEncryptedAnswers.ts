@@ -1,14 +1,11 @@
 import EthCrypto from 'eth-crypto'
+import { Bidder } from '../types';
 
-const getEncryptedAnswer = async(publicKey:string,bidder:string,answerValue:number)  =>{
-    const payload = {
-        bidder:bidder,
-        answerValue: answerValue
-    }
+const encryptValue = async(publicKey:string,value:string)  =>{
 
     const encrypted = await EthCrypto.encryptWithPublicKey(
         publicKey, // by encryping with user publicKey, only user can decrypt the payload with his privateKey
-        JSON.stringify(payload) // we have to stringify the payload before we can encrypt it
+        JSON.stringify(value) // we have to stringify the payload before we can encrypt it
     );
 
     const encryptedString = EthCrypto.cipher.stringify(encrypted);
@@ -17,15 +14,16 @@ const getEncryptedAnswer = async(publicKey:string,bidder:string,answerValue:numb
 
 }
 
-const getEncryptedAnswers = async(questionId: number,publicKeys:string[],bidders:string[],answerValues:number[])=>{
-    let encryptedAnswers :any={questionId:questionId};
-    let bidderEncryptedAnswers :any={}
-    for(let i=0;i<bidders.length;i++){
-      const encryptedAnswer = await getEncryptedAnswer(publicKeys[i],bidders[i],answerValues[i])
-      bidderEncryptedAnswers[bidders[i]] = encryptedAnswer;
+const getEncryptedAnswers = async(questionId: number,bidders:Bidder[],answerValue:string)=>{
+
+    const answers = bidders.reduce((acc: any, bidder: Bidder) => {
+      acc[bidder.address] = encryptValue(bidder.publicKey, answerValue)
+      return acc
+    }, {})
+    return {
+      questionId,
+      answers
     }
-    encryptedAnswers['answers'] = bidderEncryptedAnswers
-    return encryptedAnswers;
 }
 
 export default getEncryptedAnswers
