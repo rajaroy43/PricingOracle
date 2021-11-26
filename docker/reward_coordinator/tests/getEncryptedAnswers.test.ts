@@ -7,27 +7,23 @@ import { Bidder } from '../types'
     const answerValue = '100';
 
     const createMockdata = (numberofUsers:number)=>{
-      let mockdata =[];
-      mockdata = Array(numberofUsers).fill(0).map(()=>{
+      return Array(numberofUsers).fill(0).map(()=>{
         const user = EthCrypto.createIdentity()
         return {
-        publickey:user.publicKey,
-        bidder:user.address,
-        privatekey:user.privateKey
-      }})
-
-      return mockdata;
+          publickey:user.publicKey,
+          bidder:user.address,
+          privatekey:user.privateKey
+        }
+      })
     }
 
     const getUserData =(testData:any): Bidder[]=> {
-      var bidders:Bidder[]=[];
-      bidders= testData.map((test:any)=>{
+      return  testData.map((test:any)=>{
         return {
           publicKey :test.publickey,
           address :test.bidder
         }
       })
-      return bidders
     }
 
     const decryptdata = async(encryptedString:string,privateKey:string) =>{
@@ -58,7 +54,7 @@ import { Bidder } from '../types'
 
     it("Should not calculate correct encryption/decryption for invalid private  keys ",async ()=>{
       const numberOfUsers = 1;
-      var testData = createMockdata(numberOfUsers)
+      const testData = createMockdata(numberOfUsers)
       const bidders = getUserData(testData)
       testData[0].privatekey = "random data"; 
       const encryptedAnswers =await getEncryptedAnswers(questionId,bidders,answerValue)
@@ -70,7 +66,7 @@ import { Bidder } from '../types'
 
     it("Should not calculate correct encryption/decryption for invalid public  key length",async ()=>{
       const numberOfUsers = 1;
-      var testData = createMockdata(numberOfUsers)
+      const testData = createMockdata(numberOfUsers)
       const bidders = getUserData(testData)
       bidders[0].publicKey = "random data";  
       await expect(getEncryptedAnswers(questionId,bidders,answerValue)).rejects.toThrowError("Expected public key to be an Uint8Array with length [33, 65]")
