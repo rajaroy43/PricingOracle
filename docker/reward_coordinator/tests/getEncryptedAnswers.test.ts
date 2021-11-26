@@ -12,7 +12,7 @@ import { Bidder } from '../types'
         return {
           publickey:user.publicKey,
           bidder:user.address,
-          privatekey:user.privateKey
+          privateKey:user.privateKey
         }
       })
     }
@@ -20,8 +20,8 @@ import { Bidder } from '../types'
     const getUserData =(testData:any): Bidder[]=> {
       return  testData.map((test:any)=>{
         return {
-          publicKey :test.publickey,
-          address :test.bidder
+          publicKey: test.publickey,
+          address: test.bidder
         }
       })
     }
@@ -41,7 +41,7 @@ import { Bidder } from '../types'
       const encryptedAnswers = await getEncryptedAnswers(questionId,bidders,answerValue)
       testData.forEach(async(data)=>{
         // @ts-ignore
-        const decryptedAnswerValue = await decryptdata(encryptedAnswers.answers[data.bidder],data.privatekey);
+        const decryptedAnswerValue = await decryptdata(encryptedAnswers.answers[data.bidder],data.privateKey);
         expect(decryptedAnswerValue).toBe(answerValue)
       })
     }
@@ -56,11 +56,11 @@ import { Bidder } from '../types'
       const numberOfUsers = 1;
       const testData = createMockdata(numberOfUsers)
       const bidders = getUserData(testData)
-      testData[0].privatekey = "random data"; 
-      const encryptedAnswers =await getEncryptedAnswers(questionId,bidders,answerValue)
+      testData[0].privateKey = "random data"; 
+      const encryptedAnswers = await getEncryptedAnswers(questionId,bidders,answerValue)
       testData.forEach(async(data)=>{
         // @ts-ignore
-        await expect(decryptdata(encryptedAnswers.answers[data.bidder],data.privatekey)).rejects.toThrowError("Bad private key")
+        await expect(decryptdata(encryptedAnswers.answers[data.bidder],data.privateKey)).rejects.toThrowError("Bad private key")
       })
     })
 
