@@ -1,33 +1,33 @@
 import getEncryptedAnswers from '../utils/getEncryptedAnswers';
 import EthCrypto from 'eth-crypto'
+import { Bidder } from '../types'
 
   describe("Answers encryption with public key", () => {
     const questionId = 1;
+    const answerValue = '100';
+
     const createMockdata = (numberofUsers:number)=>{
       let mockdata =[];
-      for(let i=0; i<numberofUsers;i++){
+      mockdata = Array(numberofUsers).fill(0).map(()=>{
         const user = EthCrypto.createIdentity()
-        const formattedData = {
-          publickey:user.publicKey,
-          bidder:user.address,
-          privatekey:user.privateKey,
-          answerValue:Math.floor(Math.random() * numberofUsers)
-        }
-        mockdata.push(formattedData);
-      }
+        return {
+        publickey:user.publicKey,
+        bidder:user.address,
+        privatekey:user.privateKey
+      }})
 
       return mockdata;
     }
 
-    const getUserData =(testData:any)=>{
-      let publicKeys=[],bidders=[],answerValues=[];
-      for(let i=0;i<testData.length;i++){
-        publicKeys.push(testData[i].publickey);
-        bidders.push(testData[i].bidder);
-        answerValues.push(testData[i].answerValue);
-      }
-      
-      return {publicKeys,bidders,answerValues}
+    const getUserData =(testData:any): Bidder[]=> {
+      var bidders:Bidder[]=[];
+      bidders= testData.map((test:any)=>{
+        return {
+          publicKey :test.publickey,
+          address :test.bidder
+        }
+      })
+      return bidders
     }
 
     const decryptdata = async(encryptedString:string,privateKey:string) =>{
@@ -36,17 +36,17 @@ import EthCrypto from 'eth-crypto'
         privateKey,
         encryptedObject
       );
-      return JSON.parse(decrypted);
+      return decrypted;
     }
 
     const getCorrectEncryption = async(numberOfUsers:number)=>{
       const testData = createMockdata(numberOfUsers)
-      const {publicKeys,bidders,answerValues} = getUserData(testData)
-      const encryptedAnswers =await getEncryptedAnswers(questionId,publicKeys,bidders,answerValues)
+      const bidders = getUserData(testData)
+      const encryptedAnswers = await getEncryptedAnswers(questionId,bidders,answerValue)
       testData.forEach(async(data)=>{
-        const decryptedAnswers = await decryptdata(encryptedAnswers['answers'][data.bidder],data.privatekey);
-        expect(data.bidder).toBe(decryptedAnswers.bidder)
-        expect(data.answerValue).toBe(decryptedAnswers.answerValue)
+        // @ts-ignore
+        const decryptedAnswerValue = await decryptdata(encryptedAnswers.answers[data.bidder],data.privatekey);
+        expect(decryptedAnswerValue).toBe(answerValue)
       })
     }
 
@@ -59,21 +59,21 @@ import EthCrypto from 'eth-crypto'
     it("Should not calculate correct encryption/decryption for invalid private  keys ",async ()=>{
       const numberOfUsers = 1;
       var testData = createMockdata(numberOfUsers)
-      const {publicKeys,bidders,answerValues} = getUserData(testData)
+      const bidders = getUserData(testData)
       testData[0].privatekey = "random data"; 
-      const encryptedAnswers =await getEncryptedAnswers(questionId,publicKeys,bidders,answerValues)
+      const encryptedAnswers =await getEncryptedAnswers(questionId,bidders,answerValue)
       testData.forEach(async(data)=>{
-        await expect(decryptdata(encryptedAnswers['answers'][data.bidder],data.privatekey)).rejects.toThrowError("Bad private key")
+        // @ts-ignore
+        await expect(decryptdata(encryptedAnswers.answers[data.bidder],data.privatekey)).rejects.toThrowError("Bad private key")
       })
     })
 
     it("Should not calculate correct encryption/decryption for invalid public  key length",async ()=>{
       const numberOfUsers = 1;
       var testData = createMockdata(numberOfUsers)
-      const {publicKeys,bidders,answerValues} = getUserData(testData)
-      publicKeys[0] = "random data";  
-      await expect(getEncryptedAnswers(questionId,publicKeys,bidders,answerValues)).rejects.toThrowError("Expected public key to be an Uint8Array with length [33, 65]")
-    
+      const bidders = getUserData(testData)
+      bidders[0].publicKey = "random data";  
+      await expect(getEncryptedAnswers(questionId,bidders,answerValue)).rejects.toThrowError("Expected public key to be an Uint8Array with length [33, 65]")
     })
     
   });
