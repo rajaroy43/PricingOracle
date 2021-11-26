@@ -15,17 +15,12 @@ const encryptValue = async(publicKey:string,value:string)  =>{
 }
 
 const getEncryptedAnswers = async(questionId: number,bidders:Bidder[],answerValue:string)=>{
-    
   // @ts-ignore
-    const answers = await bidders.reduce(async(acc: any, bidder: Bidder) => {
-      const current = await acc; // unwrap the previous Promise
-      current[bidder.address] = await encryptValue(bidder.publicKey, answerValue)
-      return current
-    }, {})
-    return {
-      questionId,
-      answers
-    }
+  const answers = (await Promise.all(bidders.map(async(bidder)=>({'address':bidder.address,'value': await encryptValue(bidder.publicKey, answerValue)})))).reduce((acc, bid) => {{ acc[bid.address] = bid.value}; return acc}, {})
+  return {
+    questionId,
+    answers
+  }
 }
 
 export default getEncryptedAnswers
