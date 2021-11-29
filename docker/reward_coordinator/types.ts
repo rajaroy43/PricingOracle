@@ -1,7 +1,13 @@
+
+export interface Multihash { 
+  digest: string,
+  hashFunction: number,
+  size: number
+}
+
 export interface QuestionUpdateFields {
   questionIds: string[],
-  answerIndexes: number[],
-  answerValues: string[],
+  answerHashes: Multihash[],
   statuses: number[]
 }
 
@@ -15,6 +21,12 @@ export interface ReputationUpdateFields {
   addresses: string[],
   categoryIds: string[],
   scores: string[]
+}
+
+export interface RefundBidsFields {
+  questionIds: string[],
+  addresses: string[],
+  amounts: string[]
 }
 
 export enum AnswerStatus {

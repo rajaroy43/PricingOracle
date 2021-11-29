@@ -1,12 +1,13 @@
 
 require('dotenv').config()
-import { BigNumber } from "ethers"
-import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
-import { getQuestion } from "./queries/question"
+import { getBidsToRefund, getQuestion } from "./queries/question"
 import getRewards from "./getRewards"
 import { updateInvalidAndRefund, updateQuestionStatusAndReward } from "./publishReward"
 import { AnswerStatus } from './types'
+import getRefundsForTiers from "./utils/getRefundsForTiers"
+import QUESTION_TIERED_ADDRESSES from "./storage/questionTieredAddresses"
+import { publishBidderRefunds } from './publishBidderRefund'
 
 
 const calculateQuestionGroup = async (group: any) => {
@@ -35,10 +36,10 @@ const calculateQuestionGroup = async (group: any) => {
       console.log(`Got rewards response ${rewardsResponse.data}`)
       //const rewards = JSON.parse(rewardsResponse.data)
       if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
-        console.log('Valid answer calculation')
+        console.log(`Valid answer calculation ${group.id}`)
         updateQuestionStatusAndReward(rewardsResponse.data)
       } else {
-        console.log('Invalid answer calculation')
+        console.log(`Invalid answer calculation ${group.id}`)
         updateInvalidAndRefund(group, questions)
       }
     }
@@ -57,6 +58,57 @@ const fetchQuestionsToCalculate = async () => {
   await Promise.all(response.data.questionGroups.map(calculateQuestionGroup))
     
 }
+
+const handleBidRefunds = async (revealTiers: number[], question: any): Promise<void> => {
+  console.log(`handling refunds for questionId ${question.id} - bid count ${question.bids.length}`)
+  let tieredAddresses: any = []
+  if (!QUESTION_TIERED_ADDRESSES.areTiersCalculated(question.id)) {
+    const tieredAddresses = getRefundsForTiers(revealTiers, question.bids)
+    QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses)
+  } else {
+    tieredAddresses = QUESTION_TIERED_ADDRESSES.getTieredAddresses(question.id)
+  }
+
+  const isBidRefunded = question.bids.reduce((acc: any, bid: any) => {
+    acc[bid.id] = bid.isRefunded
+    return acc
+  }, {})
+
+  const refundArgs = {
+    questionIds: [],
+    addresses: [],
+    amounts: []
+  }
+  const refundFields = tieredAddresses.reduce((acc: any, tier: any) => acc.concat(tier), [])
+    .filter((bid: any) => isBidRefunded[bid.id])
+    .reduce((acc: any, bid: any) => {
+      acc.questionIds.push(question.id)
+      acc.addresses.push(bid.user.id)
+      acc.amounts.push(bid.refundAmount)
+      return acc
+    }, refundArgs)
+
+  console.log(`bid refund count ${refundFields.length}`)
+
+  if (refundFields.length) {
+    await publishBidderRefunds(refundFields)
+  }
+
+}
+
+const fetchBidsToRefund = async () => {
+  const response = await getBidsToRefund()
+  if (response.error) {
+    console.log(`Error fetching bids to refund: ${response.error}`)
+    return 
+  }
+  const revealTiers = response.data.pricingContractMeta.revealTiers
+  await Promise.all(response.data.questions.map((question: any) => handleBidRefunds(revealTiers, question)))
+}
+
+
 console.log(`fetch interval ${process.env.FETCH_INTERVAL}`)
-//@ts-ignore
-setInterval(fetchQuestionsToCalculate, process.env.FETCH_INTERVAL)
+
+const interval = parseInt(process.env.FETCH_INTERVAL || '60000', 10)
+setInterval(fetchQuestionsToCalculate, interval)
+setInterval(fetchBidsToRefund, interval)
