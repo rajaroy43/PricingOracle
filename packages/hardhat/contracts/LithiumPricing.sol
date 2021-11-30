@@ -416,8 +416,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   * - the caller must be an admin.
   */
   function setLithiumTokenAddress(address _tokenAddress) public {
-    require(isAdmin(msg.sender), "Must be admin to set token address");
-    require(_tokenAddress != NULL_ADDRESS,"Token Address can't be null");
+    require(isAdmin(msg.sender), "Must be admin");
+    require(_tokenAddress != NULL_ADDRESS,"Token Address != null");
     LithiumToken = IERC20(_tokenAddress);
     emit SetLithiumTokenAddress(address(LithiumToken));
   }
@@ -427,8 +427,8 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   *
   */
   function setLithiumRewardAddress(address _rewardAddress) public {
-    require(isAdmin(msg.sender), "Must be admin to set token address");
-    require(_rewardAddress != NULL_ADDRESS,"Reward Address can't be null");
+    require(isAdmin(msg.sender), "Must be admin");
+    require(_rewardAddress != NULL_ADDRESS,"Reward Address != null");
     lithiumReward = ILithiumReward(_rewardAddress);
     emit SetLithiumRewardAddress(address(lithiumReward));
   }
@@ -447,14 +447,14 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   */
   function updateValidAnswerStatus(uint256[] memory questionIds,Multihash[] memory _answerHashes)external override{
     require(isAdmin(msg.sender),"Must be admin");
-    require(questionIds.length != 0, "question IDs length must be greater than zero");
-    require(questionIds.length == answerHashes.length,"argument array length mismatch"); 
+    require(questionIds.length != 0, "must include at least 1 questionId");
+    require(questionIds.length == answerHashes.length,"argument length mismatch"); 
     for(uint256 i=0;i< questionIds.length ;i++) {
       uint256 questionId = questionIds[i];
       require(questionId < questions.length, "Invalid question id");
       Question storage question = questions[questionId];
-      require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
-      require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
+      require(question.endTime <= block.timestamp, "Question is active");
+      require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is calculated");
       uint256 hashIdx = answerHashes.length;
       question.answerHashIdxs.push(hashIdx);
       Multihash memory multihash;
@@ -484,13 +484,13 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   */
   function updateInvalidAnswerStatus(uint256[] memory questionIds)external override{
     require(isAdmin(msg.sender),"Must be admin");
-    require(questionIds.length != 0, "question IDs length must be greater than zero");
+    require(questionIds.length != 0, "questionIds length cannot be 0");
     for(uint256 i=0;i< questionIds.length ;i++) {
       uint256 questionId = questionIds[i];
       require(questionId < questions.length, "Invalid question id");
       Question storage question = questions[questionId];
-      require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
-      require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
+      require(question.endTime <= block.timestamp, "Question is active");
+      require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is calculated");
       question.isAnswerCalculated = StatusCalculated.Invalid;
       emit FinalAnswerCalculatedStatus(
         questionId,
@@ -514,13 +514,13 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   */
   function addAnswerHash(uint256[] memory questionIds, Multihash[] memory _answerHashes)external override{
     require(isAdmin(msg.sender),"Must be admin");
-    require(questionIds.length != 0, "question IDs length must be greater than zero");
-    require(questionIds.length == _answerHashes.length,"argument array length mismatch"); 
+    require(questionIds.length != 0, "questionIds length cannot be 0");
+    require(questionIds.length == _answerHashes.length,"argument length mismatch"); 
     for(uint256 i=0;i< questionIds.length ;i++) {
       uint256 questionId = questionIds[i];
       require(questionId < questions.length, "Invalid question id");
       Question storage question = questions[questionId];
-      require(question.isAnswerCalculated == StatusCalculated.Calculated,"Question answer must be calculated");
+      require(question.isAnswerCalculated == StatusCalculated.Calculated,"Question must be calculated");
       uint256 hashIdx = answerHashes.length;
       question.answerHashIdxs.push(hashIdx);
       Multihash memory multihash;
@@ -550,7 +550,7 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
   function updateReputation(address[] memory addressesToUpdate,uint256[] memory categoryIds,uint256[] memory reputationScores) external  override{
     require(isAdmin(msg.sender), "Must be admin");
     require(addressesToUpdate.length != 0, "address length must be greater than zero");
-    require(addressesToUpdate.length == categoryIds.length && categoryIds.length == reputationScores.length, "argument array length mismatch"); 
+    require(addressesToUpdate.length == categoryIds.length && categoryIds.length == reputationScores.length, "argument length mismatch"); 
     for (uint256 i = 0; i < addressesToUpdate.length; i++) {
       require(categoryIds[i] < categories.length,"invalid categoryId");
       userReputationScores[addressesToUpdate[i]][categoryIds[i]] += reputationScores[i];
@@ -593,7 +593,7 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
       uint256[] memory questionIds = questionGroups[groupIds[i]].questionIds;
       for(uint256 j=0 ; j<questionIds.length ; j++){
          Question storage question = questions[questionIds[j]];
-         require(question.isAnswerCalculated != StatusCalculated.NotCalculated,"Answer is not yet calculated");
+         require(question.isAnswerCalculated != StatusCalculated.NotCalculated,"Answer not calculated");
       }
       AnswerGroup  storage answerGroup = answerGroups[groupIds[i]][addressesToUpdate[i]];
       require(answerGroup.answerer == addressesToUpdate[i] ,"Not valid answerer");
@@ -759,16 +759,16 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     uint256[] memory refundAmounts
   ) external override{
     require(isAdmin(msg.sender), "Must be admin");
-    require(questionIds.length == nodeAddresses.length && questionIds.length == refundAmounts.length ,"argument array length mismatch");
-    require(nodeAddresses.length > 0,"There must be at least 1 node address will be refunded");
+    require(questionIds.length == nodeAddresses.length && questionIds.length == refundAmounts.length ,"argument length mismatch");
+    require(nodeAddresses.length > 0,"Node addresses length != 0");
     for (uint256 i = 0; i < questionIds.length; i++) {
       Question storage question = questions[i];
-      require(question.startTime <= block.timestamp, "Question starting time has not passed yet");
+      require(question.startTime <= block.timestamp, "Question not started");
       QuestionBid storage questionBid = questionBids[questionIds[i]][nodeAddresses[i]];
       bool isRefunded = questionBid.isBidRefunded;
       require(!isRefunded,"Wsidom node already refunded");
       uint256 userBidAmount = questionBid.bidAmount;
-      require(userBidAmount >= refundAmounts[i],"Refund amount is more  than user bid amount");
+      require(userBidAmount >= refundAmounts[i],"Refund > bid amount");
       questionBid.isBidRefunded = true;
       questionBid.bidAmount = userBidAmount - refundAmounts[i];
       question.bounty = question.bounty - refundAmounts[i];
