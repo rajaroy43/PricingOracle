@@ -36,3 +36,8 @@ export interface CalculatorResponse {
   data: RewardsResponseData,
   error: any
 }
+
+export interface Bidder {
+  address: string,
+  publicKey: string
+}

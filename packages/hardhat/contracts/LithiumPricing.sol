@@ -456,10 +456,16 @@ contract LithiumPricing is ILithiumPricing,Initializable, Roles {
     Question storage question = questions[questionId];
     require(question.endTime <= block.timestamp, "Question is still active and Final Answer status can't be updated");
     require(question.isAnswerCalculated == StatusCalculated.NotCalculated,"Answer is already calculated");
-    Multihash memory answerMultihash = Multihash(answerHashes[i].digest,answerHashes[i].hashFunction, answerHashes[i].size);
-    question.answerHash = answerMultihash;
+    Multihash memory answerHash = Multihash(answerHashes[i].digest,answerHashes[i].hashFunction, answerHashes[i].size);
+    question.answerHash = answerHash;
     question.isAnswerCalculated = answerStatuses[i];
-    emit FinalAnswerCalculatedStatus(questionId,answerMultihash,question.isAnswerCalculated);
+    emit FinalAnswerCalculatedStatus(
+      questionId,
+      answerHash.digest,
+      answerHash.hashFunction,
+      answerHash.size,
+      question.isAnswerCalculated
+    );
    }
   }
 

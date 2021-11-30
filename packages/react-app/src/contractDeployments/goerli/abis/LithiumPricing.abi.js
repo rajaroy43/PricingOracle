@@ -1,4 +1,4 @@
-[
+module.exports = [
   {
     "anonymous": false,
     "inputs": [
@@ -92,27 +92,33 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256[]",
-        "name": "questionIds",
-        "type": "uint256[]"
+        "internalType": "uint256",
+        "name": "questionId",
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint256[]",
-        "name": "answerIndexes",
-        "type": "uint256[]"
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256[]",
-        "name": "answerValues",
-        "type": "uint256[]"
+        "internalType": "uint8",
+        "name": "hashFunction",
+        "type": "uint8"
       },
       {
         "indexed": false,
-        "internalType": "enum ILithiumPricing.StatusCalculated[]",
-        "name": "answerStatuses",
-        "type": "uint8[]"
+        "internalType": "uint8",
+        "name": "size",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ILithiumPricing.StatusCalculated",
+        "name": "answerStatus",
+        "type": "uint8"
       }
     ],
     "name": "FinalAnswerCalculatedStatus",
@@ -308,6 +314,19 @@
       }
     ],
     "name": "ReputationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint16[]",
+        "name": "revealTiers",
+        "type": "uint16[]"
+      }
+    ],
+    "name": "RevealTiersUpdated",
     "type": "event"
   },
   {
@@ -919,18 +938,30 @@
           },
           {
             "internalType": "uint256",
-            "name": "finalAnswerIndex",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "finalAnswerValue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
             "name": "startTime",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "digest",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint8",
+                "name": "hashFunction",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "size",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct ILithiumPricing.Multihash",
+            "name": "answerHash",
+            "type": "tuple"
           },
           {
             "internalType": "enum ILithiumPricing.StatusCalculated",
@@ -989,6 +1020,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRevealTiers",
+    "outputs": [
+      {
+        "internalType": "uint16[]",
+        "name": "",
+        "type": "uint16[]"
       }
     ],
     "stateMutability": "view",
@@ -1241,6 +1285,25 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "revealTiers",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "_addr",
         "type": "address"
@@ -1322,14 +1385,26 @@
         "type": "uint256[]"
       },
       {
-        "internalType": "uint256[]",
-        "name": "finalAnswerIndexes",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "finalAnswerValues",
-        "type": "uint256[]"
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "hashFunction",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "size",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct ILithiumPricing.Multihash[]",
+        "name": "answerHashes",
+        "type": "tuple[]"
       },
       {
         "internalType": "enum ILithiumPricing.StatusCalculated[]",
@@ -1397,6 +1472,19 @@
       }
     ],
     "name": "updateReputation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16[]",
+        "name": "_revealTiers",
+        "type": "uint16[]"
+      }
+    ],
+    "name": "updateRevealTiers",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

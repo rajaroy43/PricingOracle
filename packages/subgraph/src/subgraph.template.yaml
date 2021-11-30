@@ -42,7 +42,7 @@ dataSources:
           handler: handleSetLithiumTokenAddress
         - event: AnswerGroupSetSubmitted(address,uint256)
           handler: handleAnswerGroupSetSubmitted
-        - event: FinalAnswerCalculatedStatus(uint256[],uint256[],uint256[],uint8[])
+        - event: FinalAnswerCalculatedStatus(uint256,bytes32,uint8,uint8,uint8)
           handler: handleFinalAnswerCalculatedStatus
         - event: GroupRewardUpdated(address[],uint256[],uint256[])
           handler: handleGroupRewardUpdated

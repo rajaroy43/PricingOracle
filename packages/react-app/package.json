@@ -102,10 +102,11 @@
   },
   "scripts": {
     "build": "react-scripts build",
-    "build-testnet": "CI=false REACT_APP_ENV=TESTNET react-scripts build",
+    "build-testnet": "CI=false REACT_APP_ENV=RINKEBY react-scripts build",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
-    "start-rinkeby": "REACT_APP_ENV=TESTNET react-scripts start",
+    "start-rinkeby": "REACT_APP_ENV=RINKEBY react-scripts start",
+    "start-goerli": "REACT_APP_ENV=GOERLI react-scripts start",
     "test": "react-scripts test",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src/**/*",
     "ipfs": "node ./scripts/ipfs.js",

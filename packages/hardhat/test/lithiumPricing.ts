@@ -814,7 +814,7 @@ describe("Lithium Pricing", async function () {
       await expect(
         //@ts-ignore
         lithiumPricing.createQuestionGroup(...args)
-      ).to.be.revertedWith("VM Exception while processing transaction: revert");
+      ).to.be.revertedWith("reverted with panic code 0x32");
     });
 
     it("Should fail to create a questionGroup  if any question  with an invalid answerSet length: too few", async function () {
@@ -1825,14 +1825,18 @@ describe("Lithium Pricing", async function () {
           .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
           .withArgs(
             questionIds[0],
-            [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size],
+            answerHashes[0].digest,
+            answerHashes[0].hashFunction,
+            answerHashes[0].size,
             answersStatuses[0]
           )
 
           .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
           .withArgs(
             questionIds[1],
-            [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size],
+            answerHashes[1].digest,
+            answerHashes[1].hashFunction,
+            answerHashes[1].size,
             answersStatuses[1]
           ) 
 
@@ -1963,14 +1967,18 @@ describe("Lithium Pricing", async function () {
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
             .withArgs(
               questionIds[0],
-              [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size],
+              answerHashes[0].digest,
+              answerHashes[0].hashFunction,
+              answerHashes[0].size,
               answersStatuses[0]
             )
 
             .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
             .withArgs(
               questionIds[1],
-              [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size],
+              answerHashes[1].digest,
+              answerHashes[1].hashFunction,
+              answerHashes[1].size,
               answersStatuses[1]
             )
 

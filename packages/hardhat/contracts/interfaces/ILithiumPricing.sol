@@ -65,7 +65,9 @@ interface ILithiumPricing {
 
   event FinalAnswerCalculatedStatus(
     uint256 questionId,
-    Multihash multiHash,
+    bytes32 digest,
+    uint8 hashFunction,
+    uint8 size,
     StatusCalculated answerStatus
   );
 

@@ -64,6 +64,7 @@ function getQuestionBidId(userId: string, questionId: string): string {
 }
 
 function getOrCreatePricingContractMeta(address: Address): PricingContractMeta {
+  log.info('getting or creating meta at {}', [address.toHexString()])
   let meta = PricingContractMeta.load(PRICING_CONTRACT_META_ID)
   if (meta == null) {
     meta = new PricingContractMeta(PRICING_CONTRACT_META_ID)
@@ -203,7 +204,7 @@ export function handleCategoryAdded(event: CategoryAdded): void {
   category.questionCount = ZERO
   category.totalBounty = ZERO
   category.totalStaked = ZERO
-  category.rewardedQuestionCount = ZERO
+  category.answeredQuestionCount = ZERO
   category.save()
 }
 
@@ -228,8 +229,7 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   question.bounty = event.params.bounty
   question.totalStaked = ZERO
   question.answerCount = ZERO
-  question.finalAnswerIndex = ZERO.toI32()
-  question.finalAnswerValue = ZERO
+  question.answerHashes = []
   question.endTime = event.params.endTime
   question.startTime = event.params.startTime
   question.pricingTime = event.params.pricingTime
@@ -244,32 +244,22 @@ export function handleQuestionCreated(event: QuestionCreated): void {
   category.save()
 }
 
-function updateFinalAnswer(questionId: string, answerIndex: string, answerValue: string, status: string ): void {
-  let question = Question.load(questionId)
-  question.finalAnswerIndex =  BigInt.fromString(answerIndex).toI32()
-  question.finalAnswerValue = BigInt.fromString(answerValue)
+export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedStatus): void {
+  let question = Question.load(event.params.questionId.toString())
+  let digest = event.params.digest.toString()
+  let hashFunction = BigInt.fromI32(event.params.hashFunction).toString()
+  let size = BigInt.fromI32(event.params.size).toString()
+  let answerHash = digest + hashFunction + size
+  let status = STATUS_CALCULATED[event.params.answerStatus]
   question.isAnswerCalculated = status
+  let answerHashes = question.answerHashes
+  answerHashes.push(answerHash)
+  question.answerHashes = answerHashes
   question.save()
-  let questionGroupId =  question.questionGroup.toString()
 
-  let questionGroup = QuestionGroup.load(questionGroupId)
+  let questionGroup = QuestionGroup.load(question.questionGroup.toString())
   questionGroup.isAnswerCalculated = status
   questionGroup.save()
-}
-
-export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedStatus): void {
-  let questionIds: Array<BigInt> = event.params.questionIds
-  let answerIndexes: Array<BigInt> = event.params.answerIndexes
-  let answerValues: Array<BigInt> = event.params.answerValues
-  let statuses: Array<i32> = event.params.answerStatuses
-  for (let i = 0; i < questionIds.length; i++) {
-    let questionId = questionIds[i]
-    let answerIndex = answerIndexes[i]
-    let answerValue = answerValues[i]
-    let status = statuses[i]
-    let statusEnum = STATUS_CALCULATED[status]
-    updateFinalAnswer(questionId.toString(), answerIndex.toString(), answerValue.toString(), statusEnum)
-  }
 }
 
 export function handleQuestionGroupCreated(event: QuestionGroupCreated): void {
