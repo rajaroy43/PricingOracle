@@ -2,6 +2,11 @@ import { BigNumber } from "ethers"
 import { updateQuestionStatus, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
 import { QuestionUpdateFields, RewardsResponseData, RewardUpdateFields } from "./types"
 
+const nullMultihash = {
+  digest: `0x0`,
+  hashFunction: 0,
+  size: 0,
+};
 export const publishAnswersRewards = (
   questionUpdate: QuestionUpdateFields,
   rewardUpdates: RewardUpdateFields
@@ -20,13 +25,11 @@ export const publishInvalidAnswers = async (
   rewardUpdates: RewardUpdateFields
 ) => {
   const INVALID_STATUS = 2
-  const answerValues = questionIds.map(() => "0")
-  const answerIndexes = questionIds.map(() => 0)
+  const answerHashes = questionIds.map(() => ({...nullMultihash}))
   const statuses = questionIds.map(() => INVALID_STATUS)
   const statusTx = await updateQuestionStatus({
     questionIds,
-    answerIndexes,
-    answerValues,
+    answerHashes,
     statuses
   })
 
@@ -78,10 +81,10 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
 
 export const updateQuestionStatusAndReward = async (response: RewardsResponseData) => {
   const statuses = new Array(response.questionIds.length).fill(response.answerStatus)
+  const answerHashes: any[] = []
   const statusTx = await updateQuestionStatus({
     questionIds: response.questionIds ,
-    answerIndexes: response.finalAnswerIndex,
-    answerValues: response.finalAnswerValue,
+    answerHashes,
     statuses
   })
 
