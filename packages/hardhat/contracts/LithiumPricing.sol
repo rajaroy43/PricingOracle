@@ -582,17 +582,17 @@ contract LithiumPricing is ILithiumPricing, Initializable, Roles {
      * - question id must be valid
      */
     function addAnswerHash(
-        uint256[] memory questionIds,
+        uint256[] memory _questionIds,
         Multihash[] memory _answerHashes
     ) external override {
         require(isAdmin(msg.sender), "Must be admin");
-        require(questionIds.length != 0, "questionIds length cannot be 0");
+        require(_questionIds.length != 0, "questionIds length cannot be 0");
         require(
-            questionIds.length == _answerHashes.length,
+            _questionIds.length == _answerHashes.length,
             "argument length mismatch"
         );
-        for (uint256 i = 0; i < questionIds.length; i++) {
-            uint256 questionId = questionIds[i];
+        for (uint256 i = 0; i < _questionIds.length; i++) {
+            uint256 questionId = _questionIds[i];
             require(questionId < questions.length, "Invalid question id");
             Question storage question = questions[questionId];
             require(

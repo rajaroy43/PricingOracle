@@ -1772,7 +1772,7 @@ describe("Lithium Pricing", async function () {
           await ethers.provider.send("evm_mine");
         });
 
-        it("Should able to update final answer status", async () => {
+        it("Should be able to update final answer status", async () => {
           const questionIds = [0, 1];
           const answersStatuses = [1, 1];
           const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
@@ -1863,6 +1863,121 @@ describe("Lithium Pricing", async function () {
           expect(
             afterUpdatingAnswerStatusquestion2.isAnswerCalculated
           ).to.equal(1);
+        });
+
+        it("Should be able to add answer hashes to valid questions", async () => {
+          const questionIds = [0, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+
+          await lithiumPricing.updateValidAnswerStatus(
+            questionIds,
+            answerHashes
+          )
+
+          await expect(
+            lithiumPricing.addAnswerHash(
+              questionIds,
+              answerHashes
+            )
+          )    
+          .emit(lithiumPricing, "QuestionAnswerAdded")
+          .withArgs(
+            questionIds[0],
+            answerHashes[0].digest,
+            answerHashes[0].hashFunction,
+            answerHashes[0].size
+          )
+
+          .emit(lithiumPricing, "QuestionAnswerAdded")
+          .withArgs(
+            questionIds[1],
+            answerHashes[1].digest,
+            answerHashes[1].hashFunction,
+            answerHashes[1].size
+          ) 
+
+          const afterUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+
+
+          const multihashIdxs1 = afterUpdatingAnswerStatusquestion1.answerHashIdxs
+          expect(multihashIdxs1.length).to.equal(2);
+
+          const multihash1_2 = await lithiumPricing.answerHashes(multihashIdxs1[1])
+          const expectedIpfsHash1_2 = getMultihashFromBytes32(multihash1_2);
+          expect(expectedIpfsHash1_2).to.equal(mockIpfsHash);
+
+          expect(
+            [multihash1_2.digest,
+              multihash1_2.hashFunction,
+              multihash1_2.size]).
+            to.eql(
+            [answerHashes[0].digest,answerHashes[0].hashFunction,answerHashes[0].size]
+          );
+
+          const afterUpdatingAnswerStatusquestion2 =
+            await lithiumPricing.getQuestion(questionIds[1]);
+
+          const multihashIdxs2 = afterUpdatingAnswerStatusquestion2.answerHashIdxs;
+          expect(multihashIdxs2.length).to.equal(2);
+          const multihash2_2 = await lithiumPricing.answerHashes(multihashIdxs2[1])
+          const expectedIpfsHash2 = getMultihashFromBytes32(multihash2_2);
+  
+          expect(expectedIpfsHash2).to.equal(mockIpfsHash);
+          expect(
+            [multihash2_2.digest,
+              multihash2_2.hashFunction,
+              multihash2_2.size]).
+          to.eql(
+            [answerHashes[1].digest,answerHashes[1].hashFunction,answerHashes[1].size]
+          );
+          expect(
+            afterUpdatingAnswerStatusquestion2.isAnswerCalculated
+          ).to.equal(1);
+        });
+
+        it("Should not be able to add answer hashes to not calculated questions", async () => {
+          const questionIds = [0, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+
+
+          await expect(
+            lithiumPricing.addAnswerHash(
+              questionIds,
+              answerHashes
+            )
+          ).to.be.revertedWith("Question must be calculated");    
+        
+
+          const afterUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+
+
+          const multihashIdxs1 = afterUpdatingAnswerStatusquestion1.answerHashIdxs
+          expect(multihashIdxs1.length).to.equal(0);
+  
+        });
+
+        it("Should not allow non admins to add answer hashes to valid questions", async () => {
+          const questionIds = [0, 1];
+          const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
+
+
+          await expect(
+            lithiumPricing.connect(account2).addAnswerHash(
+              questionIds,
+              answerHashes
+            )
+          ).to.be.revertedWith("Must be admin");    
+        
+
+          const afterUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+
+
+          const multihashIdxs1 = afterUpdatingAnswerStatusquestion1.answerHashIdxs
+          expect(multihashIdxs1.length).to.equal(0);
+  
         });
 
         it("Should able to update final answer status as invalid", async () => {
