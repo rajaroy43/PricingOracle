@@ -563,7 +563,7 @@ contract LithiumPricing is ILithiumPricing, Initializable, Roles {
             question.isAnswerCalculated = StatusCalculated.Invalid;
             emit FinalAnswerCalculatedStatus(
                 questionId,
-                "0x0",
+                "",
                 0,
                 0,
                 question.isAnswerCalculated

@@ -1865,6 +1865,83 @@ describe("Lithium Pricing", async function () {
           ).to.equal(1);
         });
 
+        it("Should able to update final answer status as invalid", async () => {
+          const nullMultihash = {
+            digest: '0x0000000000000000000000000000000000000000000000000000000000000000',
+            hashFunction: 0,
+            size: 0
+          }
+          const questionIds = [0, 1];
+          const answersStatuses = [2,2]
+          //Before updating final answer status
+          const beforeUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+          
+          expect(beforeUpdatingAnswerStatusquestion1.answerHashIdxs.length).to.equal(
+            0
+          );
+
+          expect(
+            beforeUpdatingAnswerStatusquestion1.isAnswerCalculated
+          ).to.equal(0);
+
+          const beforeUpdatingAnswerStatusquestion2 =
+            await lithiumPricing.getQuestion(questionIds[1]);
+          expect(beforeUpdatingAnswerStatusquestion2.answerHashIdxs.length).to.equal(
+              0
+            );
+  
+          expect(
+            beforeUpdatingAnswerStatusquestion2.isAnswerCalculated
+          ).to.equal(0);
+
+          await expect(
+            lithiumPricing.updateInvalidAnswerStatus(
+              questionIds
+            )
+          ) 
+          .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+          .withArgs(
+            questionIds[0],
+            nullMultihash.digest,
+            nullMultihash.hashFunction,
+            nullMultihash.size,
+            answersStatuses[0]
+          )
+
+          .emit(lithiumPricing, "FinalAnswerCalculatedStatus")
+          .withArgs(
+            questionIds[1],
+            nullMultihash.digest,
+            nullMultihash.hashFunction,
+            nullMultihash.size,
+            answersStatuses[1]
+          ) 
+
+          const afterUpdatingAnswerStatusquestion1 =
+            await lithiumPricing.getQuestion(questionIds[0]);
+
+
+          const multihash1Count = afterUpdatingAnswerStatusquestion1.answerHashIdxs.length;
+          expect(multihash1Count).to.equal(0)
+  
+
+          expect(
+            afterUpdatingAnswerStatusquestion1.isAnswerCalculated
+          ).to.equal(2);
+
+          const afterUpdatingAnswerStatusquestion2 =
+            await lithiumPricing.getQuestion(questionIds[1]);
+
+          const multihash2Count = afterUpdatingAnswerStatusquestion2.answerHashIdxs.length;
+  
+          expect(multihash2Count).to.equal(0);
+
+          expect(
+            afterUpdatingAnswerStatusquestion2.isAnswerCalculated
+          ).to.equal(2);
+        });
+
         it("Should not allow non admin to update final answer status ", async () => {
           const questionIds = [0, 1];
           const answerHashes = [getBytes32FromMultiash(mockIpfsHash),getBytes32FromMultiash(mockIpfsHash)]
