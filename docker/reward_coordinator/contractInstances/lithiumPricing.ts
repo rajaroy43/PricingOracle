@@ -32,7 +32,7 @@ export const updateInvalidAnswer = (
 export const addAnswerHashes = (
   updates: AddAnswerHashFields
 ) => { 
-  return lithiumPricing.updateValidAnswerStatus(
+  return lithiumPricing.addAnswerHashes(
     updates.questionIds,
     updates.answerHashes
   ) 
