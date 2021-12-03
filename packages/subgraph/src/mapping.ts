@@ -6,6 +6,7 @@ import {
   CategoryAdded,
   GroupRewardUpdated,
   FinalAnswerCalculatedStatus,
+  QuestionAnswerAdded,
   QuestionCreated,
   QuestionGroupCreated,
   QuestionAnswered,
@@ -208,6 +209,19 @@ export function handleCategoryAdded(event: CategoryAdded): void {
   category.save()
 }
 
+export function handleQuestionAnswerAdded(event: QuestionAnswerAdded): void {
+  let question = Question.load(event.params.questionId.toString())
+  let digest = event.params.digest.toString()
+  let hashFunction = BigInt.fromI32(event.params.hashFunction).toString()
+  let size = BigInt.fromI32(event.params.size).toString()
+  let answerHash = digest + hashFunction + size
+  let answerHashes = question.answerHashes
+  answerHashes.push(answerHash)
+  question.answerHashes = answerHashes
+
+  question.save()
+}
+
 export function handleQuestionCreated(event: QuestionCreated): void {
   let ownerAddress = event.params.owner.toHexString()
 
@@ -252,9 +266,11 @@ export function handleFinalAnswerCalculatedStatus(event: FinalAnswerCalculatedSt
   let answerHash = digest + hashFunction + size
   let status = STATUS_CALCULATED[event.params.answerStatus]
   question.isAnswerCalculated = status
-  let answerHashes = question.answerHashes
-  answerHashes.push(answerHash)
-  question.answerHashes = answerHashes
+  if (status == STATUS_CALCULATED[1]) {
+    let answerHashes = question.answerHashes
+    answerHashes.push(answerHash)
+    question.answerHashes = answerHashes
+  }
   question.save()
 
   let questionGroup = QuestionGroup.load(question.questionGroup.toString())

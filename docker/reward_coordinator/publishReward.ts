@@ -1,36 +1,14 @@
 import { BigNumber } from "ethers"
-import { updateQuestionStatus, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
-import { QuestionUpdateFields, RewardsResponseData, RewardUpdateFields } from "./types"
-
-const nullMultihash = {
-  digest: `0x0`,
-  hashFunction: 0,
-  size: 0,
-};
-export const publishAnswersRewards = (
-  questionUpdate: QuestionUpdateFields,
-  rewardUpdates: RewardUpdateFields
-) => {
-  updateQuestionStatus(
-    questionUpdate
-  )
-
-  updateRewards(
-    rewardUpdates
-  )
-}
+import { updateValidAnswer, updateInvalidAnswer, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
+import { RewardsResponseData, RewardUpdateFields } from "./types"
+import getMultihashFromBytes32 from "./utils/getMultihash"
 
 export const publishInvalidAnswers = async (
   questionIds: string[],
   rewardUpdates: RewardUpdateFields
 ) => {
-  const INVALID_STATUS = 2
-  const answerHashes = questionIds.map(() => ({...nullMultihash}))
-  const statuses = questionIds.map(() => INVALID_STATUS)
-  const statusTx = await updateQuestionStatus({
-    questionIds,
-    answerHashes,
-    statuses
+  const statusTx = await updateInvalidAnswer({
+    questionIds
   })
 
   await statusTx.wait()
@@ -79,13 +57,13 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
   )
 }
 
-export const updateQuestionStatusAndReward = async (response: RewardsResponseData) => {
-  const statuses = new Array(response.questionIds.length).fill(response.answerStatus)
-  const answerHashes: any[] = []
-  const statusTx = await updateQuestionStatus({
-    questionIds: response.questionIds ,
-    answerHashes,
-    statuses
+export const updateValidAndReward = async (response: RewardsResponseData) => {
+  // TODO get bytes32 for uploaded documents to IPFS
+  const DUMMY_BYTES = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB'
+  const answerHashes = new Array(response.questionIds.length).fill(getMultihashFromBytes32(DUMMY_BYTES))
+  const statusTx = await updateValidAnswer({
+    questionIds: response.questionIds,
+    answerHashes
   })
 
 

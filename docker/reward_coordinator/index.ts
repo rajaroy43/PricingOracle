@@ -3,7 +3,7 @@ require('dotenv').config()
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getBidsToRefund, getQuestion } from "./queries/question"
 import getRewards from "./getRewards"
-import { updateInvalidAndRefund, updateQuestionStatusAndReward } from "./publishReward"
+import { updateInvalidAndRefund, updateValidAndReward } from "./publishReward"
 import { AnswerStatus } from './types'
 import getRefundsForTiers from "./utils/getRefundsForTiers"
 import QUESTION_TIERED_ADDRESSES from "./storage/questionTieredAddresses"
@@ -36,8 +36,8 @@ const calculateQuestionGroup = async (group: any) => {
       console.log(`Got rewards response ${rewardsResponse.data}`)
       //const rewards = JSON.parse(rewardsResponse.data)
       if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
-        console.log(`Valid answer calculation ${group.id}`)
-        updateQuestionStatusAndReward(rewardsResponse.data)
+        console.log('Valid answer calculation')
+        updateValidAndReward(rewardsResponse.data)
       } else {
         console.log(`Invalid answer calculation ${group.id}`)
         updateInvalidAndRefund(group, questions)

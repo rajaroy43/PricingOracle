@@ -1,14 +1,17 @@
 
-export interface Multihash { 
+export interface MultiHashFields {
   digest: string,
   hashFunction: number,
   size: number
 }
 
-export interface QuestionUpdateFields {
-  questionIds: string[],
-  answerHashes: Multihash[],
-  statuses: number[]
+export interface UpdateInvalidAnswerFields {
+  questionIds: string[]
+}
+
+export interface AddAnswerHashFields {
+  questionIds : string[],
+  answerHashes: MultiHashFields[]
 }
 
 export interface RewardUpdateFields {
