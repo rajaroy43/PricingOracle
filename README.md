@@ -29,23 +29,24 @@ You will need 3 terminal windows to operate and a browser with metamask
 5) `cd docker && ./run.sh`
 6) In a new terminal window:
 7) `cd {project root}`
-8) `yarn deploy`
+8) Copy packages/hardhat/example.env into packages/hardhat/.env
+9) `yarn deploy`
 Wait for steps 5 and 8 to complete and then
-9) `yarn graph-init-local`
-10) asks for input, use `v0.0.1`
+10) `yarn graph-init-local`
+11) asks for input, use `v0.0.1`
 runs to completion
-11) (optional) can look at graph node operating -- see screen commands
+12) (optional) can look at graph node operating -- see screen commands
 
 To Run React app:
-12) `yarn react-app:start`
+13) `yarn react-app:start`
 
 go to browswer, add private key from `yarn chain` terminal window above to ensure LITH tokens.
 
 Make sure metamask is on network "Localhost 8545"
 
-13) connect wallet
+14) connect wallet
 
-14) play!
+15) play!
 
 
 ## Oh shit commands

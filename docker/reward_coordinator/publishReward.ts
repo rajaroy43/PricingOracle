@@ -1,33 +1,14 @@
 import { BigNumber } from "ethers"
-import { updateQuestionStatus, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
-import { QuestionUpdateFields, RewardsResponseData, RewardUpdateFields } from "./types"
-
-export const publishAnswersRewards = (
-  questionUpdate: QuestionUpdateFields,
-  rewardUpdates: RewardUpdateFields
-) => {
-  updateQuestionStatus(
-    questionUpdate
-  )
-
-  updateRewards(
-    rewardUpdates
-  )
-}
+import { updateValidAnswer, updateInvalidAnswer, addAnswerHashes, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
+import { UpdateInvalidAnswerFields, AddAnswerHashFields, RewardsResponseData, RewardUpdateFields } from "./types"
+import getMultihashFromBytes32 from "./utils/getMultihash"
 
 export const publishInvalidAnswers = async (
   questionIds: string[],
   rewardUpdates: RewardUpdateFields
 ) => {
-  const INVALID_STATUS = 2
-  const answerValues = questionIds.map(() => "0")
-  const answerIndexes = questionIds.map(() => 0)
-  const statuses = questionIds.map(() => INVALID_STATUS)
-  const statusTx = await updateQuestionStatus({
-    questionIds,
-    answerIndexes,
-    answerValues,
-    statuses
+  const statusTx = await updateInvalidAnswer({
+    questionIds
   })
 
   await statusTx.wait()
@@ -76,13 +57,13 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
   )
 }
 
-export const updateQuestionStatusAndReward = async (response: RewardsResponseData) => {
-  const statuses = new Array(response.questionIds.length).fill(response.answerStatus)
-  const statusTx = await updateQuestionStatus({
-    questionIds: response.questionIds ,
-    answerIndexes: response.finalAnswerIndex,
-    answerValues: response.finalAnswerValue,
-    statuses
+export const updateValidAndReward = async (response: RewardsResponseData) => {
+  // TODO get bytes32 for uploaded documents to IPFS
+  const DUMMY_BYTES = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB'
+  const answerHashes = new Array(response.questionIds.length).fill(getMultihashFromBytes32(DUMMY_BYTES))
+  const statusTx = await updateValidAnswer({
+    questionIds: response.questionIds,
+    answerHashes
   })
 
 

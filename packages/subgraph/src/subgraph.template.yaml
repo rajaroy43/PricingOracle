@@ -44,6 +44,8 @@ dataSources:
           handler: handleAnswerGroupSetSubmitted
         - event: FinalAnswerCalculatedStatus(uint256,bytes32,uint8,uint8,uint8)
           handler: handleFinalAnswerCalculatedStatus
+        - event: QuestionAnswerAdded(uint256,bytes32,uint8,uint8)
+          handler: handleQuestionAnswerAdded
         - event: GroupRewardUpdated(address[],uint256[],uint256[])
           handler: handleGroupRewardUpdated
         - event: ReputationUpdated(address[],uint256[],uint256[])
