@@ -4,9 +4,9 @@ export interface QuestionBidView extends QuestionBid {
   amountDisplay: string;
 }
 
-
 export interface QuestionView extends Question {
   answerSetTotalStakedDisplay: string[];
+  bidViews: QuestionBidView[];
   bountyDisplay: string;
   totalStakedDisplay: string;
   endTimeLocal: string;

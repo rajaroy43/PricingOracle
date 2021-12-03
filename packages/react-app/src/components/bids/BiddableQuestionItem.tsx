@@ -2,10 +2,11 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import Whatshot from '@material-ui/icons/Whatshot'
-import { Form, Formik } from 'formik'
+import { subgraphClient } from '../../client'
+import { useGetQuestionBids } from '../../queries/question'
 import Address from '../atoms/Address'
-import Text from '../atoms/inputs/Text'
-import Button from '../atoms/inputs/buttons/Button'
+import QuestionBidForm from '../forms/QuestionBidForm'
+import { ConnectedWalletProps } from '../../types/user'
 
 const useStyles = makeStyles(theme => ({
     /* biddable questions form */
@@ -58,18 +59,6 @@ const useStyles = makeStyles(theme => ({
         },
         minWidth: '115px'
     },
-    myBidWrapper: {
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-        whiteSpace: 'nowrap'
-    },
-    bidUnit: {
-        marginLeft: '4px'
-    },
-    buttonUpdateBid: {
-        marginTop: '16px'
-    },
     bidInfo: {
         alignItems: 'center',
         display: 'flex',
@@ -89,60 +78,50 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const BiddableQuestionItem = ({id, question}: {id: string, question: any}) => {
+const BiddableQuestionItem = ({question, connectedWallet, showBidForm}: {question: any, connectedWallet: ConnectedWalletProps, showBidForm: boolean}) => {
+    var myBid
+    var topBid
     const isBiddingOpen = question.isBiddingOpen;
     const classes = useStyles({ isBiddingOpen });
-  
+
+    const {loading, question: questionAndBids} = useGetQuestionBids(subgraphClient, question.id)
+
+    if (!loading) {
+        const now = new Date();
+        const nowTime = now.getTime();
+        myBid = question.userBidView && question.userBidView.amountDisplay ? question.userBidView.amountDisplay : 'No Bids';
+        topBid = question.bidViews && question.bidViews.length ? question.bidViews[0].amountDisplay : 'No Bids';
+    }
+
+    //TODO: Check for connected wallet and show connect your wallet if wallet not connected
+
     return (
       <div className={classes.question}>
-        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
+        <div className={classes.desc}>#{question.id} - {question.description} equal to or above ${question.answerSet[1]} on {question.pricingTimeDisplay}</div>
         <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
         <div className={classes.bidRow}>
           <div>
               Top Bid<br />
               <br />
               <div>
-                  {question.currentBid ? question.currentBid + ' LITH' : 'No Bids'}
+                  {topBid}
               </div>
           </div> 
           <div>
               My Bid<br />
               <br />
               <div>
-                {question.myBid} LITH 
+                {myBid} LITH 
               </div>
           </div>
-          <div className={classes.updateCol}>   
-              { question.isBiddingOpen === true ? 
-                <>
-                  <p><strong>Update Bid</strong></p>
-                  <Formik 
-                      initialValues={{
-                          assetName: '',
-                          pricingTime: ''
-                      }}
-                      onSubmit={async (values) => {
-                          await new Promise((r) => setTimeout(r, 500));
-                          console.log(JSON.stringify(values, null, 2));
-                      }}
-                      >
-                    <Form>
-                      <div className={classes.myBidWrapper}>
-                        <Text
-                            name="myBid"
-                            type="text"
-                            style={{width: '80px'}}
-                            defaultValue=""
-                        /><span className={classes.bidUnit}>LITH</span>
-                      </div>
-                      <Button label="Update Bid"
-                        className={classes.buttonUpdateBid} />
-                    </Form>
-                  </Formik>
-                  </>
-              :
-              null
-              }
+          <div className={classes.updateCol} style={{ display: showBidForm ? 'flex': 'none'}}>   
+            <>
+                <p><strong>Update Bid</strong></p>
+                <QuestionBidForm
+                    connectedWallet={connectedWallet}
+                    question={question}
+                />
+            </>
           </div>  
         </div>
 

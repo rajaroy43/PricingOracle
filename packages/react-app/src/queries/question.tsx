@@ -23,6 +23,10 @@ interface GetQuestionsData {
   questions: Question[] 
 }
 
+interface GetQuestionResponse extends QueryResponse {
+  question: QuestionView | null
+}
+
 export const GET_QUESTIONS  = gql`
   ${QUESTION_FIELDS}
   query questions {
@@ -54,11 +58,27 @@ export const GET_BIDDABLE_QUESTIONS_AND_USER_BID  = gql`
 }
 `;
 
+export const GET_CLOSED_QUESTIONS_AND_USER_BID  = gql`
+  ${QUESTION_FIELDS}
+  ${QUESTION_BID_FIELDS}
+  query questions($now: String!, $address: String!) {
+    questions(where: {startTime_lt: $now, questionType: "Pricing" }) {
+      ...QuestionFields
+      bids(where: {user: $address}) {
+        ...QuestionBidFields
+      }
+    }
+}
+`;
+
 export const GET_QUESTION_BIDS  = gql`
   ${QUESTION_FIELDS}
   query questions($now: String!) {
     questions(where: {created_gt: $now}) {
       ...QuestionFields
+      bids {
+        ...QuestionBidFields
+      }
     }
 }
 `;
@@ -82,11 +102,43 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
   } 
 }
 
+export const useGetQuestionBids = (client: any, id: string): GetQuestionResponse => {
+  const {loading, error, data} = useQuery<GetQuestionData, QuestionQueryVars>(
+    GET_QUESTION_BIDS,
+    {
+      client,
+      variables: {id},
+      fetchPolicy: 'no-cache'
+    });
+  return {
+    loading,
+    error,
+    question: data != null ? selectQuestion(data.question) : null
+  } 
+}
+
 export const useGetBiddableQuestionsAndUserBid = (client: any, address: string): GetQuestionsResponse => {
   const now = msToSec(new Date().getTime()).toString()
   address = toLowerCase(address)
   const {loading, error, data} = useQuery<GetQuestionsData, BiddableQuestionsAndUserBidQueryVars>(
     GET_BIDDABLE_QUESTIONS_AND_USER_BID,
+    {
+      client,
+      variables: {now, address},
+      fetchPolicy: 'no-cache'
+    });
+  return {
+    loading,
+    error,
+    questions: data != null ? data.questions.map(selectQuestion) : null
+  } 
+}
+
+export const useGetClosedQuestionsAndUserBid = (client: any, address: string): GetQuestionsResponse => {
+  const now = msToSec(new Date().getTime()).toString()
+  address = toLowerCase(address)
+  const {loading, error, data} = useQuery<GetQuestionsData, BiddableQuestionsAndUserBidQueryVars>(
+    GET_CLOSED_QUESTIONS_AND_USER_BID,
     {
       client,
       variables: {now, address},
@@ -108,10 +160,6 @@ export const GET_QUESTION  = gql`
     }
 }
 `;
-
-interface GetQuestionResponse extends QueryResponse {
-  question: QuestionView | null
-}
 
 export const useGetQuestion = (client: any, id: string): GetQuestionResponse => {
   const {loading, error, data} = useQuery<GetQuestionData, QuestionQueryVars>(

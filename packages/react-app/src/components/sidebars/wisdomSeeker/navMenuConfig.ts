@@ -30,8 +30,15 @@ const getNavItems: GetNavItemParams[] = [
         id: 'biddableQuestions',
         icon: 'nav-icon-available-sets',
         label: 'Biddable Questions',
-        getUrl: (_) => '/wisdom-seeker/biddable-questions',
-        getShouldRender: (_) => true,
+        getUrl: (params) => {
+            return params.isWalletConnected ?
+              `/wisdom-seeker/biddable-questions`
+              :
+              '/'
+          },
+          getShouldRender: (params) => {
+            return params.isWalletConnected
+          },
     },     
     {
         ...baseMenuItem,
@@ -59,8 +66,8 @@ const getNavItems: GetNavItemParams[] = [
             :
             '/'
         },
-        getShouldRender: (_) => {
-        return true
+        getShouldRender: (params) => {
+          return params.isWalletConnected
         },
     },    
 

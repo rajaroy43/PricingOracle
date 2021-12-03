@@ -1,5 +1,6 @@
 import { Question, QuestionBid } from "lithium-subgraph"
 import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
+import questionBidSchema from "../schemas/questionBid"
 import { QuestionView, QuestionBidView } from "../types/question"
 import { getTopAnswer } from "./common"
 
@@ -37,6 +38,7 @@ export const selectQuestion = (question: Question): QuestionView => {
     ...question,
     // @ts-ignore
     answerSetTotalStakedDisplay: question.answerSetTotalStaked.map(formatUnits),
+    bidViews: question.bids && question.bids.length ? question.bids.map(selectQuestionBid) : [],
     bountyDisplay: formatUnits(question.bounty),
     totalStakedDisplay: formatUnits(question.totalStaked),
     endTimeLocal: secToLocaleDate(question.endTime),
@@ -47,6 +49,5 @@ export const selectQuestion = (question: Question): QuestionView => {
     topAnswerValue: topAnswer.value.toString(),
     topAnswerDisplay: answerSetOptions[topAnswer.index].label,
     userBidView
-
   }
 }
