@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers"
 
 const getTierRefunds = (bids: any) => {
+  if (bids.length === 0) return []
   const tierBidAmount = bids[bids.length - 1].amount
   return bids.map((bid: any) => {
     const refundAmount = BigNumber.from(bid.amount).sub(tierBidAmount).toString()
@@ -22,7 +23,10 @@ const getRefundsForTiers = (tierCounts: number[], bids: any) => {
   const totalTierCount = tierCounts.reduce((acc: number, tierCount: number) => acc + tierCount, 0)
   tieredBids.push(sortedBids.slice(totalTierCount)) 
 
-  return tieredBids.map(getTierRefunds)
+  const refundedBids =  tieredBids.map(getTierRefunds)
+
+  return refundedBids
+
 }
 
 export default getRefundsForTiers

@@ -2,12 +2,12 @@ const QUESTION_TIERED_ADDRESSES = (() => {
   const tieredAddresses: {[key:string]: string[][]} = {}
 
   const areTiersCalculated = (questionId: string): boolean => {
-    return tieredAddresses[questionId] == undefined
+    return tieredAddresses[questionId] != undefined
   }
 
-  const setTieredAddresses = (questionId: string, tieredAddresses: string[][]): void => {
+  const setTieredAddresses = (questionId: string, _tieredAddresses: string[][]): void => {
     // @ts-ignore
-    tieredAddresses[questionId] = tieredAddresses
+    tieredAddresses[questionId] = _tieredAddresses
   }
 
   const removeTieredAddresses = (questionId: string): void => {

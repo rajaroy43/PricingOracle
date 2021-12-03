@@ -64,15 +64,17 @@ export const GET_BIDS_TO_REFUND = gql`
       }
     }
     pricingContractMeta(id: $metaId) {
+      id
       revealTiers
     }
   }
+
 `
 
 
 
 export const getBidsToRefund = async () => {
-  const metaId = 'PRCING_CONTRACT_META'
+  const metaId = 'pricing_contract_meta'
   const now = Math.floor(new Date().getTime() / 1000).toString();
   const response = await subgraphClient.query({
     query: GET_BIDS_TO_REFUND,

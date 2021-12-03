@@ -63,16 +63,11 @@ const handleBidRefunds = async (revealTiers: number[], question: any): Promise<v
   console.log(`handling refunds for questionId ${question.id} - bid count ${question.bids.length}`)
   let tieredAddresses: any = []
   if (!QUESTION_TIERED_ADDRESSES.areTiersCalculated(question.id)) {
-    const tieredAddresses = getRefundsForTiers(revealTiers, question.bids)
+    tieredAddresses = getRefundsForTiers(revealTiers, question.bids)
     QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses)
   } else {
     tieredAddresses = QUESTION_TIERED_ADDRESSES.getTieredAddresses(question.id)
   }
-
-  const isBidRefunded = question.bids.reduce((acc: any, bid: any) => {
-    acc[bid.id] = bid.isRefunded
-    return acc
-  }, {})
 
   const refundArgs = {
     questionIds: [],
@@ -80,17 +75,18 @@ const handleBidRefunds = async (revealTiers: number[], question: any): Promise<v
     amounts: []
   }
   const refundFields = tieredAddresses.reduce((acc: any, tier: any) => acc.concat(tier), [])
-    .filter((bid: any) => isBidRefunded[bid.id])
+    .filter((bid: any) => !bid.isRefunded)
     .reduce((acc: any, bid: any) => {
       acc.questionIds.push(question.id)
       acc.addresses.push(bid.user.id)
       acc.amounts.push(bid.refundAmount)
+      console.log(`inside reduce ${JSON.stringify(acc)}`)
       return acc
     }, refundArgs)
 
-  console.log(`bid refund count ${refundFields.length}`)
+  console.log(`bid refund count ${refundFields.questionIds.length}`)
 
-  if (refundFields.length) {
+  if (refundFields.questionIds.length) {
     await publishBidderRefunds(refundFields)
   }
 

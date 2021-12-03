@@ -1,7 +1,7 @@
 // import { Contract, utils, providers } from 'ethers'
 import { Contract } from 'ethers'
 import { coordinatorWallet } from "../client"
-import { UpdateInvalidAnswerFields, AddAnswerHashFields, ReputationUpdateFields, RewardUpdateFields } from "../types"
+import { UpdateInvalidAnswerFields, AddAnswerHashFields, ReputationUpdateFields, RewardUpdateFields, RefundBidsFields } from "../types"
 //@ts-ignore
 import { config } from '../config'
 
@@ -57,4 +57,14 @@ export const updateReputations = (
     updates.categoryIds,
     updates.scores
   ) 
+}
+
+export const refundBids = (
+  updates: RefundBidsFields
+) => {
+  return lithiumPricing.refundBids(
+    updates.questionIds,
+    updates.addresses,
+    updates.amounts
+  )
 }
