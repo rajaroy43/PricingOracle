@@ -5,7 +5,7 @@ import CURRENTLY_CALCULATING from "./currentlyCalculating"
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getQuestion } from "./queries/question"
 import getRewards from "./getRewards"
-import { updateInvalidAndRefund, updateQuestionStatusAndReward } from "./publishReward"
+import { updateInvalidAndRefund, updateValidAndReward } from "./publishReward"
 import { AnswerStatus } from './types'
 
 
@@ -36,7 +36,7 @@ const calculateQuestionGroup = async (group: any) => {
       //const rewards = JSON.parse(rewardsResponse.data)
       if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
         console.log('Valid answer calculation')
-        updateQuestionStatusAndReward(rewardsResponse.data)
+        updateValidAndReward(rewardsResponse.data)
       } else {
         console.log('Invalid answer calculation')
         updateInvalidAndRefund(group, questions)

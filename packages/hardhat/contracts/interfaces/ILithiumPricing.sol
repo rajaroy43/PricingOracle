@@ -87,6 +87,13 @@ interface ILithiumPricing {
 
   event RevealTiersUpdated(uint16[] revealTiers);
 
+  event QuestionAnswerAdded(
+    uint256 questionId,
+    bytes32 digest,
+    uint8 hashFunction,
+    uint8 size
+  );
+
   /** Datatypes */
   enum AnswerStatus { Unclaimed, Claimed }
   //Invalid is for if answer can't be calculated
@@ -149,11 +156,19 @@ interface ILithiumPricing {
 
 /* External Functions */
 
-  function updateFinalAnswerStatus(
-   uint256[] memory  questionIds, 
-   Multihash[] memory answerHashes,
-   StatusCalculated[] memory  answerStatuses
-  )external; 
+  function updateValidAnswerStatus(
+    uint256[] memory  questionIds, 
+    Multihash[] memory _answerHashes
+  ) external;
+
+  function updateInvalidAnswerStatus(
+    uint256[] memory  questionIds
+  ) external;
+
+  function addAnswerHash(
+    uint256[] memory  questionIds, 
+    Multihash[] memory _answerHashes 
+  ) external;
 
   function updateReputation(
     address[] memory addressesToUpdate,
