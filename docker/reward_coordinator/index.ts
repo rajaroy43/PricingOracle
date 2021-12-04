@@ -11,7 +11,7 @@ import { publishBidderRefunds } from './publishBidderRefund'
 
 
 const calculateQuestionGroup = async (group: any) => {
-  console.log(`calculating group : \n${JSON.stringify(group)}`)
+  console.log(`calculating group : ${group.id}`)
   const questions = await Promise.all(
     group.questions.map((question: any) => {
       return getQuestion(question.id, group.category.id)
@@ -64,9 +64,23 @@ const handleBidRefunds = async (revealTiers: number[], question: any): Promise<v
   let tieredAddresses: any = []
   if (!QUESTION_TIERED_ADDRESSES.areTiersCalculated(question.id)) {
     tieredAddresses = getRefundsForTiers(revealTiers, question.bids)
-    QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses)
+    QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses, false)
   } else {
     tieredAddresses = QUESTION_TIERED_ADDRESSES.getTieredAddresses(question.id)
+    if (tieredAddresses.refundsComplete) {
+      console.log(`refunds already complete`)
+      return 
+    } else {
+      const notRefunded = question.bids.filter((bid: any) => !bid.isRefunded)
+      tieredAddresses = getRefundsForTiers(revealTiers, question.bids)
+
+      if (notRefunded.length === 0) {
+        QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses, true)
+        return
+      } else {
+        QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses, false)
+      }
+    }
   }
 
   const refundArgs = {
