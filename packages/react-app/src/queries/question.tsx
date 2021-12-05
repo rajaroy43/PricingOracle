@@ -25,7 +25,7 @@ interface GetQuestionData {
 }
 
 interface GetQuestionAndBidsData {
-  questions: Question,
+  question: Question,
   pricingContractMeta: {
     revealTiers: number[]
   }
@@ -86,8 +86,9 @@ export const GET_CLOSED_QUESTIONS_AND_USER_BID  = gql`
 
 export const GET_QUESTION_BIDS  = gql`
   ${QUESTION_FIELDS}
-  query questions($now: String!, $metaId: String!) {
-    questions(where: {created_gt: $now}) {
+  ${QUESTION_BID_FIELDS}
+  query question($id: String!, $metaId: String!) {
+    question(id: $id) {
       ...QuestionFields
       bids {
         ...QuestionBidFields
@@ -126,7 +127,7 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
 }
 
 export const useGetQuestionBids = (client: any, id: string): GetQuestionAndBidsResponse => {
-  const metaId = 'prcing_contract_meta'
+  const metaId = 'pricing_contract_meta'
   const {loading, error, data} = useQuery<GetQuestionAndBidsData, QuestionAndBidsQueryVars>(
     GET_QUESTION_BIDS,
     {
@@ -137,7 +138,7 @@ export const useGetQuestionBids = (client: any, id: string): GetQuestionAndBidsR
   return {
     loading,
     error,
-    question: data != null ? selectQuestionAndBids(data.questions, data.pricingContractMeta.revealTiers) : null,
+    question: data != null ? selectQuestionAndBids(data.question, data.pricingContractMeta.revealTiers) : null,
     pricingContractMeta: data != null ? data.pricingContractMeta : null
   } 
 }
