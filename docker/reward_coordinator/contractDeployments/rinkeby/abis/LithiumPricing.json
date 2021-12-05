@@ -92,27 +92,33 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256[]",
-        "name": "questionIds",
-        "type": "uint256[]"
+        "internalType": "uint256",
+        "name": "questionId",
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint256[]",
-        "name": "answerIndexes",
-        "type": "uint256[]"
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256[]",
-        "name": "answerValues",
-        "type": "uint256[]"
+        "internalType": "uint8",
+        "name": "hashFunction",
+        "type": "uint8"
       },
       {
         "indexed": false,
-        "internalType": "enum ILithiumPricing.StatusCalculated[]",
-        "name": "answerStatuses",
-        "type": "uint8[]"
+        "internalType": "uint8",
+        "name": "size",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ILithiumPricing.StatusCalculated",
+        "name": "answerStatus",
+        "type": "uint8"
       }
     ],
     "name": "FinalAnswerCalculatedStatus",
@@ -154,6 +160,37 @@
       }
     ],
     "name": "MinimumStakeUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "questionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "hashFunction",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "size",
+        "type": "uint8"
+      }
+    ],
+    "name": "QuestionAnswerAdded",
     "type": "event"
   },
   {
@@ -315,6 +352,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint16[]",
+        "name": "revealTiers",
+        "type": "uint16[]"
+      }
+    ],
+    "name": "RevealTiersUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "questionGroupId",
         "type": "uint256"
@@ -465,6 +515,41 @@
   {
     "inputs": [
       {
+        "internalType": "uint256[]",
+        "name": "_questionIds",
+        "type": "uint256[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "hashFunction",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "size",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct ILithiumPricing.Multihash[]",
+        "name": "_answerHashes",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "addAnswerHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "_label",
         "type": "string"
@@ -513,6 +598,35 @@
       {
         "internalType": "enum ILithiumPricing.StatusCalculated",
         "name": "isRewardCalculated",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "answerHashes",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint8",
+        "name": "hashFunction",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "size",
         "type": "uint8"
       }
     ],
@@ -919,18 +1033,13 @@
           },
           {
             "internalType": "uint256",
-            "name": "finalAnswerIndex",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "finalAnswerValue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
             "name": "startTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "answerHashIdxs",
+            "type": "uint256[]"
           },
           {
             "internalType": "enum ILithiumPricing.StatusCalculated",
@@ -989,6 +1098,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRevealTiers",
+    "outputs": [
+      {
+        "internalType": "uint16[]",
+        "name": "",
+        "type": "uint16[]"
       }
     ],
     "stateMutability": "view",
@@ -1241,6 +1363,25 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "revealTiers",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "_addr",
         "type": "address"
@@ -1317,34 +1458,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256[]",
-        "name": "questionIds",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "finalAnswerIndexes",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "finalAnswerValues",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "enum ILithiumPricing.StatusCalculated[]",
-        "name": "answerStatuses",
-        "type": "uint8[]"
-      }
-    ],
-    "name": "updateFinalAnswerStatus",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address[]",
         "name": "addressesToUpdate",
         "type": "address[]"
@@ -1361,6 +1474,19 @@
       }
     ],
     "name": "updateGroupRewardAmounts",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "questionIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "updateInvalidAnswerStatus",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1397,6 +1523,54 @@
       }
     ],
     "name": "updateReputation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16[]",
+        "name": "_revealTiers",
+        "type": "uint16[]"
+      }
+    ],
+    "name": "updateRevealTiers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_questionIds",
+        "type": "uint256[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "hashFunction",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "size",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct ILithiumPricing.Multihash[]",
+        "name": "_answerHashes",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "updateValidAnswerStatus",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
