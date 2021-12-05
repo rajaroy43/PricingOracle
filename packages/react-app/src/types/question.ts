@@ -4,9 +4,19 @@ export interface QuestionBidView extends QuestionBid {
   amountDisplay: string;
 }
 
+export interface QuestionBidsView {
+  bidViews: QuestionBidView[];
+  topBid: QuestionBidView | null;
+  tierFloors: string[];
+}
+
+export interface UserQuestionBidView extends QuestionBidView {
+  isTopBid: boolean;
+  bidTier: number;
+}
+
 export interface QuestionView extends Question {
   answerSetTotalStakedDisplay: string[];
-  bidViews: QuestionBidView[];
   bountyDisplay: string;
   totalStakedDisplay: string;
   endTimeLocal: string;
@@ -14,9 +24,15 @@ export interface QuestionView extends Question {
   topAnswerValue: string;
   topAnswerDisplay: string;
   isFinished: boolean;
+  isBiddingOpen: boolean;
+  isAnsweringOpen: boolean;
   createdLocal: string;
   pricingTimeDisplay: string;
-  userBidView?: QuestionBidView
+  userBidView: QuestionBidView | null
+}
+
+export interface QuestionAndBidsView extends QuestionView {
+  questionBidsView: QuestionBidsView;
 }
 
 export enum CategoryLabelDisplay {

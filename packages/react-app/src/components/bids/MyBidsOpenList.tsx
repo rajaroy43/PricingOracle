@@ -33,7 +33,6 @@ const MyBidsOpenList = ({connectedWallet}: {connectedWallet: ConnectedWalletProp
                     key={question.id} 
                     question={question}  
                     connectedWallet={connectedWallet}
-                    showBidForm={true}
                   />))
                 :
                 <div>No Current Bids - <RouterLink to="biddable-questions">View Biddable Questions</RouterLink></div>

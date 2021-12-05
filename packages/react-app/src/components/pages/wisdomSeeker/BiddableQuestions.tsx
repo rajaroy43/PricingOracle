@@ -33,7 +33,6 @@ const BiddableQuestions = () => {
                                                 key={question.id} 
                                                 question={question}  
                                                 connectedWallet={wallet}
-                                                showBidForm={true}
                                               />)
               :
               'Error Loading Question Groups'

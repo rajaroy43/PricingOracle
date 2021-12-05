@@ -2,12 +2,17 @@ import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { Question } from 'lithium-subgraph'
 import { QueryResponse, QUESTION_FIELDS, QUESTION_BID_FIELDS } from './common'
-import { QuestionView } from '../types/question';
-import { selectQuestion } from '../selectors/question';
+import { QuestionAndBidsView, QuestionView } from '../types/question';
+import { selectQuestion, selectQuestionAndBids } from '../selectors/question';
 import { msToSec, toLowerCase } from '../helpers/formatters';
 
 interface QuestionQueryVars {
   id: string
+}
+
+interface QuestionAndBidsQueryVars {
+  id: string,
+  metaId: string
 }
 
 interface BiddableQuestionsAndUserBidQueryVars {
@@ -18,6 +23,14 @@ interface BiddableQuestionsAndUserBidQueryVars {
 interface GetQuestionData {
   question: Question
 }
+
+interface GetQuestionAndBidsData {
+  questions: Question,
+  pricingContractMeta: {
+    revealTiers: number[]
+  }
+}
+
 
 interface GetQuestionsData {
   questions: Question[] 
@@ -73,18 +86,28 @@ export const GET_CLOSED_QUESTIONS_AND_USER_BID  = gql`
 
 export const GET_QUESTION_BIDS  = gql`
   ${QUESTION_FIELDS}
-  query questions($now: String!) {
+  query questions($now: String!, $metaId: String!) {
     questions(where: {created_gt: $now}) {
       ...QuestionFields
       bids {
         ...QuestionBidFields
       }
     }
+    pricingContractMeta(id: $metaId) {
+      revealTiers
+    }
 }
 `;
 
 interface GetQuestionsResponse extends QueryResponse {
   questions: QuestionView[] | null
+}
+
+interface GetQuestionAndBidsResponse extends QueryResponse {
+  question: QuestionAndBidsView | null,
+    pricingContractMeta: {
+      revealTiers: number[]
+    } | null
 }
 
 export const useGetQuestions = (client: any): GetQuestionsResponse => {
@@ -102,18 +125,20 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
   } 
 }
 
-export const useGetQuestionBids = (client: any, id: string): GetQuestionResponse => {
-  const {loading, error, data} = useQuery<GetQuestionData, QuestionQueryVars>(
+export const useGetQuestionBids = (client: any, id: string): GetQuestionAndBidsResponse => {
+  const metaId = 'prcing_contract_meta'
+  const {loading, error, data} = useQuery<GetQuestionAndBidsData, QuestionAndBidsQueryVars>(
     GET_QUESTION_BIDS,
     {
       client,
-      variables: {id},
+      variables: {id, metaId},
       fetchPolicy: 'no-cache'
     });
   return {
     loading,
     error,
-    question: data != null ? selectQuestion(data.question) : null
+    question: data != null ? selectQuestionAndBids(data.questions, data.pricingContractMeta.revealTiers) : null,
+    pricingContractMeta: data != null ? data.pricingContractMeta : null
   } 
 }
 

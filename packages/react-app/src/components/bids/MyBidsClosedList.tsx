@@ -33,7 +33,6 @@ const MyBidsClosedList = ({connectedWallet}: {connectedWallet: ConnectedWalletPr
                     key={question.id} 
                     question={question}  
                     connectedWallet={connectedWallet}
-                    showBidForm={false}
                   />))
                 :
                 <div>No Closed Bids - <RouterLink to="biddable-questions">View Biddable Questions</RouterLink></div>

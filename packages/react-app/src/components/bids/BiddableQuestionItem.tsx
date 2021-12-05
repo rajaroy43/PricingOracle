@@ -7,6 +7,7 @@ import { useGetQuestionBids } from '../../queries/question'
 import Address from '../atoms/Address'
 import QuestionBidForm from '../forms/QuestionBidForm'
 import { ConnectedWalletProps } from '../../types/user'
+import { BiddableItemProps } from './types.'
 
 const useStyles = makeStyles(theme => ({
     /* biddable questions form */
@@ -78,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const BiddableQuestionItem = ({question, connectedWallet, showBidForm}: {question: any, connectedWallet: ConnectedWalletProps, showBidForm: boolean}) => {
+const BiddableQuestionItem = ({question, connectedWallet}:BiddableItemProps) => {
     var myBid
     var topBid
     const isBiddingOpen = question.isBiddingOpen;
@@ -86,11 +87,10 @@ const BiddableQuestionItem = ({question, connectedWallet, showBidForm}: {questio
 
     const {loading, question: questionAndBids} = useGetQuestionBids(subgraphClient, question.id)
 
-    if (!loading) {
+    if (!loading && questionAndBids != null) {
         const now = new Date();
-        const nowTime = now.getTime();
-        myBid = question.userBidView && question.userBidView.amountDisplay ? question.userBidView.amountDisplay : 'No Bids';
-        topBid = question.bidViews && question.bidViews.length ? question.bidViews[0].amountDisplay : 'No Bids';
+        myBid = question.userBidView ? question.userBidView.amountDisplay : 'No Bids';
+        topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay : 'No Bids';
     }
 
     //TODO: Check for connected wallet and show connect your wallet if wallet not connected
@@ -114,28 +114,32 @@ const BiddableQuestionItem = ({question, connectedWallet, showBidForm}: {questio
                 {myBid} LITH 
               </div>
           </div>
-          <div className={classes.updateCol} style={{ display: showBidForm ? 'flex': 'none'}}>   
+          <div className={classes.updateCol} style={{ display: connectedWallet != null ? 'flex': 'none'}}>   
             <>
                 <p><strong>Update Bid</strong></p>
-                <QuestionBidForm
+                {connectedWallet ?
+                  <QuestionBidForm
                     connectedWallet={connectedWallet}
                     question={question}
-                />
+                  />
+                  :
+                  <>Connect Wallet to Bid</>
+                }
             </>
           </div>  
         </div>
 
-        { question.myBid ? 
-              question.myBid === question.currentBid ? 
+        { question.userBidView && topBid ? 
+              myBid === topBid ? 
                   <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding Tier: First to Know</div>
                   :
                   question.isBiddingOpen ?
-                      <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding { question.myBid + 100 } LITH will advance your bid to [next tier].</div>
+                      <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding { question.userBidView.amountDisplay + 100 } LITH will advance your bid to [next tier].</div>
                       :
                       ''
           : '' }
 
-          { question.hot ? <div className={classes.bidInfo}><Whatshot style={{fill: '#E96036'}} /> High number of bids on this question</div> : '' }
+          { true ? <div className={classes.bidInfo}><Whatshot style={{fill: '#E96036'}} /> High number of bids on this question</div> : '' }
          
           <hr className={classes.bidRule} />
       </div>

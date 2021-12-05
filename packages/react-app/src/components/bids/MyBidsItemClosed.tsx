@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import Button from '../atoms/inputs/buttons/Button'
 import Address from '../atoms/Address'
 import BiddableQuestionItem from './BiddableQuestionItem'
+import { ConnectedWalletProps } from '../../types/user'
+import { BiddableItemProps } from './types.'
 
 const useStyles = makeStyles(theme => ({
     /* my bid questions */
@@ -57,17 +59,17 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const MyBidQuestionItem = ({id, question}: {id: string, question: any}) => {
+const MyBidQuestionItem = ({question, connectedWallet}: BiddableItemProps) => {
     const classes = useStyles();
   
     return (
       <div className={classes.myBidQuestion}>
-        { question.answerPending ? 
+        { question.isBiddingOpen ? 
             <>
-                <BiddableQuestionItem id={question.id} question={question} key={question.id} />
+                <BiddableQuestionItem question={question} connectedWallet={connectedWallet} />
             </>
             :
-                question.answerAvailable ?
+                question.isAnswerCalculated ?
                     <div className={classes.question}>
                         <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
                         <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
@@ -87,8 +89,8 @@ const MyBidQuestionItem = ({id, question}: {id: string, question: any}) => {
                         <div className={classes.answerRow}>
                             Question Ended<br />
                             Answer available in [Countdown timer]<br />
-                            <span className={classes.outbid}>Highest bid: {question.currentBid} LITH</span>
-                            My Bid: {question.myBid} LITH
+                            <span className={classes.outbid}>Highest bid: - LITH</span>
+                            My Bid: - LITH
                             <Button
                                 label="Re-Claim My Bid"
                                 type="submit"

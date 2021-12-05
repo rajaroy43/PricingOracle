@@ -1,7 +1,7 @@
 import { Question, QuestionBid } from "lithium-subgraph"
 import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
 import questionBidSchema from "../schemas/questionBid"
-import { QuestionView, QuestionBidView } from "../types/question"
+import { QuestionView, QuestionBidView, QuestionAndBidsView } from "../types/question"
 import { getTopAnswer } from "./common"
 
 export const generateAnswerSetOptions = (answerSet: string[]) => {
@@ -25,6 +25,8 @@ export const selectQuestion = (question: Question): QuestionView => {
   //TODO query a node to get the latest block time
   const now = msToSec(new Date().getTime())
   const isFinished = question.endTime < now
+  const isBiddingOpen = question.startTime < now
+  const isAnsweringOpen = !isBiddingOpen && !isFinished
   const topAnswer = getTopAnswer(question.answerSetTotalStaked)
   const answerSetOptions = generateAnswerSetOptions(question.answerSet)
 
@@ -33,16 +35,18 @@ export const selectQuestion = (question: Question): QuestionView => {
   const userBidView = question.bids && question.bids.length ?
     selectQuestionBid(question.bids[0])
     :
-    undefined
+    null
   return {
     ...question,
     // @ts-ignore
     answerSetTotalStakedDisplay: question.answerSetTotalStaked.map(formatUnits),
-    bidViews: question.bids && question.bids.length ? question.bids.map(selectQuestionBid) : [],
+
     bountyDisplay: formatUnits(question.bounty),
     totalStakedDisplay: formatUnits(question.totalStaked),
     endTimeLocal: secToLocaleDate(question.endTime),
     isFinished,
+    isBiddingOpen,
+    isAnsweringOpen,
     createdLocal:  msToLocaleDate(question.created),
     pricingTimeDisplay: secToLocaleDate(question.pricingTime),
     topAnswerIndex: topAnswer.index,
@@ -51,3 +55,19 @@ export const selectQuestion = (question: Question): QuestionView => {
     userBidView
   }
 }
+
+export const selectQuestionAndBids = (question: Question, revealTiers: number[]): QuestionAndBidsView => {
+  const questionView = selectQuestion(question)
+  const bids = question.bids || []
+  const bidViews = bids.map(selectQuestionBid)
+  const questionBidsView = {
+    bidViews,
+    topBid: bidViews.length ? bidViews[0] : null,
+    tierFloors: ['0']
+  }
+  return {
+    ...questionView,
+    questionBidsView
+  }
+}
+
