@@ -113,7 +113,7 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
             {myBid} LITH
               </div>
         </div>
-        <div className={classes.updateCol} style={{ display: connectedWallet != null ? 'flex' : 'none' }}>
+        <div className={classes.updateCol} style={{ display: connectedWallet != null && isBiddingOpen ? 'flex' : 'none' }}>
           <>
             <p><strong>Update Bid</strong></p>
             {connectedWallet ?
