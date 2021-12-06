@@ -58,6 +58,9 @@ const main = async () => {
   const lithToken = process.env.TOKEN_ADDRESS !== '' ?
     {address: process.env.TOKEN_ADDRESS} : await deploy("LithiumToken", lithTokenArgs); // <-- add in constructor args like line 19 vvvv
 
+  if(process.env.TOKEN_ADDRESS !=''){
+    fs.writeFileSync('artifacts/LithiumToken.address', lithToken.address);
+  }
   await lithiumPricing.setLithiumTokenAddress(lithToken.address);
 
 
