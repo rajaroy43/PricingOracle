@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
 import { Grid } from '@material-ui/core'
 import Typography from "@material-ui/core/Typography"
-import { subgraphClient } from '../../../client'
-import LoadingCircle from '../../atoms/Loading'
 import { WalletContext } from '../../providers/WalletProvider'
+import { subgraphClient } from '../../../client'
 import { useGetBiddableQuestionsAndUserBid } from '../../../queries/question'
 import WisdomSeekerTemplate from '../../templates/WisdomSeekerTemplate'
+import LoadingCircle from '../../atoms/Loading'
+import BiddableQuestionItem from '../../bids/BiddableQuestionItem'
 
 const BiddableQuestions = () => {
   const {wallet} = useContext(WalletContext)
@@ -15,6 +16,8 @@ const BiddableQuestions = () => {
     isWalletConnected: !!wallet.wallet,
     walletAddress: wallet.address
   }
+
+  console.log('openQuestions', questions);
 
   const main = (
     <WisdomSeekerTemplate pageProps={sideBarProps}>
@@ -26,7 +29,11 @@ const BiddableQuestions = () => {
             <LoadingCircle />
             :
             questions != null ?
-              questions.map((question:any) => <div>Question # {question.id} Totals Bids {question.bidCount} </div>)
+              questions.map((question:any) => <BiddableQuestionItem 
+                                                key={question.id} 
+                                                question={question}  
+                                                connectedWallet={wallet}
+                                              />)
               :
               'Error Loading Question Groups'
           }

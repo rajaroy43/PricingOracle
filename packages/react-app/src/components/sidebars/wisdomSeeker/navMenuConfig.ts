@@ -16,22 +16,60 @@ const getNavItems: GetNavItemParams[] = [
         label: 'Suggest Asset',
         getUrl: (params) => {
         return params.isWalletConnected ?
-            `/wisdom-node/suggestasset/`
+            `/wisdom-seeker/suggest-asset/`
             :
             '/'
         },
         getShouldRender: (params) => {
             return true
         },
+
+    },  
+    {
+        ...baseMenuItem,
+        id: 'biddableQuestions',
+        icon: 'nav-icon-available-sets',
+        label: 'Biddable Questions',
+        getUrl: (params) => {
+            return params.isWalletConnected ?
+              `/wisdom-seeker/biddable-questions`
+              :
+              '/'
+          },
+          getShouldRender: (params) => {
+            return params.isWalletConnected
+          },
+    },     
+    {
+        ...baseMenuItem,
+        id: 'myBids',
+        icon: 'nav-icon-history',
+        label: 'My Bids',
+        getUrl: (params) => {
+          return params.isWalletConnected ?
+            `/wisdom-seeker/my-bids`
+            :
+            '/'
+        },
+        getShouldRender: (params) => {
+          return params.isWalletConnected
+        },
     },
     {
-      ...baseMenuItem,
-      id: 'biddableQuestions',
-      icon: 'nav-icon-available-sets',
-      label: 'Biddable Questions',
-      getUrl: (_) => '/wisdom-seeker/biddable-questions',
-      getShouldRender: (_) => true,
-    },
+        ...baseMenuItem,
+        id: 'myAnswers',
+        icon: 'nav-icon-history',
+        label: 'My Answers',
+        getUrl: (params) => {
+          return params.isWalletConnected ?
+            `/wisdom-seeker/my-answers`
+            :
+            '/'
+        },
+        getShouldRender: (params) => {
+          return params.isWalletConnected
+        },
+    },    
 
     /*
     {
@@ -40,15 +78,15 @@ const getNavItems: GetNavItemParams[] = [
         icon: 'nav-icon-stats',
         label: 'Stats / My Profile',
         getUrl: (params) => {
+
         return params.isWalletConnected ?
             `/stats/${params.walletAddress}`
-            :
-            '/'
         },
-        getShouldRender: (_) => {
-        return true
+        getShouldRender: (params) => {
+          return params.isWalletConnected
         },
     },
+
     {
         ...baseMenuItem,
         id: 'staking',

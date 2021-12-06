@@ -48,6 +48,7 @@ export type PricingContractMeta = {
   address: Scalars['Bytes'];
   tokenAddress?: Maybe<Scalars['Bytes']>;
   rewardAddress?: Maybe<Scalars['Bytes']>;
+  revealTiers: Array<Scalars['Int']>;
 };
 
 export type Question = {
@@ -70,8 +71,7 @@ export type Question = {
   bids?: Maybe<Array<QuestionBid>>;
   bidCount: Scalars['BigInt'];
   created: Scalars['BigInt'];
-  finalAnswerIndex: Scalars['Int'];
-  finalAnswerValue: Scalars['BigInt'];
+  answerHashes: Array<Scalars['String']>;
   questionGroup?: Maybe<QuestionGroup>;
 };
 
@@ -91,7 +91,7 @@ export type QuestionCategory = {
   questionCount: Scalars['BigInt'];
   totalBounty: Scalars['BigInt'];
   totalStaked: Scalars['BigInt'];
-  rewardedQuestionCount: Scalars['BigInt'];
+  answeredQuestionCount: Scalars['BigInt'];
   questions?: Maybe<Array<Question>>;
 };
 
