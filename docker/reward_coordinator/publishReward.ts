@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
-import { updateValidAnswer, updateInvalidAnswer, addAnswerHashes, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
-import { UpdateInvalidAnswerFields, AddAnswerHashFields, RewardsResponseData, RewardUpdateFields } from "./types"
+import { updateValidAnswer, updateInvalidAnswer, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
+import { RewardsResponseData, RewardUpdateFields } from "./types"
 import getMultihashFromBytes32 from "./utils/getMultihash"
 
 export const publishInvalidAnswers = async (

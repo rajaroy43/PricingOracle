@@ -26,6 +26,12 @@ export interface ReputationUpdateFields {
   scores: string[]
 }
 
+export interface RefundBidsFields {
+  questionIds: string[],
+  addresses: string[],
+  amounts: string[]
+}
+
 export enum AnswerStatus {
   Success,
   Failure,
