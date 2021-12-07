@@ -10,9 +10,13 @@ export interface QuestionBidsView {
   tierFloors: string[];
 }
 
-export interface UserQuestionBidView extends QuestionBidView {
+export interface UserQuestionBidView {
+  amountNextTier: string;
+  amountNextTierDisplay: string;
   isTopBid: boolean;
+  isTopTier: boolean;
   bidTier: number;
+  nextBidTier: number;
 }
 
 export interface QuestionView extends Question {

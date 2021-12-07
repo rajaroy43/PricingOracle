@@ -60,6 +60,7 @@ const MyAnswersNowItem = ({ question, connectedWallet }: BiddableItemProps) => {
 
     return (
       <div className={classes.myAnswerQuestion}>
+                  {/*
         <div className={classes.question}>
             <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
             <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
@@ -76,6 +77,7 @@ const MyAnswersNowItem = ({ question, connectedWallet }: BiddableItemProps) => {
         </div>
 
         <hr className={classes.bidRule} />
+                  */}
       </div>
     )
 }

@@ -8,6 +8,7 @@ import Address from '../atoms/Address'
 import QuestionBidForm from '../forms/QuestionBidForm'
 import { ConnectedWalletProps } from '../../types/user'
 import { BiddableItemProps } from './types.'
+import { selectUserQuestionBid } from '../../selectors/question'
 
 const useStyles = makeStyles(theme => ({
   /* biddable questions form */
@@ -80,9 +81,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) => {
+  var bidInfo
   var topBid
-  const isBiddingOpen = question.isBiddingOpen;
-  const classes = useStyles({ isBiddingOpen });
+  const isBiddingOpen = question.isBiddingOpen
+  const classes = useStyles({ isBiddingOpen })
 
   const { loading, question: questionAndBids } = useGetQuestionBids(subgraphClient, question.id)
   const myBid = question.userBidView ? question.userBidView.amountDisplay : 'No Bids';
@@ -90,6 +92,10 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
   if (!loading && questionAndBids != null) {
     const now = new Date();
     topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay : 'No Bids';
+  }
+
+  if (!loading && questionAndBids != null && question.userBidView) {
+    bidInfo = selectUserQuestionBid(question.userBidView, questionAndBids)
   }
 
   return (
@@ -127,11 +133,11 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
       </div>
 
       { question.userBidView && topBid ?
-        myBid === topBid ?
+        bidInfo && bidInfo.isTopTier ?
           <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding Tier: First to Know</div>
           :
-          question.isBiddingOpen ?
-            <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding {question.userBidView.amountDisplay + 100} LITH will advance your bid to [next tier].</div>
+          bidInfo ?
+            <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding {bidInfo.amountNextTierDisplay} LITH will advance your bid to Tier {bidInfo.nextBidTier}.</div>
             :
             ''
         : ''}
