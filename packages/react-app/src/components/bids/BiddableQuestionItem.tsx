@@ -92,8 +92,6 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
     topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay : 'No Bids';
   }
 
-  //TODO: Check for connected wallet and show connect your wallet if wallet not connected
-
   return (
     <div className={classes.question}>
       <div className={classes.desc}>#{question.id} - {question.description} equal to or above ${question.answerSet[1]} on {question.pricingTimeDisplay}</div>

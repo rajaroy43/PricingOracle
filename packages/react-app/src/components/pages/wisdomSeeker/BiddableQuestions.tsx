@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
       margin: '8px 0',
       padding: '16px',
       '& > h3': {
-          fontSize: '20First To Knowpx',
+          fontSize: '20px',
           margin: 0
       },
       '& > h4': {
