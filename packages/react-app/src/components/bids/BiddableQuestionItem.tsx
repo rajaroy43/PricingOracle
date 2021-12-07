@@ -6,7 +6,6 @@ import { subgraphClient } from '../../client'
 import { useGetQuestionBids } from '../../queries/question'
 import Address from '../atoms/Address'
 import QuestionBidForm from '../forms/QuestionBidForm'
-import { ConnectedWalletProps } from '../../types/user'
 import { BiddableItemProps } from './types.'
 import { selectUserQuestionBid } from '../../selectors/question'
 
