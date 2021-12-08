@@ -63,7 +63,7 @@ const putBids = async(lithiumPricing , bidders , questionIds)=>{
     const bidder = bidders[getRandomInt(bidders.length)]
     await lithiumPricing.connect(bidder).increaseBid(questionIds[i],bidAmounts[i])
   }
-  console.log("Bids havebeen placed")
+  console.log("Bids have been placed")
 }
 
 module.exports = {
