@@ -38,13 +38,15 @@ export enum AnswerStatus {
 }
 
 export interface RewardsResponseData {
-  answerStatus: AnswerStatus
-  questionGroupId: string,
-  questionGroupCategory: string,
-  questionIds: string[],
-  finalAnswerIndex: number[],
-  finalAnswerValue: string[],
-  wisdomNodeUpdates: [string, string, string][]
+  rewards: {
+    answerStatus: AnswerStatus
+    questionGroupId: string,
+    questionGroupCategory: string,
+    questionIds: string[],
+    finalAnswerIndex: number[],
+    finalAnswerValue: string[],
+    wisdomNodeUpdates: [string, string, string][]
+  }
 }
 
 export interface CalculatorResponse {

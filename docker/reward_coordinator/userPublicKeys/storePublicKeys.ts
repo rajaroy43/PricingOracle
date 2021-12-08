@@ -4,7 +4,7 @@ import getPublicKeyFromAddress from "./getPublicKeyFromAddress"
 const getAndStorePublicKey = async (address: string): Promise<void> => {
   const publicKey = await getPublicKeyFromAddress(address)
   if (publicKey != null) {
-    USER_PUBLIC_KEYS.setPublicKey(address, publicKey)
+    USER_PUBLIC_KEYS.setPublicKey(address, publicKey.slice(2))
   } else {
     console.log(`Error getting public key for address$ ${address}`)
   }

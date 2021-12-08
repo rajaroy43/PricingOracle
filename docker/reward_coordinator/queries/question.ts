@@ -19,6 +19,7 @@ export const GET_QUESTION  = gql`
       answerCount
       bounty
       totalStaked
+      pricingTime
       answers {
         id
         answerer {

@@ -9,6 +9,7 @@ import { Bidder } from '../types'
     const createMockdata = (numberofUsers:number)=>{
       return Array(numberofUsers).fill(0).map(()=>{
         const user = EthCrypto.createIdentity()
+        console.log(`created identity ${JSON.stringify(user)}`)
         return {
           publickey:user.publicKey,
           bidder:user.address,

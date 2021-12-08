@@ -25,7 +25,7 @@ const getPublicKeyFromAddress = async (address:string) => {
     return USER_PUBLIC_KEYS.getPublicKey(address)
   } else {
     const publicKey = await fetchPublicKeyFromAddress(address)
-    USER_PUBLIC_KEYS.setPublicKey(address, publicKey)
+    USER_PUBLIC_KEYS.setPublicKey(address, publicKey.slice(2))
     return publicKey
   }
 }

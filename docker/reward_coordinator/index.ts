@@ -22,9 +22,11 @@ const calculateQuestionGroup = async (group: any) => {
   //@ts-ignore
   const answerCount = parseInt(questions[0].question.answerCount, 10)
   if (parseInt(group.minimumRequiredAnswers, 10) > answerCount) {
+    console.log(`QuestionGroup ${group.id} INVALID, ${answerCount} Answers`)
+  //@ts-ignore
     updateInvalidAndRefund(group, questions)
   } else {
-    console.log(`QuestionGroup ${group.id} VALID, getting rewards`)
+    console.log(`QuestionGroup ${group.id} VALID, ${answerCount} Answers, getting rewards`)
     const groupData = {
       ...group,
       questions
@@ -34,9 +36,9 @@ const calculateQuestionGroup = async (group: any) => {
     if (rewardsResponse.error) {
       console.log(`Error calculating rewards for group ${group.id}\nError Message: ${rewardsResponse.error}`)
     } else {
-      console.log(`Got rewards response ${rewardsResponse.data}`)
+      console.log(`Got rewards response ${JSON.stringify(rewardsResponse.data)} -- ${rewardsResponse.data.rewards.answerStatus} -- ${AnswerStatus.Success}`)
       //const rewards = JSON.parse(rewardsResponse.data)
-      if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
+      if (rewardsResponse.data.rewards.answerStatus === AnswerStatus.Success) {
         console.log('Valid answer calculation')
         updateValidAndReward(rewardsResponse.data, questions)
       } else {
@@ -52,7 +54,7 @@ const fetchQuestionsToCalculate = async () => {
   console.log(`fetching questions to calculate`)
 
   const response = await getEndedQuestionGroups()
-
+console.log(`got questions to calculate ${JSON.stringify(response.data.questionGroups)}`)
   if (response.error) {
     console.log(`Error fetching question groups: ${response.error}`)
     return 

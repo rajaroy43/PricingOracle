@@ -41,7 +41,7 @@ const getOrFetchPublicKey = async (address: string): Promise<Bidder> => {
 
   } else {
     publicKey = await getPublicKeyFromAddress(address)
-    USER_PUBLIC_KEYS.setPublicKey(address, publicKey)
+    USER_PUBLIC_KEYS.setPublicKey(address, publicKey.slice(2))
   }
   return {
     address,
@@ -50,25 +50,28 @@ const getOrFetchPublicKey = async (address: string): Promise<Bidder> => {
 }
 
 export const handleNewAnswer = async (question: any, answer: string): Promise<EncryptedAnswerDocument[]> => {
+  console.log(`handling new answer for question ${question.id}`)
   if (question.id == null) return []
   if (!QUESTION_TIERED_ADDRESSES.areTiersCalculated(question.id)) {
+    console.log(`fetching bid tiers for question ${question.id}`)
 
     const questionAndBids = await getQuestionAndBids()
 
     const tieredAddresses = getRefundsForTiers(questionAndBids.data.metaPricingContract.revealTiers, question.bids)
-    QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses, false)
+    QUESTION_TIERED_ADDRESSES.setTieredAddresses(question.id, tieredAddresses, true)
   }
   const bidderTiers = await Promise.all(
     QUESTION_TIERED_ADDRESSES.getTieredAddresses(question.id).tiers
     .map(async (tier: string[]) => {
       const bidderTier = await Promise.all(
-        tier.map(async (address: string): Promise<Bidder> => {
-          const bidder = await getOrFetchPublicKey(address)
+        tier.map(async (bid: any): Promise<Bidder> => {
+          const bidder = await getOrFetchPublicKey(bid.user.id)
           return bidder
         }))
       return bidderTier
     })
   )
+
 
   const encryptedAnswers =  await Promise.all(
     bidderTiers.map(async(tier: Bidder[]): Promise<EncryptedAnswerDocument> => {
@@ -76,22 +79,22 @@ export const handleNewAnswer = async (question: any, answer: string): Promise<En
       return document
     })
   )
-
   
   return encryptedAnswers
 }
 
 export const handleQuestionAnswers = async (rewardsData: RewardsResponseData, questions: any) => {
-  const answerDocuments = await Promise.all(rewardsData.questionIds.map((questionId, idx) => {
-    const question = questions.find((question: any) => question.id === questionId)
-    const answerIndex = rewardsData.finalAnswerIndex[idx]
-    const answerValue = rewardsData.finalAnswerValue[idx]
+  const { questionIds, finalAnswerIndex, finalAnswerValue } = rewardsData.rewards
+  const answerDocuments = await Promise.all(questionIds.map((questionId, idx) => {
+    const question = questions.find((question: any) => question.question.id === questionId)
+    const answerIndex = finalAnswerIndex[idx]
+    const answerValue = finalAnswerValue[idx]
     const answer = JSON.stringify({
-      questionId: question.id,
+      questionId: question.question.id,
       answerIndex,
       answerValue
     })
-    return handleNewAnswer(question, answer)
+    return handleNewAnswer(question.question, answer)
   }))
   return answerDocuments
 }
