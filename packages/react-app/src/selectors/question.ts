@@ -1,7 +1,7 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { Question, QuestionBid } from "lithium-subgraph"
 import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
-import questionBidSchema from "../schemas/questionBid"
-import { QuestionView, QuestionBidView, QuestionAndBidsView } from "../types/question"
+import { QuestionView, QuestionBidView, QuestionAndBidsView, UserQuestionBidView } from "../types/question"
 import { getTopAnswer } from "./common"
 
 export const generateAnswerSetOptions = (answerSet: string[]) => {
@@ -82,3 +82,20 @@ export const selectUserBidQuestion = (bid: QuestionBid,  revealTiers: number[]):
 }
 
 
+export const selectUserQuestionBid = (userBidView: QuestionBidView, questionAndBids: QuestionAndBidsView): UserQuestionBidView => {
+  const amountNextTier = BigNumber.from('10000000000000000').toString()
+  const amountNextTierDisplay = '2'
+  const isTopBid = false
+  const isTopTier = false
+  const bidTier = 2
+  const nextBidTier = 1
+  
+  return {
+    amountNextTier,
+    amountNextTierDisplay,
+    bidTier,
+    isTopBid,
+    isTopTier,
+    nextBidTier
+  }
+}
