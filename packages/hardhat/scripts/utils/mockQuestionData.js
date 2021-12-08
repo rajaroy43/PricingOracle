@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-const generateMockQuestionData = async (endTimeFutureSeconds, minimumRequiredAnswers) => {
+const generateMockQuestionData = async (endTimeFutureSeconds, minimumRequiredAnswers, startTimeFutureSeconds) => {
   const block = await ethers.provider.getBlock();
   const endTime = block.timestamp + endTimeFutureSeconds;
   const pricingTime = endTime + 50000;
@@ -9,7 +9,7 @@ const generateMockQuestionData = async (endTimeFutureSeconds, minimumRequiredAns
   const categoryId = 0;
 
 
-  const startTime = block.timestamp + 15;
+  const startTime = block.timestamp + startTimeFutureSeconds;
   const description1 = `What is the price of an TATA NANO share  `;
   const bounty1 = ethers.utils.parseUnits("120.0", 18);
   const answerSet1 = [0, 1320];

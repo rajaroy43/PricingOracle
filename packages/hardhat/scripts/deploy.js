@@ -121,7 +121,11 @@ const main = async () => {
       //above is question group id 6 and 7  (i.e start from 24 to 31 )
       const questionIds3 = getQuestionIdsByIndex(24,31)
 
-      await putBids(lithiumPricing,userAccounts,questionIds3)      
+      await putBids(lithiumPricing,userAccounts,questionIds3) 
+      
+      //Creating mock QuestionsGroup no answers starts in 100 minute
+      await createQuestionGroup(lithiumPricing, 11000, 1, 10000);
+      console.log(chalk.magenta("<><><><>QuestionGroups created no answers bidding ongoing", "\n"));
 
     } 
   }
