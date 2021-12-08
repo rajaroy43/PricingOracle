@@ -35,6 +35,11 @@ export interface QuestionAndBidsView extends QuestionView {
   questionBidsView: QuestionBidsView;
 }
 
+export interface UserBidsView {
+  biddingOpenQuestions: QuestionAndBidsView[],
+  answeringOpenQuestions: QuestionAndBidsView[],
+  answeredQuestions: QuestionAndBidsView[]
+}
 export enum CategoryLabelDisplay {
   PreIPO,
   Crypto,

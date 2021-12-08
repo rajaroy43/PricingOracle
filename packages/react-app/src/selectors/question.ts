@@ -71,3 +71,14 @@ export const selectQuestionAndBids = (question: Question, revealTiers: number[])
   }
 }
 
+export const selectUserBidQuestion = (bid: QuestionBid,  revealTiers: number[]): QuestionAndBidsView => {
+  const userBidView = selectQuestionBid(bid)
+  const questionView = selectQuestionAndBids(bid.question, revealTiers)
+
+  return {
+    ...questionView,
+    userBidView
+  }
+}
+
+
