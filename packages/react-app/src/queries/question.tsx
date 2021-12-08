@@ -119,9 +119,9 @@ interface GetQuestionsResponse extends QueryResponse {
 
 interface GetQuestionAndBidsResponse extends QueryResponse {
   question: QuestionAndBidsView | null,
-    pricingContractMeta: {
-      revealTiers: number[]
-    } | null
+  pricingContractMeta: {
+    revealTiers: number[]
+  } | null
 }
 
 export const useGetQuestions = (client: any): GetQuestionsResponse => {

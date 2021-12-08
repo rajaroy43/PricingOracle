@@ -10,7 +10,7 @@ export interface QuestionBidsView {
   tierFloors: string[];
 }
 
-export interface UserQuestionBidView {
+export interface UserBidTierView {
   amountNextTier: string;
   amountNextTierDisplay: string;
   isTopBid: boolean;

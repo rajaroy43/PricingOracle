@@ -7,7 +7,7 @@ import { useGetQuestionBids } from '../../queries/question'
 import Address from '../atoms/Address'
 import QuestionBidForm from '../forms/QuestionBidForm'
 import { BiddableItemProps } from './types.'
-import { selectUserQuestionBid } from '../../selectors/question'
+import { selectUserBidTier } from '../../selectors/question'
 
 const useStyles = makeStyles(theme => ({
   /* biddable questions form */
@@ -85,16 +85,15 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
   const isBiddingOpen = question.isBiddingOpen
   const classes = useStyles({ isBiddingOpen })
 
-  const { loading, question: questionAndBids } = useGetQuestionBids(subgraphClient, question.id)
+  const { loading, question: questionAndBids, pricingContractMeta } = useGetQuestionBids(subgraphClient, question.id)
   const myBid = question.userBidView ? question.userBidView.amountDisplay : 'No Bids';
 
   if (!loading && questionAndBids != null) {
-    const now = new Date();
     topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay : 'No Bids';
   }
 
-  if (!loading && questionAndBids != null && question.userBidView) {
-    bidInfo = selectUserQuestionBid(question.userBidView, questionAndBids)
+  if (!loading && questionAndBids != null && question.userBidView && pricingContractMeta != null) {
+    bidInfo = selectUserBidTier(question.userBidView, questionAndBids, pricingContractMeta.revealTiers)
   }
 
   return (
