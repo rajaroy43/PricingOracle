@@ -24,7 +24,7 @@ const getModifiedTxData = (txData:Transaction )=>{
   return modifiedTxData
 }
 
-const getPublicKey = async (txHash:string)=>{
+const getPublicKeyFromTx = async (txHash:string)=>{
     
     const txData = await getTransactionData(txHash);
   
@@ -43,9 +43,7 @@ const getPublicKey = async (txHash:string)=>{
     const tx = FeeMarketEIP1559Transaction.fromTxData(modifiedTxData, { common: customCommon  })
       
     const publicKey = EthUtil.bufferToHex(tx.getSenderPublicKey());
-    console.log("Public Key ",publicKey)
-    console.log("user address",EthUtil.bufferToHex(tx.getSenderAddress()))
     return publicKey;
 }
 
-export default getPublicKey
+export default getPublicKeyFromTx

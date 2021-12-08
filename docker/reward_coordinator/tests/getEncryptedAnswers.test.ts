@@ -1,4 +1,4 @@
-import getEncryptedAnswers from '../utils/getEncryptedAnswers';
+import { getEncryptedAnswerDocument } from '../utils/encryptedAnswers';
 import EthCrypto from 'eth-crypto'
 import { Bidder } from '../types'
 
@@ -38,7 +38,7 @@ import { Bidder } from '../types'
     const getCorrectEncryption = async(numberOfUsers:number)=>{
       const testData = createMockdata(numberOfUsers)
       const bidders = getUserData(testData)
-      const encryptedAnswers = await getEncryptedAnswers(questionId,bidders,answerValue)
+      const encryptedAnswers = await getEncryptedAnswerDocument(questionId,bidders,answerValue)
       testData.forEach(async(data)=>{
         // @ts-ignore
         const decryptedAnswerValue = await decryptdata(encryptedAnswers.answers[data.bidder],data.privateKey);
@@ -57,7 +57,7 @@ import { Bidder } from '../types'
       const testData = createMockdata(numberOfUsers)
       const bidders = getUserData(testData)
       testData[0].privateKey = "random data"; 
-      const encryptedAnswers = await getEncryptedAnswers(questionId,bidders,answerValue)
+      const encryptedAnswers = await getEncryptedAnswerDocument(questionId,bidders,answerValue)
       testData.forEach(async(data)=>{
         // @ts-ignore
         await expect(decryptdata(encryptedAnswers.answers[data.bidder],data.privateKey)).rejects.toThrowError("Bad private key")
@@ -69,7 +69,7 @@ import { Bidder } from '../types'
       const testData = createMockdata(numberOfUsers)
       const bidders = getUserData(testData)
       bidders[0].publicKey = "random data";  
-      await expect(getEncryptedAnswers(questionId,bidders,answerValue)).rejects.toThrowError("Expected public key to be an Uint8Array with length [33, 65]")
+      await expect(getEncryptedAnswerDocument(questionId,bidders,answerValue)).rejects.toThrowError("Expected public key to be an Uint8Array with length [33, 65]")
     })
     
   });

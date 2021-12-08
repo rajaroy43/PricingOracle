@@ -1,7 +1,8 @@
 import { BigNumber } from "ethers"
-import { updateValidAnswer, updateInvalidAnswer, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
-import { RewardsResponseData, RewardUpdateFields } from "./types"
-import getMultihashFromBytes32 from "./utils/getMultihash"
+import { updateValidAnswer, updateInvalidAnswer, updateReputations, updateRewards } from "../contractInstances/lithiumPricing"
+import { RewardsResponseData, RewardUpdateFields } from "../types"
+import { handleQuestionAnswers } from "../utils/encryptedAnswers"
+import getMultihashFromBytes32 from "../utils/getMultihash"
 
 export const publishInvalidAnswers = async (
   questionIds: string[],
@@ -57,8 +58,10 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
   )
 }
 
-export const updateValidAndReward = async (response: RewardsResponseData) => {
+export const updateValidAndReward = async (response: RewardsResponseData, questions: any) => {
   // TODO get bytes32 for uploaded documents to IPFS
+  const answerDocuments = await handleQuestionAnswers(response, questions)
+  console.log(`got encrypted answer documents ${answerDocuments.length} ${answerDocuments[0]}`)
   const DUMMY_BYTES = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB'
   const answerHashes = new Array(response.questionIds.length).fill(getMultihashFromBytes32(DUMMY_BYTES))
   const statusTx = await updateValidAnswer({

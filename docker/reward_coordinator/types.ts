@@ -56,3 +56,11 @@ export interface Bidder {
   address: string,
   publicKey: string
 }
+
+export interface EncryptedAnswerDocument {
+  questionId: string,
+  description: string,
+  pricingTime: string,
+  answerSet: string
+  answers: {[key: string]: string}
+}
