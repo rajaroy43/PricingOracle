@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     justifySelf: 'end',
     textAlign: 'left',
     padding: '6px 8px',
-    width: '170px'
+    width: '176px'
   },
 }));
 
