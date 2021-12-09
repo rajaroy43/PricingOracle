@@ -89,7 +89,7 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
 
   if (!loading && questionAndBids != null) {
     const now = new Date();
-    topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay : 'No Bids';
+    topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay + ' LITH' : 'No Bids';
   }
 
   //TODO: Check for connected wallet and show connect your wallet if wallet not connected
@@ -110,7 +110,7 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
           My Bid<br />
           <br />
           <div>
-            {myBid} LITH
+            {myBid}
               </div>
         </div>
         <div className={classes.updateCol} style={{ display: connectedWallet != null && isBiddingOpen ? 'flex' : 'none' }}>
