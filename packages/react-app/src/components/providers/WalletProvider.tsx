@@ -10,12 +10,7 @@ const UPDATE_TYPES = {
 }
 
 const initialState: ConnectedWallet = {
-  wallet: {
-    walletType: undefined,
-    wallet: null,
-    address: undefined,
-    provider: null
-  },
+  wallet: null,
   updaters: {
     setWallet: () => {},
     disconnectWallet: () => {}

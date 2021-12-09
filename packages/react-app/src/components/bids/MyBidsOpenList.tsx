@@ -3,9 +3,10 @@ import { Link as RouterLink } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { subgraphClient } from '../../client'
-import { useGetBiddableQuestionsAndUserBid } from '../../queries/question'
+import { useGetBiddableQuestionsAndUserBid, useGetUserBids } from '../../queries/question'
 import { ConnectedWalletProps } from '../../types/user'
 import BiddableQuestionItem from './BiddableQuestionItem'
+import LoadingCircle from '../atoms/Loading'
 
 const useStyles = makeStyles(theme => ({
     /* my bids open list */
@@ -20,22 +21,24 @@ const useStyles = makeStyles(theme => ({
 
 const MyBidsOpenList = ({connectedWallet}: {connectedWallet: ConnectedWalletProps}) => {
     const classes = useStyles();
-    const {loading, questions} = useGetBiddableQuestionsAndUserBid(subgraphClient, connectedWallet.address || "0x0")
+    const {loading, bids} = useGetUserBids(subgraphClient, connectedWallet.address)
 
     return (
         <div className={classes.myBidsOpenListWrapper}> 
             <Typography variant="h3">Questions - Bidding Open</Typography>
             <Typography variant="subtitle1">Questions eligible for bidding</Typography>
 
-            { questions && questions.length ?
-                // @ts-ignore
-                questions.map((question =><BiddableQuestionItem 
+            { !loading ?
+                bids.biddingOpenQuestions.length ?
+                  bids.biddingOpenQuestions.map((question => <BiddableQuestionItem 
                     key={question.id} 
                     question={question}  
                     connectedWallet={connectedWallet}
                   />))
+                  :
+                  <div>No Current Bids - <RouterLink to="biddable-questions">View Biddable Questions</RouterLink></div>
                 :
-                <div>No Current Bids - <RouterLink to="biddable-questions">View Biddable Questions</RouterLink></div>
+                <LoadingCircle />    
             }
         </div>
     );

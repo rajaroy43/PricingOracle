@@ -6,13 +6,14 @@ import WisdomSeekerTemplate from '../../templates/WisdomSeekerTemplate'
 import MyBidsOpenList from '../../bids/MyBidsOpenList'
 import MyBidsClosedList from '../../bids/MyBidsClosedList'
 
-const MyBids = ({ match }: any) => {
+const MyBids = () => {
     const {wallet} = useContext(WalletContext)
 
+    
     const sideBarProps = {
         activePage: 'myBids',
-        isWalletConnected: !!wallet.wallet,
-        walletAddress: wallet.address
+        isWalletConnected: !!wallet,
+        walletAddress: wallet ? wallet.address : undefined
     }
 
     return (
@@ -21,8 +22,14 @@ const MyBids = ({ match }: any) => {
 
             <Grid container>
                 <Grid item md={12} sm={12} xs={12}>
-                    <MyBidsOpenList connectedWallet={wallet} />
-                    <MyBidsClosedList connectedWallet={wallet} />
+                    {wallet ?
+                      <>
+                        <MyBidsOpenList connectedWallet={wallet} />
+                        <MyBidsClosedList connectedWallet={wallet} />
+                        </>
+                      :
+                      <div>Connect Wallet to View Your Bids</div>
+                    }
                 </Grid>
             </Grid>
         </WisdomSeekerTemplate>

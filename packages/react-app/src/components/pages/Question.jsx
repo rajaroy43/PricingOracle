@@ -12,8 +12,8 @@ const Question = ({match}) => {
   const {wallet} = useContext(WalletContext)
   const sideBarProps = {
     activePage: 'question',
-    isWalletConnected: !!wallet.wallet,
-    walletAddress: wallet.address
+    isWalletConnected: !!wallet,
+    walletAddress: wallet ? wallet.address : undefined
   }
 
   const main = (

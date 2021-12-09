@@ -11,18 +11,20 @@ const Admin = () => {
   const { loading } = useGetQuestions(subgraphClient)
   const sideBarProps = {
     activePage: '',
-    isWalletConnected: !!wallet.wallet,
-    walletAddress: wallet.address
+    isWalletConnected: !!wallet,
+    walletAddress: wallet ? wallet.address : undefined
   }
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
       <h1>Lithium Finance</h1>
-     {loading 
-        ? <LoadingCircle />
-        : <div>
-            <CreateQuestionGroup connectedAddress={wallet.address} pricingInstance={wallet.pricingInstance} />
-        </div>
-     }
+      {loading ? 
+        <LoadingCircle />
+        :
+        wallet ?
+          <CreateQuestionGroup wallet={wallet} />
+          :
+          <p style={{ color: 'white' }}>Please Connect to Metamask</p>
+      }
     </WisdomNodeTemplate>
   )
   return main

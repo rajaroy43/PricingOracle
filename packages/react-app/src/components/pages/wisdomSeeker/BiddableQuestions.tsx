@@ -75,11 +75,12 @@ export const BidTiers = () => {
 
 const BiddableQuestions = () => {
   const {wallet} = useContext(WalletContext)
-  const {loading, questions} = useGetBiddableQuestionsAndUserBid(subgraphClient, wallet.address || "0x0")
+  const walletAddress = wallet ? wallet.address : "0x0"
+  const {loading, questions} = useGetBiddableQuestionsAndUserBid(subgraphClient, walletAddress)
   const sideBarProps = {
     activePage: 'biddableQuestions',
-    isWalletConnected: !!wallet.wallet,
-    walletAddress: wallet.address
+    isWalletConnected: !!wallet,
+    walletAddress: wallet ? wallet.address: undefined
   }
 
   const main = (
@@ -92,14 +93,17 @@ const BiddableQuestions = () => {
           {loading  ?
             <LoadingCircle />
             :
-            questions != null ?
-              questions.map((question:any) => <BiddableQuestionItem 
+            wallet ?
+              questions != null ?
+                questions.map((question:any) => <BiddableQuestionItem 
                                                 key={question.id} 
                                                 question={question}  
                                                 connectedWallet={wallet}
                                               />)
+                :
+                'Error Loading Question Groups'
               :
-              'Error Loading Question Groups'
+              <p style={{ color: 'white' }}>Please Connect to Metamask</p>
           }
         </Grid>
       </Grid>

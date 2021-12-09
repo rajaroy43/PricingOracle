@@ -23,14 +23,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UserProfile = ({ walletAddress, mode }: {walletAddress: string, mode: string}) => {
-  const { wallet: {pricingInstance}, updaters: {disconnectWallet} } = useContext(WalletContext);
+  const { wallet, updaters: {disconnectWallet} } = useContext(WalletContext);
   const { loading, user } = useGetUser(subgraphClient, walletAddress);
   const classes = useStyles();
 
   if (loading) {
     return <LoadingCircle />
   } 
-  if (walletAddress && user && pricingInstance) {
+  if (walletAddress && user && wallet) {
     return (
       <div className={classes.userProfile}>
         <Button label='Disconnect' onClick={disconnectWallet} />
@@ -39,7 +39,7 @@ const UserProfile = ({ walletAddress, mode }: {walletAddress: string, mode: stri
         <Flex justifyContent="flex-end" mt="1rem">
           <ClaimRewardForm
             connectedAddress={walletAddress}
-            pricingInstance={pricingInstance}
+            pricingInstance={wallet.pricingInstance}
             answerGroupIds={user.answerGroupsView.claimableIds}
             isDisabled={!user.answerGroupsView.hasUnclaimedRewards}
           />

@@ -11,8 +11,8 @@ const MyAnswers = ({ match }: any) => {
 
     const sideBarProps = {
         activePage: 'myAnswers',
-        isWalletConnected: !!wallet.wallet,
-        walletAddress: wallet.address
+        isWalletConnected: !!wallet,
+        walletAddress: wallet ? wallet.address : undefined
     }
 
     /*
@@ -29,8 +29,13 @@ const MyAnswers = ({ match }: any) => {
 
             <Grid container>
                 <Grid item md={12} sm={12} xs={12}>
+                  {wallet ?
                     <MyAnswersNowList connectedWallet={wallet} />
-                    {/*<MyAnswersSoonList connectedWallet={wallet} />*/}
+                  
+                    :
+                    <div>Connect your wallet to view your answers</div>
+                  }
+                  {/*<MyAnswersSoonList connectedWallet={wallet} />*/}
                 </Grid>
             </Grid>
         </WisdomSeekerTemplate>

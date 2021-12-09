@@ -12,6 +12,7 @@ import { QuestionType } from '../../../types/question'
 import CreateQuestionArray from './CreateQuestionArray'
 import config from '../../../config'
 import { SuccessProps } from '../../formikTLDR/types'
+import { ConnectedWalletProps } from '../../../types/user'
 
 const Row = styled.div`
     display: flex;
@@ -185,26 +186,21 @@ const Success = ({receipt}: SuccessProps) => (
         <a href={config.getTxExplorerUrl(receipt.transactionHash)}>{receipt.transactionHash}</a>
     </div>
 )
-const CreateQuestionGroupForm = ({ connectedAddress, pricingInstance, onSuccess }: any) => {
+const CreateQuestionGroupForm = ({ wallet }: {wallet: ConnectedWalletProps}) => {
     const [selectedCategory, setSelectedCategory] = useState(categories[0])
 
-    if ( !connectedAddress || !pricingInstance) {
-        return <p style={{ color: 'white' }}>Please Connect to Metamask</p>
-    }
     const formProps = {
         defaultValues: createQuestionGroupSchema.defaultValues,
         schema: createQuestionGroupSchema.schema,
         getForm: getForm(),
-        contractMethod: pricingInstance.methods.createQuestionGroup,
-        connectedAddress,
+        contractMethod: wallet.pricingInstance.methods.createQuestionGroup,
+        connectedAddress: wallet.address,
         getMethodArgs: getMethodArgs(),
         stateEls: {
             SuccessEl: Success
         },
         formOnSuccess: false,
-        updaters: {
-          onSuccess
-        }
+        updaters:{}
     }
     return (
         <Web3Form
