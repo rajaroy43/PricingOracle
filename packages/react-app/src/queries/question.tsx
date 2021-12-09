@@ -39,7 +39,7 @@ interface GetQuestionAndBidsData {
 }
 
 interface GetUserBidsData {
-  bids: QuestionBid[],
+  questionBids: QuestionBid[],
   pricingContractMeta: {
     revealTiers: number[]
   }
@@ -217,15 +217,13 @@ export const useGetQuestion = (client: any, id: string): GetQuestionResponse => 
 export const GET_USER_BIDS  = gql`
   ${QUESTION_FIELDS}
   ${QUESTION_BID_FIELDS}
-  query bids($address: String!, $metaId: String!) {
-    bids(where: {user: $address}) {
-      bids {
-        ...QuestionBidFields
-        question {
-          ...QuestionFields
-          bids {
-            ...QuestionBidFields
-          }
+  query questionBids($address: String!, $metaId: String!) {
+    questionBids(where: {user: $address}) {
+      ...QuestionBidFields
+      question {
+        ...QuestionFields
+        bids {
+          ...QuestionBidFields
         }
       }
     }
@@ -254,7 +252,7 @@ export const useGetUserBids = (client: any, address: string): GetUserBidsRespons
     answeredQuestions: []
   }
   const bids = data != null ?
-    data.bids.map((bid) => selectUserBidQuestion(bid, data.pricingContractMeta.revealTiers))
+    data.questionBids.map((bid) => selectUserBidQuestion(bid, data.pricingContractMeta.revealTiers))
     .reduce((acc: any, question: any) => {
       if (question.isBiddingOpen) {
         acc.biddingOpenQuestions.push(question)
