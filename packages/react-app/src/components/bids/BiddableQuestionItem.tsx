@@ -55,15 +55,12 @@ const useStyles = makeStyles(theme => ({
     }
   },
   updateCol: {
-    '& > p': {
-      marginTop: '0'
-    },
     minWidth: '115px'
   },
   bidInfo: {
     alignItems: 'center',
     display: 'flex',
-    flexDiretion: 'row',
+    flexDirection: 'row',
     fontWeight: 700,
     marginTop: '16px',
     '& > svg': {
@@ -117,7 +114,6 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
         </div>
         <div className={classes.updateCol} style={{ display: connectedWallet != null && isBiddingOpen ? 'flex' : 'none' }}>
           <>
-            <p><strong>Update Bid</strong></p>
             {connectedWallet ?
               <QuestionBidForm
                 connectedWallet={connectedWallet}
