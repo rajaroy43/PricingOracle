@@ -8,9 +8,9 @@ import { getTopAnswer } from "./common"
 export const generateAnswerSetOptions = (answerSet: string[]) => {
   return answerSet.map((answer: string, index: number) => {
     if (index === answerSet.length - 1) {
-      return {label: `Greater Than or Equal to ${answer}`, value: index}
+      return {label: `Greater Than or Equal to ${formatNumber(answer)}`, value: index}
     } else {
-      return {label: `Greater Than or Equal to ${answer} or  Less Than ${answerSet[index+1]}`, value: index}
+      return {label: `Greater Than or Equal to ${formatNumber(answer)} or Less Than ${formatNumber(answerSet[index+1])}`, value: index}
     }
   })
 }
@@ -42,6 +42,7 @@ export const selectQuestion = (question: Question): QuestionView => {
     // @ts-ignore
     answerSetTotalStakedDisplay: question.answerSetTotalStaked.map(formatUnits),
 
+    answerSetDisplay: question.answerSet.map(answer => formatNumber(answer)),
     bountyDisplay: formatNumber(formatUnits(question.bounty)),
     totalStakedDisplay: formatUnits(question.totalStaked),
     endTimeLocal: secToLocaleDate(question.endTime),

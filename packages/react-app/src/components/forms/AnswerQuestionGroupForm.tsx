@@ -14,7 +14,6 @@ import { QuestionGroupView } from '../../types/questionGroup'
 import { useGetUser } from '../../queries/user'
 import { subgraphClient } from '../../client'
 import { FormStateEls, SuccessProps } from '../formikTLDR/types';
-import config from '../../config';
 import ExplorerLink from '../atoms/ExplorerLink';
 
 const useStyles = makeStyles(theme => ({

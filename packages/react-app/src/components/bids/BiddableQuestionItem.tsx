@@ -95,7 +95,7 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
 
   return (
     <div className={classes.question}>
-      <div className={classes.desc}>#{question.id} - {question.description} equal to or above ${question.answerSet[1]} on {question.pricingTimeDisplay}</div>
+      <div className={classes.desc}>#{question.id} - {question.description} equal to or above ${question.answerSetDisplay[1]} on {question.pricingTimeDisplay}</div>
       <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
       <div className={classes.bidRow}>
         <div>

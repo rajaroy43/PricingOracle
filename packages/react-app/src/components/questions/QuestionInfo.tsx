@@ -33,7 +33,7 @@ const QuestionItem = ({question}: {question: QuestionView}) => {
 
   return (
     <div className={classes.question}>
-      <div className={classes.desc}>{question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
+      <div className={classes.desc}>{question.description} {question.answerSetDisplay[1]} on {question.pricingTimeDisplay}</div>
       <Flex>Asked by&nbsp;<Address address={question.owner.id} length={4} /></Flex>
       <div>Status: {question.isFinished ? 'Finished' : 'Active'}</div>
       <div>Bounty: {question.bountyDisplay}</div>
