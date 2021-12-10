@@ -36,6 +36,7 @@ const Date = (props) => {
         {...props}
         onChange={onChange}
         renderDay={renderDay}
+        utc={true}
         />
       <ErrorMessage
         isError={isError}

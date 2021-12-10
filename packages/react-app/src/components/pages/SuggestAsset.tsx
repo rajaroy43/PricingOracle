@@ -1,20 +1,21 @@
 import React, { useContext } from 'react'
+import SuggestAssetForm from '../forms/SuggestAssetForm'
 import { WalletContext } from '../providers/WalletProvider'
 import WisdomSeekerTemplate from '../templates/WisdomSeekerTemplate'
 
-const SuggestAsset = ({ match }: any) => {
-    const connectedWallet = useContext(WalletContext)
+const SuggestAsset = () => {
+    const {wallet} = useContext(WalletContext)
     const sideBarProps = {
         activePage: 'suggestAsset',
         // @ts-ignore
-        isWalletConnected: !!connectedWallet.wallet,
+        isWalletConnected: !!wallet,
         // @ts-ignore
-        walletAddress: connectedWallet.address
+        walletAddress: wallet ? wallet.address : undefined
     }
 
     return (
         <WisdomSeekerTemplate pageProps={sideBarProps}>
-            TBD
+            <SuggestAssetForm />
         </WisdomSeekerTemplate>
     )
 }

@@ -9,21 +9,25 @@ import AnsweringGroup from '../questions/AnsweringGroup'
 const Answering = ({ match}: any)=> {
     const urlQuestionGroupId = match.params.questionGroupId;
     const {wallet} = useContext(WalletContext)
-    const {loading, questionGroup} = useGetQuestionGroupAndUserAnswer(subgraphClient, urlQuestionGroupId, wallet.address || '0x0')
+    const walletAddress = wallet ? wallet.address : '0x0'
+    const {loading, questionGroup} = useGetQuestionGroupAndUserAnswer(subgraphClient, urlQuestionGroupId, walletAddress)
 
     const sideBarProps = {
         activePage: 'availableQuestions',
-        isWalletConnected: !!wallet.wallet,
-        walletAddress: wallet.address
+        isWalletConnected: !!wallet,
+        walletAddress: wallet ? wallet.address : undefined
     }
     return (
         <WisdomNodeTemplate pageProps={sideBarProps}>
             { 
-            !wallet.wallet ? <h3>Connect Wallet to Answer Questions</h3> : 
+            !wallet ? <h3>Connect Wallet to Answer Questions</h3> : 
                 loading ?
                     <LoadingCircle />
                     :
-                    questionGroup ? wallet.wallet && <AnsweringGroup questionGroup={questionGroup} connectedWallet={wallet} /> : null
+                    questionGroup ?
+                      <AnsweringGroup questionGroup={questionGroup} connectedWallet={wallet} />
+                      :
+                      <div>Error loading page, please refresh</div>
                 
             }
         </WisdomNodeTemplate>

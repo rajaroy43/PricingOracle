@@ -24,6 +24,7 @@ module.exports = {
     "react/prefer-stateless-function": "off",
     "no-param-reassign": "off",
     "spaced-comment": "off",
+    "no-var": "off",
     "no-unused-vars": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-boolean-value": "off",
