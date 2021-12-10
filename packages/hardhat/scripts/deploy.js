@@ -33,7 +33,7 @@ const getQuestionIdsByIndex = (startingQuestionId,lastIndex) =>{
 
 const main = async () => {
   const accounts = await ethers.getSigners();
-  const userAccounts = [...accounts.slice(1, 7)];
+  const userAccounts = [...accounts.slice(1, 8)];
   account0 = accounts[0];
   account1 = accounts[1];
   account2 = accounts[2];

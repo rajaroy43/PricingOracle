@@ -1,7 +1,8 @@
 import { BigNumber } from "ethers"
-import { updateValidAnswer, updateInvalidAnswer, updateReputations, updateRewards } from "./contractInstances/lithiumPricing"
-import { RewardsResponseData, RewardUpdateFields } from "./types"
-import getMultihashFromBytes32 from "./utils/getMultihash"
+import { updateValidAnswer, updateInvalidAnswer, updateReputations, updateRewards } from "../contractInstances/lithiumPricing"
+import { RewardsResponseData, RewardUpdateFields } from "../types"
+import { handleQuestionAnswers } from "../utils/encryptedAnswers"
+import getMultihashFromBytes32 from "../utils/getMultihash"
 
 export const publishInvalidAnswers = async (
   questionIds: string[],
@@ -25,8 +26,7 @@ export const publishInvalidAnswers = async (
 }
 
 export const updateInvalidAndRefund = (group: any, questions: any) => {
-  console.log(`QuestionGroup ${group.id} INVALID`)
-  //@ts-ignore
+
   const answerCount = parseInt(questions[0].question.answerCount, 10)
   const questionIds = group.questions.map((question: any) => question.id)
   const groupIds = Array(answerCount).fill(group.id)
@@ -57,20 +57,23 @@ export const updateInvalidAndRefund = (group: any, questions: any) => {
   )
 }
 
-export const updateValidAndReward = async (response: RewardsResponseData) => {
+export const updateValidAndReward = async (response: RewardsResponseData, questions: any) => {
+  const {questionIds, wisdomNodeUpdates, questionGroupId, questionGroupCategory} = response.rewards
   // TODO get bytes32 for uploaded documents to IPFS
+  const answerDocuments = await handleQuestionAnswers(response, questions)
+  console.log(`got encrypted answer documents ${answerDocuments.length} ${answerDocuments[0]}`)
   const DUMMY_BYTES = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB'
-  const answerHashes = new Array(response.questionIds.length).fill(getMultihashFromBytes32(DUMMY_BYTES))
+  const answerHashes = new Array(questionIds.length).fill(getMultihashFromBytes32(DUMMY_BYTES))
   const statusTx = await updateValidAnswer({
-    questionIds: response.questionIds,
+    questionIds,
     answerHashes
   })
 
 
   console.log((`got statusTx ${JSON.stringify(statusTx, null, 2)}`))
 
-  const groupIds = new Array(response.wisdomNodeUpdates.length).fill(response.questionGroupId)
-  const addressRewards = response.wisdomNodeUpdates.reduce(
+  const groupIds = new Array(wisdomNodeUpdates.length).fill(questionGroupId)
+  const addressRewards = wisdomNodeUpdates.reduce(
     (acc: any, update: any) => {
       acc[0].push(update[0])
       acc[1].push(update[1])
@@ -87,7 +90,7 @@ export const updateValidAndReward = async (response: RewardsResponseData) => {
 
   console.log((`got rewardsTx ${JSON.stringify(rewardsTx, null, 2)}`))
 
-  const categoryIds = new Array(addressRewards[0].length).fill(response.questionGroupCategory)
+  const categoryIds = new Array(addressRewards[0].length).fill(questionGroupCategory)
 
   const reputationTx = await updateReputations({
     addresses: addressRewards[0],
