@@ -1,5 +1,5 @@
 import { User } from "lithium-subgraph"
-import { formatUnits } from "../helpers/formatters"
+import { formatNumber, formatUnits } from "../helpers/formatters"
 import { UserView } from "../types/user"
 import { selectAnswerGroups } from "./answerGroup"
 import { selectQuestion } from "./question"
@@ -8,10 +8,10 @@ export const selectUser = (user: User): UserView => {
   const tokenApprovalBalanceDisplay = formatUnits(user.tokenApprovalBalance)
   return {
     ...user,
-    totalBountyDisplay: formatUnits(user.totalBounty),
-    totalRewardsClaimedDisplay: formatUnits(user.totalRewardsClaimed),
-    totalStakedDisplay: formatUnits(user.totalStaked),
-    tokenBalanceDisplay: formatUnits(user.tokenBalance),
+    totalBountyDisplay: formatNumber(formatUnits(user.totalBounty)),
+    totalRewardsClaimedDisplay: formatNumber(formatUnits(user.totalRewardsClaimed)),
+    totalStakedDisplay: formatNumber(formatUnits(user.totalStaked)),
+    tokenBalanceDisplay: formatNumber(formatUnits(user.tokenBalance)),
     tokenApprovalBalanceDisplay,
     pricingIsApproved: +tokenApprovalBalanceDisplay > 0,
     // @ts-ignore
