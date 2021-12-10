@@ -86,7 +86,8 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
   const myBid = question.userBidView ? question.userBidView.amountDisplay : 'No Bids';
 
   if (!loading && questionAndBids != null) {
-    topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay : 'No Bids';
+    const now = new Date();
+    topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay + ' LITH' : 'No Bids';
   }
 
   if (!loading && questionAndBids != null && question.userBidView && pricingContractMeta != null) {
@@ -109,7 +110,7 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
           My Bid<br />
           <br />
           <div>
-            {myBid} LITH
+            {myBid}
               </div>
         </div>
         <div className={classes.updateCol} style={{ display: connectedWallet != null && isBiddingOpen ? 'flex' : 'none' }}>

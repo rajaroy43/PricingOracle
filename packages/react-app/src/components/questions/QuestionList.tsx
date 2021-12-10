@@ -4,7 +4,6 @@ import { QuestionView } from '../../types/question'
 import QuestionItem from './QuestionItem'
 
 const QuestionList = ({questions}: {questions: QuestionView[]}) => {
-  console.log('questions', questions);
   return (
     <div>
       <Typography variant="h3">Latest Questions:</Typography>

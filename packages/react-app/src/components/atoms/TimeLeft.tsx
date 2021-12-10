@@ -14,9 +14,9 @@ const useStyles = makeStyles(() => ({
     marginRight: '2px',
     marginTop: '4px',
     justifySelf: 'end',
-    textAlign: 'right',
-    padding: '4px 8px',
-    width: 'fit-content'
+    textAlign: 'left',
+    padding: '6px 8px',
+    width: '180px'
   },
 }));
 
@@ -42,7 +42,7 @@ const TimeLeft = ({targetTime, label}: {targetTime: number, label: string}) => {
   
   return (
     <div className={classes.questionGroupTime}>
-      {label}: {remainingTime.getUTCHours()}:{remainingTime.getUTCMinutes()}:{remainingTime.getUTCSeconds()}
+      {label}: {("0" + remainingTime.getUTCHours()).slice(-2)}:{("0" + remainingTime.getUTCMinutes()).slice(-2)}:{("0" + remainingTime.getUTCSeconds()).slice(-2)}
     </div>
   )
 }
