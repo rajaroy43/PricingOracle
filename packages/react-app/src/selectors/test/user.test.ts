@@ -40,7 +40,7 @@ import { selectUser } from "../user"
 
       }
       const expectedTotalBounty = formatNumber(formatUnits(user.totalBounty))
-      const expectedTotalRewardsClaimed = formatUnits(user.totalRewardsClaimed)
+      const expectedTotalRewardsClaimed = formatNumber(formatUnits(user.totalRewardsClaimed))
       const expectedTotalStaked =formatUnits(user.totalStaked)
       const expectedTotalBalance = formatUnits(user.tokenBalance)
       const expectedTokenApprovalBalance = formatUnits(user.tokenApprovalBalance)
@@ -61,7 +61,7 @@ import { selectUser } from "../user"
         const user={}
         //@ts-ignore
         const userView=selectUser(user)
-        expect(userView.totalBountyDisplay).toBe(0)
+        expect(userView.totalBountyDisplay).toBe('0')
         expect(userView.totalRewardsClaimedDisplay).toBeUndefined()
         expect(userView.totalStakedDisplay).toBeUndefined()
         expect(userView.totalBountyDisplay).toBeUndefined()

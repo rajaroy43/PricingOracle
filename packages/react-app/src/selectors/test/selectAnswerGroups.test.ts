@@ -83,7 +83,7 @@ import { formatNumber, formatUnits } from "../../helpers/formatters"
         }],
         questionGroup:questionGroup
       }]
-      const expectedUnclaimedRewards=answerGroup[0].rewardAmount
+      const expectedUnclaimedRewards=answerGroup[0].rewardAmount.toString()
       const expectedUnclaimedRewardsDisplay=formatNumber(formatUnits(expectedUnclaimedRewards))
       const expectedClaimableIds:string[]=[answerGroup[0].questionGroup.id]
       const expectedEarnings = answerGroup[0].rewardAmount-answerGroup[0].answers[0].stakeAmount

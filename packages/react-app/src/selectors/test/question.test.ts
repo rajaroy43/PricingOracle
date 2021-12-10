@@ -4,8 +4,8 @@ describe('Answer set labels description', () => {
   it('Should generate answer set labels', () => {
     const answerSetDisplay = ['1.0000', '2.0000', '3.0000'];
     const answerSetLabels = generateAnswerSetOptions(answerSetDisplay);
-    expect(answerSetLabels[0]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[0]} or  Less Than ${answerSetDisplay[1]}`);
-    expect(answerSetLabels[1]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[1]} or  Less Than ${answerSetDisplay[2]}`);
+    expect(answerSetLabels[0]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[0]} or Less Than ${answerSetDisplay[1]}`);
+    expect(answerSetLabels[1]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[1]} or Less Than ${answerSetDisplay[2]}`);
     expect(answerSetLabels[2]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[2]}`);
   });
 
