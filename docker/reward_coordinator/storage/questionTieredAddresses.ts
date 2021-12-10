@@ -1,5 +1,11 @@
+import { EncryptedAnswerDocument } from "../types"
+
 interface TieredAddresses {
-  tiers: string[][], refundsComplete: boolean
+  tiers: string[][],
+  refundsComplete: boolean,
+  answerDocuments: EncryptedAnswerDocument[],
+  answerPublished: string[],
+  currentlyAnswering: boolean
 }
 
 const QUESTION_TIERED_ADDRESSES = (() => {
@@ -13,7 +19,10 @@ const QUESTION_TIERED_ADDRESSES = (() => {
     // @ts-ignore
     tieredAddresses[questionId] = {
       tiers,
-      refundsComplete
+      refundsComplete,
+      answerDocuments: [],
+      answerPublished: [],
+      currentlyAnswering: false
     }
   }
 
@@ -24,9 +33,21 @@ const QUESTION_TIERED_ADDRESSES = (() => {
   const getTieredAddresses = (questionId: string): TieredAddresses => {
     return tieredAddresses[questionId]
   }
+
+  const setAnswerDocuments = (questionId: string, answerDocuments: EncryptedAnswerDocument[]): void => {
+    tieredAddresses[questionId].answerDocuments = answerDocuments
+  }
+
+  const addPublishedDate = (questionId: string, publishDate: string, currentlyAnswering: boolean): void => {
+    const tiers = tieredAddresses[questionId]
+    tiers.answerPublished.push(publishDate)
+    tiers.currentlyAnswering =  currentlyAnswering
+  }
   
   return {
     areTiersCalculated,
+    setAnswerDocuments,
+    addPublishedDate,
     setTieredAddresses,
     removeTieredAddresses,
     getTieredAddresses

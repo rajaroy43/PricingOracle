@@ -4,11 +4,13 @@ const { generateMockQuestionData } = require("./mockQuestionData");
 const createQuestionGroup = async (
   lithiumPricing,
   endTimeFutureSeconds = 10000,
-  minimumRequiredAnswer = 1
+  minimumRequiredAnswer = 1,
+  startTimeFutureSeconds = 15
 ) => {
   const args = await generateMockQuestionData(
     endTimeFutureSeconds,
-    minimumRequiredAnswer
+    minimumRequiredAnswer,
+    startTimeFutureSeconds
   );
   console.log("\n\n 📡 Creating mock question groups \n");
   for (var i = 0; i < args.length; i++) {
@@ -63,7 +65,7 @@ const putBids = async(lithiumPricing , bidders , questionIds)=>{
     const bidder = bidders[getRandomInt(bidders.length)]
     await lithiumPricing.connect(bidder).increaseBid(questionIds[i],bidAmounts[i])
   }
-  console.log("Bids havebeen placed")
+  console.log("Bids have been placed")
 }
 
 module.exports = {

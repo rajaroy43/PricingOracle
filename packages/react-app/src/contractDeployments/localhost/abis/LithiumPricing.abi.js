@@ -28,7 +28,7 @@ module.exports = [
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "bidder",
         "type": "address"

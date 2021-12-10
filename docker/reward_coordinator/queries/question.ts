@@ -19,6 +19,7 @@ export const GET_QUESTION  = gql`
       answerCount
       bounty
       totalStaked
+      pricingTime
       answers {
         id
         answerer {
@@ -68,12 +69,42 @@ export const GET_BIDS_TO_REFUND = gql`
       revealTiers
     }
   }
-
 `
 
-
-
 export const getBidsToRefund = async () => {
+  const metaId = 'pricing_contract_meta'
+  const now = Math.floor(new Date().getTime() / 1000).toString();
+  const response = await subgraphClient.query({
+    query: GET_BIDS_TO_REFUND,
+    variables: {now, metaId},
+    fetchPolicy: "network-only"
+  })
+
+  return response
+}
+
+export const GET_QUESTION_AND_BIDS = gql`
+  query question($id: String!, $metaId: String!) {
+    question(id: $id) {
+      id
+      bidCount
+      bids {
+        id
+        isRefunded
+        amount
+        user {
+          id
+        }
+      }
+    }
+    pricingContractMeta(metaId: $metaId) {
+      id
+      revealTiers
+    }
+  }
+`
+
+export const getQuestionAndBids = async () => {
   const metaId = 'pricing_contract_meta'
   const now = Math.floor(new Date().getTime() / 1000).toString();
   const response = await subgraphClient.query({

@@ -1,7 +1,8 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { Question, QuestionBid } from "lithium-subgraph"
 import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
-import questionBidSchema from "../schemas/questionBid"
-import { QuestionView, QuestionBidView, QuestionAndBidsView } from "../types/question"
+import getBidTiers from "../helpers/getBidTiers"
+import { QuestionView, QuestionBidView, QuestionAndBidsView, UserBidTierView } from "../types/question"
 import { getTopAnswer } from "./common"
 
 export const generateAnswerSetOptions = (answerSet: string[]) => {
@@ -71,3 +72,40 @@ export const selectQuestionAndBids = (question: Question, revealTiers: number[])
   }
 }
 
+export const selectUserBidQuestion = (bid: QuestionBid,  revealTiers: number[]): QuestionAndBidsView => {
+  const userBidView = selectQuestionBid(bid)
+  const questionView = selectQuestionAndBids(bid.question, revealTiers)
+
+  return {
+    ...questionView,
+    userBidView
+  }
+}
+
+
+export const selectUserBidTier = (userBidView: QuestionBidView, questionAndBids: QuestionAndBidsView, revealTiers: number[]): UserBidTierView => {
+  const {tieredBids, tierRanges} = getBidTiers(revealTiers, questionAndBids.bids)
+  const isTopBid = userBidView.amount ===  tieredBids[0][0].amount
+  const bidTierIdx = tierRanges.findIndex((tier: string[]) => tier[0] >= userBidView.amount && tier[1] <= userBidView.amount)
+  const isTopTier = bidTierIdx === 0
+  const bidTier = bidTierIdx + 1
+  let nextBidTier = 0
+  let amountNextTier = '0'
+  let amountNextTierDisplay = '0'
+
+  if (!isTopTier) {
+    const nextTierFloor = tieredBids[bidTierIdx - 1]
+    nextBidTier = bidTier - 1
+    amountNextTier = BigNumber.from(nextTierFloor.amount).add(1).toString()
+    amountNextTierDisplay = formatUnits(amountNextTier)
+  }
+
+  return {
+    amountNextTier,
+    amountNextTierDisplay,
+    bidTier,
+    isTopBid,
+    isTopTier,
+    nextBidTier
+  }
+}

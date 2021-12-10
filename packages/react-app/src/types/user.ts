@@ -19,12 +19,12 @@ export enum SUPPORTED_WALLETS {
 }
 
 export interface ConnectedWalletProps {
-  walletType?: SUPPORTED_WALLETS;
-  wallet?: any;
-  address?: string;
-  provider?: any;
-  tokenInstance?: any;
-  pricingInstance?: any;
+  walletType: SUPPORTED_WALLETS;
+  wallet: any;
+  address: string;
+  provider: any;
+  tokenInstance: any;
+  pricingInstance: any;
 }
 
 export interface ConnectedWalletUpdaters {
@@ -33,6 +33,6 @@ export interface ConnectedWalletUpdaters {
 }
 
 export interface ConnectedWallet {
-  wallet: ConnectedWalletProps;
+  wallet: ConnectedWalletProps | null;
   updaters: ConnectedWalletUpdaters;
 }

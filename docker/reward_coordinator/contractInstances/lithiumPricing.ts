@@ -4,7 +4,6 @@ import { coordinatorWallet } from "../client"
 import { UpdateInvalidAnswerFields, AddAnswerHashFields, ReputationUpdateFields, RewardUpdateFields, RefundBidsFields } from "../types"
 //@ts-ignore
 import { config } from '../config'
-
 // ethers
 // @ts-ignore
 // export const getLithiumTokenInstance = (provider: any) => new Contract(config.LITHIUM_TOKEN_ADDRESS, new utils.Interface(tokenAbi), new providers.Web3Provider(provider))

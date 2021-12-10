@@ -81,7 +81,7 @@ interface ILithiumPricing {
 
   event GroupRewardUpdated(address[] addressesToUpdate,uint256[] groupIds,uint256[] rewardAmounts);
 
-  event BidReceived(uint256 questionId,address bidder,uint256 bidAmount);
+  event BidReceived(uint256 questionId,address indexed bidder,uint256 bidAmount);
 
   event BidRefunded(uint256 questionId, address nodeAddress,uint256 refundAmount);
 

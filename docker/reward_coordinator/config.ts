@@ -4,7 +4,7 @@ import rinkebyConfig from './contractDeployments/rinkeby/config.json'
 import localPricingAbi from './contractDeployments/localhost/abis/LithiumPricing.json'
 import rinkebyPricingAbi from './contractDeployments/rinkeby/abis/LithiumPricing.json'
 
-const lithiumEnv = process.env.TARGET_CHAIN!
+const lithiumEnv = process.env.TARGET_CHAIN! || 'localhost'
 
 export const CHAIN_IDS = {
   1337: 'Ganache Local',

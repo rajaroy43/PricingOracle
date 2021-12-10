@@ -6,19 +6,19 @@ import AnswerGroupList from '../answers/AnswerGroupList'
 
 const History = () => {
   const {wallet} = useContext(WalletContext)
-  const address = wallet.address || ''
+  const address = wallet ? wallet.address : undefined
 
 
   const sideBarProps = {
     activePage: 'history',
-    isWalletConnected: !!wallet.wallet,
-    walletAddress: wallet.address
+    isWalletConnected: !!wallet,
+    walletAddress: address
   }
 
   const main = (
     <WisdomNodeTemplate pageProps={sideBarProps}>
       <Typography variant="h1">History / My Answers</Typography>
-     {address !== '' ?
+     {address  ?
         <AnswerGroupList address={address} />
         :
         'Connect Wallet to View History'

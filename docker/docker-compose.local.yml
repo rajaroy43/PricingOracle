@@ -13,7 +13,7 @@ services:
           REWARD_CALCULATOR_URI: 'http://reward_calculator:9001'
           COORDINATOR_KEY: 'df57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e'
           FETCH_INTERVAL: 30000
-          ETH_NODE: 'http://:8545'
+          ETH_NODE: 'http://host.docker.internal:8545'
           TARGET_CHAIN: 'localhost'
 
     python:

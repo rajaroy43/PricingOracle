@@ -1,10 +1,12 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
-import { Question } from 'lithium-subgraph'
+import { Question, QuestionBid } from 'lithium-subgraph'
 import { QueryResponse, QUESTION_FIELDS, QUESTION_BID_FIELDS } from './common'
-import { QuestionAndBidsView, QuestionView } from '../types/question';
-import { selectQuestion, selectQuestionAndBids } from '../selectors/question';
+import { QuestionAndBidsView, QuestionBidView, QuestionView, UserBidsView } from '../types/question';
+import { selectQuestion, selectQuestionAndBids, selectUserBidQuestion } from '../selectors/question';
 import { msToSec, toLowerCase } from '../helpers/formatters';
+
+const metaId = 'pricing_contract_meta'
 
 interface QuestionQueryVars {
   id: string
@@ -20,6 +22,11 @@ interface BiddableQuestionsAndUserBidQueryVars {
   address: string
 }
 
+interface UserBidsQueryVars {
+  address: string,
+  metaId: string
+}
+
 interface GetQuestionData {
   question: Question
 }
@@ -31,6 +38,12 @@ interface GetQuestionAndBidsData {
   }
 }
 
+interface GetUserBidsData {
+  questionBids: QuestionBid[],
+  pricingContractMeta: {
+    revealTiers: number[]
+  }
+}
 
 interface GetQuestionsData {
   questions: Question[] 
@@ -106,9 +119,9 @@ interface GetQuestionsResponse extends QueryResponse {
 
 interface GetQuestionAndBidsResponse extends QueryResponse {
   question: QuestionAndBidsView | null,
-    pricingContractMeta: {
-      revealTiers: number[]
-    } | null
+  pricingContractMeta: {
+    revealTiers: number[]
+  } | null
 }
 
 export const useGetQuestions = (client: any): GetQuestionsResponse => {
@@ -127,7 +140,6 @@ export const useGetQuestions = (client: any): GetQuestionsResponse => {
 }
 
 export const useGetQuestionBids = (client: any, id: string): GetQuestionAndBidsResponse => {
-  const metaId = 'pricing_contract_meta'
   const {loading, error, data} = useQuery<GetQuestionAndBidsData, QuestionAndBidsQueryVars>(
     GET_QUESTION_BIDS,
     {
@@ -199,5 +211,64 @@ export const useGetQuestion = (client: any, id: string): GetQuestionResponse => 
     loading,
     error,
     question: data != null ? selectQuestion(data.question) : null
+  } 
+}
+
+export const GET_USER_BIDS  = gql`
+  ${QUESTION_FIELDS}
+  ${QUESTION_BID_FIELDS}
+  query questionBids($address: String!, $metaId: String!) {
+    questionBids(where: {user: $address}) {
+      ...QuestionBidFields
+      question {
+        ...QuestionFields
+        bids {
+          ...QuestionBidFields
+        }
+      }
+    }
+    pricingContractMeta(id: $metaId) {
+      revealTiers
+    }
+}
+`;
+
+interface GetUserBidsResponse extends QueryResponse {
+  bids: UserBidsView
+}
+
+export const useGetUserBids = (client: any, address: string): GetUserBidsResponse => {
+  address = toLowerCase(address)
+  const {loading, error, data} = useQuery<GetUserBidsData, UserBidsQueryVars>(
+    GET_USER_BIDS,
+    {
+      client,
+      variables: { address, metaId },
+      fetchPolicy: 'no-cache'
+    });
+  const userBids = {
+    biddingOpenQuestions: [],
+    answeringOpenQuestions: [],
+    answeredQuestions: []
+  }
+  const bids = data != null ?
+    data.questionBids.map((bid) => selectUserBidQuestion(bid, data.pricingContractMeta.revealTiers))
+    .reduce((acc: any, question: any) => {
+      if (question.isBiddingOpen) {
+        acc.biddingOpenQuestions.push(question)
+      } else if (question.isAnswerCalculated) {
+        acc.answeringOpenQuestions.push(question)
+      } else {
+        acc.answeredQuestions.push(question)
+      }
+      return acc
+    }, {...userBids} )
+
+    :
+    userBids
+  return {
+    loading,
+    error,
+    bids
   } 
 }

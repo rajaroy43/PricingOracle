@@ -3,11 +3,12 @@ require('dotenv').config()
 import { getEndedQuestionGroups } from "./queries/questionGroup"
 import { getBidsToRefund, getQuestion } from "./queries/question"
 import getRewards from "./getRewards"
-import { updateInvalidAndRefund, updateValidAndReward } from "./publishReward"
+import { updateInvalidAndRefund, updateValidAndReward } from "./transactions/publishReward"
 import { AnswerStatus } from './types'
 import getRefundsForTiers from "./utils/getRefundsForTiers"
 import QUESTION_TIERED_ADDRESSES from "./storage/questionTieredAddresses"
-import { publishBidderRefunds } from './publishBidderRefund'
+import { publishBidderRefunds } from './transactions/publishBidderRefund'
+import storePublicKeys from "./userPublicKeys/storePublicKeys"
 
 
 const calculateQuestionGroup = async (group: any) => {
@@ -21,9 +22,11 @@ const calculateQuestionGroup = async (group: any) => {
   //@ts-ignore
   const answerCount = parseInt(questions[0].question.answerCount, 10)
   if (parseInt(group.minimumRequiredAnswers, 10) > answerCount) {
+    console.log(`QuestionGroup ${group.id} INVALID, ${answerCount} Answers`)
+  //@ts-ignore
     updateInvalidAndRefund(group, questions)
   } else {
-    console.log(`QuestionGroup ${group.id} VALID, getting rewards`)
+    console.log(`QuestionGroup ${group.id} VALID, ${answerCount} Answers, getting rewards`)
     const groupData = {
       ...group,
       questions
@@ -33,11 +36,11 @@ const calculateQuestionGroup = async (group: any) => {
     if (rewardsResponse.error) {
       console.log(`Error calculating rewards for group ${group.id}\nError Message: ${rewardsResponse.error}`)
     } else {
-      console.log(`Got rewards response ${rewardsResponse.data}`)
+      console.log(`Got rewards response ${JSON.stringify(rewardsResponse.data)} -- ${rewardsResponse.data.rewards.answerStatus} -- ${AnswerStatus.Success}`)
       //const rewards = JSON.parse(rewardsResponse.data)
-      if (rewardsResponse.data.answerStatus === AnswerStatus.Success) {
+      if (rewardsResponse.data.rewards.answerStatus === AnswerStatus.Success) {
         console.log('Valid answer calculation')
-        updateValidAndReward(rewardsResponse.data)
+        updateValidAndReward(rewardsResponse.data, questions)
       } else {
         console.log(`Invalid answer calculation ${group.id}`)
         updateInvalidAndRefund(group, questions)
@@ -48,8 +51,10 @@ const calculateQuestionGroup = async (group: any) => {
 }
 
 const fetchQuestionsToCalculate = async () => {
-  const response = await getEndedQuestionGroups()
+  console.log(`fetching questions to calculate`)
 
+  const response = await getEndedQuestionGroups()
+console.log(`got questions to calculate ${JSON.stringify(response.data.questionGroups)}`)
   if (response.error) {
     console.log(`Error fetching question groups: ${response.error}`)
     return 
@@ -94,7 +99,6 @@ const handleBidRefunds = async (revealTiers: number[], question: any): Promise<v
       acc.questionIds.push(question.id)
       acc.addresses.push(bid.user.id)
       acc.amounts.push(bid.refundAmount)
-      console.log(`inside reduce ${JSON.stringify(acc)}`)
       return acc
     }, refundArgs)
 
@@ -107,6 +111,7 @@ const handleBidRefunds = async (revealTiers: number[], question: any): Promise<v
 }
 
 const fetchBidsToRefund = async () => {
+  console.log(`fetching bids to refund`)
   const response = await getBidsToRefund()
   if (response.error) {
     console.log(`Error fetching bids to refund: ${response.error}`)
@@ -114,6 +119,7 @@ const fetchBidsToRefund = async () => {
   }
   const revealTiers = response.data.pricingContractMeta.revealTiers
   await Promise.all(response.data.questions.map((question: any) => handleBidRefunds(revealTiers, question)))
+  response.data.questions.forEach((question: any) => storePublicKeys(question))
 }
 
 

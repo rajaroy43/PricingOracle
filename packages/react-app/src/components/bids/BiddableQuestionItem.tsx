@@ -6,8 +6,8 @@ import { subgraphClient } from '../../client'
 import { useGetQuestionBids } from '../../queries/question'
 import Address from '../atoms/Address'
 import QuestionBidForm from '../forms/QuestionBidForm'
-import { ConnectedWalletProps } from '../../types/user'
 import { BiddableItemProps } from './types.'
+import { selectUserBidTier } from '../../selectors/question'
 
 const useStyles = makeStyles(theme => ({
   /* biddable questions form */
@@ -55,15 +55,12 @@ const useStyles = makeStyles(theme => ({
     }
   },
   updateCol: {
-    '& > p': {
-      marginTop: '0'
-    },
     minWidth: '115px'
   },
   bidInfo: {
     alignItems: 'center',
     display: 'flex',
-    flexDiretion: 'row',
+    flexDirection: 'row',
     fontWeight: 700,
     marginTop: '16px',
     '& > svg': {
@@ -80,11 +77,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) => {
+  var bidInfo
   var topBid
-  const isBiddingOpen = question.isBiddingOpen;
-  const classes = useStyles({ isBiddingOpen });
+  const isBiddingOpen = question.isBiddingOpen
+  const classes = useStyles({ isBiddingOpen })
 
-  const { loading, question: questionAndBids } = useGetQuestionBids(subgraphClient, question.id)
+  const { loading, question: questionAndBids, pricingContractMeta } = useGetQuestionBids(subgraphClient, question.id)
   const myBid = question.userBidView ? question.userBidView.amountDisplay : 'No Bids';
 
   if (!loading && questionAndBids != null) {
@@ -92,7 +90,9 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
     topBid = questionAndBids.questionBidsView.topBid ? questionAndBids.questionBidsView.topBid.amountDisplay + ' LITH' : 'No Bids';
   }
 
-  //TODO: Check for connected wallet and show connect your wallet if wallet not connected
+  if (!loading && questionAndBids != null && question.userBidView && pricingContractMeta != null) {
+    bidInfo = selectUserBidTier(question.userBidView, questionAndBids, pricingContractMeta.revealTiers)
+  }
 
   return (
     <div className={classes.question}>
@@ -115,7 +115,6 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
         </div>
         <div className={classes.updateCol} style={{ display: connectedWallet != null && isBiddingOpen ? 'flex' : 'none' }}>
           <>
-            <p><strong>Update Bid</strong></p>
             {connectedWallet ?
               <QuestionBidForm
                 connectedWallet={connectedWallet}
@@ -129,11 +128,11 @@ const BiddableQuestionItem = ({ question, connectedWallet }: BiddableItemProps) 
       </div>
 
       { question.userBidView && topBid ?
-        myBid === topBid ?
+        bidInfo && bidInfo.isTopTier ?
           <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding Tier: First to Know</div>
           :
-          question.isBiddingOpen ?
-            <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding {question.userBidView.amountDisplay + 100} LITH will advance your bid to [next tier].</div>
+          bidInfo ?
+            <div className={classes.bidInfo}><InfoOutlinedIcon /> Bidding {bidInfo.amountNextTierDisplay} LITH will advance your bid to Tier {bidInfo.nextBidTier}.</div>
             :
             ''
         : ''}

@@ -36,7 +36,7 @@ const config = {
     pricingAbi: rinkebyPricingAbi,
     LITHIUM_TOKEN_ADDRESS: rinkebyConfig.LithiumTokenAddress,
     LITHIUM_PRICING_ADDRESS: rinkebyConfig.LithiumPricingAddress,
-    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.20",
+    LITHIUM_SUBGRAPH: "https://api.studio.thegraph.com/query/4730/lithium-finance/v0.0.21",
     getTxExplorerUrl: (txHash) => `https://rinkeby.etherscan.io/tx/${txHash}`
   },
   GOERLI: {
