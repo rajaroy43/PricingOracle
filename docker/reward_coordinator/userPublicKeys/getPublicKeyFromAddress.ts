@@ -1,21 +1,18 @@
 import getPublicKey from "../utils/getPublicKey"
 import { lithiumPricing } from "../contractInstances/lithiumPricing"
-import { getTransactionCount } from "../queries/ethNode"
 import USER_PUBLIC_KEYS from "../storage/userPublicKeys";
 
 const fetchPublicKeyFromAddress = async (userAddress:string)=>{
   const address = userAddress.replace(/\s+/g, '');
-  const getTxCount = await getTransactionCount(address);
-  if(getTxCount == 0){
-    throw new Error(`This user ${address} don't have any transaction yet`)
-  }
-  const eventFilter = lithiumPricing.filters.QuestionAnswered(null,address)
+
+  const eventFilter = lithiumPricing.filters.BidReceived(null,address)
   const events = await lithiumPricing.queryFilter(eventFilter)
-  const txHash = events[0]?.['transactionHash']
-  if(!txHash){
-    throw new Error(`This user ${address} doesn't answers any questions yet`)
+
+  if(events.length === 0){
+    throw new Error(`No bid transactions found for ${address}`)
   }
-  const publicKey = await getPublicKey(txHash);
+
+  const publicKey = await getPublicKey(events[0].transactionHash);
   
   return publicKey;
 }

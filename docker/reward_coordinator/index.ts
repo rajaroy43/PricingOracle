@@ -99,7 +99,6 @@ const handleBidRefunds = async (revealTiers: number[], question: any): Promise<v
       acc.questionIds.push(question.id)
       acc.addresses.push(bid.user.id)
       acc.amounts.push(bid.refundAmount)
-      console.log(`inside reduce ${JSON.stringify(acc)}`)
       return acc
     }, refundArgs)
 
