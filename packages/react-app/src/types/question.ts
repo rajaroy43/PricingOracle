@@ -10,9 +10,13 @@ export interface QuestionBidsView {
   tierFloors: string[];
 }
 
-export interface UserQuestionBidView extends QuestionBidView {
+export interface UserBidTierView {
+  amountNextTier: string;
+  amountNextTierDisplay: string;
   isTopBid: boolean;
+  isTopTier: boolean;
   bidTier: number;
+  nextBidTier: number;
 }
 
 export interface QuestionView extends Question {
@@ -35,6 +39,11 @@ export interface QuestionAndBidsView extends QuestionView {
   questionBidsView: QuestionBidsView;
 }
 
+export interface UserBidsView {
+  biddingOpenQuestions: QuestionAndBidsView[],
+  answeringOpenQuestions: QuestionAndBidsView[],
+  answeredQuestions: QuestionAndBidsView[]
+}
 export enum CategoryLabelDisplay {
   PreIPO,
   Crypto,

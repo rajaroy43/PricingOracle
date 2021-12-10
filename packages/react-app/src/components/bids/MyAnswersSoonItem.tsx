@@ -1,7 +1,10 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import { subgraphClient } from '../../client'
+import { useGetQuestionBids } from '../../queries/question'
 import Button from '../atoms/inputs/buttons/Button'
 import Address from '../atoms/Address'
+import { BiddableItemProps } from './types.'
 
 const useStyles = makeStyles(theme => ({
     /* my answer questions */
@@ -50,11 +53,14 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const MyAnswersNowItem = ({id, question}: {id: string, question: any}) => {
+const MyAnswersNowItem = ({ question, connectedWallet }: BiddableItemProps) => {
     const classes = useStyles();
-  
+    // TODO: Calculate question.currentBid?
+    const { loading, question: questionAndBids } = useGetQuestionBids(subgraphClient, question.id)
+
     return (
       <div className={classes.myAnswerQuestion}>
+                  {/*
         <div className={classes.question}>
             <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
             <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
@@ -71,6 +77,7 @@ const MyAnswersNowItem = ({id, question}: {id: string, question: any}) => {
         </div>
 
         <hr className={classes.bidRule} />
+                  */}
       </div>
     )
 }

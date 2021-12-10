@@ -4,12 +4,15 @@ import { Form } from 'formik'
 import Web3Form from '../formikTLDR/forms/Web3Form'
 import Button from '../atoms/inputs/buttons/Button'
 import Text from '../atoms/inputs/Text'
-import { SuccessProps } from '../formikTLDR/types'
-import ExplorerLink from '../atoms/ExplorerLink'
+import { ErrorProps, SuccessProps } from '../formikTLDR/types'
+import BidExplorerLink from '../atoms/BidExplorerLink'
 import questionBidSchema from '../../schemas/questionBid'
 import { parseUnits } from '../../helpers/formatters'
 
 const useStyles = makeStyles(theme => ({
+    updateHead: {
+      marginTop: '0'
+    },
     myBidWrapper: {
         alignItems: 'center',
         display: 'flex',
@@ -22,10 +25,18 @@ const useStyles = makeStyles(theme => ({
     buttonUpdateBid: {
         marginTop: '16px'
     },
+    successWrapper: {
+      maxWidth: '175px',
+      '& > h3': {
+        fontSize: '18px',
+        marginTop: '0'
+      }
+    }
 }));
 
 const getForm = (classes: any) => (submit: any) => (
   <Form>
+     <p className={classes.updateHead}><strong>Update Bid</strong></p>
      <div className={classes.myBidWrapper}>
         <Text
             name="questionBidAmount"
@@ -41,13 +52,25 @@ const getForm = (classes: any) => (submit: any) => (
   </Form>
 )
 
-const Success = ({receipt}: SuccessProps) => (
-  <div>
-      <h3>Bid Updates!</h3>
-      <h5>Tx Confirmed</h5>
-      <ExplorerLink txHash={receipt.transactionHash} />
-  </div>
-)
+const Success = ({receipt}: SuccessProps) => {
+  const classes = useStyles();
+  return (
+    <div className={classes.successWrapper}>
+        <h3>Bid Updated</h3>
+        <BidExplorerLink txHash={receipt.transactionHash} />
+    </div>
+  )
+}
+
+const Error = ({error}: ErrorProps) => {
+  const classes = useStyles();
+  return (
+    <div className={classes.successWrapper}>
+        <h3>Tx Error</h3>
+        <p>{error.code}</p>
+    </div>
+  )
+}
 
 const getMethodArgs = (questionId: string[]) => (values: any) => {
   const bidAmount = parseUnits(values.questionBidAmount);
@@ -64,6 +87,7 @@ const QuestionBidForm = ({ connectedWallet, question }: any) => {
     connectedAddress: connectedWallet.address,
     getMethodArgs: getMethodArgs(question.id),
     stateEls: {
+      ErrorEl: Error,
       SuccessEl: Success
     },
     formOnSuccess: false,

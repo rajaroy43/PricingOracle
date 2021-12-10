@@ -1,8 +1,11 @@
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import MyAnswersSoonItem from './MyAnswersSoonItem';
+import { subgraphClient } from '../../client'
+import { useGetBiddableQuestionsAndUserBid } from '../../queries/question'
+import { ConnectedWalletProps } from '../../types/user'
+import MyAnswersSoonItem from './MyAnswersSoonItem'
 
 const useStyles = makeStyles(theme => ({
     /* my answers */
@@ -15,17 +18,22 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const MyAnswersSoonList = ({questions}: {questions: any}) => {
-    const classes = useStyles();
+const MyAnswersSoonList = ({connectedWallet}: {connectedWallet: ConnectedWalletProps}) => {
+    const classes = useStyles()
+    const {loading, questions} = useGetBiddableQuestionsAndUserBid(subgraphClient, connectedWallet.address || "0x0")
 
     return (
         <div className={classes.myAnswerQuestionWrapper}> 
             <Typography variant="h3">Answers - Available Soon</Typography>
             <Typography variant="subtitle1">Answers available shortly for viewing</Typography>
 
-            {questions.length ?
+            {questions && questions.length ?
                 // @ts-ignore
-                questions.map((question => <MyAnswersSoonItem id={question.id} question={question} key={question.id} />))
+                questions.map((question => <MyAnswersSoonItem 
+                    key={question.id}
+                    question={question} 
+                    connectedWallet={connectedWallet} 
+                     />))
                 :
                 <div>No Answers Available - <RouterLink to="biddable-questions">View Biddable Questions</RouterLink></div>
             }

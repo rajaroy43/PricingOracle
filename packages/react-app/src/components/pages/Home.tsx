@@ -12,8 +12,8 @@ const Home = () => {
   const {loading, questions} = useGetQuestions(subgraphClient)
   const sideBarProps = {
     activePage: '',
-    isWalletConnected: !!wallet.wallet,
-    walletAddress: wallet.address
+    isWalletConnected: !!wallet,
+    walletAddress: wallet ? wallet.address : undefined
   }
 
   const main = (

@@ -10,7 +10,7 @@ export interface PendingProps {
 }
 
 export interface ErrorProps {
-  error: string
+  error: any
 }
 
 export interface FormStateEls {
