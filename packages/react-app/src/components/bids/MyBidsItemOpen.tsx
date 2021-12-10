@@ -64,7 +64,7 @@ const MyBidsItemOpen = ({question, connectedWallet}: BiddableItemProps) => {
             :
                 question.isAnswerCalculated ?
                     <div className={classes.question}>
-                        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
+                        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSetDisplay[1]} on {question.pricingTimeDisplay}</div>
                         <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
                         <div className={classes.answerRow}>
                             Question Ended<br />
@@ -77,7 +77,7 @@ const MyBidsItemOpen = ({question, connectedWallet}: BiddableItemProps) => {
                     </div>
                     :
                     <div className={classes.question}>
-                        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
+                        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSetDisplay[1]} on {question.pricingTimeDisplay}</div>
                         <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
                         <div className={classes.answerRow}>
                             Question Ended<br />

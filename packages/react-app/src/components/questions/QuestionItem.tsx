@@ -33,7 +33,7 @@ const QuestionItem = ({id, question}: {id: string, question: QuestionView}) => {
   return (
     <div className={classes.question}>
       <RouterLink to={`/wisdom-node/question/${question.id}`} className={classes.questionLink}>
-        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSet[1]} on {question.pricingTimeDisplay}</div>
+        <div className={classes.desc}>#{question.id} - {question.description} {question.answerSetDisplay[1]} on {question.pricingTimeDisplay}</div>
       </RouterLink>
       <div>Asked by <Address address={question.owner.id} length={4} className={classes.address} /></div>
       <div>Status: {question.isFinished ? 'Finished' : 'Active'}</div>

@@ -1,12 +1,12 @@
-import { formatUnits, msToLocaleDate, msToSec, secToLocaleDate } from '../../helpers/formatters';
+import { formatNumber, formatUnits, msToLocaleDate, msToSec, secToLocaleDate } from '../../helpers/formatters';
 import { generateAnswerSetOptions, selectQuestionBid, selectQuestion } from '../question';
 describe('Answer set labels description', () => {
   it('Should generate answer set labels', () => {
-    const answerSet = ['1', '2', '3'];
-    const answerSetLabels = generateAnswerSetOptions(answerSet);
-    expect(answerSetLabels[0]['label']).toBe(`Greater Than or Equal to ${answerSet[0]} or  Less Than ${answerSet[1]}`);
-    expect(answerSetLabels[1]['label']).toBe(`Greater Than or Equal to ${answerSet[1]} or  Less Than ${answerSet[2]}`);
-    expect(answerSetLabels[2]['label']).toBe(`Greater Than or Equal to ${answerSet[2]}`);
+    const answerSetDisplay = ['1.0000', '2.0000', '3.0000'];
+    const answerSetLabels = generateAnswerSetOptions(answerSetDisplay);
+    expect(answerSetLabels[0]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[0]} or Less Than ${answerSetDisplay[1]}`);
+    expect(answerSetLabels[1]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[1]} or Less Than ${answerSetDisplay[2]}`);
+    expect(answerSetLabels[2]['label']).toBe(`Greater Than or Equal to ${answerSetDisplay[2]}`);
   });
 
   it('Should generate empty answer set labels for empty answer sets', () => {
@@ -55,7 +55,7 @@ describe('Question  Selection', () => {
   });
   it('Should get question data', () => {
     const expectedAnswerSetTotalStakedDisplay = question.answerSetTotalStaked.map(formatUnits);
-    const expectedBountyDisplay = formatUnits(question.bounty);
+    const expectedBountyDisplay = formatNumber(formatUnits(question.bounty));
     const expectedTotalStakedDisplay = formatUnits(question.totalStaked);
     const expectedEndTimeLocal = secToLocaleDate(question.endTime);
     const now = msToSec(new Date().getTime());

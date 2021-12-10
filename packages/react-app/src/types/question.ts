@@ -20,6 +20,7 @@ export interface UserBidTierView {
 }
 
 export interface QuestionView extends Question {
+  answerSetDisplay: string[];
   answerSetTotalStakedDisplay: string[];
   bountyDisplay: string;
   totalStakedDisplay: string;
@@ -44,6 +45,7 @@ export interface UserBidsView {
   answeringOpenQuestions: QuestionAndBidsView[],
   answeredQuestions: QuestionAndBidsView[]
 }
+
 export enum CategoryLabelDisplay {
   PreIPO,
   Crypto,

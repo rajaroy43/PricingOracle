@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber"
 import { Question, QuestionBid } from "lithium-subgraph"
-import { formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
+import { formatNumber, formatUnits, msToSec, secToLocaleDate, msToLocaleDate } from "../helpers/formatters"
 import getBidTiers from "../helpers/getBidTiers"
 import { QuestionView, QuestionBidView, QuestionAndBidsView, UserBidTierView } from "../types/question"
 import { getTopAnswer } from "./common"
@@ -8,9 +8,9 @@ import { getTopAnswer } from "./common"
 export const generateAnswerSetOptions = (answerSet: string[]) => {
   return answerSet.map((answer: string, index: number) => {
     if (index === answerSet.length - 1) {
-      return {label: `Greater Than or Equal to ${answer}`, value: index}
+      return {label: `Greater Than or Equal to ${formatNumber(answer)}`, value: index}
     } else {
-      return {label: `Greater Than or Equal to ${answer} or  Less Than ${answerSet[index+1]}`, value: index}
+      return {label: `Greater Than or Equal to ${formatNumber(answer)} or Less Than ${formatNumber(answerSet[index+1])}`, value: index}
     }
   })
 }
@@ -42,7 +42,8 @@ export const selectQuestion = (question: Question): QuestionView => {
     // @ts-ignore
     answerSetTotalStakedDisplay: question.answerSetTotalStaked.map(formatUnits),
 
-    bountyDisplay: formatUnits(question.bounty),
+    answerSetDisplay: question.answerSet.map(answer => formatNumber(answer)),
+    bountyDisplay: formatNumber(formatUnits(question.bounty)),
     totalStakedDisplay: formatUnits(question.totalStaked),
     endTimeLocal: secToLocaleDate(question.endTime),
     isFinished,
@@ -81,7 +82,6 @@ export const selectUserBidQuestion = (bid: QuestionBid,  revealTiers: number[]):
     userBidView
   }
 }
-
 
 export const selectUserBidTier = (userBidView: QuestionBidView, questionAndBids: QuestionAndBidsView, revealTiers: number[]): UserBidTierView => {
   const {tieredBids, tierRanges} = getBidTiers(revealTiers, questionAndBids.bids)

@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { AnswerGroup } from "lithium-subgraph"
-import { formatUnits } from "../helpers/formatters"
+import { formatNumber, formatUnits } from "../helpers/formatters"
 import { AnswerGroupView, AnswerGroupsView } from "../types/answerGroup"
 import { selectAnswer } from "./answer"
 import { selectQuestionGroup } from "./questionGroup"
@@ -39,7 +39,7 @@ export const selectAnswerGroups = (answerGroups: AnswerGroup[]): AnswerGroupsVie
     return acc
   }, groupsAcc)
 
-  const unclaimedRewardsDisplay = formatUnits(filteredGroups.unclaimedRewards.toString())
+  const unclaimedRewardsDisplay = formatNumber(formatUnits(filteredGroups.unclaimedRewards.toString()))
   return {
     ...filteredGroups,
     unclaimedRewards: filteredGroups.unclaimedRewards.toString(),

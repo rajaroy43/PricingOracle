@@ -1,7 +1,7 @@
 import { selectAnswerGroups} from "../answerGroup"
 import { AnswerGroupView } from "../../types/answerGroup"
 import { AnswerGroup } from "lithium-subgraph"
-import { formatUnits } from "../../helpers/formatters"
+import { formatNumber, formatUnits } from "../../helpers/formatters"
   describe("Selecting answer Groups", () => {
     
     it("Should get unclaimedRewards and answergroups if reward is NotCalculated", () => {
@@ -34,7 +34,7 @@ import { formatUnits } from "../../helpers/formatters"
         questionGroup:questionGroup
       }]
       const expectedUnclaimedRewards=0
-      const expectedUnclaimedRewardsDisplay=0
+      const expectedUnclaimedRewardsDisplay="0.0000"
       const expectUnclaimedAnswerGroups:number[]=[]
       const expectedClaimableIds:string[]=[]
       const expectedEarnings = answerGroup[0].rewardAmount-answerGroup[0].answers[0].stakeAmount
@@ -45,7 +45,7 @@ import { formatUnits } from "../../helpers/formatters"
 
       expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual(expectUnclaimedAnswerGroups)
       expect(answerGroupsView.unclaimedRewards).toBe(expectedUnclaimedRewards.toString())
-      expect(answerGroupsView.unclaimedRewardsDisplay).toBe(expectedUnclaimedRewardsDisplay.toFixed(1))
+      expect(answerGroupsView.unclaimedRewardsDisplay).toBe(expectedUnclaimedRewardsDisplay)
       expect(answerGroupsView.hasUnclaimedRewards).toBeFalsy()
       expect(answerGroupsView.claimableIds).toStrictEqual(expectedClaimableIds)
       expect(answerGroupsView.answerGroupViews[0]['rewardAmount']).toBe(answerGroup[0].rewardAmount)
@@ -83,8 +83,8 @@ import { formatUnits } from "../../helpers/formatters"
         }],
         questionGroup:questionGroup
       }]
-      const expectedUnclaimedRewards=answerGroup[0].rewardAmount
-      const expectedUnclaimedRewardsDisplay=formatUnits(expectedUnclaimedRewards.toString())
+      const expectedUnclaimedRewards=answerGroup[0].rewardAmount.toString()
+      const expectedUnclaimedRewardsDisplay=formatNumber(formatUnits(expectedUnclaimedRewards))
       const expectedClaimableIds:string[]=[answerGroup[0].questionGroup.id]
       const expectedEarnings = answerGroup[0].rewardAmount-answerGroup[0].answers[0].stakeAmount
       const expectedEarningsDisplay = formatUnits(expectedEarnings.toString())
@@ -105,16 +105,16 @@ import { formatUnits } from "../../helpers/formatters"
     it("Should  get unclaimedRewards and answergroups  as 0 and [] , if empty[] passed", () => {
       const answerGroup: AnswerGroup[]=[]
       const unclaimedAnswerGroups:number[]=[]
-      const expectedUnclaimedRewards=0
+      const expectedUnclaimedRewards="0"
       const expectedClaimableIds:string[]=[]
       const expectedAnswerGroupViews:AnswerGroupView[]=[]
-      const expectedUnclaimedRewardsDisplay=0
+      const expectedUnclaimedRewardsDisplay="0.0000"
 
       const answerGroupsView=selectAnswerGroups(answerGroup)
       
       expect(answerGroupsView.unclaimedAnswerGroups).toStrictEqual(unclaimedAnswerGroups)
-      expect(answerGroupsView.unclaimedRewards).toBe(expectedUnclaimedRewards.toString())
-      expect(answerGroupsView.unclaimedRewardsDisplay).toBe(expectedUnclaimedRewardsDisplay.toFixed(1))
+      expect(answerGroupsView.unclaimedRewards).toBe(expectedUnclaimedRewards)
+      expect(answerGroupsView.unclaimedRewardsDisplay).toBe(expectedUnclaimedRewardsDisplay)
       expect(answerGroupsView.hasUnclaimedRewards).toBeFalsy()
       expect(answerGroupsView.claimableIds).toStrictEqual(expectedClaimableIds)
       expect(answerGroupsView.answerGroupViews).toStrictEqual(expectedAnswerGroupViews)

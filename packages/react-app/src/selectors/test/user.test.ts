@@ -1,4 +1,4 @@
-import { formatUnits } from "../../helpers/formatters"
+import { formatNumber, formatUnits } from "../../helpers/formatters"
 import { selectUser } from "../user"
   describe("User Selectors", () => {
 
@@ -37,12 +37,13 @@ import { selectUser } from "../user"
         tokenBalance:'55',
         tokenApprovalBalance:'1000000',
         answerGroups:answerGroup
-
       }
-      const expectedTotalBounty = formatUnits(user.totalBounty)
-      const expectedTotalRewardsClaimed = formatUnits(user.totalRewardsClaimed)
-      const expectedTotalStaked =formatUnits(user.totalStaked)
-      const expectedTotalBalance = formatUnits(user.tokenBalance)
+
+      const expectedTotalBounty = formatNumber(formatUnits(user.totalBounty))
+      const expectedTotalRewardsClaimed = formatNumber(formatUnits(user.totalRewardsClaimed))
+      const expectedTotalStaked = formatUnits(user.totalStaked)
+      const expectedTotalStakedDisplay = formatNumber(formatUnits(user.totalStaked)) 
+      const expectedTotalBalanceDisplay = formatNumber(formatUnits(user.tokenBalance))
       const expectedTokenApprovalBalance = formatUnits(user.tokenApprovalBalance)
 
       //@ts-ignore
@@ -50,8 +51,8 @@ import { selectUser } from "../user"
       
       expect(userView.totalBountyDisplay).toBe(expectedTotalBounty)
       expect(userView.totalRewardsClaimedDisplay).toBe(expectedTotalRewardsClaimed)
-      expect(userView.totalStakedDisplay).toBe(expectedTotalStaked)
-      expect(userView.tokenBalanceDisplay).toBe(expectedTotalBalance)
+      expect(userView.totalStakedDisplay).toBe(expectedTotalStakedDisplay)
+      expect(userView.tokenBalanceDisplay).toBe(expectedTotalBalanceDisplay)
       expect(userView.tokenApprovalBalanceDisplay).toBe(expectedTokenApprovalBalance)
       expect(userView.pricingIsApproved).toBeTruthy()
       expect(userView.questionViews).toBeNull()
@@ -61,10 +62,10 @@ import { selectUser } from "../user"
         const user={}
         //@ts-ignore
         const userView=selectUser(user)
-        expect(userView.totalBountyDisplay).toBeUndefined()
-        expect(userView.totalRewardsClaimedDisplay).toBeUndefined()
-        expect(userView.totalStakedDisplay).toBeUndefined()
-        expect(userView.totalBountyDisplay).toBeUndefined()
+        expect(userView.totalBountyDisplay).toBe('0')
+        expect(userView.totalRewardsClaimedDisplay).toBe('0')
+        expect(userView.totalStakedDisplay).toBe('0')
+        expect(userView.totalBountyDisplay).toBe('0')
         expect(userView.tokenApprovalBalanceDisplay).toBeUndefined()
         expect(userView.pricingIsApproved).toBeFalsy()
         expect(userView.questionViews).toBeNull()

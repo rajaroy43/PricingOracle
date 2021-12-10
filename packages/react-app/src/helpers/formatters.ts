@@ -2,7 +2,7 @@ import { utils } from 'ethers'
 import numeral from 'numeral'
 
 //transform number to better readablity
-export const formatNumber = (number: number) => number ? `${numeral(number).format("0.0a").toUpperCase()}` : "0"
+export const formatNumber = (number: number|string) => number ? `${numeral(number).format("0.0000a").toUpperCase()}` : "0"
 
 // transform display units to native units
 export const parseUnits = (value: string, decimals = 18): string  => {
@@ -17,7 +17,7 @@ export const parseUnits = (value: string, decimals = 18): string  => {
 // transform native units to display
 export const formatUnits = (value: string, decimals = 18):string => {
   try {
-    const formatted = utils.formatUnits( value, decimals)
+    const formatted = utils.formatUnits(value, decimals)
     return formatted
   } catch {
     return value
