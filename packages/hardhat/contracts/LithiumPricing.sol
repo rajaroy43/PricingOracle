@@ -14,7 +14,7 @@ contract LithiumPricing is ILithiumPricing, Initializable, Roles {
         address owner; // question creator
         uint256 id; // uinique identifier
         uint256 categoryId; // related category id
-        string description; // explanation of asset to price ex 'The price of LITH will be higher then'
+        bytes32 description; // explanation of asset to price ex 'The price of LITH will be higher then' in bytes
         uint256[] answerSet; // the list of possible answers
         uint256[] answerSetTotalStaked; // the total staked for each answer
         uint256 bounty; // to bounty offered by the questions creator in LITH tokens
@@ -310,7 +310,7 @@ contract LithiumPricing is ILithiumPricing, Initializable, Roles {
         question.categoryId = categoryId;
         question.bounty = bounty;
         question.owner = msg.sender;
-        question.description = description;
+        question.description = keccak256(abi.encodePacked(description));
         question.answerSet = answerSet;
         question.answerSetTotalStaked = answerSetTotalStaked;
         question.endTime = endTime;

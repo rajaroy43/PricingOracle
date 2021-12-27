@@ -134,6 +134,11 @@ describe("Lithium Pricing", async function () {
       const pricingTime = block.timestamp + 7;
       const endTime = block.timestamp + 5;
       const description = "foo";
+      const keccak256Description0 = ethers.utils.solidityKeccak256(
+        ["string"],
+        [description]
+      );
+      
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
@@ -143,6 +148,10 @@ describe("Lithium Pricing", async function () {
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
       const description1 = "foo1";
+      const keccak256Description1 = ethers.utils.solidityKeccak256(
+        ["string"],
+        [description1]
+      )
       const bounty1 = transferAmount1;
       const answerSet1 = [0, 100];
       const categoryId1 = 0;
@@ -186,6 +195,11 @@ describe("Lithium Pricing", async function () {
         .emit(lithiumPricing, "QuestionGroupCreated")
         .withArgs(0, account0.address, [0, 1], minimumRequiredAnswer);
 
+      const question0 = await lithiumPricing.getQuestion(0)
+      const question1 = await lithiumPricing.getQuestion(1)
+
+      expect(question0.description).to.equal(keccak256Description0)
+      expect(question1.description).to.equal(keccak256Description1)
       const [questionBidAmount1,] = await lithiumPricing.questionBids(0,account0.address)
       expect(questionBidAmount1).to.equal(bounty)
       const [questionBidAmount2,] = await lithiumPricing.questionBids(1,account0.address) 
@@ -203,6 +217,10 @@ describe("Lithium Pricing", async function () {
       const pricingTime = block.timestamp + 7;
       const endTime = block.timestamp + 5;
       const description = "foo";
+      const keccak256Description0 = ethers.utils.solidityKeccak256(
+        ["string"],
+        [description]
+      )
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
@@ -212,6 +230,10 @@ describe("Lithium Pricing", async function () {
       const pricingTime1 = block.timestamp + 7;
       const endTime1 = block.timestamp + 5;
       const description1 = "foo1";
+      const keccak256Description1 = ethers.utils.solidityKeccak256(
+        ["string"],
+        [description1]
+      )
       const bounty1 = transferAmount1;
       const answerSet1 = [0, 100];
       const categoryId1 = 0;
@@ -271,6 +293,12 @@ describe("Lithium Pricing", async function () {
 
       const senderBalanceAfter = await lithToken.balanceOf(account0.address);
 
+      const question0 = await lithiumPricing.getQuestion(0)
+      const question1 = await lithiumPricing.getQuestion(1)
+
+      expect(question0.description).to.equal(keccak256Description0)
+      expect(question1.description).to.equal(keccak256Description1)
+
       expect(bounty.add(senderBalanceAfter).add(bounty1)).to.equal(
         senderBalance
       );
@@ -281,6 +309,10 @@ describe("Lithium Pricing", async function () {
       const pricingTime = block.timestamp + 7;
       const endTime = block.timestamp + 5;
       const description = "foo";
+      const keccak256Description = ethers.utils.solidityKeccak256(
+        ["string"],
+        [description]
+      )
       const bounty = transferAmount1;
       const answerSet = [0, 50];
       const categoryId = 0;
@@ -312,6 +344,8 @@ describe("Lithium Pricing", async function () {
         questiontype0,
         startTime
       );
+      const question = await lithiumPricing.getQuestion(0)
+      expect(question.description).to.equal(keccak256Description)
 
     });
 
