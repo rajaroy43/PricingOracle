@@ -1,6 +1,6 @@
-# Lithium Finance MVP v0.0.1
+# Pricing  Oracle 
 
-Tesnet alpha version for internal reviews
+Tesnet alpha version
 ---
 
 ## README -- how to run app locally (dev)
